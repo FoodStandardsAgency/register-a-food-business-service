@@ -1,6 +1,6 @@
-const { GraphQLString, GraphQLID, GraphQLList } = require('graphql');
-const establishmentType = require('./establishmentType');
-const { createEstablishment } = require('./establishmentResolvers');
+const { GraphQLString, GraphQLID, GraphQLList } = require("graphql");
+const establishmentType = require("./establishmentType");
+const { createEstablishment } = require("./establishmentResolvers");
 
 module.exports = {
   type: establishmentType,
@@ -16,4 +16,4 @@ module.exports = {
   resolve: (root, args) => {
     return createEstablishment(args);
   }
-}
+};

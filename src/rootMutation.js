@@ -1,8 +1,8 @@
-const { GraphQLObjectType } = require('graphql');
-const createEstablishment = require('./establishment/establishmentMutation');
+const { GraphQLObjectType } = require("graphql");
+const createEstablishment = require("./establishment/establishmentMutation");
 
 module.exports = new GraphQLObjectType({
-  name: 'Mutation',
+  name: "Mutation",
   fields: () => ({
     createEstablishment
   })

@@ -1,8 +1,8 @@
-const { GraphQLObjectType } = require('graphql');
-const { establishments } = require('./establishment/establishmentQuery');
+const { GraphQLObjectType } = require("graphql");
+const { establishments } = require("./establishment/establishmentQuery");
 
 module.exports = new GraphQLObjectType({
-  name: 'Query',
+  name: "Query",
   fields: () => ({
     establishments
   })

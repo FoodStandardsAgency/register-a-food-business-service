@@ -1,10 +1,10 @@
-const createEstablishment = (establishment) => {
+const createEstablishment = () => {
   // AUTEHNTICATION
 
   // VALIDATION
 
   // RESOLUTION
-  return 'Establishment Created'
+  return "Establishment Created";
 };
 
 module.exports = { createEstablishment };
