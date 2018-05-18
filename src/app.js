@@ -7,8 +7,14 @@ const app = express();
 app.use(
   "/graphql",
   graphQL({
-    schema
-    // graphiql: true
+    schema,
+    graphiql: true,
+    formatError: error => ({
+      message: error.message,
+      state: error.originalError && error.originalError.state,
+      locations: error.locations,
+      path: error.path
+    }),
   })
 );
 

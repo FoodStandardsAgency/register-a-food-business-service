@@ -5,7 +5,6 @@ describe("Function: createEstablishment", () => {
     it("Should return email error", () => {
       // Arrange
       const operator_email = "sdlkf";
-      const error = new Error("Invalid email address");
       let errorResponse;
       // Act
       try {
@@ -14,7 +13,8 @@ describe("Function: createEstablishment", () => {
         // Assert
         errorResponse = err;
       }
-      expect(errorResponse).toEqual(error);
+      expect(errorResponse.message).toBe("The request is invalid.")
+      expect(errorResponse.state.email[0]).toBe("Invalid email address");
     });
   });
   describe("When given valid input", () => {
