@@ -7,8 +7,19 @@ const createEstablishment = establishment => {
   // VALIDATION
   const errors = [];
 
-  if (!isEmail(establishment.operator_email)) {
+  if (establishment.operator_email && !isEmail(establishment.operator_email)) {
     errors.push({ key: "email", message: "Invalid email address" });
+  }
+
+  if (Array.isArray(establishment.operator_mobile_numbers)) {
+    establishment.operator_mobile_numbers.forEach(number => {
+      if (number.length > 11) {
+        errors.push({
+          key: "operator_mobile_numbers",
+          message: "Invalid phone number"
+        });
+      }
+    });
   }
 
   if (errors.length) {
