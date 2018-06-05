@@ -61,6 +61,36 @@ describe("Mutation: createEstablishment", () => {
     expect(establishmentMutation.args.operator_email.type).toBe(GraphQLString);
   });
 
+  it("Should have an Establishment First Line argument with type GraphQLString", () => {
+    expect(establishmentMutation.args).toHaveProperty(
+      "establishment_first_line"
+    );
+    expect(establishmentMutation.args.establishment_first_line.type).toBe(
+      GraphQLString
+    );
+  });
+
+  it("Should have an Establishment Street argument with type GraphQLString", () => {
+    expect(establishmentMutation.args).toHaveProperty("establishment_street");
+    expect(establishmentMutation.args.establishment_street.type).toBe(
+      GraphQLString
+    );
+  });
+
+  it("Should have an Establishment Town argument with type GraphQLString", () => {
+    expect(establishmentMutation.args).toHaveProperty("establishment_town");
+    expect(establishmentMutation.args.establishment_town.type).toBe(
+      GraphQLString
+    );
+  });
+
+  it("Should have an Establishment Postcode argument with type GraphQLString", () => {
+    expect(establishmentMutation.args).toHaveProperty("establishment_postcode");
+    expect(establishmentMutation.args.establishment_postcode.type).toBe(
+      GraphQLString
+    );
+  });
+
   it("Should resolve by returning the result of the createEstablishment resolver with args", () => {
     // Arrange
     createEstablishment.mockImplementation = jest.fn((root, args) => {

@@ -1,4 +1,4 @@
-const { isEmail } = require("validator");
+const { isEmail, isPostalCode, isAscii } = require("validator");
 const ValidationError = require("../errors/ValidationError");
 
 const createEstablishment = establishment => {
@@ -22,12 +22,32 @@ const createEstablishment = establishment => {
     });
   }
 
+  if (
+    establishment.establishment_first_line &&
+    !isAscii(establishment.establishment_first_line)
+  ) {
+    errors.push({
+      key: "establishment_first_line",
+      message: "Invalid establishment first line"
+    });
+  }
+
+  if (
+    establishment.establishment_postcode &&
+    !isPostalCode(establishment.establishment_postcode, "GB")
+  ) {
+    errors.push({
+      key: "establishment_postcode",
+      message: "Invalid establishment postcode"
+    });
+  }
+
   if (errors.length) {
     throw new ValidationError(errors);
   }
 
   // RESOLUTION
-  return "Establishment Created";
+  return establishment;
 };
 
 module.exports = { createEstablishment };

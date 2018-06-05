@@ -12,7 +12,11 @@ const establishments = {
         operator_work_numbers: ["123"],
         operator_text_phone_numbers: ["123"],
         operator_type_talk_numbers: ["123"],
-        operator_email: "email@email.com"
+        operator_email: "email@email.com",
+        establishment_first_line: "123",
+        establishment_street: "Street Road",
+        establishment_town: "London",
+        establishment_postcode: "SW2"
       }
     ];
   }

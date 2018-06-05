@@ -11,7 +11,11 @@ module.exports = {
     operator_work_numbers: { type: new GraphQLList(GraphQLString) },
     operator_text_phone_numbers: { type: new GraphQLList(GraphQLString) },
     operator_type_talk_numbers: { type: new GraphQLList(GraphQLString) },
-    operator_email: { type: GraphQLString }
+    operator_email: { type: GraphQLString },
+    establishment_first_line: { type: GraphQLString },
+    establishment_street: { type: GraphQLString },
+    establishment_town: { type: GraphQLString },
+    establishment_postcode: { type: GraphQLString }
   },
   resolve: (root, args) => {
     return createEstablishment(args);

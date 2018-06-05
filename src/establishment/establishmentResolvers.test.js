@@ -38,8 +38,51 @@ describe("Function: createEstablishment", () => {
       );
     });
   });
+
+  describe("When: given an invalid establishment first line", () => {
+    it("Should return establishment first line error", () => {
+      // Arrange
+      const establishment_first_line = "±«Ψ";
+      let errorResponse;
+
+      // Act
+      try {
+        createEstablishment({ establishment_first_line });
+      } catch (err) {
+        errorResponse = err;
+      }
+
+      // Assert
+      expect(errorResponse.message).toBe("The request is invalid.");
+      expect(errorResponse.state.establishment_first_line[0]).toBe(
+        "Invalid establishment first line"
+      );
+    });
+  });
+
+  describe("When: given an invalid establishment postcode", () => {
+    it("Should return establishment postcode error", () => {
+      // Arrange
+      const establishment_postcode = "AA";
+      let errorResponse;
+
+      // Act
+      try {
+        createEstablishment({ establishment_postcode });
+      } catch (err) {
+        errorResponse = err;
+      }
+
+      // Assert
+      expect(errorResponse.message).toBe("The request is invalid.");
+      expect(errorResponse.state.establishment_postcode[0]).toBe(
+        "Invalid establishment postcode"
+      );
+    });
+  });
+
   describe("When given valid input", () => {
-    it("Should return Establishment Created", () => {
+    it("Should return establishment object", () => {
       // Arrange
       const operator_email = "email@email.com";
 
@@ -47,7 +90,7 @@ describe("Function: createEstablishment", () => {
       const response = createEstablishment({ operator_email });
 
       // Assert
-      expect(response).toBe("Establishment Created");
+      expect(response).toEqual({ operator_email: "email@email.com" });
     });
   });
 });
