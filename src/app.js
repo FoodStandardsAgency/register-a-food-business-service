@@ -14,7 +14,7 @@ app.use(
       state: error.originalError && error.originalError.state,
       locations: error.locations,
       path: error.path
-    }),
+    })
   })
 );
 
