@@ -1,4 +1,4 @@
-const { isEmail, isPostalCode, isAscii } = require("validator");
+const { isEmail, isPostalCode, isAscii, isEmpty } = require("validator");
 const ValidationError = require("../errors/ValidationError");
 
 const createEstablishment = establishment => {
@@ -6,21 +6,6 @@ const createEstablishment = establishment => {
 
   // VALIDATION
   const errors = [];
-
-  if (establishment.operator_email && !isEmail(establishment.operator_email)) {
-    errors.push({ key: "email", message: "Invalid email address" });
-  }
-
-  if (Array.isArray(establishment.operator_mobile_numbers)) {
-    establishment.operator_mobile_numbers.forEach(number => {
-      if (number.length > 11) {
-        errors.push({
-          key: "operator_mobile_numbers",
-          message: "Invalid phone number"
-        });
-      }
-    });
-  }
 
   if (
     establishment.establishment_first_line &&
@@ -39,6 +24,28 @@ const createEstablishment = establishment => {
     errors.push({
       key: "establishment_postcode",
       message: "Invalid establishment postcode"
+    });
+  }
+
+  if (establishment.declaration1 === "") {
+    console.log("invalid error1");
+    errors.push({
+      key: "declaration1",
+      message: "Invalid declaration1"
+    });
+  }
+
+  if (establishment.declaration1 === "") {
+    errors.push({
+      key: "declaration2",
+      message: "Invalid declaration2"
+    });
+  }
+
+  if (establishment.declaration1 === "") {
+    errors.push({
+      key: "declaration3",
+      message: "Invalid declaration3"
     });
   }
 

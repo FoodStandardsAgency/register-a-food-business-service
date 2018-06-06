@@ -1,44 +1,6 @@
 const { createEstablishment } = require("./establishmentResolvers");
 
 describe("Function: createEstablishment", () => {
-  describe("When: given invalid email address", () => {
-    it("Should return email error", () => {
-      // Arrange
-      const operator_email = "sdlkf";
-      let errorResponse;
-      // Act
-      try {
-        createEstablishment({ operator_email });
-      } catch (err) {
-        // Assert
-        errorResponse = err;
-      }
-      expect(errorResponse.message).toBe("The request is invalid.");
-      expect(errorResponse.state.email[0]).toBe("Invalid email address");
-    });
-  });
-
-  describe("When: given invalid operator mobile numbers", () => {
-    it("Should return mobile number error", () => {
-      // Arrange
-      const operator_mobile_numbers = ["3947239487235235"];
-      let errorResponse;
-
-      // Act
-      try {
-        createEstablishment({ operator_mobile_numbers });
-      } catch (err) {
-        errorResponse = err;
-      }
-
-      // Assert
-      expect(errorResponse.message).toBe("The request is invalid.");
-      expect(errorResponse.state.operator_mobile_numbers[0]).toBe(
-        "Invalid phone number"
-      );
-    });
-  });
-
   describe("When: given an invalid establishment first line", () => {
     it("Should return establishment first line error", () => {
       // Arrange
@@ -81,16 +43,44 @@ describe("Function: createEstablishment", () => {
     });
   });
 
+  describe("When: given an invalid declaration", () => {
+    it("Should return declaration error", () => {
+      // Arrange
+      const declaration1 = "";
+      const declaration2 = "";
+      const declaration3 = "";
+      let errorResponse;
+
+      // Act
+      try {
+        createEstablishment({ declaration1, declaration2, declaration3 });
+      } catch (err) {
+        errorResponse = err;
+      }
+
+      // Assert
+      expect(errorResponse.message).toBe("The request is invalid.");
+      console.log(errorResponse);
+      expect(errorResponse.state.declaration1[0]).toBe("Invalid declaration1");
+      expect(errorResponse.state.declaration2[0]).toBe("Invalid declaration2");
+      expect(errorResponse.state.declaration3[0]).toBe("Invalid declaration3");
+    });
+  });
+
   describe("When given valid input", () => {
     it("Should return establishment object", () => {
       // Arrange
-      const operator_email = "email@email.com";
+      const establishment = {
+        declaration1: "good declaration",
+        declaration2: "good declaration",
+        declaration3: "good declaration"
+      };
 
       // Act
-      const response = createEstablishment({ operator_email });
+      const response = createEstablishment(establishment);
 
       // Assert
-      expect(response).toEqual({ operator_email: "email@email.com" });
+      expect(response).toEqual(establishment);
     });
   });
 });
