@@ -1,6 +1,6 @@
 {
   "name": "register-a-food-business-service",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "",
   "main": "src/app.js",
   "scripts": {
@@ -33,7 +33,7 @@
   "devDependencies": {
     "cucumber": "^4.2.1",
     "eslint": "^4.19.1",
-    "eslint-plugin-prettier": "^2.6.0",
+    "eslint-config-prettier": "^2.9.0",
     "jest": "^22.4.3",
     "prettier": "^1.12.1"
   }
