@@ -28,21 +28,20 @@ const createEstablishment = establishment => {
   }
 
   if (establishment.declaration1 === "") {
-    console.log("invalid error1");
     errors.push({
       key: "declaration1",
       message: "Invalid declaration1"
     });
   }
 
-  if (establishment.declaration1 === "") {
+  if (establishment.declaration2 === "") {
     errors.push({
       key: "declaration2",
       message: "Invalid declaration2"
     });
   }
 
-  if (establishment.declaration1 === "") {
+  if (establishment.declaration3 === "") {
     errors.push({
       key: "declaration3",
       message: "Invalid declaration3"
