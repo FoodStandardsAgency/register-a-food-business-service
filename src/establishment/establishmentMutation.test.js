@@ -15,50 +15,43 @@ describe("Mutation: createEstablishment", () => {
     expect(establishmentMutation.args.id.type).toBe(GraphQLID);
   });
 
-  it("Should have an Operator Mobile Numbers argument with type GraphQLString", () => {
+  it("Should have an Establishment First Line argument with type GraphQLString", () => {
     expect(establishmentMutation.args).toHaveProperty(
-      "operator_mobile_numbers"
+      "establishment_first_line"
     );
-    expect(establishmentMutation.args.operator_mobile_numbers.type).toEqual(
-      new GraphQLList(GraphQLString)
-    );
-  });
-
-  it("Should have an Operator Home Numbers argument with type GraphQLString", () => {
-    expect(establishmentMutation.args).toHaveProperty("operator_home_numbers");
-    expect(establishmentMutation.args.operator_home_numbers.type).toEqual(
-      new GraphQLList(GraphQLString)
+    expect(establishmentMutation.args.establishment_first_line.type).toBe(
+      GraphQLString
     );
   });
 
-  it("Should have an Operator Work Numbers argument with type GraphQLString", () => {
-    expect(establishmentMutation.args).toHaveProperty("operator_work_numbers");
-    expect(establishmentMutation.args.operator_work_numbers.type).toEqual(
-      new GraphQLList(GraphQLString)
+  it("Should have an Establishment Street argument with type GraphQLString", () => {
+    expect(establishmentMutation.args).toHaveProperty("establishment_street");
+    expect(establishmentMutation.args.establishment_street.type).toBe(
+      GraphQLString
     );
   });
 
-  it("Should have an Operator Text Phone Numbers argument with type GraphQLString", () => {
-    expect(establishmentMutation.args).toHaveProperty(
-      "operator_text_phone_numbers"
-    );
-    expect(establishmentMutation.args.operator_text_phone_numbers.type).toEqual(
-      new GraphQLList(GraphQLString)
+  it("Should have an Establishment Town argument with type GraphQLString", () => {
+    expect(establishmentMutation.args).toHaveProperty("establishment_town");
+    expect(establishmentMutation.args.establishment_town.type).toBe(
+      GraphQLString
     );
   });
 
-  it("Should have an Operator Type Talk Numbers argument with type GraphQLString", () => {
-    expect(establishmentMutation.args).toHaveProperty(
-      "operator_type_talk_numbers"
-    );
-    expect(establishmentMutation.args.operator_type_talk_numbers.type).toEqual(
-      new GraphQLList(GraphQLString)
+  it("Should have an Establishment Postcode argument with type GraphQLString", () => {
+    expect(establishmentMutation.args).toHaveProperty("establishment_postcode");
+    expect(establishmentMutation.args.establishment_postcode.type).toBe(
+      GraphQLString
     );
   });
 
-  it("Should have an Operator Email argument with type GraphQLString", () => {
-    expect(establishmentMutation.args).toHaveProperty("operator_email");
-    expect(establishmentMutation.args.operator_email.type).toBe(GraphQLString);
+  it("Should have three declaration arguments with type GraphQLString", () => {
+    expect(establishmentMutation.args).toHaveProperty("declaration1");
+    expect(establishmentMutation.args).toHaveProperty("declaration2");
+    expect(establishmentMutation.args).toHaveProperty("declaration3");
+    expect(establishmentMutation.args.declaration1.type).toBe(GraphQLString);
+    expect(establishmentMutation.args.declaration2.type).toBe(GraphQLString);
+    expect(establishmentMutation.args.declaration3.type).toBe(GraphQLString);
   });
 
   it("Should resolve by returning the result of the createEstablishment resolver with args", () => {
