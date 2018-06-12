@@ -15,6 +15,15 @@ describe("Mutation: createEstablishment", () => {
     expect(establishmentMutation.args.id.type).toBe(GraphQLID);
   });
 
+  it("Should have an Establishment Trading Name argument with type GraphQLString", () => {
+    expect(establishmentMutation.args).toHaveProperty(
+      "establishment_trading_name"
+    );
+    expect(establishmentMutation.args.establishment_trading_name.type).toBe(
+      GraphQLString
+    );
+  });
+
   it("Should have an Establishment First Line argument with type GraphQLString", () => {
     expect(establishmentMutation.args).toHaveProperty(
       "establishment_first_line"

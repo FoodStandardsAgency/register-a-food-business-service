@@ -8,10 +8,13 @@ module.exports = {
     id: {
       type: GraphQLID
     },
-   operator_first_name: {
+    operator_first_name: {
       type: GraphQLString
     },
-   operator_last_name: {
+    operator_last_name: {
+      type: GraphQLString
+    },
+    establishment_trading_name: {
       type: GraphQLString
     },
     establishment_first_line: {

@@ -2,9 +2,9 @@ const { createEstablishment } = require("./establishmentResolvers");
 
 describe("Function: createEstablishment", () => {
   describe("When: given an invalid operator first name", () => {
-    it ("Should return operator first name error", () => {
+    it("Should return operator first name error", () => {
       //Arrange
-      const operator_first_name ="±«Ψ"
+      const operator_first_name = "±«Ψ";
       let errorResponse;
       //Act
       try {
@@ -20,9 +20,9 @@ describe("Function: createEstablishment", () => {
     });
   });
   describe("When: given an invalid operator last name", () => {
-    it ("Should return operator last name error", () => {
+    it("Should return operator last name error", () => {
       //Arrange
-      const operator_last_name ="±«Ψ"
+      const operator_last_name = "±«Ψ";
       let errorResponse;
       //Act
       try {
@@ -37,7 +37,25 @@ describe("Function: createEstablishment", () => {
       );
     });
   });
-  
+  describe("When: given an invalid establishment trading name", () => {
+    it("Should return establishment trading name error", () => {
+      //Arrange
+      const establishment_trading_name = "±«Ψ";
+      let errorResponse;
+      //Act
+      try {
+        createEstablishment({ establishment_trading_name });
+      } catch (err) {
+        errorResponse = err;
+      }
+      //Assert
+      expect(errorResponse.message).toBe("The request is invalid.");
+      expect(errorResponse.state.establishment_trading_name[0]).toBe(
+        "Invalid establishment trading name"
+      );
+    });
+  });
+
   describe("When: given an invalid establishment first line", () => {
     it("Should return establishment first line error", () => {
       // Arrange
