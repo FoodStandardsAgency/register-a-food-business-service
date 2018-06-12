@@ -6,7 +6,24 @@ const createEstablishment = establishment => {
 
   // VALIDATION
   const errors = [];
-
+  if (
+    establishment.operator_first_name &&
+    !isAscii(establishment.operator_first_name)
+  ) {
+    errors.push({
+      key: "operator_first_name",
+      message: "Invalid operator first name"
+    });
+  }
+  if (
+    establishment.operator_last_name &&
+    !isAscii(establishment.operator_last_name)
+  ) {
+    errors.push({
+      key: "operator_last_name",
+      message: "Invalid operator last name"
+    });
+  }
   if (
     establishment.establishment_first_line &&
     !isAscii(establishment.establishment_first_line)
