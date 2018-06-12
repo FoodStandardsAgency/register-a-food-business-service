@@ -1,6 +1,43 @@
 const { createEstablishment } = require("./establishmentResolvers");
 
 describe("Function: createEstablishment", () => {
+  describe("When: given an invalid operator first name", () => {
+    it ("Should return operator first name error", () => {
+      //Arrange
+      const operator_first_name ="±«Ψ"
+      let errorResponse;
+      //Act
+      try {
+        createEstablishment({ operator_first_name });
+      } catch (err) {
+        errorResponse = err;
+      }
+      //Assert
+      expect(errorResponse.message).toBe("The request is invalid.");
+      expect(errorResponse.state.operator_first_name[0]).toBe(
+        "Invalid operator first name"
+      );
+    });
+  });
+  describe("When: given an invalid operator last name", () => {
+    it ("Should return operator last name error", () => {
+      //Arrange
+      const operator_last_name ="±«Ψ"
+      let errorResponse;
+      //Act
+      try {
+        createEstablishment({ operator_last_name });
+      } catch (err) {
+        errorResponse = err;
+      }
+      //Assert
+      expect(errorResponse.message).toBe("The request is invalid.");
+      expect(errorResponse.state.operator_last_name[0]).toBe(
+        "Invalid operator last name"
+      );
+    });
+  });
+  
   describe("When: given an invalid establishment first line", () => {
     it("Should return establishment first line error", () => {
       // Arrange

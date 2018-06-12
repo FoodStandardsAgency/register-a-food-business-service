@@ -1,5 +1,6 @@
 const express = require("express");
 const graphQL = require("express-graphql");
+const winston = require("winston");
 const schema = require("./schema.js");
 
 const app = express();
@@ -18,4 +19,6 @@ app.use(
   })
 );
 
-app.listen(4000);
+app.listen(4000, () => {
+  winston.info("App Started listening on port 4000");
+});
