@@ -1,18 +1,22 @@
 const { GraphQLString, GraphQLID, GraphQLList } = require("graphql");
 const establishmentType = require("./establishmentType");
 
-describe("Type: Establishment", () => {
-  it("Should have an ID field with type GraphQLID", () => {
-    expect(establishmentType.getFields()).toHaveProperty("id");
-    expect(establishmentType.getFields().id.type).toBe(GraphQLID);
-  });
+const testTypeProperty = (name, type) => {
+  expect(establishmentType.getFields()).toHaveProperty(name);
+  expect(establishmentType.getFields()[name].type).toBe(type);
+}
 
-  it("Should have an Establishment Postcode field with type GraphQLString", () => {
-    expect(establishmentType.getFields()).toHaveProperty(
-      "establishment_postcode"
-    );
-    expect(establishmentType.getFields().establishment_postcode.type).toBe(
-      GraphQLString
-    );
+const types = {
+  "id": GraphQLID,
+  "operator_first_name": GraphQLString,
+  "operator_last_name": GraphQLString,
+  "establishment_postcode": GraphQLString
+}
+
+describe("Type: Establishment", () => {
+  it("should have all the types listed in types", () => {
+    Object.keys(types).forEach((key) => {
+      testTypeProperty(key, types[key]);
+    });
   });
 });
