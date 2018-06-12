@@ -28,7 +28,8 @@
     "express-graphql": "^0.6.12",
     "graphql": "^0.13.2",
     "node-fetch": "^2.1.2",
-    "validator": "^10.2.0"
+    "validator": "^10.2.0",
+    "winston": "^2.4.3"
   },
   "devDependencies": {
     "cucumber": "^4.2.1",
