@@ -25,6 +25,15 @@ const createEstablishment = establishment => {
     });
   }
   if (
+    establishment.establishment_trading_name &&
+    !isAscii(establishment.establishment_trading_name)
+  ) {
+    errors.push({
+      key: "establishment_trading_name",
+      message: "Invalid establishment trading name"
+    });
+  }
+  if (
     establishment.establishment_first_line &&
     !isAscii(establishment.establishment_first_line)
   ) {
