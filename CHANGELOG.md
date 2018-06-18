@@ -3,6 +3,12 @@
 All notable changes to this projectwill be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## v1.2.0 - 18th June 2018 (unreleased)
+
+### Added
+
+- SDB-144 - Backed data schema visualisation with Voyager 
+
 ## v1.2.0 - 13th June 2018 (unreleased)
 
 ### Added
