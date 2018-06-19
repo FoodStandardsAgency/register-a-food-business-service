@@ -1,5 +1,6 @@
 const { isEmail, isPostalCode, isAscii, isEmpty } = require("validator");
 const ValidationError = require("../errors/ValidationError");
+const { validatePhoneNumber, validatePhoneNumberOptional } = require('../services/validationFunctions');
 
 const createEstablishment = establishment => {
   // AUTHENTICATION
@@ -15,6 +16,7 @@ const createEstablishment = establishment => {
       message: "Invalid operator first name"
     });
   }
+
   if (
     establishment.operator_last_name &&
     !isAscii(establishment.operator_last_name)
@@ -24,6 +26,28 @@ const createEstablishment = establishment => {
       message: "Invalid operator last name"
     });
   }
+  if (establishment.operator_primary_number && !validatePhoneNumber(establishment.operator_primary_number)) {
+    errors.push({
+      key: "operator_primary_number",
+      message: "Invalid operator primary number"
+    });
+  }
+  if (establishment.operator_secondary_number && !validatePhoneNumberOptional(establishment.operator_secondary_number)) {
+    errors.push({
+      key: "operator_secondary_number",
+      message: "Invalid operator secondary number"
+    });
+  }
+  if (
+    establishment.operator_email &&
+    !isEmail(establishment.operator_email)
+  ) {
+    errors.push({
+      key: "operator_email",
+      message: "Invalid operator email"
+    });
+  }
+
   if (
     establishment.establishment_trading_name &&
     !isAscii(establishment.establishment_trading_name)

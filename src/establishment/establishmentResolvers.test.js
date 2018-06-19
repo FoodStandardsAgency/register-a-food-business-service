@@ -97,7 +97,24 @@ describe("Function: createEstablishment", () => {
       );
     });
   });
-
+  describe("When: given an invalid operator email", () => {
+    it("Should return operator email error", () => {
+      //Arrange
+      const operator_email = "notanemail";
+      let errorResponse;
+      //Act
+      try {
+        createEstablishment({ operator_email });
+      } catch (err) {
+        errorResponse = err;
+      }
+      //Assert
+      expect(errorResponse.message).toBe("The request is invalid.");
+      expect(errorResponse.state.operator_email[0]).toBe(
+        "Invalid operator email"
+      );
+    });
+  });
   describe("When: given an invalid declaration", () => {
     it("Should return declaration error", () => {
       // Arrange

@@ -14,6 +14,15 @@ module.exports = {
     operator_last_name: {
       type: GraphQLString
     },
+    operator_primary_number: {
+      type: GraphQLString
+    },
+    operator_secondary_number: {
+      type: GraphQLString
+    },
+    operator_email: {
+      type: GraphQLString
+    },
     establishment_trading_name: {
       type: GraphQLString
     },
