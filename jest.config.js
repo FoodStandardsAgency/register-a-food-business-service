@@ -13,6 +13,7 @@ module.exports = {
     "!**/src/app.js",
     "!**/src/rootMutation.js",
     "!**/src/rootQuery.js",
-    "!**/src/schema.js"
+    "!**/src/schema.js",
+    "!**/src/services/validation.schema.js"
   ]
 };

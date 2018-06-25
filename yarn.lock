@@ -48,6 +48,12 @@
   dependencies:
     "@f/map-obj" "^1.2.2"
 
+"@slice-and-dice/register-a-food-business-validation@^1.2.1":
+  version "1.2.1"
+  resolved "https://registry.npmjs.org/@slice-and-dice/register-a-food-business-validation/-/register-a-food-business-validation-1.2.1.tgz#40162080e6d5192a0c48ccb497bece03b928aa39"
+  dependencies:
+    validator "^10.4.0"
+
 "@types/prop-types@^15.5.2":
   version "15.5.3"
   resolved "https://registry.npmjs.org/@types/prop-types/-/prop-types-15.5.3.tgz#bef071852dca2a2dbb65fecdb7bfb30cedae2de2"
@@ -1116,6 +1122,13 @@ eslint-config-prettier@^2.9.0:
   dependencies:
     get-stdin "^5.0.1"
 
+eslint-plugin-prettier@^2.6.1:
+  version "2.6.1"
+  resolved "https://registry.npmjs.org/eslint-plugin-prettier/-/eslint-plugin-prettier-2.6.1.tgz#de902b4a66b7bca24296429a59a1cc04020ccbbd"
+  dependencies:
+    fast-diff "^1.1.1"
+    jest-docblock "^21.0.0"
+
 eslint-scope@^3.7.1:
   version "3.7.1"
   resolved "https://registry.yarnpkg.com/eslint-scope/-/eslint-scope-3.7.1.tgz#3d63c3edfda02e06e01a452ad88caacc7cdcb6e8"
@@ -1373,6 +1386,10 @@ eyes@0.1.x:
 fast-deep-equal@^1.0.0:
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/fast-deep-equal/-/fast-deep-equal-1.1.0.tgz#c053477817c86b51daa853c81e059b733d023614"
+
+fast-diff@^1.1.1:
+  version "1.1.2"
+  resolved "https://registry.npmjs.org/fast-diff/-/fast-diff-1.1.2.tgz#4b62c42b8e03de3f848460b639079920695d0154"
 
 fast-json-stable-stringify@^2.0.0:
   version "2.0.0"
@@ -2260,6 +2277,10 @@ jest-diff@^22.4.0, jest-diff@^22.4.3:
     jest-get-type "^22.4.3"
     pretty-format "^22.4.3"
 
+jest-docblock@^21.0.0:
+  version "21.2.0"
+  resolved "https://registry.npmjs.org/jest-docblock/-/jest-docblock-21.2.0.tgz#51529c3b30d5fd159da60c27ceedc195faf8d414"
+
 jest-docblock@^22.4.0, jest-docblock@^22.4.3:
   version "22.4.3"
   resolved "https://registry.yarnpkg.com/jest-docblock/-/jest-docblock-22.4.3.tgz#50886f132b42b280c903c592373bb6e93bb68b19"
@@ -2528,6 +2549,10 @@ json5@^0.5.1:
 jsonify@~0.0.0:
   version "0.0.0"
   resolved "https://registry.yarnpkg.com/jsonify/-/jsonify-0.0.0.tgz#2c74b6ee41d93ca51b7b5aaee8f503631d252a73"
+
+jsonschema@^1.2.4:
+  version "1.2.4"
+  resolved "https://registry.npmjs.org/jsonschema/-/jsonschema-1.2.4.tgz#a46bac5d3506a254465bc548876e267c6d0d6464"
 
 jsprim@^1.2.2:
   version "1.4.1"
@@ -4213,6 +4238,10 @@ validate-npm-package-license@^3.0.1:
 validator@^10.2.0:
   version "10.3.0"
   resolved "https://registry.yarnpkg.com/validator/-/validator-10.3.0.tgz#157a8c0981858cff381f59aabcdb8f83b57317cc"
+
+validator@^10.4.0:
+  version "10.4.0"
+  resolved "https://registry.npmjs.org/validator/-/validator-10.4.0.tgz#ee99a44afb3bb5ed350a159f056ca72a204cfc3c"
 
 vary@~1.1.2:
   version "1.1.2"
