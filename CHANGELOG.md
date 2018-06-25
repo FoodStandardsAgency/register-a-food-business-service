@@ -3,6 +3,12 @@
 All notable changes to this projectwill be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## v1.7.0 - 25th June 2018 (unreleased)
+
+### Added
+
+- SDB-36 - Limited company details
+
 ## v1.6.0 - 25th June 2018 (unreleased)
 
 ### Added

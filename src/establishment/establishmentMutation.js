@@ -26,6 +26,12 @@ module.exports = {
     operator_email: {
       type: GraphQLString
     },
+    operator_company_name: {
+      type: GraphQLString
+    },
+    operator_company_house_number: {
+      type: GraphQLString
+    },
     establishment_trading_name: {
       type: GraphQLString
     },

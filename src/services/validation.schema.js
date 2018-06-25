@@ -9,7 +9,9 @@ const {
   validatePhoneNumber,
   validatePhoneNumberOptional,
   validateEmail,
-  validateOperatorType
+  validateOperatorType,
+  validateCompanyName,
+  validateCompaniesHouseNumber
 } = require("@slice-and-dice/register-a-food-business-validation");
 
 const schema = {
@@ -39,6 +41,14 @@ const schema = {
       operator_email: {
         type: "string",
         validation: validateEmail
+      },
+      operator_company_name: {
+        type: "string",
+        validation: validateCompanyName
+      },
+      operator_company_house_number: {
+        type: "string",
+        validation: validateCompaniesHouseNumber
       },
       establishment_trading_name: {
         type: "string",
