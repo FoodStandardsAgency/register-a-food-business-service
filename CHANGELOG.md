@@ -7,6 +7,12 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Modified
 
+- SDB-55 - Operator type
+
+## v1.5.0 - 25th June 2018 (unreleased)
+
+### Modified
+
 - SDB-247 - Validation refactor
 
 ## v1.4.0 - 18th June 2018 (unreleased)

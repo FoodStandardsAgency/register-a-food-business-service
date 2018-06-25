@@ -4,6 +4,7 @@ module.exports = new GraphQLObjectType({
   name: "Establishment",
   fields: {
     id: { type: GraphQLID },
+    operator_type: { type: GraphQLString },
     operator_first_name: { type: GraphQLString },
     operator_last_name: { type: GraphQLString },
     operator_primary_number: { type: GraphQLString },
