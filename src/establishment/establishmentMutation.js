@@ -1,4 +1,4 @@
-const { GraphQLString, GraphQLID, GraphQLList } = require("graphql");
+const { GraphQLString, GraphQLID } = require("graphql");
 const establishmentType = require("./establishmentType");
 const { createEstablishment } = require("./establishmentResolvers");
 
