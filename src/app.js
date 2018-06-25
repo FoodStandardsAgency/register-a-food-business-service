@@ -5,7 +5,7 @@ const schema = require("./schema.js");
 const voyagerMiddleware = require("graphql-voyager/middleware").express;
 
 const app = express();
-
+const port = process.env.PORT || 4000;
 app.use(
   "/graphql",
   graphQL({
@@ -22,6 +22,6 @@ app.use(
 
 app.use("/voyager", voyagerMiddleware({ endpointUrl: "/graphql" }));
 
-app.listen(4000, () => {
+app.listen(port, () => {
   winston.info("App Started listening on port 4000");
 });
