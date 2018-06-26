@@ -8,6 +8,9 @@ module.exports = {
     id: {
       type: GraphQLID
     },
+    registration_role: {
+      type: GraphQLString
+    },
     operator_type: {
       type: GraphQLString
     },
