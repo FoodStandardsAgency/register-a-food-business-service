@@ -3,6 +3,12 @@
 All notable changes to this projectwill be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## v1.6.0 - 25th June 2018 (unreleased)
+
+### Added
+
+- SDB-55 - Operator type
+
 ## v1.5.0 - 25th June 2018 (unreleased)
 
 ### Modified
@@ -19,7 +25,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Added
 
-- SDB-144 - Backed data schema visualisation with Voyager 
+- SDB-144 - Backed data schema visualisation with Voyager
 
 ## v1.2.0 - 13th June 2018 (unreleased)
 

@@ -48,9 +48,9 @@
   dependencies:
     "@f/map-obj" "^1.2.2"
 
-"@slice-and-dice/register-a-food-business-validation@^1.2.1":
-  version "1.2.1"
-  resolved "https://registry.npmjs.org/@slice-and-dice/register-a-food-business-validation/-/register-a-food-business-validation-1.2.1.tgz#40162080e6d5192a0c48ccb497bece03b928aa39"
+"@slice-and-dice/register-a-food-business-validation@^1.4.0":
+  version "1.4.0"
+  resolved "https://registry.yarnpkg.com/@slice-and-dice/register-a-food-business-validation/-/register-a-food-business-validation-1.4.0.tgz#d600b864b51bfdc5744401dac2ccbdac27728af1"
   dependencies:
     validator "^10.4.0"
 

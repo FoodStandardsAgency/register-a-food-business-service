@@ -8,13 +8,18 @@ const {
   validateEstablishmentTradingName,
   validatePhoneNumber,
   validatePhoneNumberOptional,
-  validateEmail
+  validateEmail,
+  validateOperatorType
 } = require("@slice-and-dice/register-a-food-business-validation");
 
 const schema = {
   establishment: {
     type: "object",
     properties: {
+      operator_type: {
+        type: "string",
+        validation: validateOperatorType
+      },
       operator_first_name: {
         type: "string",
         validation: validateName
