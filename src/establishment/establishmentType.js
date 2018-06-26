@@ -10,6 +10,8 @@ module.exports = new GraphQLObjectType({
     operator_primary_number: { type: GraphQLString },
     operator_secondary_number: { type: GraphQLString },
     operator_email: { type: GraphQLString },
+    operator_company_name: { type: GraphQLString },
+    operator_company_house_number: { type: GraphQLString },
     establishment_trading_name: { type: GraphQLString },
     establishment_first_line: { type: GraphQLString },
     establishment_street: { type: GraphQLString },
