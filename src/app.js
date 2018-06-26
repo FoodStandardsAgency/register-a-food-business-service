@@ -23,5 +23,5 @@ app.use(
 app.use("/voyager", voyagerMiddleware({ endpointUrl: "/graphql" }));
 
 app.listen(port, () => {
-  winston.info("App Started listening on port 4000");
+  winston.info(`App Started listening on port ${port}`);
 });
