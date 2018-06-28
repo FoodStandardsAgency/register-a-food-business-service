@@ -34,6 +34,22 @@ const schema = {
         type: "string",
         validation: validateName
       },
+      operator_postcode: {
+        type: "string",
+        validation: validatePostCode
+      },
+      operator_first_line: {
+        type: "string",
+        validation: validateEstablishmentFirstLine
+      },
+      operator_street: {
+        type: "string",
+        validation: validateStreet
+      },
+      operator_town: {
+        type: "string",
+        validation: validateTown
+      },
       operator_primary_number: {
         type: "string",
         validation: validatePhoneNumber
@@ -82,6 +98,8 @@ const schema = {
       "registration_role",
       "operator_type",
       "operator_primary_number",
+      "operator_postcode",
+      "operator_first_line",
       "operator_email",
       "establishment_trading_name",
       "establishment_postcode",

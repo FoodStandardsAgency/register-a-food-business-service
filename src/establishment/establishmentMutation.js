@@ -20,6 +20,18 @@ module.exports = {
     operator_last_name: {
       type: GraphQLString
     },
+    operator_first_line: {
+      type: GraphQLString
+    },
+    operator_street: {
+      type: GraphQLString
+    },
+    eoperator_town: {
+      type: GraphQLString
+    },
+    operator_postcode: {
+      type: GraphQLString
+    },
     operator_primary_number: {
       type: GraphQLString
     },
