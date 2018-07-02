@@ -47,6 +47,12 @@ module.exports = {
     operator_company_house_number: {
       type: GraphQLString
     },
+    operator_charity_name: {
+      type: GraphQLString
+    },
+    operator_charity_number: {
+      type: GraphQLString
+    },
     establishment_trading_name: {
       type: GraphQLString
     },

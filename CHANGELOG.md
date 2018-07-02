@@ -3,6 +3,12 @@
 All notable changes to this projectwill be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## v1.9.0 - 28th June 2018 (unreleased)
+
+### Added
+
+- SDB-40 - Charity details
+
 ## v1.8.0 - 28th June 2018 (unreleased)
 
 ### Added

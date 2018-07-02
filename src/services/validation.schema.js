@@ -11,7 +11,9 @@ const {
   validateEmail,
   validateRadioButtons,
   validateCompanyName,
-  validateCompaniesHouseNumber
+  validateCompaniesHouseNumber,
+  validateCharityName,
+  validateCharityNumber
 } = require("@slice-and-dice/register-a-food-business-validation");
 
 const schema = {
@@ -70,6 +72,14 @@ const schema = {
         type: "string",
         validation: validateCompaniesHouseNumber
       },
+      operator_charity_name: {
+        type: "string",
+        validation: validateCharityName
+      },
+      operator_charity_number: {
+        type: "string",
+        validation: validateCharityNumber
+      },
       establishment_trading_name: {
         type: "string",
         validation: validateEstablishmentTradingName
@@ -110,6 +120,7 @@ const schema = {
     ],
     oneOf: [
       { required: ["operator_company_name", "operator_company_house_number"] },
+      { required: ["operator_charity_name", "operator_charity_number"] },
       { required: ["operator_first_name", "operator_last_name"] }
     ]
   }
