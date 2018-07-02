@@ -18,6 +18,8 @@ const errorMessages = {
   operator_email: "Invalid operator email",
   operator_company_name: "Invalid operator company name",
   operator_company_house_number: "Invalid operator Companies House number",
+  operator_charity_name: "Invalid operator charity name",
+  operator_charity_number: "Invalid operator charity number",
   establishment_first_line: "Invalid establishment first line",
   establishment_street: "Invalid street name",
   establishment_town: "Invalid town name",
