@@ -120,7 +120,7 @@ const schema = {
     ],
     oneOf: [
       { required: ["operator_company_name", "operator_company_house_number"] },
-      { required: ["operator_charity_name", "operator_charity_number"] },
+      { required: ["operator_charity_name"] },
       { required: ["operator_first_name", "operator_last_name"] }
     ]
   }
