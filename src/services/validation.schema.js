@@ -1,7 +1,7 @@
 const {
   validateDeclaration,
   validatePostCode,
-  validateEstablishmentFirstLine,
+  validateFirstLine,
   validateStreet,
   validateName,
   validateTown,
@@ -42,7 +42,7 @@ const schema = {
       },
       operator_first_line: {
         type: "string",
-        validation: validateEstablishmentFirstLine
+        validation: validateFirstLine
       },
       operator_street: {
         type: "string",
@@ -90,7 +90,7 @@ const schema = {
       },
       establishment_first_line: {
         type: "string",
-        validation: validateEstablishmentFirstLine
+        validation: validateFirstLine
       },
       establishment_street: {
         type: "string",
