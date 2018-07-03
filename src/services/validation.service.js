@@ -1,4 +1,5 @@
 const { Validator } = require("jsonschema");
+const { info } = require("winston");
 const schema = require("./validation.schema");
 
 const errorMessages = {
@@ -41,6 +42,7 @@ validator.attributes.validation = (instance, schema, options, ctx) => {
 };
 
 module.exports.validate = data => {
+  info(`validationService: validate: called`);
   const result = [];
   const validatorResult = validator.validate(data, schema.establishment);
   // turn errors into key:value pairs
@@ -48,5 +50,6 @@ module.exports.validate = data => {
     const key = error.property.split(".")[1];
     result.push({ key, message: error.message });
   });
+  info(`validationService: validate: finished`);
   return result;
 };
