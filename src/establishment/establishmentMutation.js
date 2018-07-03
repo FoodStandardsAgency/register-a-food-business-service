@@ -1,4 +1,5 @@
 const { GraphQLString, GraphQLID } = require("graphql");
+const { info } = require("winston");
 const establishmentType = require("./establishmentType");
 const { createEstablishment } = require("./establishmentResolvers");
 
@@ -79,6 +80,7 @@ module.exports = {
     }
   },
   resolve: (root, args) => {
+    info("establishment mutation called");
     return createEstablishment(args);
   }
 };
