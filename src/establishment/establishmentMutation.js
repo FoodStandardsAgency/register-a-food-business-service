@@ -27,7 +27,7 @@ module.exports = {
     operator_street: {
       type: GraphQLString
     },
-    eoperator_town: {
+    operator_town: {
       type: GraphQLString
     },
     operator_postcode: {
