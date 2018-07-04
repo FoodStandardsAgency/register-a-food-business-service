@@ -97,7 +97,7 @@ describe("Function: validate", () => {
         operator_company_house_number: "true",
         operator_charity_name: "true",
         operator_charity_number: "true"
-      }
+      };
 
       // Act
       const response = validate(establishment);
