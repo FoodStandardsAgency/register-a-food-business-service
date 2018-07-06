@@ -24,6 +24,9 @@ module.exports = new GraphQLObjectType({
     establishment_street: { type: GraphQLString },
     establishment_town: { type: GraphQLString },
     establishment_postcode: { type: GraphQLString },
+    establishment_primary_number: { type: GraphQLString },
+    establishment_secondary_number: { type: GraphQLString },
+    establishment_email: { type: GraphQLString },
     declaration1: { type: GraphQLString },
     declaration2: { type: GraphQLString },
     declaration3: { type: GraphQLString }

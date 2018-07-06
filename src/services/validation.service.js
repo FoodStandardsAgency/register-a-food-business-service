@@ -25,6 +25,9 @@ const errorMessages = {
   establishment_street: "Invalid street name",
   establishment_town: "Invalid town name",
   establishment_postcode: "Invalid establishment postcode",
+  establishment_primary_number: "Invalid operator primary number",
+  establishment_secondary_number: "Invalid operator secondary number",
+  establishment_email: "Invalid operator email",
   establishment_trading_name: "Invalid establishment trading name"
 };
 

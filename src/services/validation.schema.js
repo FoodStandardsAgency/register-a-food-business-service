@@ -100,6 +100,18 @@ const schema = {
         type: "string",
         validation: validateTown
       },
+      establishment_primary_number: {
+        type: "string",
+        validation: validatePhoneNumber
+      },
+      establishment_secondary_number: {
+        type: "string",
+        validation: validatePhoneNumberOptional
+      },
+      establishment_email: {
+        type: "string",
+        validation: validateEmail
+      },
       declaration1: { type: "string", validation: validateDeclaration },
       declaration2: { type: "string", validation: validateDeclaration },
       declaration3: { type: "string", validation: validateDeclaration }
@@ -114,6 +126,8 @@ const schema = {
       "establishment_trading_name",
       "establishment_postcode",
       "establishment_first_line",
+      "establishment_primary_number",
+      "establishment_email",
       "declaration1",
       "declaration2",
       "declaration3"

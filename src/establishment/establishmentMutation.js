@@ -69,6 +69,15 @@ module.exports = {
     establishment_postcode: {
       type: GraphQLString
     },
+    establishment_primary_number: {
+      type: GraphQLString
+    },
+    establishment_secondary_number: {
+      type: GraphQLString
+    },
+    establishment_email: {
+      type: GraphQLString
+    },
     declaration1: {
       type: GraphQLString
     },
