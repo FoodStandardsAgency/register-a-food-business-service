@@ -33,7 +33,7 @@ jest.mock("./validation.schema", () => ({
       establishment_primary_number: {
         type: "string",
         validation: input => input === "true"
-      },
+      }
     }
   }
 }));
@@ -52,7 +52,7 @@ describe("Function: validate", () => {
         operator_company_house_number: "true",
         operator_charity_name: "true",
         operator_charity_number: "true",
-        establishment_primary_number: "true",
+        establishment_primary_number: "true"
       };
 
       // Act
@@ -74,7 +74,7 @@ describe("Function: validate", () => {
         operator_company_house_number: "false",
         operator_charity_name: "false",
         operator_charity_number: "false",
-        establishment_primary_number: "false",
+        establishment_primary_number: "false"
       };
 
       // Act
