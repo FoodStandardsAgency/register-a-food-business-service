@@ -20,10 +20,6 @@ const schema = {
   establishment: {
     type: "object",
     properties: {
-      registration_role: {
-        type: "string",
-        validation: validateRadioButtons
-      },
       operator_type: {
         type: "string",
         validation: validateRadioButtons
@@ -117,7 +113,6 @@ const schema = {
       declaration3: { type: "string", validation: validateDeclaration }
     },
     required: [
-      "registration_role",
       "operator_type",
       "operator_primary_number",
       "operator_postcode",

@@ -6,7 +6,6 @@ const errorMessages = {
   declaration1: "Invalid declaration1",
   declaration2: "Invalid declaration2",
   declaration3: "Invalid declaration3",
-  registration_role: "Invalid registration role",
   operator_type: "Invalid operator type",
   operator_first_name: "Invalid operator first name",
   operator_last_name: "Invalid operator last name",
