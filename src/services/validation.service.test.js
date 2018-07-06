@@ -92,4 +92,25 @@ describe("Function: validate", () => {
       expect(response[7].key).toBe("establishment_primary_number");
     });
   });
+
+  describe("When given undefined input", () => {
+    it("Should not validate that field", () => {
+      // Arrange
+      const establishment = {
+        operator_first_name: undefined,
+        operator_last_name: undefined,
+        operator_primary_number: "true",
+        operator_company_name: "true",
+        operator_company_house_number: "true",
+        operator_charity_name: "true",
+        operator_charity_number: "true"
+      };
+
+      // Act
+      const response = validate(establishment);
+
+      // Assert
+      expect(response.length).toBe(0);
+    });
+  });
 });
