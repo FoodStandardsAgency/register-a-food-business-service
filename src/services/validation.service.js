@@ -6,7 +6,6 @@ const errorMessages = {
   declaration1: "Invalid declaration1",
   declaration2: "Invalid declaration2",
   declaration3: "Invalid declaration3",
-  registration_role: "Invalid registration role",
   operator_type: "Invalid operator type",
   operator_first_name: "Invalid operator first name",
   operator_last_name: "Invalid operator last name",
@@ -25,6 +24,9 @@ const errorMessages = {
   establishment_street: "Invalid street name",
   establishment_town: "Invalid town name",
   establishment_postcode: "Invalid establishment postcode",
+  establishment_primary_number: "Invalid operator primary number",
+  establishment_secondary_number: "Invalid operator secondary number",
+  establishment_email: "Invalid operator email",
   establishment_trading_name: "Invalid establishment trading name"
 };
 

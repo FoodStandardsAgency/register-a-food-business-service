@@ -29,6 +29,10 @@ jest.mock("./validation.schema", () => ({
       operator_charity_number: {
         type: "string",
         validation: input => input === "true"
+      },
+      establishment_primary_number: {
+        type: "string",
+        validation: input => input === "true"
       }
     }
   }
@@ -47,7 +51,8 @@ describe("Function: validate", () => {
         operator_company_name: "true",
         operator_company_house_number: "true",
         operator_charity_name: "true",
-        operator_charity_number: "true"
+        operator_charity_number: "true",
+        establishment_primary_number: "true"
       };
 
       // Act
@@ -68,14 +73,15 @@ describe("Function: validate", () => {
         operator_company_name: "false",
         operator_company_house_number: "false",
         operator_charity_name: "false",
-        operator_charity_number: "false"
+        operator_charity_number: "false",
+        establishment_primary_number: "false"
       };
 
       // Act
       const response = validate(establishment);
 
       // Assert
-      expect(response.length).toBe(7);
+      expect(response.length).toBe(8);
       expect(response[0].key).toBe("operator_first_name");
       expect(response[1].key).toBe("operator_last_name");
       expect(response[2].key).toBe("operator_primary_number");
@@ -83,6 +89,7 @@ describe("Function: validate", () => {
       expect(response[4].key).toBe("operator_company_house_number");
       expect(response[5].key).toBe("operator_charity_name");
       expect(response[6].key).toBe("operator_charity_number");
+      expect(response[7].key).toBe("establishment_primary_number");
     });
   });
 

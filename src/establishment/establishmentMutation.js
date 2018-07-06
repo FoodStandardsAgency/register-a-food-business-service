@@ -9,9 +9,6 @@ module.exports = {
     id: {
       type: GraphQLID
     },
-    registration_role: {
-      type: GraphQLString
-    },
     operator_type: {
       type: GraphQLString
     },
@@ -67,6 +64,15 @@ module.exports = {
       type: GraphQLString
     },
     establishment_postcode: {
+      type: GraphQLString
+    },
+    establishment_primary_number: {
+      type: GraphQLString
+    },
+    establishment_secondary_number: {
+      type: GraphQLString
+    },
+    establishment_email: {
       type: GraphQLString
     },
     declaration1: {

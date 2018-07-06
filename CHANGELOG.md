@@ -3,6 +3,18 @@
 All notable changes to this projectwill be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## v1.10.1 - 6th July 2018 (unreleased)
+
+### Modified
+
+- Removal of registration role from backend
+
+## v1.10.0 - 6th July 2018 (unreleased)
+
+### Added
+
+- SDB-113 - Establishment Contact Details
+
 ## v1.9.0 - 28th June 2018 (unreleased)
 
 ### Added

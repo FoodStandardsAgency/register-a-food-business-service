@@ -4,7 +4,6 @@ module.exports = new GraphQLObjectType({
   name: "Establishment",
   fields: {
     id: { type: GraphQLID },
-    registration_role: { type: GraphQLString },
     operator_type: { type: GraphQLString },
     operator_first_name: { type: GraphQLString },
     operator_last_name: { type: GraphQLString },
@@ -24,6 +23,9 @@ module.exports = new GraphQLObjectType({
     establishment_street: { type: GraphQLString },
     establishment_town: { type: GraphQLString },
     establishment_postcode: { type: GraphQLString },
+    establishment_primary_number: { type: GraphQLString },
+    establishment_secondary_number: { type: GraphQLString },
+    establishment_email: { type: GraphQLString },
     declaration1: { type: GraphQLString },
     declaration2: { type: GraphQLString },
     declaration3: { type: GraphQLString }
