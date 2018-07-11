@@ -54,6 +54,13 @@ describe("Mutation: createEstablishment", () => {
     );
   });
 
+  it("Should have an Customer Type argument with type GraphQLString", () => {
+    expect(establishmentMutation.args).toHaveProperty("customer_type");
+    expect(establishmentMutation.args.establishment_postcode.type).toBe(
+      GraphQLString
+    );
+  });
+
   it("Should have three declaration arguments with type GraphQLString", () => {
     expect(establishmentMutation.args).toHaveProperty("declaration1");
     expect(establishmentMutation.args).toHaveProperty("declaration2");

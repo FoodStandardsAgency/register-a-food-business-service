@@ -27,7 +27,8 @@ const errorMessages = {
   establishment_primary_number: "Invalid operator primary number",
   establishment_secondary_number: "Invalid operator secondary number",
   establishment_email: "Invalid operator email",
-  establishment_trading_name: "Invalid establishment trading name"
+  establishment_trading_name: "Invalid establishment trading name",
+  customer_type: "Invalid customer type"
 };
 
 const validator = new Validator();

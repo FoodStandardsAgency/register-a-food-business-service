@@ -13,7 +13,8 @@ const {
   validateCompanyName,
   validateCompaniesHouseNumber,
   validateCharityName,
-  validateCharityNumber
+  validateCharityNumber,
+  validateCustomerType
 } = require("@slice-and-dice/register-a-food-business-validation");
 
 const schema = {
@@ -108,6 +109,10 @@ const schema = {
         type: "string",
         validation: validateEmail
       },
+      customer_type: {
+        type: "string",
+        validation: validateCustomerType
+      },
       declaration1: { type: "string", validation: validateDeclaration },
       declaration2: { type: "string", validation: validateDeclaration },
       declaration3: { type: "string", validation: validateDeclaration }
@@ -123,6 +128,7 @@ const schema = {
       "establishment_first_line",
       "establishment_primary_number",
       "establishment_email",
+      "customer_type",
       "declaration1",
       "declaration2",
       "declaration3"
