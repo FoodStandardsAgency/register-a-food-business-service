@@ -61,7 +61,6 @@ describe("Mutation: createEstablishment", () => {
     );
   });
 
-
   it("Should have three declaration arguments with type GraphQLString", () => {
     expect(establishmentMutation.args).toHaveProperty("declaration1");
     expect(establishmentMutation.args).toHaveProperty("declaration2");
