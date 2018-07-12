@@ -1,7 +1,13 @@
 ## Change Log
 
 All notable changes to this projectwill be documented in this file.
-This project adheres to [Semantic Versioning](http://semver.org/).
+This project adheres to [Semantic Versioning](http://semver.org/)
+## v1.12.0 - 12th July 2018 (unreleased)
+
+### Added
+
+- SDB-241 - Contact Representative
+
 ## v1.11.0 - 11th July 2018 (unreleased)
 
 ### Added
