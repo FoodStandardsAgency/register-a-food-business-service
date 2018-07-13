@@ -26,6 +26,11 @@ module.exports = new GraphQLObjectType({
     establishment_primary_number: { type: GraphQLString },
     establishment_secondary_number: { type: GraphQLString },
     establishment_email: { type: GraphQLString },
+    contact_representative_name: { type: GraphQLString },
+    contact_representative_role: { type: GraphQLString },
+    contact_representative_number: { type: GraphQLString },
+    contact_representative_email: { type: GraphQLString },
+    customer_type: { type: GraphQLString },
     declaration1: { type: GraphQLString },
     declaration2: { type: GraphQLString },
     declaration3: { type: GraphQLString }

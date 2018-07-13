@@ -2,7 +2,7 @@ const {
   validateDeclaration,
   validatePostCode,
   validateFirstLine,
-  validateStreet,
+  validateOptionalString,
   validateName,
   validateTown,
   validateEstablishmentTradingName,
@@ -13,7 +13,8 @@ const {
   validateCompanyName,
   validateCompaniesHouseNumber,
   validateCharityName,
-  validateCharityNumber
+  validateCharityNumber,
+  validateCustomerType
 } = require("@slice-and-dice/register-a-food-business-validation");
 
 const schema = {
@@ -42,7 +43,7 @@ const schema = {
       },
       operator_street: {
         type: "string",
-        validation: validateStreet
+        validation: validateOptionalString
       },
       operator_town: {
         type: "string",
@@ -90,7 +91,7 @@ const schema = {
       },
       establishment_street: {
         type: "string",
-        validation: validateStreet
+        validation: validateOptionalString
       },
       establishment_town: {
         type: "string",
@@ -108,6 +109,26 @@ const schema = {
         type: "string",
         validation: validateEmail
       },
+      contact_representative_name: {
+        type: "string",
+        validation: validateName
+      },
+      contact_representative_number: {
+        type: "string",
+        validation: validatePhoneNumber
+      },
+      contact_representative_role: {
+        type: "string",
+        validation: validateOptionalString
+      },
+      contact_representative_email: {
+        type: "string",
+        validation: validateEmail
+      },
+      customer_type: {
+        type: "string",
+        validation: validateCustomerType
+      },
       declaration1: { type: "string", validation: validateDeclaration },
       declaration2: { type: "string", validation: validateDeclaration },
       declaration3: { type: "string", validation: validateDeclaration }
@@ -123,6 +144,10 @@ const schema = {
       "establishment_first_line",
       "establishment_primary_number",
       "establishment_email",
+      "contact_representative_number",
+      "contact_representative_name",
+      "contact_representative_email",
+      "customer_type",
       "declaration1",
       "declaration2",
       "declaration3"
@@ -130,7 +155,15 @@ const schema = {
     oneOf: [
       { required: ["operator_company_name", "operator_company_house_number"] },
       { required: ["operator_charity_name"] },
-      { required: ["operator_first_name", "operator_last_name"] }
+      { required: ["operator_first_name", "operator_last_name"] },
+      { required: ["operator_primary_number", "operator_email"] },
+      {
+        required: [
+          "contact_representative_number",
+          "contact_representative_name",
+          "contact_representative_role"
+        ]
+      }
     ]
   }
 };

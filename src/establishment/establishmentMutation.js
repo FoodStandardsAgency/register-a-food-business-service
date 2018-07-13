@@ -75,6 +75,21 @@ module.exports = {
     establishment_email: {
       type: GraphQLString
     },
+    contact_representative_name: {
+      type: GraphQLString
+    },
+    contact_representative_number: {
+      type: GraphQLString
+    },
+    contact_representative_role: {
+      type: GraphQLString
+    },
+    contact_representative_email: {
+      type: GraphQLString
+    },
+    customer_type: {
+      type: GraphQLString
+    },
     declaration1: {
       type: GraphQLString
     },
