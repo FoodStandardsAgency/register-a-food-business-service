@@ -125,10 +125,6 @@ const schema = {
         type: "string",
         validation: validateEmail
       },
-      establishment_email: {
-        type: "string",
-        validation: validateEmail
-      },
       customer_type: {
         type: "string",
         validation: validateCustomerType
@@ -161,7 +157,13 @@ const schema = {
       { required: ["operator_charity_name"] },
       { required: ["operator_first_name", "operator_last_name"] },
       { required: ["operator_primary_number", "operator_email"] },
-      { required: ["contact_representative_number", "contact_representative_name", "contact_representative_role"] }
+      {
+        required: [
+          "contact_representative_number",
+          "contact_representative_name",
+          "contact_representative_role"
+        ]
+      }
     ]
   }
 };
