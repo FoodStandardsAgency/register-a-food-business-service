@@ -75,6 +75,9 @@ module.exports = {
     establishment_email: {
       type: GraphQLString
     },
+    establishment_opening_date: {
+      type: GraphQLString
+    },
     customer_type: {
       type: GraphQLString
     },

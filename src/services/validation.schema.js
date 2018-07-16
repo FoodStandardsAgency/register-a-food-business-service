@@ -2,7 +2,7 @@ const {
   validateDeclaration,
   validatePostCode,
   validateFirstLine,
-  validateStreet,
+  validateOptionalString,
   validateName,
   validateTown,
   validateEstablishmentTradingName,
@@ -14,7 +14,8 @@ const {
   validateCompaniesHouseNumber,
   validateCharityName,
   validateCharityNumber,
-  validateCustomerType
+  validateCustomerType,
+  validateDate
 } = require("@slice-and-dice/register-a-food-business-validation");
 
 const schema = {
@@ -43,7 +44,7 @@ const schema = {
       },
       operator_street: {
         type: "string",
-        validation: validateStreet
+        validation: validateOptionalString
       },
       operator_town: {
         type: "string",
@@ -91,7 +92,7 @@ const schema = {
       },
       establishment_street: {
         type: "string",
-        validation: validateStreet
+        validation: validateOptionalString
       },
       establishment_town: {
         type: "string",
@@ -108,6 +109,10 @@ const schema = {
       establishment_email: {
         type: "string",
         validation: validateEmail
+      },
+      establishment_opening_date: {
+        type: "string",
+        validation: validateDate
       },
       customer_type: {
         type: "string",
@@ -129,6 +134,7 @@ const schema = {
       "establishment_primary_number",
       "establishment_email",
       "customer_type",
+      "establishment_opening_date",
       "declaration1",
       "declaration2",
       "declaration3"
