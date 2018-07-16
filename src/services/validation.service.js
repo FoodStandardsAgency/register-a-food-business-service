@@ -28,6 +28,7 @@ const errorMessages = {
   establishment_secondary_number: "Invalid operator secondary number",
   establishment_email: "Invalid operator email",
   establishment_trading_name: "Invalid establishment trading name",
+  establishment_opening_date: "Invalid establishment opening date",
   customer_type: "Invalid customer type"
 };
 
@@ -36,7 +37,6 @@ const validator = new Validator();
 // Set validation rules on validator
 validator.attributes.validation = (instance, schema, options, ctx) => {
   const propertyName = ctx.propertyPath.split(".")[1];
-
   if (instance !== undefined) {
     if (schema.validation(instance) === false) {
       return errorMessages[propertyName];

@@ -2,7 +2,7 @@ const { GraphQLObjectType } = require("graphql");
 const createEstablishment = require("./establishment/establishmentMutation");
 
 module.exports = new GraphQLObjectType({
-  name: "Mutation",
+  name: "EstablishmentMutation",
   fields: () => ({
     createEstablishment
   })
