@@ -1,4 +1,5 @@
 const { info, error } = require("winston");
+const uuidv4 = require("uuid/v4");
 const ValidationError = require("../errors/ValidationError");
 const { validate } = require("../services/validation.service");
 const { personalInfoFilter } = require("../services/personalInfoFilter");
@@ -17,7 +18,10 @@ const createEstablishment = async establishment => {
   // RESOLUTION
   try {
     const filteredEstablishment = personalInfoFilter(establishment);
-    const response = await Establishment.create(filteredEstablishment);
+    const id = uuidv4();
+    const response = await Establishment.create(
+      Object.assign(filteredEstablishment, { id })
+    );
     info(`establishmentResolver: createEstablishment: finished`);
     return response;
   } catch (err) {

@@ -37,7 +37,7 @@ describe("Function: createEstablishment", () => {
       const response = await createEstablishment(data);
 
       // Assert
-      expect(response).toEqual(data);
+      expect(response.input).toEqual("data");
     });
   });
 
