@@ -19,7 +19,9 @@ const db = new Sequelize(connectionString, {
 
 const Establishment = createEstablishment(db, Sequelize);
 
-db.sync();
+db.sync({
+  force: true
+});
 
 db.authenticate()
   .then(() => {
