@@ -19,8 +19,6 @@ const db = new Sequelize(connectionString, {
 
 const Establishment = createEstablishment(db, Sequelize);
 
-db.sync();
-
 db.authenticate()
   .then(() => {
     info("Connection to postgres db has been established successfully.");
