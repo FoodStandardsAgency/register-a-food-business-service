@@ -3,8 +3,6 @@ const graphQL = require("express-graphql");
 const winston = require("winston");
 const schema = require("./schema.js");
 const voyagerMiddleware = require("graphql-voyager/middleware").express;
-require("dotenv").config();
-const db = require("./db/db");
 
 const app = express();
 const port = process.env.PORT || 4000;
