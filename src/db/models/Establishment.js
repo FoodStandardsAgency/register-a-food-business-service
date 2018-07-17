@@ -1,7 +1,7 @@
 module.exports = (db, Sequelize) => {
   return db.define("establishment", {
     id: {
-      type: Sequelize.INTEGER,
+      type: Sequelize.UUID,
       primaryKey: true
     },
     operator_type: { type: Sequelize.STRING },
