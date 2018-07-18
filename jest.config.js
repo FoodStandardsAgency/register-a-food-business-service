@@ -14,6 +14,8 @@ module.exports = {
     "!**/src/rootMutation.js",
     "!**/src/rootQuery.js",
     "!**/src/schema.js",
-    "!**/src/services/validation.schema.js"
+    "!**/src/services/validation.schema.js",
+    "!**/src/db/**",
+    "!**/src/config.js"
   ]
 };

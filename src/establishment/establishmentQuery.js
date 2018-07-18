@@ -1,5 +1,16 @@
-const { GraphQLList } = require("graphql");
+const { GraphQLList, GraphQLID } = require("graphql");
+const { getEstablishmentById } = require("./establishmentResolvers");
 const establishmentType = require("./establishmentType");
+
+const establishment = {
+  type: establishmentType,
+  args: {
+    id: { type: GraphQLID }
+  },
+  resolve: (parentValue, args) => {
+    return getEstablishmentById(args.id);
+  }
+};
 
 const establishments = {
   type: new GraphQLList(establishmentType),
@@ -16,4 +27,4 @@ const establishments = {
   }
 };
 
-module.exports = { establishments };
+module.exports = { establishment, establishments };
