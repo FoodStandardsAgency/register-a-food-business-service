@@ -3,6 +3,12 @@
 All notable changes to this projectwill be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## v1.13.0 - 18th July 2018 (unreleased)
+
+### Added
+
+- Database layer
+
 ## v1.12.0 - 11th July 2018 (unreleased)
 
 ### Added
