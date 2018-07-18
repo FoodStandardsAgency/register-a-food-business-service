@@ -1,9 +1,13 @@
 const { GraphQLObjectType } = require("graphql");
-const { establishments } = require("./establishment/establishmentQuery");
+const {
+  establishments,
+  establishment
+} = require("./establishment/establishmentQuery");
 
 module.exports = new GraphQLObjectType({
   name: "Query",
   fields: () => ({
-    establishments
+    establishments,
+    establishment
   })
 });
