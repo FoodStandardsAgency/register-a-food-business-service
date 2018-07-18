@@ -5,6 +5,23 @@ const { validate } = require("../services/validation.service");
 const { personalInfoFilter } = require("../services/personalInfoFilter");
 const { Establishment } = require("../db/db");
 
+const getEstablishmentById = async id => {
+  info(`establishmentResolver: getEstablishmentById: called`);
+  // AUTHENTICATION
+
+  // VALIDATION
+
+  // RESOLUTION
+  try {
+    const response = await Establishment.findOne({ where: { id: id } });
+    info(`establishmentResolver: getEstablishmentById: finished`);
+    return response;
+  } catch (err) {
+    error(`establishmentResolver: getEstablishmentById: error: ${err}`);
+    throw err;
+  }
+};
+
 const createEstablishment = async establishment => {
   info(`establishmentResolver: createEstablishment: called`);
   // AUTHENTICATION
@@ -30,4 +47,4 @@ const createEstablishment = async establishment => {
   }
 };
 
-module.exports = { createEstablishment };
+module.exports = { createEstablishment, getEstablishmentById };

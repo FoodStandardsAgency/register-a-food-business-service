@@ -5,12 +5,16 @@ jest.mock("../services/validation.service", () => ({
 }));
 jest.mock("../db/db", () => ({
   Establishment: {
-    create: jest.fn(input => input)
+    create: jest.fn(input => input),
+    findOne: jest.fn()
   }
 }));
 const { Establishment } = require("../db/db");
 const { validate } = require("../services/validation.service");
-const { createEstablishment } = require("./establishmentResolvers");
+const {
+  createEstablishment,
+  getEstablishmentById
+} = require("./establishmentResolvers");
 
 describe("Function: createEstablishment", () => {
   describe("When given valid input", () => {
@@ -83,6 +87,62 @@ describe("Function: createEstablishment", () => {
 
       // Assert
       expect(errorResponse.message).toBe("test");
+    });
+  });
+});
+
+describe("Function: getEstablishmentById", () => {
+  describe("When Establishment.findOne fails", () => {
+    beforeEach(() => {
+      Establishment.findOne.mockImplementation(() => {
+        throw new Error("test");
+      });
+    });
+
+    it("Should throw error", async () => {
+      // Arrange
+      let errorResponse;
+
+      // Act
+      try {
+        await getEstablishmentById();
+      } catch (err) {
+        errorResponse = err;
+      }
+
+      // Assert
+      expect(errorResponse.message).toBe("test");
+    });
+  });
+
+  describe("when Establishment.findOne succeeds", () => {
+    beforeEach(() => {
+      Establishment.findOne.mockImplementation(() => {
+        return "findOne result";
+      });
+    });
+
+    it("Should call findOne with id", async () => {
+      // Arrange
+      const id = "123";
+
+      // Act
+      await getEstablishmentById(id);
+
+      // Assert
+      expect(Establishment.findOne).toHaveBeenCalledWith({
+        where: { id: "123" }
+      });
+    });
+
+    it("Should return result of findOne call", async () => {
+      // Arrange
+
+      // Act
+      const response = await getEstablishmentById();
+
+      // Assert
+      expect(response).toBe("findOne result");
     });
   });
 });
