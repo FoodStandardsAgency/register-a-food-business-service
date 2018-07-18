@@ -3,11 +3,14 @@ const fetch = require("node-fetch");
 const { Given, When, Then } = require("cucumber");
 
 const sendRequest = async body => {
-  const res = await fetch("http://localhost:4000/graphql", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: body
-  });
+  const res = await fetch(
+    "https://register-a-food-business-service-dev.azurewebsites.net/graphql",
+    {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: body
+    }
+  );
 
   return res.json();
 };
@@ -106,6 +109,8 @@ Given("I have a new establishment with all valid required fields", function() {
     (this.establishment_first_line = "Establishment Testing Line"),
     (this.establishment_primary_number = "07722343545"),
     (this.establishment_email = "establishment@email.com"),
+    (this.establishment_opening_date = "2018-06-04"),
+    (this.customer_type = "Other businesses"),
     (this.declaration1 = "true"),
     (this.declaration2 = "true"),
     (this.declaration3 = "true"),
@@ -149,14 +154,16 @@ When("I submit it to the backend", async function() {
     establishment_postcode: "${this.establishment_postcode}", 
     establishment_first_line: "${this.establishment_first_line}",
     establishment_primary_number: "${this.establishment_primary_number}", 
-    establishment_email: "${this.establishment_email}", 
+    establishment_email: "${this.establishment_email}",
+    establishment_opening_date: "${this.establishment_opening_date}",
+    customer_type: "${this.customer_type}",
     declaration1: "${this.declaration1}",  
     declaration2: "${this.declaration2}", 
     declaration3: "${this.declaration3}", 
     operator_first_name: "${this.operator_first_name}", 
     operator_last_name: "${this.operator_last_name}", 
     
-    ) {id, operator_email, operator_primary_number} }`
+    ) {id, establishment_trading_name} }`
   });
   this.response = await sendRequest(requestBody);
 });
@@ -181,23 +188,43 @@ When("I submit my multiple fields to the backend", async function() {
     operator_last_name: "${this.operator_last_name}", 
     operator_charity_name: "${this.operator_charity_name}"
     
-    ) {id, operator_email, operator_primary_number} }`
+    ) {id, establishment_trading_name} }`
   });
   this.response = await sendRequest(requestBody);
 });
 
 Then("I get a success response", function() {
-  assert.equal(this.response.data.createEstablishment.id, "1");
   assert.equal(
-    this.response.data.createEstablishment.operator_email,
-    this.operator_email
-  );
-  assert.equal(
-    this.response.data.createEstablishment.operator_primary_number,
-    this.operator_primary_number
+    this.response.data.createEstablishment.establishment_trading_name,
+    this.establishment_trading_name
   );
 });
 
 Then("I get an error response", function() {
   assert.equal(this.response.errors[0].message, "The request is invalid.");
+});
+
+Then("The non personal information is saved to the database", async function() {
+  const requestBody = JSON.stringify({
+    query: `query { establishment(id: "${
+      this.response.data.createEstablishment.id
+    }")
+    {establishment_trading_name} }`
+  });
+  this.response = await sendRequest(requestBody);
+  assert.equal(
+    this.response.data.establishment.establishment_trading_name,
+    "Test Trading Name"
+  );
+});
+
+Then("The personal information is not saved to the database", async function() {
+  const requestBody = JSON.stringify({
+    query: `query { establishment(id: "${
+      this.response.data.createEstablishment.id
+    }")
+    {establishment_trading_name} }`
+  });
+  this.response = await sendRequest(requestBody);
+  assert.equal(this.response.data.establishment.operator_first_name, null);
 });
