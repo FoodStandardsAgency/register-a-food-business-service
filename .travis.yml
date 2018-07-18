@@ -3,13 +3,13 @@ node_js:
 - "8.9.4"
 install: true
 script: echo "skipping build step"
-  # - yarn format:verify
-  # - yarn lint
-  # - yarn test
+  - yarn format:verify
+  - yarn lint
+  - yarn test
 deploy:
   - provider: azure_web_apps
     verbose: true
-    on: feature/database-layer
+    on: develop
     site: register-a-food-business-service-dev
   - provider: azure_web_apps
     verbose: true
