@@ -13,12 +13,12 @@ Feature: Backend accepts new establishment and responds
         When I submit it to the backend
         Then I get an error response
 
- @accepts_new_estab_SDB-489_multiple_conditional
-Scenario:
-    Given I have a new establishment with all valid required fields
-    And I have multiple conditional required fields
-    When I submit my multiple fields to the backend
-    Then I get an error response
+    @accepts_new_estab_SDB-489_multiple_conditional
+    Scenario:
+        Given I have a new establishment with all valid required fields
+        And I have multiple conditional required fields
+        When I submit my multiple fields to the backend
+        Then I get an error response
 
 
 
