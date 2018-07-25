@@ -8,7 +8,7 @@ script:
 deploy:
   - provider: azure_web_apps
     verbose: true
-    on: develop
+    on: feature/data-structure-refactor
     site: register-a-food-business-service-dev
   - provider: azure_web_apps
     verbose: true
