@@ -19,8 +19,8 @@ describe("registration router", () => {
     });
 
     describe("when making a valid request", () => {
-      beforeEach(() => {
-        handler("request", { send });
+      beforeEach(async () => {
+        await handler("request", { send });
       });
 
       it("should call res.send", () => {
