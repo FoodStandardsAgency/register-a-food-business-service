@@ -3,6 +3,7 @@ jest.mock("express", () => ({
     post: jest.fn()
   }))
 }));
+jest.mock("./registration.controller");
 const { registrationRouter } = require("./registration.router");
 describe("registration router", () => {
   let router, send, handler;
