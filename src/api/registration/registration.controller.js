@@ -7,7 +7,7 @@ const createNewRegistration = async registration => {
   // VALIDATION
   const errors = validate(registration);
   if (errors.length) {
-    throw new Error("validation error");
+    return errors;
   }
 
   // RESOLUTION

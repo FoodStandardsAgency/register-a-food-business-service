@@ -1,6 +1,7 @@
 jest.mock("../../services/validation.service", () => ({
   validate: jest.fn()
 }));
+
 jest.mock("./registration.service", () => ({
   saveRegistration: jest.fn()
 }));
@@ -41,7 +42,7 @@ describe("registration controller", () => {
       });
 
       it("should return the registration", () => {
-        expect(result.message).toBe("validation error");
+        expect(result).toEqual(["ERROR"]);
       });
     });
   });

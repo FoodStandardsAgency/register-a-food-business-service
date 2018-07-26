@@ -47,7 +47,7 @@ validator.attributes.validation = (instance, schema, options, ctx) => {
 module.exports.validate = data => {
   info(`validationService: validate: called`);
   const result = [];
-  const validatorResult = validator.validate(data, schema.establishment);
+  const validatorResult = validator.validate(data, schema.registration);
   // turn errors into key:value pairs
   validatorResult.errors.forEach(error => {
     const key = error.property.split(".")[1];

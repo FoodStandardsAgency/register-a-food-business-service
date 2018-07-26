@@ -47,14 +47,14 @@ const schema = {
               establishment_opening_date: {
                 type: "string",
                 validation: validateDate
-              },
-              required: [
-                "establishment_trading_name",
-                "establishment_primary_number",
-                "establishment_email",
-                "establishment_opening_date"
-              ]
-            }
+              }
+            },
+            required: [
+              "establishment_trading_name",
+              "establishment_primary_number",
+              "establishment_email",
+              "establishment_opening_date"
+            ]
           },
           operator: {
             type: "object",

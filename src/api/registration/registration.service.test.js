@@ -6,9 +6,14 @@ jest.mock("../../connectors/registrationDb/registrationDb", () => ({
   createPremise: jest.fn(),
   createRegistration: jest.fn()
 }));
+
 const {
   createRegistration,
-  createEstablishment
+  createEstablishment,
+  createOperator,
+  createActivities,
+  createPremise,
+  createMetadata
 } = require("../../connectors/registrationDb/registrationDb");
 
 const { saveRegistration } = require("./registration.service");
@@ -22,6 +27,18 @@ describe("Function: saveRegistration: ", () => {
     createEstablishment.mockImplementation(() => {
       return { id: "225" };
     });
+    createOperator.mockImplementation(() => {
+      return { id: "123" };
+    });
+    createActivities.mockImplementation(() => {
+      return { id: "562" };
+    });
+    createPremise.mockImplementation(() => {
+      return { id: "495" };
+    });
+    createMetadata.mockImplementation(() => {
+      return { id: "901" };
+    });
     result = await saveRegistration({
       establishment: {
         establishment_details: {}
@@ -30,6 +47,13 @@ describe("Function: saveRegistration: ", () => {
   });
 
   it("Should return the result of createRegistration", () => {
-    expect(result).toEqual({ regId: "435", establishmentId: "225" });
+    expect(result).toEqual({
+      regId: "435",
+      establishmentId: "225",
+      operatorId: "123",
+      activitiesId: "562",
+      premiseId: "495",
+      metadataId: "901"
+    });
   });
 });
