@@ -1,11 +1,14 @@
 jest.mock("express", () => ({
   Router: jest.fn(() => ({
-    post: jest.fn()
+    post: jest.fn(),
+    get: jest.fn()
   }))
 }));
 jest.mock("./registration.controller", () => ({
-  createNewRegistration: jest.fn()
+  createNewRegistration: jest.fn(),
+  getRegistration: jest.fn()
 }));
+const registrationController = require("./registration.controller");
 const { registrationRouter } = require("./registration.router");
 describe("registration router", () => {
   let router, send, handler;
@@ -28,6 +31,26 @@ describe("registration router", () => {
 
       it("should call res.send", () => {
         expect(send).toBeCalled();
+      });
+    });
+  });
+
+  describe("Get to /:id", () => {
+    beforeEach(() => {
+      handler = router.get.mock.calls[0][1];
+    });
+
+    describe("when making a valid request", () => {
+      beforeEach(async () => {
+        await handler({ params: { id: "1" } }, { send });
+      });
+
+      it("should call res.send", () => {
+        expect(send).toBeCalled();
+      });
+
+      it("should call getRegistration", () => {
+        expect(registrationController.getRegistration).toBeCalled();
       });
     });
   });

@@ -12,7 +12,7 @@ const modelCreate = async (data, model, modelName) => {
   info(`Function: create${modelName} called`);
   try {
     const response = await model.create(data);
-    info(`Function: create${modelName} called`);
+    info(`Function: create${modelName} successful`);
     return response;
   } catch (err) {
     error(`Function: create${modelName} failed with error: ${err}`);
@@ -49,11 +49,77 @@ const createRegistration = async registration => {
   return modelCreate(registration, Registration, "Registration");
 };
 
+const modelFindOne = async (query, model, functionName) => {
+  info(`Function: ${functionName} called`);
+  try {
+    const response = await model.findOne(query);
+    info(`Function: ${functionName} successful`);
+    return response;
+  } catch (err) {
+    info(`Function ${functionName} failed with error: ${err}`);
+    return err;
+  }
+};
+
+const getRegistrationById = async id => {
+  return modelFindOne(
+    { where: { id: id } },
+    Registration,
+    "getRegistrationByRegId"
+  );
+};
+
+const getEstablishmentByRegId = async id => {
+  return modelFindOne(
+    { where: { registrationId: id } },
+    Establishment,
+    "getEstablishmentByRegId"
+  );
+};
+
+const getMetadataByRegId = async id => {
+  return modelFindOne(
+    { where: { registrationId: id } },
+    Metadata,
+    "getMetadataByRegId"
+  );
+};
+
+const getOperatorByEstablishmentId = async id => {
+  return modelFindOne(
+    { where: { establishmentId: id } },
+    Operator,
+    "getOperatorByEstablishmentId"
+  );
+};
+
+const getPremiseByEstablishmentId = async id => {
+  return modelFindOne(
+    { where: { establishmentId: id } },
+    Premise,
+    "getPremiseByEstablishmentId"
+  );
+};
+
+const getActivitiesByEstablishmentId = async id => {
+  return modelFindOne(
+    { where: { establishmentId: id } },
+    Activities,
+    "getActivitiesByEstablishmentId"
+  );
+};
+
 module.exports = {
   createActivities,
   createEstablishment,
   createMetadata,
   createOperator,
   createPremise,
-  createRegistration
+  createRegistration,
+  getRegistrationById,
+  getEstablishmentByRegId,
+  getMetadataByRegId,
+  getOperatorByEstablishmentId,
+  getPremiseByEstablishmentId,
+  getActivitiesByEstablishmentId
 };

@@ -36,7 +36,8 @@ const validator = new Validator();
 
 // Set validation rules on validator
 validator.attributes.validation = (instance, schema, options, ctx) => {
-  const propertyName = ctx.propertyPath.split(".")[1];
+  const propertyPathArray = ctx.propertyPath.split(".");
+  const propertyName = propertyPathArray.pop();
   if (instance !== undefined) {
     if (schema.validation(instance) === false) {
       return errorMessages[propertyName];

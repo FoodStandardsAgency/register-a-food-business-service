@@ -11,6 +11,13 @@ const registrationRouter = () => {
     res.send(response);
   });
 
+  router.get("/:id", async (req, res) => {
+    const response = await registrationController.getRegistration(
+      req.params.id
+    );
+    res.send(response);
+  });
+
   return router;
 };
 

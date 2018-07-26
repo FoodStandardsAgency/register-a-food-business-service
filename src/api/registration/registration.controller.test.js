@@ -3,11 +3,18 @@ jest.mock("../../services/validation.service", () => ({
 }));
 
 jest.mock("./registration.service", () => ({
-  saveRegistration: jest.fn()
+  saveRegistration: jest.fn(),
+  getFullRegistrationById: jest.fn()
 }));
-const { saveRegistration } = require("./registration.service");
+const {
+  saveRegistration,
+  getFullRegistrationById
+} = require("./registration.service");
 const { validate } = require("../../services/validation.service");
-const { createNewRegistration } = require("./registration.controller");
+const {
+  createNewRegistration,
+  getRegistration
+} = require("./registration.controller");
 
 describe("registration controller", () => {
   let result;
@@ -43,6 +50,21 @@ describe("registration controller", () => {
 
       it("should return the registration", () => {
         expect(result).toEqual(["ERROR"]);
+      });
+    });
+  });
+
+  describe("Function: getRegistration", () => {
+    describe("when given an id", () => {
+      beforeEach(async () => {
+        getFullRegistrationById.mockImplementation(() => {
+          return "response";
+        });
+        result = await getRegistration();
+      });
+
+      it("should return the result of getFullRegistrationById", () => {
+        expect(result).toEqual("response");
       });
     });
   });

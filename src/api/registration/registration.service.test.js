@@ -4,7 +4,13 @@ jest.mock("../../connectors/registrationDb/registrationDb", () => ({
   createMetadata: jest.fn(),
   createOperator: jest.fn(),
   createPremise: jest.fn(),
-  createRegistration: jest.fn()
+  createRegistration: jest.fn(),
+  getRegistrationById: jest.fn(),
+  getEstablishmentByRegId: jest.fn(),
+  getMetadataByRegId: jest.fn(),
+  getOperatorByEstablishmentId: jest.fn(),
+  getPremiseByEstablishmentId: jest.fn(),
+  getActivitiesByEstablishmentId: jest.fn()
 }));
 
 const {
@@ -13,10 +19,19 @@ const {
   createOperator,
   createActivities,
   createPremise,
-  createMetadata
+  createMetadata,
+  getRegistrationById,
+  getEstablishmentByRegId,
+  getMetadataByRegId,
+  getOperatorByEstablishmentId,
+  getPremiseByEstablishmentId,
+  getActivitiesByEstablishmentId
 } = require("../../connectors/registrationDb/registrationDb");
 
-const { saveRegistration } = require("./registration.service");
+const {
+  saveRegistration,
+  getFullRegistrationById
+} = require("./registration.service");
 
 describe("Function: saveRegistration: ", () => {
   let result;
@@ -54,6 +69,44 @@ describe("Function: saveRegistration: ", () => {
       activitiesId: "562",
       premiseId: "495",
       metadataId: "901"
+    });
+  });
+});
+
+describe("Function: getFullRegistrationById: ", () => {
+  let result;
+
+  beforeEach(async () => {
+    getRegistrationById.mockImplementation(() => {
+      return { id: "1" };
+    });
+    getEstablishmentByRegId.mockImplementation(() => {
+      return { id: "1" };
+    });
+    getMetadataByRegId.mockImplementation(() => {
+      return "metadata";
+    });
+    getOperatorByEstablishmentId.mockImplementation(() => {
+      return "operator";
+    });
+    getPremiseByEstablishmentId.mockImplementation(() => {
+      return "premise";
+    });
+    getActivitiesByEstablishmentId.mockImplementation(() => {
+      return "activities";
+    });
+
+    result = await getFullRegistrationById();
+  });
+
+  it("Should return the result of the get functions", () => {
+    expect(result).toEqual({
+      registration: { id: "1" },
+      establishment: { id: "1" },
+      operator: "operator",
+      activities: "activities",
+      premise: "premise",
+      metadata: "metadata"
     });
   });
 });

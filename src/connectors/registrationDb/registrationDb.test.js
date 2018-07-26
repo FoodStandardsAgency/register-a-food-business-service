@@ -1,22 +1,33 @@
 jest.mock("../../db/db", () => ({
   Activities: {
-    create: jest.fn()
+    create: jest.fn(),
+    findOne: jest.fn()
   },
   Establishment: {
-    create: jest.fn()
+    create: jest.fn(),
+    findOne: jest.fn()
   },
   Metadata: {
-    create: jest.fn()
+    create: jest.fn(),
+    findOne: jest.fn()
   },
   Operator: {
-    create: jest.fn()
+    create: jest.fn(),
+    findOne: jest.fn()
   },
   Premise: {
-    create: jest.fn()
+    create: jest.fn(),
+    findOne: jest.fn()
   },
   Registration: {
-    create: jest.fn()
+    create: jest.fn(),
+    findOne: jest.fn()
   }
+}));
+
+jest.mock("winston", () => ({
+  info: jest.fn(),
+  error: jest.fn()
 }));
 
 const {
@@ -34,7 +45,13 @@ const {
   createMetadata,
   createOperator,
   createPremise,
-  createRegistration
+  createRegistration,
+  getRegistrationById,
+  getEstablishmentByRegId,
+  getMetadataByRegId,
+  getOperatorByEstablishmentId,
+  getPremiseByEstablishmentId,
+  getActivitiesByEstablishmentId
 } = require("./registrationDb");
 
 describe("RegistrationDb connector", () => {
@@ -217,6 +234,7 @@ describe("RegistrationDb connector", () => {
       });
     });
   });
+
   describe("Function: createRegistration", () => {
     describe("When Registration.create fails", () => {
       beforeEach(async () => {
@@ -246,6 +264,210 @@ describe("RegistrationDb connector", () => {
       it("Should call the create model with registration data", () => {
         expect(Registration.create).toBeCalledWith({
           some: "data"
+        });
+      });
+    });
+  });
+
+  describe("Function: getRegistrationById", () => {
+    describe("When Registration.findOne fails", () => {
+      beforeEach(async () => {
+        Registration.findOne.mockImplementation(() => {
+          throw new Error("Failed");
+        });
+        result = await getRegistrationById("45");
+      });
+
+      it("Should return the error", () => {
+        expect(result.message).toBe("Failed");
+      });
+    });
+
+    describe("When Registration.findOne succeeds", () => {
+      beforeEach(async () => {
+        Registration.findOne.mockImplementation(() => {
+          return "success";
+        });
+        result = await getRegistrationById("45");
+      });
+
+      it("Should return the response", () => {
+        expect(result).toBe("success");
+      });
+
+      it("Should call the findOne model with query", () => {
+        expect(Registration.findOne).toBeCalledWith({
+          where: { id: "45" }
+        });
+      });
+    });
+  });
+
+  describe("Function: getEstablishmentByRegId", () => {
+    describe("When Establishment.findOne fails", () => {
+      beforeEach(async () => {
+        Establishment.findOne.mockImplementation(() => {
+          throw new Error("Failed");
+        });
+        result = await getEstablishmentByRegId("45");
+      });
+
+      it("Should return the error", () => {
+        expect(result.message).toBe("Failed");
+      });
+    });
+
+    describe("When Establishment.findOne succeeds", () => {
+      beforeEach(async () => {
+        Establishment.findOne.mockImplementation(() => {
+          return "success";
+        });
+        result = await getEstablishmentByRegId("45");
+      });
+
+      it("Should return the response", () => {
+        expect(result).toBe("success");
+      });
+
+      it("Should call the findOne model with query", () => {
+        expect(Establishment.findOne).toBeCalledWith({
+          where: { registrationId: "45" }
+        });
+      });
+    });
+  });
+
+  describe("Function: getMetadataByRegId", () => {
+    describe("When Metadata.findOne fails", () => {
+      beforeEach(async () => {
+        Metadata.findOne.mockImplementation(() => {
+          throw new Error("Failed");
+        });
+        result = await getMetadataByRegId("45");
+      });
+
+      it("Should return the error", () => {
+        expect(result.message).toBe("Failed");
+      });
+    });
+
+    describe("When Metadata.findOne succeeds", () => {
+      beforeEach(async () => {
+        Metadata.findOne.mockImplementation(() => {
+          return "success";
+        });
+        result = await getMetadataByRegId("45");
+      });
+
+      it("Should return the response", () => {
+        expect(result).toBe("success");
+      });
+
+      it("Should call the findOne model with query", () => {
+        expect(Metadata.findOne).toBeCalledWith({
+          where: { registrationId: "45" }
+        });
+      });
+    });
+  });
+
+  describe("Function: getOperatorByEstablishmentId", () => {
+    describe("When Operator.findOne fails", () => {
+      beforeEach(async () => {
+        Operator.findOne.mockImplementation(() => {
+          throw new Error("Failed");
+        });
+        result = await getOperatorByEstablishmentId("45");
+      });
+
+      it("Should return the error", () => {
+        expect(result.message).toBe("Failed");
+      });
+    });
+
+    describe("When Operator.findOne succeeds", () => {
+      beforeEach(async () => {
+        Operator.findOne.mockImplementation(() => {
+          return "success";
+        });
+        result = await getOperatorByEstablishmentId("45");
+      });
+
+      it("Should return the response", () => {
+        expect(result).toBe("success");
+      });
+
+      it("Should call the findOne model with query", () => {
+        expect(Operator.findOne).toBeCalledWith({
+          where: { establishmentId: "45" }
+        });
+      });
+    });
+  });
+
+  describe("Function: getPremiseByEstablishmentId", () => {
+    describe("When Operator.findOne fails", () => {
+      beforeEach(async () => {
+        Premise.findOne.mockImplementation(() => {
+          throw new Error("Failed");
+        });
+        result = await getPremiseByEstablishmentId("45");
+      });
+
+      it("Should return the error", () => {
+        expect(result.message).toBe("Failed");
+      });
+    });
+
+    describe("When Premise.findOne succeeds", () => {
+      beforeEach(async () => {
+        Premise.findOne.mockImplementation(() => {
+          return "success";
+        });
+        result = await getPremiseByEstablishmentId("45");
+      });
+
+      it("Should return the response", () => {
+        expect(result).toBe("success");
+      });
+
+      it("Should call the findOne model with query", () => {
+        expect(Premise.findOne).toBeCalledWith({
+          where: { establishmentId: "45" }
+        });
+      });
+    });
+  });
+
+  describe("Function: getActivitiesByEstablishmentId", () => {
+    describe("When Activities.findOne fails", () => {
+      beforeEach(async () => {
+        Activities.findOne.mockImplementation(() => {
+          throw new Error("Failed");
+        });
+        result = await getActivitiesByEstablishmentId("45");
+      });
+
+      it("Should return the error", () => {
+        expect(result.message).toBe("Failed");
+      });
+    });
+
+    describe("When Activities.findOne succeeds", () => {
+      beforeEach(async () => {
+        Activities.findOne.mockImplementation(() => {
+          return "success";
+        });
+        result = await getActivitiesByEstablishmentId("45");
+      });
+
+      it("Should return the response", () => {
+        expect(result).toBe("success");
+      });
+
+      it("Should call the findOne model with query", () => {
+        expect(Activities.findOne).toBeCalledWith({
+          where: { establishmentId: "45" }
         });
       });
     });

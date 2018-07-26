@@ -6,14 +6,9 @@ const setupRelationships = ({
   Premise,
   Operator
 }) => {
-  Registration.hasOne(Establishment);
-  Registration.hasOne(Metadata);
   Establishment.belongsTo(Registration);
   Metadata.belongsTo(Registration);
-  Establishment.hasOne(Activities);
-  Establishment.hasOne(Premise);
-  Establishment.hasOne(Operator);
-  Activities.belongsTo(Establishment);
+  Operator.belongsTo(Establishment);
   Premise.belongsTo(Establishment);
   Activities.belongsTo(Establishment);
 };

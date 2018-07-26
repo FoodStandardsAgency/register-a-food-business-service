@@ -1,15 +1,22 @@
+const { info } = require("winston");
 const {
   createRegistration,
   createEstablishment,
   createOperator,
   createActivities,
   createPremise,
-  createMetadata
+  createMetadata,
+  getRegistrationById,
+  getEstablishmentByRegId,
+  getMetadataByRegId,
+  getOperatorByEstablishmentId,
+  getPremiseByEstablishmentId,
+  getActivitiesByEstablishmentId
 } = require("../../connectors/registrationDb/registrationDb");
 
 const saveRegistration = async registration => {
+  info("Function: saveRegistration called");
   const reg = await createRegistration({});
-
   const establishment = await createEstablishment(
     registration.establishment.establishment_details,
     reg.id
@@ -31,7 +38,7 @@ const saveRegistration = async registration => {
   );
 
   const metadata = await createMetadata(registration.metadata, reg.id);
-
+  info("Function: saveRegistration successful");
   return {
     regId: reg.id,
     establishmentId: establishment.id,
@@ -42,4 +49,21 @@ const saveRegistration = async registration => {
   };
 };
 
-module.exports = { saveRegistration };
+const getFullRegistrationById = async id => {
+  const registration = await getRegistrationById(id);
+  const establishment = await getEstablishmentByRegId(registration.id);
+  const metadata = await getMetadataByRegId(registration.id);
+  const operator = await getOperatorByEstablishmentId(establishment.id);
+  const activities = await getActivitiesByEstablishmentId(establishment.id);
+  const premise = await getPremiseByEstablishmentId(establishment.id);
+  return {
+    registration,
+    establishment,
+    operator,
+    activities,
+    premise,
+    metadata
+  };
+};
+
+module.exports = { saveRegistration, getFullRegistrationById };

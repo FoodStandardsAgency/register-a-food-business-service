@@ -1,5 +1,8 @@
 const { validate } = require("../../services/validation.service");
-const { saveRegistration } = require("./registration.service");
+const {
+  saveRegistration,
+  getFullRegistrationById
+} = require("./registration.service");
 
 const createNewRegistration = async registration => {
   // AUTHENTICATION
@@ -11,14 +14,18 @@ const createNewRegistration = async registration => {
   }
 
   // RESOLUTION
-  const response = saveRegistration(registration);
+  const response = await saveRegistration(registration);
 
-  // const filteredRegistration = personalInfoFilter(registration);
-  // const id = uuidv4();
-  // const response = await Establishment.create(
-  //   Object.assign(filteredRegistration, { id })
-  // );
   return response;
 };
 
-module.exports = { createNewRegistration };
+const getRegistration = async id => {
+  // AUTHENTICATION
+
+  // RESOLUTION
+  const response = await getFullRegistrationById(id);
+
+  return response;
+};
+
+module.exports = { createNewRegistration, getRegistration };
