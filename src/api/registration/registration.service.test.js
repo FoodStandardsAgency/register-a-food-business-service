@@ -7,7 +7,8 @@ jest.mock("../../connectors/registrationDb/registrationDb", () => ({
   createRegistration: jest.fn()
 }));
 const {
-  createRegistration
+  createRegistration,
+  createEstablishment
 } = require("../../connectors/registrationDb/registrationDb");
 
 const { saveRegistration } = require("./registration.service");
@@ -16,12 +17,19 @@ describe("Function: saveRegistration: ", () => {
   let result;
   beforeEach(async () => {
     createRegistration.mockImplementation(() => {
-      return "435";
+      return { id: "435" };
     });
-    result = await saveRegistration();
+    createEstablishment.mockImplementation(() => {
+      return { id: "225" };
+    });
+    result = await saveRegistration({
+      establishment: {
+        establishment_details: {}
+      }
+    });
   });
 
   it("Should return the result of createRegistration", () => {
-    expect(result).toBe("435");
+    expect(result).toEqual({ regId: "435", establishmentId: "225" });
   });
 });

@@ -25,25 +25,36 @@ const schema = {
       establishment: {
         type: "object",
         properties: {
-          establishment_trading_name: {
-            type: "string",
-            validation: validateEstablishmentTradingName
-          },
-          establishment_primary_number: {
-            type: "string",
-            validation: validatePhoneNumber
-          },
-          establishment_secondary_number: {
-            type: "string",
-            validation: validatePhoneNumberOptional
-          },
-          establishment_email: {
-            type: "string",
-            validation: validateEmail
-          },
-          establishment_opening_date: {
-            type: "string",
-            validation: validateDate
+          establishment_details: {
+            type: "object",
+            properties: {
+              establishment_trading_name: {
+                type: "string",
+                validation: validateEstablishmentTradingName
+              },
+              establishment_primary_number: {
+                type: "string",
+                validation: validatePhoneNumber
+              },
+              establishment_secondary_number: {
+                type: "string",
+                validation: validatePhoneNumberOptional
+              },
+              establishment_email: {
+                type: "string",
+                validation: validateEmail
+              },
+              establishment_opening_date: {
+                type: "string",
+                validation: validateDate
+              },
+              required: [
+                "establishment_trading_name",
+                "establishment_primary_number",
+                "establishment_email",
+                "establishment_opening_date"
+              ]
+            }
           },
           operator: {
             type: "object",
@@ -156,15 +167,7 @@ const schema = {
             required: ["customer_type"]
           }
         },
-        required: [
-          "establishment_trading_name",
-          "establishment_primary_number",
-          "establishment_email",
-          "establishment_opening_date",
-          "operator",
-          "premise",
-          "activities"
-        ]
+        required: ["establishment_details", "operator", "premise", "activities"]
       },
       metadata: {
         type: "object",
