@@ -4,12 +4,12 @@ const {
 } = require("../../connectors/registrationDb/registrationDb");
 
 const saveRegistration = async registration => {
-  const regId = await createRegistration({}).id;
-  const establishmentId = await createEstablishment(
+  const reg = await createRegistration({});
+  const establishment = await createEstablishment(
     registration.establishment.establishment_details,
-    regId
-  ).id;
-  return { regId, establishmentId };
+    reg.id
+  );
+  return { regId: reg.id, establishmentId: establishment.id };
 };
 
 module.exports = { saveRegistration };
