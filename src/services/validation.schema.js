@@ -95,6 +95,14 @@ const schema = {
                 type: "string",
                 validation: validateEmail
               },
+              contact_representative_number: {
+                type: "string",
+                validation: validatePhoneNumber
+              },
+              contact_representative_email: {
+                type: "string",
+                validation: validateEmail
+              },
               operator_type: {
                 type: "string",
                 validation: validateRadioButtons
@@ -118,20 +126,35 @@ const schema = {
             },
             required: [
               "operator_type",
-              "operator_primary_number",
               "operator_postcode",
-              "operator_first_line",
-              "operator_email"
+              "operator_first_line"
             ],
-            oneOf: [
+            allOf: [
               {
-                required: [
-                  "operator_company_name",
-                  "operator_company_house_number"
+                oneOf: [
+                  {
+                    required: [
+                      "operator_company_name",
+                      "operator_company_house_number"
+                    ]
+                  },
+                  { required: ["operator_charity_name"] },
+                  { required: ["operator_first_name", "operator_last_name"] }
                 ]
               },
-              { required: ["operator_charity_name"] },
-              { required: ["operator_first_name", "operator_last_name"] }
+              {
+                oneOf: [
+                  {
+                    required: ["operator_primary_number", "operator_email"]
+                  },
+                  {
+                    required: [
+                      "contact_representative_email",
+                      "contact_representative_number"
+                    ]
+                  }
+                ]
+              }
             ]
           },
           premise: {
