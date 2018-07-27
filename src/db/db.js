@@ -1,6 +1,14 @@
 const Sequelize = require("sequelize");
 const { info } = require("winston");
-const createEstablishment = require("./models/Establishment");
+const {
+  activities,
+  establishment,
+  metadata,
+  operator,
+  premise,
+  registration,
+  setupRelationships
+} = require("./models");
 const {
   POSTGRES_DB,
   POSTGRES_HOST,
@@ -17,7 +25,21 @@ const db = new Sequelize(connectionString, {
   }
 });
 
-const Establishment = createEstablishment(db, Sequelize);
+const Activities = activities(db, Sequelize);
+const Establishment = establishment(db, Sequelize);
+const Metadata = metadata(db, Sequelize);
+const Operator = operator(db, Sequelize);
+const Premise = premise(db, Sequelize);
+const Registration = registration(db, Sequelize);
+
+setupRelationships({
+  Activities,
+  Establishment,
+  Metadata,
+  Operator,
+  Premise,
+  Registration
+});
 
 db.sync({
   force: true
@@ -31,4 +53,11 @@ db.authenticate()
     info("Unable to connect to the database:", err);
   });
 
-module.exports = { Establishment };
+module.exports = {
+  Activities,
+  Establishment,
+  Metadata,
+  Operator,
+  Premise,
+  Registration
+};

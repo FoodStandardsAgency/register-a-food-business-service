@@ -3,6 +3,12 @@
 All notable changes to this projectwill be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## v2.0.0 - 27th July 2018 (unreleased)
+
+### Modified
+
+- Changed API from GraphQL to REST API, after reassessing benefits of GraphQL in our service context.
+
 ## v1.13.0 - 18th July 2018 (unreleased)
 
 ### Added

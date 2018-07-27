@@ -1,5 +1,5 @@
 jest.mock("./validation.schema", () => ({
-  establishment: {
+  registration: {
     type: "object",
     properties: {
       operator_first_name: {
@@ -66,7 +66,7 @@ describe("Function: validate", () => {
   describe("When given invalid input", () => {
     it("Should return array with error for each invalid field", () => {
       // Arrange
-      const establishment = {
+      const registration = {
         operator_first_name: "false",
         operator_last_name: "false",
         operator_primary_number: "false",
@@ -78,7 +78,7 @@ describe("Function: validate", () => {
       };
 
       // Act
-      const response = validate(establishment);
+      const response = validate(registration);
 
       // Assert
       expect(response.length).toBe(8);

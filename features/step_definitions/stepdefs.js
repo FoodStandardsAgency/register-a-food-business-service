@@ -4,16 +4,24 @@ const { Given, When, Then } = require("cucumber");
 
 const sendRequest = async body => {
   const res = await fetch(
-    "https://register-a-food-business-service-dev.azurewebsites.net/graphql",
+    "http://localhost:4000/api/registration/createNewRegistration",
     {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: body
+      headers: {
+        "Content-Type": "application/json",
+        "Accept": "application/json"
+      },
+      body: JSON.stringify(body)
     }
   );
 
   return res.json();
 };
+
+const getRequest = async id => {
+  const res = await fetch(`http://localhost:4000/api/registration/${id}`);
+  return res.json();
+}
 Given("I enter an email address without an @ symbol", function() {
   this.emailAddress = "skdjfh";
 });
@@ -98,74 +106,96 @@ Then("I get an error response for mobile due to the space", function() {
 
 //////////////
 
-Given("I have a new establishment with all valid required fields", function() {
-  (this.operator_email = "valid@email.com"),
-    (this.operatorType = "sole_trader"),
-    (this.operator_primary_number = "07722343454"),
-    (this.operator_postcode = "NW1 4HB"),
-    (this.operator_first_line = "Operator Testing Line"),
-    (this.establishment_trading_name = "Test Trading Name"),
-    (this.establishment_postcode = "WC1H 8WK"),
-    (this.establishment_first_line = "Establishment Testing Line"),
-    (this.establishment_primary_number = "07722343545"),
-    (this.establishment_email = "establishment@email.com"),
-    (this.establishment_opening_date = "2018-06-04"),
-    (this.customer_type = "Other businesses"),
-    (this.declaration1 = "true"),
-    (this.declaration2 = "true"),
-    (this.declaration3 = "true"),
-    (this.operator_first_name = "Tester"),
-    (this.operator_last_name = "McTestface");
+Given("I have a new registration with all valid required fields", function() {
+  this.registration = {
+    registration: {
+      establishment: {
+        establishment_details: {
+          establishment_trading_name: "Itsu",
+          establishment_primary_number: "329857245",
+          establishment_secondary_number: "84345245",
+          establishment_email: "django@email.com",
+          establishment_opening_date: "2018-06-07"
+        },
+        operator: {
+          operator_first_name: "Fred",
+          operator_last_name: "Bloggs",
+          operator_postcode: "SW12 9RQ",
+          operator_first_line: "335",
+          operator_street: "Some St.",
+          operator_town: "London",
+          operator_primary_number: "9827235",
+          operator_email: "operator@email.com",
+          operator_type: "Sole trader"
+        },
+        premise: {
+          establishment_postcode: "SW12 9RQ",
+          establishment_first_line: "123",
+          establishment_street: "Street",
+          establishment_town: "London"
+        },
+        activities: {
+          customer_type: "End consumer"
+        }
+      },
+      metadata: {
+        declaration1: "Declaration",
+        declaration2: "Declaration",
+        declaration3: "Declaration"
+      }
+    }
+  };
 });
 
 Given(
   "I have a new establishment with some invalid required fields",
   function() {
-    (this.operator_email = "validemail.com"),
-      (this.operatorType = "sole_trader"),
-      (this.operator_primary_number = "§§§§§"),
-      (this.operator_postcode = "NW1 4HB"),
-      (this.operator_first_line = "Operator Testing Line"),
-      (this.establishment_trading_name = ""),
-      (this.establishment_postcode = "WC1H 8WK"),
-      (this.establishment_first_line = "Establishment Testing Line"),
-      (this.establishment_primary_number = "07722343545"),
-      (this.establishment_email = "establishment@email.com"),
-      (this.declaration1 = "true"),
-      (this.declaration2 = "true"),
-      (this.declaration3 = "true"),
-      (this.operator_first_name = "Tester"),
-      (this.operator_last_name = "McTestface");
+    this.registration = {
+      registration: {
+        establishment: {
+          establishment_details: {
+            establishment_trading_name: "Itsu",
+            establishment_primary_number: "349785766",
+            establishment_secondary_number: "84345245",
+            establishment_email: "dfg",
+            establishment_opening_date: "2018-06-07"
+          },
+          operator: {
+            operator_first_name: "Fred",
+            operator_last_name: "Bloggs",
+            operator_postcode: "SW12 9RQ",
+            operator_first_line: "335",
+            operator_street: "Some St.",
+            operator_town: "London",
+            operator_primary_number: "9827235",
+            operator_email: "operator@email.com",
+            operator_type: "Sole trader"
+          },
+          premise: {
+            establishment_postcode: "SW12 9RQ",
+            establishment_first_line: "123",
+            establishment_street: "Street",
+            establishment_town: "London"
+          },
+          activities: {
+            customer_type: "End consumer"
+          }
+        },
+        metadata: {
+          declaration1: "Declaration",
+          declaration2: "Declaration",
+          declaration3: "Declaration"
+        }
+      }
+    };
   }
 );
 Given("I have multiple conditional required fields", function() {
-  this.operator_charity_name = "Op Charity Name";
+  this.registration.registration.establishment.operator.operator_charity_name = "Op Charity Name";
 });
 
 When("I submit it to the backend", async function() {
-  const requestBody = JSON.stringify({
-    query: `mutation { createEstablishment(id: 1, 
-    operator_email: "${this.operator_email}", 
-    operator_type: "${this.operator_type}",
-    operator_primary_number: "${this.operator_primary_number}", 
-    operator_postcode: "${this.operator_postcode}", 
-    operator_first_line: "${this.operator_first_line}", 
-    establishment_trading_name: "${this.establishment_trading_name}", 
-    establishment_postcode: "${this.establishment_postcode}", 
-    establishment_first_line: "${this.establishment_first_line}",
-    establishment_primary_number: "${this.establishment_primary_number}", 
-    establishment_email: "${this.establishment_email}",
-    establishment_opening_date: "${this.establishment_opening_date}",
-    customer_type: "${this.customer_type}",
-    declaration1: "${this.declaration1}",  
-    declaration2: "${this.declaration2}", 
-    declaration3: "${this.declaration3}", 
-    operator_first_name: "${this.operator_first_name}", 
-    operator_last_name: "${this.operator_last_name}", 
-    
-    ) {id, establishment_trading_name} }`
-  });
-  this.response = await sendRequest(requestBody);
+  this.response = await sendRequest(this.registration);
 });
 
 When("I submit my multiple fields to the backend", async function() {
@@ -194,37 +224,21 @@ When("I submit my multiple fields to the backend", async function() {
 });
 
 Then("I get a success response", function() {
-  assert.equal(
-    this.response.data.createEstablishment.establishment_trading_name,
-    this.establishment_trading_name
-  );
+  assert.ok(this.response.regId);
 });
 
 Then("I get an error response", function() {
-  assert.equal(this.response.errors[0].message, "The request is invalid.");
+  assert.ok(this.response[0].message);
 });
 
 Then("The non personal information is saved to the database", async function() {
-  const requestBody = JSON.stringify({
-    query: `query { establishment(id: "${
-      this.response.data.createEstablishment.id
-    }")
-    {establishment_trading_name} }`
-  });
-  this.response = await sendRequest(requestBody);
-  assert.equal(
-    this.response.data.establishment.establishment_trading_name,
-    "Test Trading Name"
-  );
+  const id = this.response.regId;
+  this.response = await getRequest(id);
+  assert.equal(this.response.establishment.establishment_trading_name, "Itsu");
 });
 
 Then("The personal information is not saved to the database", async function() {
-  const requestBody = JSON.stringify({
-    query: `query { establishment(id: "${
-      this.response.data.createEstablishment.id
-    }")
-    {establishment_trading_name} }`
-  });
-  this.response = await sendRequest(requestBody);
-  assert.equal(this.response.data.establishment.operator_first_name, null);
+  const id = this.response.regId;
+  this.response = await getRequest(id);
+  assert.equal(this.response.establishment.operator_first_name, null);
 });
