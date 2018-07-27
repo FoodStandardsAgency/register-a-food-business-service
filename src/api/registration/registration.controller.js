@@ -8,9 +8,12 @@ const createNewRegistration = async registration => {
   // AUTHENTICATION
 
   // VALIDATION
+  if (registration === undefined) {
+    throw new Error("registration is undefined");
+  }
   const errors = validate(registration);
   if (errors.length) {
-    return errors;
+    throw new Error(JSON.stringify(errors));
   }
 
   // RESOLUTION

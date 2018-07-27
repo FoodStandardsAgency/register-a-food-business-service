@@ -49,7 +49,17 @@ describe("registration controller", () => {
       });
 
       it("should return the registration", () => {
-        expect(result).toEqual(["ERROR"]);
+        expect(result.message).toEqual('["ERROR"]');
+      });
+    });
+
+    describe("when given undefined", () => {
+      it("Should throw an error", () => {
+        try {
+          createNewRegistration(undefined);
+        } catch (err) {
+          expect(err.message).toBeDefined();
+        }
       });
     });
   });
