@@ -11,9 +11,10 @@ jest.mock("./registration.controller", () => ({
 const registrationController = require("./registration.controller");
 const { registrationRouter } = require("./registration.router");
 describe("registration router", () => {
-  let router, send, handler;
+  let router, send, handler, status;
   beforeEach(() => {
     send = jest.fn();
+    status = jest.fn();
     router = registrationRouter();
   });
 
@@ -26,11 +27,26 @@ describe("registration router", () => {
 
     describe("when making a valid request", () => {
       beforeEach(async () => {
-        await handler({ body: { registration: "reg" } }, { send });
+        await handler({ body: { registration: "reg" } }, { send, status });
       });
 
       it("should call res.send", () => {
         expect(send).toBeCalled();
+      });
+    });
+
+    describe("when an error is thrown", () => {
+      beforeEach(async () => {
+        registrationController.createNewRegistration.mockImplementation(() => {
+          throw new Error("reg error");
+        });
+        status.mockImplementation(() => ({
+          send: jest.fn()
+        }));
+        await handler({ body: { registration: "reg" } }, { send, status });
+      });
+      it("should call res.status", () => {
+        expect(status).toBeCalledWith(500);
       });
     });
   });
