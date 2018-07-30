@@ -8,7 +8,8 @@ const premise = (db, Sequelize) => {
     establishment_first_line: { type: Sequelize.STRING },
     establishment_street: { type: Sequelize.STRING },
     establishment_town: { type: Sequelize.STRING },
-    establishment_postcode: { type: Sequelize.STRING }
+    establishment_postcode: { type: Sequelize.STRING },
+    establishment_type: { type: Sequelize.STRING }
   });
 };
 

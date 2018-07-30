@@ -29,7 +29,8 @@ const errorMessages = {
   establishment_email: "Invalid operator email",
   establishment_trading_name: "Invalid establishment trading name",
   establishment_opening_date: "Invalid establishment opening date",
-  customer_type: "Invalid customer type"
+  customer_type: "Invalid customer type",
+  establishment_type: "Invalid establishment type"
 };
 
 const validator = new Validator();

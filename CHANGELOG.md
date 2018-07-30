@@ -3,6 +3,12 @@
 All notable changes to this projectwill be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## v2.1.0 - 30th July 2018 (unreleased)
+
+### Added
+
+- SDB-50 - Establishment Type
+
 ## v2.0.0 - 27th July 2018 (unreleased)
 
 ### Modified
