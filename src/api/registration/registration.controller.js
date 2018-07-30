@@ -3,6 +3,7 @@ const {
   saveRegistration,
   getFullRegistrationById
 } = require("./registration.service");
+const moment = require("moment");
 
 const createNewRegistration = async registration => {
   // AUTHENTICATION
@@ -17,7 +18,7 @@ const createNewRegistration = async registration => {
   }
 
   // RESOLUTION
-  var moment = require("moment");
+
   const reg_submission_date = moment().format("YYYY MM DD");
   const response = await saveRegistration(registration);
 
