@@ -16,13 +16,15 @@ const {
   POSTGRES_USER
 } = require("../config");
 
-const connectionString = `postgres://${POSTGRES_USER}:${POSTGRES_PASS}@${POSTGRES_HOST}:5432/${POSTGRES_DB}?ssl=true`;
+const connectionString = `postgres://postgres:${
+  process.env.PASS
+}@localhost:5432/postgres`;
 
 const db = new Sequelize(connectionString, {
-  dialect: "postgres",
-  dialectOptions: {
-    ssl: true
-  }
+  dialect: "postgres"
+  // dialectOptions: {
+  //   ssl: true
+  // }
 });
 
 const Activities = activities(db, Sequelize);

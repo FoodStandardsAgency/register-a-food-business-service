@@ -17,9 +17,12 @@ const createNewRegistration = async registration => {
   }
 
   // RESOLUTION
+  var moment = require("moment");
+  const reg_submission_date = moment().format("YYYY MM DD");
   const response = await saveRegistration(registration);
 
-  return response;
+  const combinedResponse = Object.assign(response, { reg_submission_date });
+  return combinedResponse;
 };
 
 const getRegistration = async id => {
