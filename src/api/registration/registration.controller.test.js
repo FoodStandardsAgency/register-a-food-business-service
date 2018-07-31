@@ -6,6 +6,10 @@ jest.mock("./registration.service", () => ({
   saveRegistration: jest.fn(),
   getFullRegistrationById: jest.fn()
 }));
+
+jest.mock("node-fetch");
+const fetch = require("node-fetch");
+
 const {
   saveRegistration,
   getFullRegistrationById
@@ -28,6 +32,10 @@ describe("registration controller", () => {
         saveRegistration.mockImplementation(() => {
           return { regId: 1 };
         });
+        fetch.mockImplementation(() => ({
+          status: "200",
+          json: () => ({ fsa_rn: "12345" })
+        }));
         result = await createNewRegistration("input");
       });
 
@@ -63,6 +71,43 @@ describe("registration controller", () => {
         } catch (err) {
           expect(err.message).toBeDefined();
         }
+      });
+    });
+
+    describe("When fsaRnResponse is 200", () => {
+      beforeEach(async () => {
+        validate.mockImplementation(() => {
+          return [];
+        });
+        saveRegistration.mockImplementation(() => {
+          return { regId: 1 };
+        });
+        fetch.mockImplementation(() => ({
+          status: 200,
+          json: () => ({ fsa_rn: "12345" })
+        }));
+        result = await createNewRegistration("input");
+      });
+      it("should return an object that contains fsa_rn", () => {
+        expect(result.fsa_rn).toBeDefined();
+      });
+    });
+    describe("When fsaRnResponse is not 200", () => {
+      beforeEach(async () => {
+        validate.mockImplementation(() => {
+          return [];
+        });
+        saveRegistration.mockImplementation(() => {
+          return { regId: 1 };
+        });
+        fetch.mockImplementation(() => ({
+          status: 100,
+          json: () => ({ fsa_rn: undefined })
+        }));
+        result = await createNewRegistration("input");
+      });
+      it("should return an object that contains fsa_rn", () => {
+        expect(result.fsa_rn).toBe(undefined);
       });
     });
   });
