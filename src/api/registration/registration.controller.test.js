@@ -26,13 +26,16 @@ describe("registration controller", () => {
           return [];
         });
         saveRegistration.mockImplementation(() => {
-          return "345";
+          return { regId: 1 };
         });
         result = await createNewRegistration("input");
       });
 
       it("should return the result of saveRegistration", () => {
-        expect(result).toBe("345");
+        expect(result.regId).toBe(1);
+      });
+      it("should return an object that contains reg_submission_date", () => {
+        expect(result.reg_submission_date).toBeDefined();
       });
     });
 
