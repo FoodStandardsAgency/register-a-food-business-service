@@ -13,6 +13,9 @@ jest.mock("../../connectors/registrationDb/registrationDb", () => ({
   getActivitiesByEstablishmentId: jest.fn()
 }));
 
+jest.mock("node-fetch");
+const fetch = require("node-fetch");
+
 const {
   createRegistration,
   createEstablishment,
@@ -30,7 +33,8 @@ const {
 
 const {
   saveRegistration,
-  getFullRegistrationById
+  getFullRegistrationById,
+  getRegistrationMetaData
 } = require("./registration.service");
 
 describe("Function: saveRegistration: ", () => {
@@ -107,6 +111,37 @@ describe("Function: getFullRegistrationById: ", () => {
       activities: "activities",
       premise: "premise",
       metadata: "metadata"
+    });
+  });
+});
+
+describe("Function: getRegistrationMetaData: ", () => {
+  let result;
+  describe("When fsaRnResponse is 200", () => {
+    beforeEach(async () => {
+      fetch.mockImplementation(() => ({
+        status: 200,
+        json: () => ({ "fsa-rn": "12345", reg_submission_date: "18/03/2018" })
+      }));
+      result = await getRegistrationMetaData();
+    });
+    it("should return an object that contains fsa-rn", () => {
+      expect(result["fsa-rn"]).toBeDefined();
+    });
+    it("should return an object that contains reg_submission_date", () => {
+      expect(result.reg_submission_date).toBeDefined();
+    });
+  });
+  describe("When fsaRnResponse is not 200", () => {
+    beforeEach(async () => {
+      fetch.mockImplementation(() => ({
+        status: 100,
+        json: () => ({ "fsa-rn": undefined })
+      }));
+      result = await getRegistrationMetaData();
+    });
+    it("should return an object that contains fsa_rn", () => {
+      expect(result["fsa-rn"]).toBe(undefined);
     });
   });
 });

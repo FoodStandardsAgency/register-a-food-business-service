@@ -1,10 +1,9 @@
 const { validate } = require("../../services/validation.service");
 const {
   saveRegistration,
-  getFullRegistrationById
+  getFullRegistrationById,
+  getRegistrationMetaData
 } = require("./registration.service");
-const moment = require("moment");
-const fetch = require("node-fetch");
 
 const createNewRegistration = async registration => {
   // AUTHENTICATION
@@ -20,23 +19,11 @@ const createNewRegistration = async registration => {
 
   // RESOLUTION
 
-  const reg_submission_date = moment().format("YYYY MM DD");
-
-  const fsaRnResponse = await fetch(
-    "https://fsa-rn.epimorphics.net/fsa-rn/1000/01"
-  );
-  let fsa_rn = undefined;
-  if (fsaRnResponse.status === 200) {
-    fsa_rn = await fsaRnResponse.json();
-  }
-
+  const metaDataResponse = await getRegistrationMetaData();
   const response = await saveRegistration(registration);
 
-  const combinedResponse = Object.assign(
-    response,
-    { reg_submission_date },
-    fsa_rn
-  );
+  const combinedResponse = Object.assign(response, metaDataResponse);
+  console.log(combinedResponse);
   return combinedResponse;
 };
 
