@@ -1,7 +1,8 @@
 const { validate } = require("../../services/validation.service");
 const {
   saveRegistration,
-  getFullRegistrationById
+  getFullRegistrationById,
+  sendTascomiRegistration
 } = require("./registration.service");
 
 const createNewRegistration = async registration => {
@@ -17,9 +18,11 @@ const createNewRegistration = async registration => {
   }
 
   // RESOLUTION
+
+  const tascomiResponse = await sendTascomiRegistration(registration);
   const response = await saveRegistration(registration);
 
-  return response;
+  return { response, tascomiResponse };
 };
 
 const getRegistration = async id => {

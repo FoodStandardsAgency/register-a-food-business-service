@@ -4,7 +4,8 @@ jest.mock("../../services/validation.service", () => ({
 
 jest.mock("./registration.service", () => ({
   saveRegistration: jest.fn(),
-  getFullRegistrationById: jest.fn()
+  getFullRegistrationById: jest.fn(),
+  sendTascomiRegistration: jest.fn()
 }));
 const {
   saveRegistration,
@@ -32,7 +33,7 @@ describe("registration controller", () => {
       });
 
       it("should return the result of saveRegistration", () => {
-        expect(result).toBe("345");
+        expect(result.response).toBe("345");
       });
     });
 

@@ -14,8 +14,13 @@ const {
   getActivitiesByEstablishmentId
 } = require("../../connectors/registrationDb/registrationDb");
 
+const {
+  createFoodBusinessRegistration,
+  createReferenceNumber
+} = require("../../connectors/tascomi/tascomi.connector");
+
 const saveRegistration = async registration => {
-  info("Function: saveRegistration called");
+  info("registration.connector: saveRegistration: called");
   const reg = await createRegistration({});
   const establishment = await createEstablishment(
     registration.establishment.establishment_details,
@@ -38,7 +43,7 @@ const saveRegistration = async registration => {
   );
 
   const metadata = await createMetadata(registration.metadata, reg.id);
-  info("Function: saveRegistration successful");
+  info("registration.connector: saveRegistration: successful");
   return {
     regId: reg.id,
     establishmentId: establishment.id,
@@ -50,12 +55,14 @@ const saveRegistration = async registration => {
 };
 
 const getFullRegistrationById = async id => {
+  info("registration.connector: getFullRegistrationById: called");
   const registration = await getRegistrationById(id);
   const establishment = await getEstablishmentByRegId(registration.id);
   const metadata = await getMetadataByRegId(registration.id);
   const operator = await getOperatorByEstablishmentId(establishment.id);
   const activities = await getActivitiesByEstablishmentId(establishment.id);
   const premise = await getPremiseByEstablishmentId(establishment.id);
+  info("registration.connector: getFullRegistrationById: successful");
   return {
     registration,
     establishment,
@@ -66,4 +73,16 @@ const getFullRegistrationById = async id => {
   };
 };
 
-module.exports = { saveRegistration, getFullRegistrationById };
+const sendTascomiRegistration = async registration => {
+  info("registration.connector: sendTascomiRegistration: called");
+  const reg = await createFoodBusinessRegistration(registration);
+  const response = await createReferenceNumber(JSON.parse(reg).id);
+  info("registration.connector: sendTascomiRegistration: successful");
+  return response;
+};
+
+module.exports = {
+  saveRegistration,
+  getFullRegistrationById,
+  sendTascomiRegistration
+};
