@@ -23,7 +23,6 @@ const createNewRegistration = async registration => {
   const response = await saveRegistration(registration);
 
   const combinedResponse = Object.assign(response, metaDataResponse);
-  console.log(combinedResponse);
   return combinedResponse;
 };
 
