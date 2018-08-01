@@ -1,4 +1,7 @@
 const { info } = require("winston");
+const moment = require("moment");
+const fetch = require("node-fetch");
+
 const {
   createRegistration,
   createEstablishment,
@@ -66,4 +69,24 @@ const getFullRegistrationById = async id => {
   };
 };
 
-module.exports = { saveRegistration, getFullRegistrationById };
+const getRegistrationMetaData = async () => {
+  const reg_submission_date = moment().format("YYYY MM DD");
+  const fsaRnResponse = await fetch(
+    "https://fsa-rn.epimorphics.net/fsa-rn/1000/01"
+  );
+  let fsa_rn;
+  if (fsaRnResponse.status === 200) {
+    fsa_rn = await fsaRnResponse.json();
+  }
+
+  return {
+    "fsa-rn": fsa_rn ? fsa_rn["fsa-rn"] : undefined,
+    reg_submission_date: reg_submission_date
+  };
+};
+
+module.exports = {
+  saveRegistration,
+  getFullRegistrationById,
+  getRegistrationMetaData
+};

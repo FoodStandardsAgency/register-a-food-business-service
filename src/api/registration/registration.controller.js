@@ -1,9 +1,9 @@
 const { validate } = require("../../services/validation.service");
 const {
   saveRegistration,
-  getFullRegistrationById
+  getFullRegistrationById,
+  getRegistrationMetaData
 } = require("./registration.service");
-const moment = require("moment");
 
 const createNewRegistration = async registration => {
   // AUTHENTICATION
@@ -19,10 +19,10 @@ const createNewRegistration = async registration => {
 
   // RESOLUTION
 
-  const reg_submission_date = moment().format("YYYY MM DD");
+  const metaDataResponse = await getRegistrationMetaData();
   const response = await saveRegistration(registration);
 
-  const combinedResponse = Object.assign(response, { reg_submission_date });
+  const combinedResponse = Object.assign(response, metaDataResponse);
   return combinedResponse;
 };
 

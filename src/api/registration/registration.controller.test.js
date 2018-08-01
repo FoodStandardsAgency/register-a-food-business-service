@@ -4,11 +4,14 @@ jest.mock("../../services/validation.service", () => ({
 
 jest.mock("./registration.service", () => ({
   saveRegistration: jest.fn(),
-  getFullRegistrationById: jest.fn()
+  getFullRegistrationById: jest.fn(),
+  getRegistrationMetaData: jest.fn()
 }));
+
 const {
   saveRegistration,
-  getFullRegistrationById
+  getFullRegistrationById,
+  getRegistrationMetaData
 } = require("./registration.service");
 const { validate } = require("../../services/validation.service");
 const {
@@ -28,14 +31,17 @@ describe("registration controller", () => {
         saveRegistration.mockImplementation(() => {
           return { regId: 1 };
         });
+        getRegistrationMetaData.mockImplementation(() => {
+          return { reg_submission_date: 1 };
+        });
         result = await createNewRegistration("input");
       });
 
       it("should return the result of saveRegistration", () => {
         expect(result.regId).toBe(1);
       });
-      it("should return an object that contains reg_submission_date", () => {
-        expect(result.reg_submission_date).toBeDefined();
+      it("should return the result of getRegistrationMetaData", () => {
+        expect(result.reg_submission_date).toBe(1);
       });
     });
 
