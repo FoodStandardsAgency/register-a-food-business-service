@@ -7,7 +7,7 @@ script:
   - yarn format:verify
   - yarn lint
   - yarn test
-before_deploy: "rm -rf node_modules"
+before_deploy: "rm -rf node_modules coverage package-lock.json"
 deploy:
   - provider: azure_web_apps
     verbose: true
