@@ -2,7 +2,8 @@ const { validate } = require("../../services/validation.service");
 const {
   saveRegistration,
   getFullRegistrationById,
-  sendTascomiRegistration
+  sendTascomiRegistration,
+  getRegistrationMetaData
 } = require("./registration.service");
 
 const createNewRegistration = async registration => {
@@ -19,10 +20,12 @@ const createNewRegistration = async registration => {
 
   // RESOLUTION
 
+  const metaDataResponse = await getRegistrationMetaData();
   const tascomiResponse = await sendTascomiRegistration(registration);
   const response = await saveRegistration(registration);
 
-  return { response, tascomiResponse };
+  const combinedResponse = Object.assign(response, metaDataResponse);
+  return combinedResponse;
 };
 
 const getRegistration = async id => {

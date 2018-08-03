@@ -17,11 +17,13 @@ jest.mock("../../connectors/tascomi/tascomi.connector", () => ({
   createFoodBusinessRegistration: jest.fn(),
   createReferenceNumber: jest.fn()
 }));
+jest.mock("node-fetch");
 
 const {
   createFoodBusinessRegistration,
   createReferenceNumber
 } = require("../../connectors/tascomi/tascomi.connector");
+const fetch = require("node-fetch");
 
 const {
   createRegistration,
@@ -41,7 +43,8 @@ const {
 const {
   saveRegistration,
   getFullRegistrationById,
-  sendTascomiRegistration
+  sendTascomiRegistration,
+  getRegistrationMetaData
 } = require("./registration.service");
 
 describe("Function: saveRegistration: ", () => {
@@ -143,5 +146,36 @@ describe("Function: sendTascomiRegistration: ", () => {
 
   it("should return response of createReferenceNumber", () => {
     expect(result).toBe("0000123");
+  });
+});
+
+describe("Function: getRegistrationMetaData: ", () => {
+  let result;
+  describe("When fsaRnResponse is 200", () => {
+    beforeEach(async () => {
+      fetch.mockImplementation(() => ({
+        status: 200,
+        json: () => ({ "fsa-rn": "12345", reg_submission_date: "18/03/2018" })
+      }));
+      result = await getRegistrationMetaData();
+    });
+    it("should return an object that contains fsa-rn", () => {
+      expect(result["fsa-rn"]).toBeDefined();
+    });
+    it("should return an object that contains reg_submission_date", () => {
+      expect(result.reg_submission_date).toBeDefined();
+    });
+  });
+  describe("When fsaRnResponse is not 200", () => {
+    beforeEach(async () => {
+      fetch.mockImplementation(() => ({
+        status: 100,
+        json: () => ({ "fsa-rn": undefined })
+      }));
+      result = await getRegistrationMetaData();
+    });
+    it("should return an object that contains fsa_rn", () => {
+      expect(result["fsa-rn"]).toBe(undefined);
+    });
   });
 });
