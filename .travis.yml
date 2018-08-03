@@ -1,8 +1,6 @@
 language: node_js
 node_js:
 - "8.9.4"
-before_install:
-  - echo "//registry.npmjs.org/:_authToken=\${NPM_TOKEN}" > .npmrc
 script:
   - yarn format:verify
   - yarn lint
