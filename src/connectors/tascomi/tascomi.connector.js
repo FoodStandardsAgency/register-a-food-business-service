@@ -1,6 +1,7 @@
 const request = require("request-promise-native");
 const { info, error } = require("winston");
 const { tascomiAuth } = require("@slice-and-dice/fsa-rof");
+const { doubleRequest } = require("./tascomi.double");
 
 const sendRequest = async (url, method, body) => {
   const auth = await tascomiAuth.generateSyncHash(
@@ -17,16 +18,14 @@ const sendRequest = async (url, method, body) => {
     },
     form: body
   };
+  if (process.env.DOUBLE_MODE === "true") {
+    info("tascomi.connector: running in double mode");
+    return doubleRequest(tascomiApiOptions);
+  }
   return request(tascomiApiOptions);
 };
 
-const salesActivitiesMapping = {
-  "End consumer": "1",
-  "Other businesses": "2",
-  "End consumer and other businesses": "1, 2"
-};
-
-const createFoodBusinessRegistration = async registration => {
+const createFoodBusinessRegistration = async (registration, fsa_rn) => {
   info("tascomi.connector: createFoodBusinessRegistration: called");
   try {
     const url = `${process.env.TASCOMI_URL}online_food_business_registrations`;
@@ -48,7 +47,7 @@ const createFoodBusinessRegistration = async registration => {
     );
 
     const requestData = {
-      fsa_rn: "",
+      fsa_rn: fsa_rn,
       premise_name: establishmentDetails.establishment_trading_name,
       premise_building_number: premiseDetails.establishment_first_line,
       premise_street_name: premiseDetails.establishment_street,
@@ -82,8 +81,7 @@ const createFoodBusinessRegistration = async registration => {
       owner_postcode: operatorDetails.operator_postcode,
       owner_telephone: operatorDetails.operator_primary_number,
       owner_email: operatorDetails.operator_email,
-      sales_activity_ids:
-        salesActivitiesMapping[activitiesDetails.customer_type],
+      sales_activities_string: activitiesDetails.customer_type,
       submit_date: "16-07-2018",
       accepted: "f",
       declined: "f"

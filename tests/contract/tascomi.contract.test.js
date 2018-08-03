@@ -4,30 +4,35 @@ const {
   createReferenceNumber
 } = require("../../src/connectors/tascomi/tascomi.connector");
 
-describe("Tascomi integration: createReferenceNumber", () => {
-  process.env.DOUBLE_MODE = true;
+describe("Tascomi contract: createReferenceNumber", () => {
   describe("When given valid request", () => {
-    it("Should return reference number and id", async () => {
-      const result = await createReferenceNumber("35");
-      const jsonResult = JSON.parse(result);
-      expect(jsonResult.id).toBe("35");
-      expect(jsonResult.online_reference).toBe("0000035");
+    it("Should return same resposne", async () => {
+      process.env.DOUBLE_MODE = true;
+      const doubleResult = await createReferenceNumber("35");
+      const doubleJson = JSON.parse(doubleResult);
+      process.env.DOUBLE_MODE = false;
+      const realResult = await createReferenceNumber("35");
+      const realJson = JSON.parse(realResult);
+      expect(doubleJson).toEqual(realJson);
     });
   });
 
-  describe("When given an invalid request", () => {
-    it("Should return id of 0", async () => {
-      const result = await createReferenceNumber("not an id");
-      const jsonResult = JSON.parse(result);
-      expect(jsonResult.id).toBe(0);
+  describe("When given invalid request", () => {
+    it("Should return same response", async () => {
+      process.env.DOUBLE_MODE = true;
+      const doubleResult = await createReferenceNumber("not an id");
+      const doubleJson = JSON.parse(doubleResult);
+      process.env.DOUBLE_MODE = false;
+      const realResult = await createReferenceNumber("not an id");
+      const realJson = JSON.parse(realResult);
+      expect(doubleJson).toEqual(realJson);
     });
   });
 });
 
-describe("Tascomi integration: createFoodBusinessRegistration", () => {
-  process.env.DOUBLE_MODE = true;
+describe("Tascomi contract: createFoodBusinessRegistration", () => {
   describe("When given valid request", () => {
-    it("Should return response with created fields", async () => {
+    it("Should return same resposne", async () => {
       const registration = {
         establishment: {
           establishment_details: {
@@ -65,14 +70,20 @@ describe("Tascomi integration: createFoodBusinessRegistration", () => {
           declaration3: "Declaration"
         }
       };
-      const result = await createFoodBusinessRegistration(
+      process.env.DOUBLE_MODE = true;
+      const doubleResult = await createFoodBusinessRegistration(
         registration,
         "23589-DHF375"
       );
-      const jsonResult = JSON.parse(result);
-      expect(jsonResult.fsa_rn).toBe("23589-DHF375");
-      expect(jsonResult.owner_email).toBe("operator@email.com");
-      expect(jsonResult.accepted).toBe("f");
+      const doubleJson = JSON.parse(doubleResult);
+      process.env.DOUBLE_MODE = false;
+      const realResult = await createFoodBusinessRegistration(
+        registration,
+        "23589-DHF375"
+      );
+      const realJson = JSON.parse(realResult);
+      expect(doubleJson.owner_email).toEqual(realJson.owner_email);
+      expect(doubleJson.fsa_rn).toEqual(realJson.fsa_rn);
     });
   });
 });
