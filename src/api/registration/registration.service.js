@@ -76,9 +76,11 @@ const getFullRegistrationById = async id => {
   };
 };
 
-const sendTascomiRegistration = async registration => {
+const sendTascomiRegistration = async (registration, fsa_rn) => {
   info("registration.connector: sendTascomiRegistration: called");
-  const reg = await createFoodBusinessRegistration(registration);
+  const reg = await createFoodBusinessRegistration(registration, fsa_rn);
+  console.log(reg);
+  console.log(typeof reg);
   const response = await createReferenceNumber(JSON.parse(reg).id);
   info("registration.connector: sendTascomiRegistration: successful");
   return response;

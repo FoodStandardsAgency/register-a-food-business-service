@@ -21,10 +21,16 @@ const createNewRegistration = async registration => {
   // RESOLUTION
 
   const metaDataResponse = await getRegistrationMetaData();
-  const tascomiResponse = await sendTascomiRegistration(registration);
+  const tascomiResponse = await sendTascomiRegistration(
+    registration,
+    metaDataResponse["fsa-rn"]
+  );
+  const tascomiObject = JSON.parse(tascomiResponse);
   const response = await saveRegistration(registration);
 
-  const combinedResponse = Object.assign(response, metaDataResponse);
+  const combinedResponse = Object.assign(response, metaDataResponse, {
+    tascomiResponse: tascomiObject
+  });
   return combinedResponse;
 };
 
