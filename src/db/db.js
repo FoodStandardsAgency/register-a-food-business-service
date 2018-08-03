@@ -16,7 +16,7 @@ const {
   POSTGRES_USER
 } = require("../config");
 
-const connectionString = `postgres://${POSTGRES_USER}:${POSTGRES_PASS}@${POSTGRES_HOST}:5432/${POSTGRES_DB}?ssl=true`; 
+const connectionString = `postgres://${POSTGRES_USER}:${POSTGRES_PASS}@${POSTGRES_HOST}:5432/${POSTGRES_DB}?ssl=true`;
 
 const db = new Sequelize(connectionString, {
   dialect: "postgres",
