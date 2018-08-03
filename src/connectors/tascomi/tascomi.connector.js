@@ -48,6 +48,7 @@ const createFoodBusinessRegistration = async registration => {
     );
 
     const requestData = {
+      fsa_rn: "",
       premise_name: establishmentDetails.establishment_trading_name,
       premise_building_number: premiseDetails.establishment_first_line,
       premise_street_name: premiseDetails.establishment_street,
@@ -60,8 +61,21 @@ const createFoodBusinessRegistration = async registration => {
       premise_typical_trading_days_friday: "f",
       premise_typical_trading_days_saturday: "f",
       premise_typical_trading_days_sunday: "f",
+      opening_date: establishmentDetails.establishment_opening_date,
       owner_firstname: operatorDetails.operator_first_name,
       owner_surname: operatorDetails.operator_last_name,
+      operator_type: operatorDetails.operator_type,
+      operator_company_name: operatorDetails.operator_company_name,
+      operator_company_house_number:
+        operatorDetails.operator_company_house_number,
+      operator_charity_name: operatorDetails.operator_charity_name,
+      operator_charity_number: operatorDetails.operator_charity_number,
+      contact_representative_number:
+        operatorDetails.contact_representative_number,
+      contact_representative_email:
+        operatorDetails.contact_representative_email,
+      contact_representative_name: operatorDetails.contact_representative_name,
+      contact_representative_role: operatorDetails.contact_representative_role,
       owner_house_name_or_number: operatorDetails.operator_first_line,
       owner_street_name: operatorDetails.operator_street,
       owner_town: operatorDetails.operator_town,
