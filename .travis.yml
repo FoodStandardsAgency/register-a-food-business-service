@@ -10,7 +10,7 @@ script:
 deploy:
   - provider: azure_web_apps
     verbose: true
-    on: develop
+    on: feature/tascomi-integration
     site: register-a-food-business-service-dev
   - provider: azure_web_apps
     verbose: true
