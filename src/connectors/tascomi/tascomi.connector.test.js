@@ -1,5 +1,7 @@
 jest.mock("request-promise-native");
+jest.mock("./tascomi.double");
 const request = require("request-promise-native");
+const { doubleRequest } = require("./tascomi.double");
 
 const {
   createFoodBusinessRegistration,
@@ -48,6 +50,7 @@ describe("Function: createFoodBusinessRegistration", () => {
   let result;
   describe("When request throws an error", () => {
     beforeEach(async () => {
+      process.env.DOUBLE_MODE = false;
       jest.clearAllMocks();
       request.mockImplementation(() => {
         throw new Error("Request error");
@@ -62,6 +65,7 @@ describe("Function: createFoodBusinessRegistration", () => {
 
   describe("When request is successful", () => {
     beforeEach(async () => {
+      process.env.DOUBLE_MODE = false;
       request.mockImplementation(() => {
         return "request response";
       });
@@ -76,6 +80,7 @@ describe("Function: createFoodBusinessRegistration", () => {
   describe("When establishment_type is home or domestic premises", () => {
     beforeEach(async () => {
       jest.clearAllMocks();
+      process.env.DOUBLE_MODE = false;
       request.mockImplementation(() => {
         return "request response";
       });
@@ -88,12 +93,27 @@ describe("Function: createFoodBusinessRegistration", () => {
       expect(request.mock.calls[0][0].form.premise_domestic_premises).toBe("t");
     });
   });
+
+  describe("When running in double mode", () => {
+    beforeEach(async () => {
+      jest.clearAllMocks();
+      process.env.DOUBLE_MODE = true;
+      doubleRequest.mockImplementation(() => {
+        return "doubleRequest response";
+      });
+      result = await createFoodBusinessRegistration(registration);
+    });
+    it("should call double request", () => {
+      expect(result).toBe("doubleRequest response");
+    });
+  });
 });
 
 describe("Function: createReferenceNumber", () => {
   let result;
   describe("When request throws an error", () => {
     beforeEach(async () => {
+      process.env.DOUBLE_MODE = false;
       jest.clearAllMocks();
       request.mockImplementation(() => {
         throw new Error("Request error");
@@ -108,6 +128,7 @@ describe("Function: createReferenceNumber", () => {
 
   describe("When request is successful", () => {
     beforeEach(async () => {
+      process.env.DOUBLE_MODE = false;
       jest.clearAllMocks();
       request.mockImplementation(() => {
         return "request response";
