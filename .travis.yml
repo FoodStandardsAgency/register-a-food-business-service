@@ -19,6 +19,7 @@ deploy:
   - provider: azure_web_apps
     verbose: true
     on: feature/tascomi-integration
+    site: register-a-food-business-service-dev
     slot: register-a-food-business-service-dev-double
     skip_cleanup: true
   - provider: azure_web_apps
