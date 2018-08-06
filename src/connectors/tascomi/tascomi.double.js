@@ -1,7 +1,8 @@
 const doubleRequest = options => {
   const target = options.url.split("/").pop();
   if (target === "online_food_business_registrations") {
-    return JSON.stringify(options.form);
+    const response = Object.assign(options.form, { id: "25" });
+    return JSON.stringify(response);
   } else {
     let response;
     if (isNaN(target)) {
