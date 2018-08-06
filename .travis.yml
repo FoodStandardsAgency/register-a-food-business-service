@@ -16,5 +16,11 @@ deploy:
     skip_cleanup: true
   - provider: azure_web_apps
     verbose: true
+    on: feature/tascomi-integration
+    slot: double
+    site: register-a-food-business-service-dev
+    skip_cleanup: true
+  - provider: azure_web_apps
+    verbose: true
     on: master
     site: TEST-REGISTER-A-FOOD-BUSINESS-SERVICE
