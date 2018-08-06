@@ -5,10 +5,10 @@ git:
    depth: 9999999
 before_install:
   - echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > .npmrc
-# script:
-#   - yarn format:verify
-#   - yarn lint
-#   - yarn test
+script:
+  - yarn format:verify
+  - yarn lint
+  - yarn test
 before_deploy: "rm -rf node_modules coverage package-lock.json"
 deploy:
   - provider: azure_web_apps
