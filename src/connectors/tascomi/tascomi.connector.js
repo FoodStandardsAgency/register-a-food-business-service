@@ -5,8 +5,8 @@ const { doubleRequest } = require("./tascomi.double");
 
 const sendRequest = async (url, method, body) => {
   const auth = await tascomiAuth.generateSyncHash(
-    process.env.PUBLIC_KEY,
-    process.env.PRIVATE_KEY,
+    process.env.TASCOMI_PUBLIC_KEY,
+    process.env.TASCOMI_PRIVATE_KEY,
     process.env.NTP_SERVER
   );
   const tascomiApiOptions = {
