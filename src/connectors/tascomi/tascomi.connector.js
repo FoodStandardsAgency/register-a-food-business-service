@@ -82,7 +82,6 @@ const createFoodBusinessRegistration = async (registration, fsa_rn) => {
       owner_telephone: operatorDetails.operator_primary_number,
       owner_email: operatorDetails.operator_email,
       sales_activities_string: activitiesDetails.customer_type,
-      submit_date: "16-07-2018",
       accepted: "f",
       declined: "f"
     };
