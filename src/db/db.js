@@ -45,7 +45,8 @@ db.sync({
   force: true
 });
 
-db.authenticate()
+db
+  .authenticate()
   .then(() => {
     info("Connection to postgres db has been established successfully.");
   })
