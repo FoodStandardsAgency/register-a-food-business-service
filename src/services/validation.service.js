@@ -30,7 +30,9 @@ const errorMessages = {
   establishment_trading_name: "Invalid establishment trading name",
   establishment_opening_date: "Invalid establishment opening date",
   customer_type: "Invalid customer type",
-  establishment_type: "Invalid establishment type"
+  establishment_type: "Invalid establishment type",
+  business_type: "Invalid business type",
+  business_type_search_term: "Invalid business type search term"
 };
 
 const validator = new Validator();

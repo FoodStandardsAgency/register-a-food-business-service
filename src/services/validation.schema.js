@@ -15,6 +15,7 @@ const {
   validateCharityName,
   validateCharityNumber,
   validateCustomerType,
+  validateBusinessType,
   validateDate
 } = require("@slice-and-dice/register-a-food-business-validation");
 
@@ -193,9 +194,17 @@ const schema = {
               customer_type: {
                 type: "string",
                 validation: validateCustomerType
+              },
+              business_type: {
+                type: "string",
+                validation: validateBusinessType
+              },
+              business_type_search_term: {
+                type: "string",
+                validation: validateFirstLine
               }
             },
-            required: ["customer_type"]
+            required: ["customer_type", "business_type"]
           }
         },
         required: ["establishment_details", "operator", "premise", "activities"]
