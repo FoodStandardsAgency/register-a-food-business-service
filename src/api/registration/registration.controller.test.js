@@ -5,13 +5,15 @@ jest.mock("../../services/validation.service", () => ({
 jest.mock("./registration.service", () => ({
   saveRegistration: jest.fn(),
   getFullRegistrationById: jest.fn(),
+  sendTascomiRegistration: jest.fn(),
   getRegistrationMetaData: jest.fn()
 }));
 
 const {
   saveRegistration,
   getFullRegistrationById,
-  getRegistrationMetaData
+  getRegistrationMetaData,
+  sendTascomiRegistration
 } = require("./registration.service");
 const { validate } = require("../../services/validation.service");
 const {
@@ -28,6 +30,10 @@ describe("registration controller", () => {
         validate.mockImplementation(() => {
           return [];
         });
+        sendTascomiRegistration.mockImplementation(
+          () =>
+            '{"accepted": "f", "ceased": "f", "declined": "f", "fsa_rn": "23589-DHF375"}'
+        );
         saveRegistration.mockImplementation(() => {
           return { regId: 1 };
         });

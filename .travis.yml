@@ -1,15 +1,27 @@
 language: node_js
 node_js:
 - "8.9.4"
+git:
+   depth: 9999999
+before_install:
+  - echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > .npmrc
 script:
   - yarn format:verify
   - yarn lint
   - yarn test
+before_deploy: "rm -rf node_modules coverage package-lock.json"
 deploy:
   - provider: azure_web_apps
     verbose: true
     on: develop
     site: register-a-food-business-service-dev
+    skip_cleanup: true
+  - provider: azure_web_apps
+    verbose: true
+    on: develop
+    site: register-a-food-business-service-dev
+    slot: register-a-food-business-service-dev-double
+    skip_cleanup: true
   - provider: azure_web_apps
     verbose: true
     on: master

@@ -13,7 +13,16 @@ jest.mock("../../connectors/registrationDb/registrationDb", () => ({
   getActivitiesByEstablishmentId: jest.fn()
 }));
 
+jest.mock("../../connectors/tascomi/tascomi.connector", () => ({
+  createFoodBusinessRegistration: jest.fn(),
+  createReferenceNumber: jest.fn()
+}));
 jest.mock("node-fetch");
+
+const {
+  createFoodBusinessRegistration,
+  createReferenceNumber
+} = require("../../connectors/tascomi/tascomi.connector");
 const fetch = require("node-fetch");
 
 const {
@@ -34,6 +43,7 @@ const {
 const {
   saveRegistration,
   getFullRegistrationById,
+  sendTascomiRegistration,
   getRegistrationMetaData
 } = require("./registration.service");
 
@@ -112,6 +122,30 @@ describe("Function: getFullRegistrationById: ", () => {
       premise: "premise",
       metadata: "metadata"
     });
+  });
+});
+
+describe("Function: sendTascomiRegistration: ", () => {
+  let result;
+
+  beforeEach(async () => {
+    jest.clearAllMocks();
+    createFoodBusinessRegistration.mockImplementation(() => '{ "id": "123"}');
+
+    createReferenceNumber.mockImplementation(() => "0000123");
+    result = await sendTascomiRegistration();
+  });
+
+  it("should call createFoodBusinessRegistration", () => {
+    expect(createFoodBusinessRegistration).toBeCalled();
+  });
+
+  it("should call createReferenceNumber with result of previous call", () => {
+    expect(createReferenceNumber).toBeCalledWith("123");
+  });
+
+  it("should return response of createReferenceNumber", () => {
+    expect(result).toBe("0000123");
   });
 });
 
