@@ -14,15 +14,33 @@ deploy:
   - provider: azure_web_apps
     verbose: true
     on: develop
-    site: register-a-food-business-service-dev
+    site: dev-register-a-food-business-service
     skip_cleanup: true
   - provider: azure_web_apps
     verbose: true
     on: develop
-    site: register-a-food-business-service-dev
-    slot: register-a-food-business-service-dev-double
+    site: dev-register-a-food-business-service
+    slot: dev-register-a-food-business-service-double
+    skip_cleanup: true
+  - provider: azure_web_apps
+    verbose: true
+    on: develop
+    site: test-register-a-food-business-service
+    skip_cleanup: true
+  - provider: azure_web_apps
+    verbose: true
+    on: develop
+    site: test-register-a-food-business-service
+    slot: test-register-a-food-business-service-double
+    skip_cleanup: true
+  - provider: azure_web_apps
+    verbose: true
+    on: /(release-.*)/
+    site: staging-register-a-food-business-service
     skip_cleanup: true
   - provider: azure_web_apps
     verbose: true
     on: master
-    site: TEST-REGISTER-A-FOOD-BUSINESS-SERVICE
+    site: prod-register-a-food-business-service
+    slot: prod-register-a-food-business-service-double
+    skip_cleanup: true
