@@ -5,7 +5,9 @@ const activities = (db, Sequelize) => {
       primaryKey: true,
       autoIncrement: true
     },
-    customer_type: { type: Sequelize.STRING }
+    customer_type: { type: Sequelize.STRING },
+    business_type: { type: Sequelize.STRING },
+    business_type_search_term: { type: Sequelize.STRING }
   });
 };
 
