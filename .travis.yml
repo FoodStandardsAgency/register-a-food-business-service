@@ -35,7 +35,7 @@ deploy:
     skip_cleanup: true
   - provider: azure_web_apps
     verbose: true
-    on: /(release-.*)/
+    on: release
     site: staging-register-a-food-business-service
     skip_cleanup: true
   - provider: azure_web_apps
