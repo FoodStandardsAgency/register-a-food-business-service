@@ -14,37 +14,38 @@ jobs:
         - yarn test
       before_deploy: "rm -rf node_modules coverage package-lock.json"
       deploy: 
-      - provider: azure_web_apps
-        verbose: true
-        on: develop
-        site: dev-register-a-food-business-service
-        skip_cleanup: true
-      - provider: azure_web_apps
-        verbose: true
-        on: develop
-        site: dev-register-a-food-business-service
-        slot: dev-register-a-food-business-service-double
-        skip_cleanup: true
-deploy:
-  - provider: azure_web_apps
-    verbose: true
-    on: develop
-    site: test-register-a-food-business-service
-    skip_cleanup: true
-  - provider: azure_web_apps
-    verbose: true
-    on: develop
-    site: test-register-a-food-business-service
-    slot: test-register-a-food-business-service-double
-    skip_cleanup: true
-  - provider: azure_web_apps
-    verbose: true
-    on: release
-    site: staging-register-a-food-business-service
-    skip_cleanup: true
-  - provider: azure_web_apps
-    verbose: true
-    on: master
-    site: prod-register-a-food-business-service
-    slot: prod-register-a-food-business-service-double
-    skip_cleanup: true
+        - provider: azure_web_apps
+          verbose: true
+          on: develop
+          site: dev-register-a-food-business-service
+          skip_cleanup: true
+        - provider: azure_web_apps
+          verbose: true
+          on: develop
+          site: dev-register-a-food-business-service
+          slot: dev-register-a-food-business-service-double
+          skip_cleanup: true
+    - stage: test build and deploy
+      deploy:
+        - provider: azure_web_apps
+          verbose: true
+          on: develop
+          site: test-register-a-food-business-service
+          skip_cleanup: true
+        - provider: azure_web_apps
+          verbose: true
+          on: develop
+          site: test-register-a-food-business-service
+          slot: test-register-a-food-business-service-double
+          skip_cleanup: true
+        - provider: azure_web_apps
+          verbose: true
+          on: release
+          site: staging-register-a-food-business-service
+          skip_cleanup: true
+        - provider: azure_web_apps
+          verbose: true
+          on: master
+          site: prod-register-a-food-business-service
+          slot: prod-register-a-food-business-service-double
+          skip_cleanup: true
