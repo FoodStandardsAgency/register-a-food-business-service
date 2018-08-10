@@ -9,21 +9,21 @@ const invalidTemplateId = "1a1aaa-11aa-11a1-111a-Z11111a11a19";
 const validRecipientEmail = "fsatestemail.valid@gmail.com";
 const invalidRecipientEmail = "not-in-an-email-format";
 
-describe("Notify contract: sendSingleEmail", () => {
-  describe("When given valid request", () => {
+describe("Notify integration: sendSingleEmail", () => {
+  beforeEach(() => {
+    process.env.DOUBLE_MODE = true;
+  });
+
+  describe("When given a valid request", () => {
     const notifyArguments = [
       testTemplateID,
       validRecipientEmail,
       testTemplateData
     ];
 
-    it("Should both return an ID showing a successful email send (but not necessarily that it has arrived - this will not be tested)", async () => {
-      process.env.DOUBLE_MODE = true;
-      const doubleResult = await sendSingleEmail(...notifyArguments);
-      process.env.DOUBLE_MODE = false;
-      const realResult = await sendSingleEmail(...notifyArguments);
-      expect(doubleResult.id).toBeDefined();
-      expect(realResult.id).toBeDefined();
+    it("Should return an ID showing a successful email send", async () => {
+      const result = await sendSingleEmail(...notifyArguments);
+      expect(result.id).toBe("123-456");
     });
   });
 
@@ -34,10 +34,7 @@ describe("Notify contract: sendSingleEmail", () => {
       testTemplateData
     ];
 
-    it("Should both reject", async () => {
-      process.env.DOUBLE_MODE = true;
-      await expect(sendSingleEmail(...notifyArguments)).rejects.toBeDefined();
-      process.env.DOUBLE_MODE = false;
+    it("Should reject", async () => {
       await expect(sendSingleEmail(...notifyArguments)).rejects.toBeDefined();
     });
   });
@@ -49,10 +46,7 @@ describe("Notify contract: sendSingleEmail", () => {
       testTemplateData
     ];
 
-    it("Should both reject", async () => {
-      process.env.DOUBLE_MODE = true;
-      await expect(sendSingleEmail(...notifyArguments)).rejects.toBeDefined();
-      process.env.DOUBLE_MODE = false;
+    it("Should reject", async () => {
       await expect(sendSingleEmail(...notifyArguments)).rejects.toBeDefined();
     });
   });
@@ -60,10 +54,7 @@ describe("Notify contract: sendSingleEmail", () => {
   describe("When missing required data", () => {
     const notifyArguments = [testTemplateID, validRecipientEmail, {}];
 
-    it("Should both reject", async () => {
-      process.env.DOUBLE_MODE = true;
-      await expect(sendSingleEmail(...notifyArguments)).rejects.toBeDefined();
-      process.env.DOUBLE_MODE = false;
+    it("Should reject", async () => {
       await expect(sendSingleEmail(...notifyArguments)).rejects.toBeDefined();
     });
   });

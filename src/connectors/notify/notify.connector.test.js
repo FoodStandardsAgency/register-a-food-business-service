@@ -5,7 +5,7 @@ const { notifyClientDouble } = require("./notify.double");
 jest.mock("notifications-node-client");
 jest.mock("./notify.double");
 
-describe("Function: sendEmail", () => {
+describe("Function: sendSingleEmail", () => {
   let mockNotifyClient;
   let testTemplateID = "1a1aaa-11aa-11a1-111a-111111a11a11";
   let testRecipient = "email@email.com";
