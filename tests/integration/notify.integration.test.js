@@ -3,7 +3,7 @@ const {
   sendSingleEmail
 } = require("../../src/connectors/notify/notify.connector");
 
-const { NOTIFY_TEMPLATE_ID_TEST } = require("../../src/config");
+const validTemplateId = "integration-test";
 const invalidTemplateId = "1a1aaa-11aa-11a1-111a-Z11111a11a19";
 const validRecipientEmail = "fsatestemail.valid@gmail.com";
 const invalidRecipientEmail = "not-in-an-email-format";
@@ -36,7 +36,7 @@ describe("Notify integration: sendSingleEmail", () => {
 
   describe("When given a valid request", () => {
     const notifyArguments = [
-      NOTIFY_TEMPLATE_ID_TEST,
+      validTemplateId,
       validRecipientEmail,
       testRegistration,
       testPostRegistrationMetadata
@@ -50,7 +50,7 @@ describe("Notify integration: sendSingleEmail", () => {
 
   describe("When specifying an email that is not in a valid email format", () => {
     const notifyArguments = [
-      NOTIFY_TEMPLATE_ID_TEST,
+      validTemplateId,
       invalidRecipientEmail,
       testRegistration,
       testPostRegistrationMetadata
@@ -75,12 +75,7 @@ describe("Notify integration: sendSingleEmail", () => {
   });
 
   describe("When missing required data", () => {
-    const notifyArguments = [
-      NOTIFY_TEMPLATE_ID_TEST,
-      validRecipientEmail,
-      {},
-      {}
-    ];
+    const notifyArguments = [validTemplateId, validRecipientEmail, {}, {}];
 
     it("Should reject", async () => {
       await expect(sendSingleEmail(...notifyArguments)).rejects.toBeDefined();

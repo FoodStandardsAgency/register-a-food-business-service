@@ -16,7 +16,8 @@ const notifyClientDouble = {
           if (
             templateId === NOTIFY_TEMPLATE_ID_TEST ||
             templateId === NOTIFY_TEMPLATE_ID_FBO ||
-            templateId === NOTIFY_TEMPLATE_ID_LC
+            templateId === NOTIFY_TEMPLATE_ID_LC ||
+            templateId === "integration-test"
           ) {
             resolve({ body: { id: "123-456" } });
           } else {
