@@ -7,25 +7,25 @@ before_install:
   - echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > .npmrc
 jobs:
   include:
-    - stage: format
-      script: yarn format:verify
-    - stage: lint
-      script: yarn lint
-    - stage: unit test
-      script: yarn test
-before_deploy: "rm -rf node_modules coverage package-lock.json"
+    - stage: dev build and deploy
+      script: 
+        - yarn format:verify
+        - yarn lint
+        - yarn test
+      before_deploy: "rm -rf node_modules coverage package-lock.json"
+      deploy: 
+      - provider: azure_web_apps
+        verbose: true
+        on: develop
+        site: dev-register-a-food-business-service
+        skip_cleanup: true
+      - provider: azure_web_apps
+        verbose: true
+        on: develop
+        site: dev-register-a-food-business-service
+        slot: dev-register-a-food-business-service-double
+        skip_cleanup: true
 deploy:
-  - provider: azure_web_apps
-    verbose: true
-    on: develop
-    site: dev-register-a-food-business-service
-    skip_cleanup: true
-  - provider: azure_web_apps
-    verbose: true
-    on: develop
-    site: dev-register-a-food-business-service
-    slot: dev-register-a-food-business-service-double
-    skip_cleanup: true
   - provider: azure_web_apps
     verbose: true
     on: develop
