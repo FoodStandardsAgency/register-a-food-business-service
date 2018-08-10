@@ -1,4 +1,8 @@
-const { NOTIFY_TEMPLATE_ID_TEST } = require("../../config");
+const {
+  NOTIFY_TEMPLATE_ID_TEST,
+  NOTIFY_TEMPLATE_ID_FBO,
+  NOTIFY_TEMPLATE_ID_LC
+} = require("../../config");
 
 const notifyClientDouble = {
   sendEmail: (templateId, recipientEmail, options) => {
@@ -9,7 +13,11 @@ const notifyClientDouble = {
         options.personalisation.test_variable
       ) {
         if (recipientEmail === "fsatestemail.valid@gmail.com") {
-          if (templateId === NOTIFY_TEMPLATE_ID_TEST) {
+          if (
+            templateId === NOTIFY_TEMPLATE_ID_TEST ||
+            templateId === NOTIFY_TEMPLATE_ID_FBO ||
+            templateId === NOTIFY_TEMPLATE_ID_LC
+          ) {
             resolve({ body: { id: "123-456" } });
           } else {
             reject(

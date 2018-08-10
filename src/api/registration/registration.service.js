@@ -1,4 +1,4 @@
-const { info } = require("winston");
+const { info, error } = require("winston");
 const moment = require("moment");
 const fetch = require("node-fetch");
 
@@ -24,7 +24,7 @@ const {
   createReferenceNumber
 } = require("../../connectors/tascomi/tascomi.connector");
 
-const { sendEmail } = require("../../connectors/notify/notify.connector");
+const { sendSingleEmail } = require("../../connectors/notify/notify.connector");
 
 const saveRegistration = async registration => {
   info("registration.connector: saveRegistration: called");
@@ -105,11 +105,12 @@ const getRegistrationMetaData = async () => {
 };
 
 const sendFboEmail = async (registration, postRegistrationMetadata) => {
+  info("registration.service: sendFboEmail called");
   const fboEmailSent = { email_success_fbo: undefined };
   try {
     const fboEmailAddress = registration.establishment.operator.operator_email;
 
-    await sendEmail(
+    await sendSingleEmail(
       NOTIFY_TEMPLATE_ID_FBO,
       fboEmailAddress,
       registration,
@@ -118,7 +119,9 @@ const sendFboEmail = async (registration, postRegistrationMetadata) => {
     fboEmailSent.email_success_fbo = true;
   } catch (err) {
     fboEmailSent.email_success_fbo = false;
+    error(`registration.service: sendFboEmail errored: ${err}`);
   }
+  info("registration.service: sendFboEmail finished");
   return fboEmailSent;
 };
 

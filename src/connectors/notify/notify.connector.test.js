@@ -37,7 +37,21 @@ describe("Function: sendSingleEmail", () => {
     testPostRegistrationMetadata
   ];
 
-  describe("given request throws an error", () => {
+  describe("given the NotifyClient constructor throws an error when used", () => {
+    beforeEach(async () => {
+      process.env.DOUBLE_MODE = false;
+      jest.clearAllMocks();
+      NotifyClient.mockImplementation(() => {
+        throw new Error();
+      });
+    });
+
+    it("Should reject with an error message", async () => {
+      await expect(sendSingleEmail(...args)).rejects.toBeDefined();
+    });
+  });
+
+  describe("given the request throws an error", () => {
     beforeEach(async () => {
       process.env.DOUBLE_MODE = false;
       jest.clearAllMocks();
@@ -74,7 +88,7 @@ describe("Function: sendSingleEmail", () => {
       );
     });
 
-    it("Should have called the sendEmail function with the template ID, recipient, and a flattened version of the personalisation/data", () => {
+    it("Should have called the Notify sendEmail function with the template ID, recipient, and a flattened version of the personalisation/data", () => {
       const testFlattenedData = {
         establishment_trading_name: "Itsu",
         operator_first_name: "Fred",

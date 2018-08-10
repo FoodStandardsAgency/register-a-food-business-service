@@ -14,7 +14,7 @@ jest.mock("../../connectors/registrationDb/registrationDb", () => ({
 }));
 
 jest.mock("../../connectors/notify/notify.connector", () => ({
-  sendEmail: jest.fn()
+  sendSingleEmail: jest.fn()
 }));
 
 jest.mock("../../connectors/tascomi/tascomi.connector", () => ({
@@ -29,7 +29,7 @@ const {
   createReferenceNumber
 } = require("../../connectors/tascomi/tascomi.connector");
 
-const { sendEmail } = require("../../connectors/notify/notify.connector");
+const { sendSingleEmail } = require("../../connectors/notify/notify.connector");
 
 const { NOTIFY_TEMPLATE_ID_FBO } = require("../../config");
 
@@ -203,7 +203,7 @@ describe("Function: sendFboEmail: ", () => {
     };
 
     beforeEach(async () => {
-      sendEmail.mockImplementation(() => ({
+      sendSingleEmail.mockImplementation(() => ({
         id: "123-456"
       }));
       result = await sendFboEmail(
@@ -217,7 +217,7 @@ describe("Function: sendFboEmail: ", () => {
     });
 
     it("should have called the connector with the correct arguments", () => {
-      expect(sendEmail).toHaveBeenLastCalledWith(
+      expect(sendSingleEmail).toHaveBeenLastCalledWith(
         NOTIFY_TEMPLATE_ID_FBO,
         "example@example.com",
         testRegistration,
@@ -227,7 +227,7 @@ describe("Function: sendFboEmail: ", () => {
   });
   describe("When the connector throws an error", () => {
     beforeEach(async () => {
-      sendEmail.mockImplementation(() => {
+      sendSingleEmail.mockImplementation(() => {
         throw new Error();
       });
       result = await sendFboEmail();

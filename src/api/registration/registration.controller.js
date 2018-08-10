@@ -7,7 +7,10 @@ const {
   sendFboEmail
 } = require("./registration.service");
 
+const { info } = require("winston");
+
 const createNewRegistration = async registration => {
+  info("registration.controller: createNewRegistration called");
   // AUTHENTICATION
 
   // VALIDATION
@@ -43,6 +46,7 @@ const createNewRegistration = async registration => {
     emailSuccessOrFailureFbo
   );
 
+  info("registration.controller: createNewRegistration finished");
   return combinedResponse;
 };
 

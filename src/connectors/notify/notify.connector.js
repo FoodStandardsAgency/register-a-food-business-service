@@ -16,7 +16,14 @@ const sendSingleEmail = async (
     info("notify.connector: running in double mode");
     notifyClient = notifyClientDouble;
   } else {
-    notifyClient = new NotifyClient(process.env.NOTIFY_KEY);
+    try {
+      notifyClient = new NotifyClient(process.env.NOTIFY_KEY);
+    } catch (err) {
+      error(`notify.connector: sendSingleEmail errored: ${err}`);
+      throw new Error(
+        "notify.connector: sendSingleEmail: NOTIFY_KEY environment variable either incorrect or missing, or NotifyClient has failed."
+      );
+    }
   }
 
   const flattenedData = Object.assign(
