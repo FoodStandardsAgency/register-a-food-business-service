@@ -7,9 +7,35 @@ jest.mock("./notify.double");
 
 describe("Function: sendSingleEmail", () => {
   let mockNotifyClient;
-  let testTemplateID = "1a1aaa-11aa-11a1-111a-111111a11a11";
-  let testRecipient = "email@email.com";
-  let testData = { example: "data" };
+  const testTemplateId = "123456";
+  const testRecipient = "email@email.com";
+  const testRegistration = {
+    establishment: {
+      establishment_details: {
+        establishment_trading_name: "Itsu"
+      },
+      operator: {
+        operator_first_name: "Fred"
+      },
+      premise: {
+        establishment_postcode: "SW12 9RQ"
+      },
+      activities: {
+        customer_type: "End consumer"
+      }
+    },
+    metadata: {
+      declaration1: "Declaration"
+    }
+  };
+  const testPostRegistrationMetadata = { example: "metadata" };
+
+  const args = [
+    testTemplateId,
+    testRecipient,
+    testRegistration,
+    testPostRegistrationMetadata
+  ];
 
   describe("given request throws an error", () => {
     beforeEach(async () => {
@@ -24,9 +50,9 @@ describe("Function: sendSingleEmail", () => {
     });
 
     it("Should reject with the error message", async () => {
-      await expect(
-        sendSingleEmail(testTemplateID, testRecipient, testData)
-      ).rejects.toEqual(Error("This is an error thrown by the notify client"));
+      await expect(sendSingleEmail(...args)).rejects.toEqual(
+        Error("This is an error thrown by the notify client")
+      );
     });
   });
 
@@ -43,21 +69,28 @@ describe("Function: sendSingleEmail", () => {
     });
 
     it("Should resolve with the success message", async () => {
-      await expect(
-        sendSingleEmail(testTemplateID, testRecipient, testData)
-      ).resolves.toBe("This is a success message from the notify client");
+      await expect(sendSingleEmail(...args)).resolves.toBe(
+        "This is a success message from the notify client"
+      );
     });
 
-    it("Should have called the sendEmail function with the template ID, recipient, and personalisation/data", () => {
-      return sendSingleEmail(testTemplateID, testRecipient, testData).then(
-        () => {
-          expect(mockNotifyClient.sendEmail).toHaveBeenLastCalledWith(
-            testTemplateID,
-            testRecipient,
-            { personalisation: testData }
-          );
-        }
-      );
+    it("Should have called the sendEmail function with the template ID, recipient, and a flattened version of the personalisation/data", () => {
+      const testFlattenedData = {
+        establishment_trading_name: "Itsu",
+        operator_first_name: "Fred",
+        establishment_postcode: "SW12 9RQ",
+        customer_type: "End consumer",
+        declaration1: "Declaration",
+        example: "metadata"
+      };
+
+      return sendSingleEmail(...args).then(() => {
+        expect(mockNotifyClient.sendEmail).toHaveBeenLastCalledWith(
+          testTemplateId,
+          testRecipient,
+          { personalisation: testFlattenedData }
+        );
+      });
     });
   });
 
@@ -72,9 +105,7 @@ describe("Function: sendSingleEmail", () => {
     });
 
     it("Should resolve with the double message", async () => {
-      await expect(
-        sendSingleEmail(testTemplateID, testRecipient, testData)
-      ).resolves.toBe("Double response");
+      await expect(sendSingleEmail(...args)).resolves.toBe("Double response");
     });
   });
 });

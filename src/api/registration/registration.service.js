@@ -2,6 +2,8 @@ const { info } = require("winston");
 const moment = require("moment");
 const fetch = require("node-fetch");
 
+const { NOTIFY_TEMPLATE_ID_FBO } = require("../../config");
+
 const {
   createRegistration,
   createEstablishment,
@@ -21,6 +23,8 @@ const {
   createFoodBusinessRegistration,
   createReferenceNumber
 } = require("../../connectors/tascomi/tascomi.connector");
+
+const { sendEmail } = require("../../connectors/notify/notify.connector");
 
 const saveRegistration = async registration => {
   info("registration.connector: saveRegistration: called");
@@ -100,9 +104,28 @@ const getRegistrationMetaData = async () => {
   };
 };
 
+const sendFboEmail = async (registration, postRegistrationMetadata) => {
+  const fboEmailSent = { email_success_fbo: undefined };
+  try {
+    const fboEmailAddress = registration.establishment.operator.operator_email;
+
+    await sendEmail(
+      NOTIFY_TEMPLATE_ID_FBO,
+      fboEmailAddress,
+      registration,
+      postRegistrationMetadata
+    );
+    fboEmailSent.email_success_fbo = true;
+  } catch (err) {
+    fboEmailSent.email_success_fbo = false;
+  }
+  return fboEmailSent;
+};
+
 module.exports = {
   saveRegistration,
   getFullRegistrationById,
   sendTascomiRegistration,
-  getRegistrationMetaData
+  getRegistrationMetaData,
+  sendFboEmail
 };

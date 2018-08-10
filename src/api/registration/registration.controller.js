@@ -3,7 +3,8 @@ const {
   saveRegistration,
   getFullRegistrationById,
   sendTascomiRegistration,
-  getRegistrationMetaData
+  getRegistrationMetaData,
+  sendFboEmail
 } = require("./registration.service");
 
 const createNewRegistration = async registration => {
@@ -28,9 +29,20 @@ const createNewRegistration = async registration => {
   const tascomiObject = JSON.parse(tascomiResponse);
   const response = await saveRegistration(registration);
 
-  const combinedResponse = Object.assign(response, metaDataResponse, {
-    tascomiResponse: tascomiObject
-  });
+  const emailSuccessOrFailureFbo = await sendFboEmail(
+    registration,
+    metaDataResponse
+  );
+
+  const combinedResponse = Object.assign(
+    response,
+    metaDataResponse,
+    {
+      tascomiResponse: tascomiObject
+    },
+    emailSuccessOrFailureFbo
+  );
+
   return combinedResponse;
 };
 

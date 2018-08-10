@@ -2,7 +2,12 @@ const { NotifyClient } = require("notifications-node-client");
 const { notifyClientDouble } = require("./notify.double");
 const { info, error } = require("winston");
 
-const sendSingleEmail = async (templateId, recipientEmail, data) => {
+const sendSingleEmail = async (
+  templateId,
+  recipientEmail,
+  registration,
+  postRegistrationMetadata
+) => {
   info("notify.connector: sendSingleEmail: called");
 
   let notifyClient;
@@ -14,11 +19,21 @@ const sendSingleEmail = async (templateId, recipientEmail, data) => {
     notifyClient = new NotifyClient(process.env.NOTIFY_KEY);
   }
 
+  const flattenedData = Object.assign(
+    {},
+    registration.establishment.premise,
+    registration.establishment.establishment_details,
+    registration.establishment.operator,
+    registration.establishment.activities,
+    registration.metadata,
+    postRegistrationMetadata
+  );
+
   try {
     const notifyArguments = [
       templateId,
       recipientEmail,
-      { personalisation: data }
+      { personalisation: flattenedData }
     ];
 
     const notifyResponse = await notifyClient.sendEmail(...notifyArguments);

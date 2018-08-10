@@ -6,14 +6,16 @@ jest.mock("./registration.service", () => ({
   saveRegistration: jest.fn(),
   getFullRegistrationById: jest.fn(),
   sendTascomiRegistration: jest.fn(),
-  getRegistrationMetaData: jest.fn()
+  getRegistrationMetaData: jest.fn(),
+  sendFboEmail: jest.fn()
 }));
 
 const {
   saveRegistration,
   getFullRegistrationById,
   getRegistrationMetaData,
-  sendTascomiRegistration
+  sendTascomiRegistration,
+  sendFboEmail
 } = require("./registration.service");
 const { validate } = require("../../services/validation.service");
 const {
@@ -40,6 +42,9 @@ describe("registration controller", () => {
         getRegistrationMetaData.mockImplementation(() => {
           return { reg_submission_date: 1 };
         });
+        sendFboEmail.mockImplementation(() => {
+          return { email_success_fbo: true };
+        });
         result = await createNewRegistration("input");
       });
 
@@ -48,6 +53,9 @@ describe("registration controller", () => {
       });
       it("should return the result of getRegistrationMetaData", () => {
         expect(result.reg_submission_date).toBe(1);
+      });
+      it("should return the result of sendFboEmail", () => {
+        expect(result.email_success_fbo).toBe(true);
       });
     });
 

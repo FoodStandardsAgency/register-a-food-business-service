@@ -13,16 +13,26 @@ jest.mock("../../connectors/registrationDb/registrationDb", () => ({
   getActivitiesByEstablishmentId: jest.fn()
 }));
 
+jest.mock("../../connectors/notify/notify.connector", () => ({
+  sendEmail: jest.fn()
+}));
+
 jest.mock("../../connectors/tascomi/tascomi.connector", () => ({
   createFoodBusinessRegistration: jest.fn(),
   createReferenceNumber: jest.fn()
 }));
+
 jest.mock("node-fetch");
 
 const {
   createFoodBusinessRegistration,
   createReferenceNumber
 } = require("../../connectors/tascomi/tascomi.connector");
+
+const { sendEmail } = require("../../connectors/notify/notify.connector");
+
+const { NOTIFY_TEMPLATE_ID_FBO } = require("../../config");
+
 const fetch = require("node-fetch");
 
 const {
@@ -44,7 +54,8 @@ const {
   saveRegistration,
   getFullRegistrationById,
   sendTascomiRegistration,
-  getRegistrationMetaData
+  getRegistrationMetaData,
+  sendFboEmail
 } = require("./registration.service");
 
 describe("Function: saveRegistration: ", () => {
@@ -176,6 +187,54 @@ describe("Function: getRegistrationMetaData: ", () => {
     });
     it("should return an object that contains fsa_rn", () => {
       expect(result["fsa-rn"]).toBe(undefined);
+    });
+  });
+});
+
+describe("Function: sendFboEmail: ", () => {
+  let result;
+  describe("When the connector responds successfully", () => {
+    const testRegistration = {
+      establishment: { operator: { operator_email: "example@example.com" } }
+    };
+
+    const testPostRegistrationMetadata = {
+      example: "metadata"
+    };
+
+    beforeEach(async () => {
+      sendEmail.mockImplementation(() => ({
+        id: "123-456"
+      }));
+      result = await sendFboEmail(
+        testRegistration,
+        testPostRegistrationMetadata
+      );
+    });
+
+    it("should return an object with success value true", () => {
+      expect(result.email_success_fbo).toBe(true);
+    });
+
+    it("should have called the connector with the correct arguments", () => {
+      expect(sendEmail).toHaveBeenLastCalledWith(
+        NOTIFY_TEMPLATE_ID_FBO,
+        "example@example.com",
+        testRegistration,
+        testPostRegistrationMetadata
+      );
+    });
+  });
+  describe("When the connector throws an error", () => {
+    beforeEach(async () => {
+      sendEmail.mockImplementation(() => {
+        throw new Error();
+      });
+      result = await sendFboEmail();
+    });
+
+    it("should return an object with success value false", () => {
+      expect(result.email_success_fbo).toBe(false);
     });
   });
 });
