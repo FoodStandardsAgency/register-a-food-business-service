@@ -28,7 +28,7 @@ const sendRequest = async (url, method, body) => {
 const createFoodBusinessRegistration = async (registration, fsa_rn) => {
   info("tascomi.connector: createFoodBusinessRegistration: called");
   try {
-    const url = `${process.env.TASCOMI_URL}online_food_business_registrations`;
+    const url = `${process.env.TASCOMI_URL}/online_food_business_registrations`;
     const premiseDetails = Object.assign(
       {},
       registration.establishment.premise
@@ -107,7 +107,7 @@ const createReferenceNumber = async id => {
   try {
     const url = `${
       process.env.TASCOMI_URL
-    }online_food_business_registrations/${id}`;
+    }/online_food_business_registrations/${id}`;
     const online_reference = id.padStart(7, "0");
     const requestData = {
       online_reference

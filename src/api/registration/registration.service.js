@@ -1,6 +1,8 @@
-const { info } = require("winston");
+const { info, error } = require("winston");
 const moment = require("moment");
 const fetch = require("node-fetch");
+
+const { NOTIFY_TEMPLATE_ID_FBO } = require("../../config");
 
 const {
   createRegistration,
@@ -21,6 +23,8 @@ const {
   createFoodBusinessRegistration,
   createReferenceNumber
 } = require("../../connectors/tascomi/tascomi.connector");
+
+const { sendSingleEmail } = require("../../connectors/notify/notify.connector");
 
 const saveRegistration = async registration => {
   info("registration.connector: saveRegistration: called");
@@ -100,9 +104,33 @@ const getRegistrationMetaData = async () => {
   };
 };
 
+const sendFboEmail = async (registration, postRegistrationMetadata) => {
+  info("registration.service: sendFboEmail called");
+  const fboEmailSent = { email_fbo: { success: undefined } };
+  const fboEmailAddress =
+    registration.establishment.operator.operator_email ||
+    registration.establishment.operator.contact_representative_email;
+
+  try {
+    await sendSingleEmail(
+      NOTIFY_TEMPLATE_ID_FBO,
+      fboEmailAddress,
+      registration,
+      postRegistrationMetadata
+    );
+    fboEmailSent.email_fbo = { success: true, recipient: fboEmailAddress };
+  } catch (err) {
+    fboEmailSent.email_fbo = { success: false, recipient: fboEmailAddress };
+    error(`registration.service: sendFboEmail errored: ${err}`);
+  }
+  info("registration.service: sendFboEmail finished");
+  return fboEmailSent;
+};
+
 module.exports = {
   saveRegistration,
   getFullRegistrationById,
   sendTascomiRegistration,
-  getRegistrationMetaData
+  getRegistrationMetaData,
+  sendFboEmail
 };

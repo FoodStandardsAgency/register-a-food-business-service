@@ -13,16 +13,26 @@ jest.mock("../../connectors/registrationDb/registrationDb", () => ({
   getActivitiesByEstablishmentId: jest.fn()
 }));
 
+jest.mock("../../connectors/notify/notify.connector", () => ({
+  sendSingleEmail: jest.fn()
+}));
+
 jest.mock("../../connectors/tascomi/tascomi.connector", () => ({
   createFoodBusinessRegistration: jest.fn(),
   createReferenceNumber: jest.fn()
 }));
+
 jest.mock("node-fetch");
 
 const {
   createFoodBusinessRegistration,
   createReferenceNumber
 } = require("../../connectors/tascomi/tascomi.connector");
+
+const { sendSingleEmail } = require("../../connectors/notify/notify.connector");
+
+const { NOTIFY_TEMPLATE_ID_FBO } = require("../../config");
+
 const fetch = require("node-fetch");
 
 const {
@@ -44,7 +54,8 @@ const {
   saveRegistration,
   getFullRegistrationById,
   sendTascomiRegistration,
-  getRegistrationMetaData
+  getRegistrationMetaData,
+  sendFboEmail
 } = require("./registration.service");
 
 describe("Function: saveRegistration: ", () => {
@@ -176,6 +187,93 @@ describe("Function: getRegistrationMetaData: ", () => {
     });
     it("should return an object that contains fsa_rn", () => {
       expect(result["fsa-rn"]).toBe(undefined);
+    });
+  });
+});
+
+describe("Function: sendFboEmail: ", () => {
+  let result;
+  const testRegistration = {
+    establishment: { operator: { operator_email: "example@example.com" } }
+  };
+
+  const testRegistrationWithRepresentativeEmail = {
+    establishment: {
+      operator: { contact_representative_email: "example-rep@example.com" }
+    }
+  };
+
+  const testPostRegistrationMetadata = {
+    example: "metadata"
+  };
+
+  describe("When the connector responds successfully", () => {
+    beforeEach(async () => {
+      sendSingleEmail.mockImplementation(() => ({
+        id: "123-456"
+      }));
+    });
+
+    describe("When operator_address is defined, but contact_representative_email is not", () => {
+      beforeEach(async () => {
+        result = await sendFboEmail(
+          testRegistration,
+          testPostRegistrationMetadata
+        );
+      });
+
+      it("should return an object with success value true and the correct recipient email", () => {
+        expect(result.email_fbo.success).toBe(true);
+        expect(result.email_fbo.recipient).toBe("example@example.com");
+      });
+
+      it("should have called the connector with the correct arguments", () => {
+        expect(sendSingleEmail).toHaveBeenLastCalledWith(
+          NOTIFY_TEMPLATE_ID_FBO,
+          "example@example.com",
+          testRegistration,
+          testPostRegistrationMetadata
+        );
+      });
+    });
+
+    describe("When contact_representative_email is defined, but operator_address is not", () => {
+      beforeEach(async () => {
+        result = await sendFboEmail(
+          testRegistrationWithRepresentativeEmail,
+          testPostRegistrationMetadata
+        );
+      });
+
+      it("should return an object with success value true and the correct recipient email", () => {
+        expect(result.email_fbo.success).toBe(true);
+        expect(result.email_fbo.recipient).toBe("example-rep@example.com");
+      });
+
+      it("should have called the connector with the correct arguments", () => {
+        expect(sendSingleEmail).toHaveBeenLastCalledWith(
+          NOTIFY_TEMPLATE_ID_FBO,
+          "example-rep@example.com",
+          testRegistrationWithRepresentativeEmail,
+          testPostRegistrationMetadata
+        );
+      });
+    });
+  });
+
+  describe("When the connector throws an error", () => {
+    beforeEach(async () => {
+      sendSingleEmail.mockImplementation(() => {
+        throw new Error();
+      });
+      result = await sendFboEmail(
+        testRegistration,
+        testPostRegistrationMetadata
+      );
+    });
+
+    it("should return an object with success value false", () => {
+      expect(result.email_fbo.success).toBe(false);
     });
   });
 });
