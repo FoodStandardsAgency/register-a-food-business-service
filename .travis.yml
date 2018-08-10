@@ -5,13 +5,18 @@ git:
    depth: 9999999
 before_install:
   - echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > .npmrc
+stages: 
+  - dev build and deploy
+  - test build and deploy
+  - staging deploy
+  - prod deploy
 jobs:
   include:
     - stage: dev build and deploy
       script: 
-        - yarn format:verify
-        - yarn lint
-        - yarn test
+        - npm run format:verify
+        - npm run lint
+        - npm run test
       before_deploy: "rm -rf node_modules coverage package-lock.json"
       deploy: 
         - provider: azure_web_apps
@@ -26,6 +31,9 @@ jobs:
           slot: dev-register-a-food-business-service-double
           skip_cleanup: true
     - stage: test build and deploy
+      script: 
+        - npm run test:component
+        - npm run test:integration
       deploy:
         - provider: azure_web_apps
           verbose: true
@@ -38,11 +46,17 @@ jobs:
           site: test-register-a-food-business-service
           slot: test-register-a-food-business-service-double
           skip_cleanup: true
+    - stage: staging deploy
+      script: echo "No tests to run"
+      deploy:  
         - provider: azure_web_apps
           verbose: true
           on: release
           site: staging-register-a-food-business-service
           skip_cleanup: true
+      stage: prod deploy
+      script: echo "No tests to run"
+      deploy:
         - provider: azure_web_apps
           verbose: true
           on: master

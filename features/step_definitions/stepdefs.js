@@ -4,7 +4,7 @@ const { Given, When, Then } = require("cucumber");
 
 const sendRequest = async body => {
   const res = await fetch(
-    "http://localhost:4000/api/registration/createNewRegistration",
+    "https://dev-register-a-food-business-service-double.azurewebsites.net//api/registration/createNewRegistration",
     {
       method: "POST",
       headers: {
@@ -19,7 +19,9 @@ const sendRequest = async body => {
 };
 
 const getRequest = async id => {
-  const res = await fetch(`http://localhost:4000/api/registration/${id}`);
+  const res = await fetch(
+    `https://dev-register-a-food-business-service-double.azurewebsites.net//api/registration/${id}`
+  );
   return res.json();
 };
 Given("I enter an email address without an @ symbol", function() {
@@ -136,7 +138,8 @@ Given("I have a new registration with all valid required fields", function() {
           establishment_type: "domestic"
         },
         activities: {
-          customer_type: "End consumer"
+          customer_type: "End consumer",
+          business_type: "Livestock farm"
         }
       },
       metadata: {
