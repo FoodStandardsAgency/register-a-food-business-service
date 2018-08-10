@@ -5,7 +5,6 @@ git:
    depth: 9999999
 before_install:
   - echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > .npmrc
-install: npm install
 jobs:
   include:
     - stage: format
