@@ -106,19 +106,21 @@ const getRegistrationMetaData = async () => {
 
 const sendFboEmail = async (registration, postRegistrationMetadata) => {
   info("registration.service: sendFboEmail called");
-  const fboEmailSent = { email_success_fbo: undefined };
-  try {
-    const fboEmailAddress = registration.establishment.operator.operator_email;
+  const fboEmailSent = { email_fbo: { success: undefined } };
+  const fboEmailAddress =
+    registration.establishment.operator.operator_email ||
+    registration.establishment.operator.contact_representative_email;
 
+  try {
     await sendSingleEmail(
       NOTIFY_TEMPLATE_ID_FBO,
       fboEmailAddress,
       registration,
       postRegistrationMetadata
     );
-    fboEmailSent.email_success_fbo = true;
+    fboEmailSent.email_fbo = { success: true, recipient: fboEmailAddress };
   } catch (err) {
-    fboEmailSent.email_success_fbo = false;
+    fboEmailSent.email_fbo = { success: false, recipient: fboEmailAddress };
     error(`registration.service: sendFboEmail errored: ${err}`);
   }
   info("registration.service: sendFboEmail finished");
