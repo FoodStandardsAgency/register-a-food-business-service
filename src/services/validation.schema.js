@@ -209,7 +209,11 @@ const schema = {
                 validation: validateBusinessImportExport
               }
             },
-            required: ["customer_type", "business_type"]
+            required: [
+              "customer_type",
+              "business_type",
+              "import_export_activities"
+            ]
           }
         },
         required: ["establishment_details", "operator", "premise", "activities"]
