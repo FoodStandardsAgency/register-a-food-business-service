@@ -8,13 +8,10 @@ before_install:
 jobs:
   include:
     - stage: format
-      install: true
       script: yarn format:verify
     - stage: lint
-      install: true
       script: yarn lint
     - stage: unit test
-      install: true
       script: yarn test
 before_deploy: "rm -rf node_modules coverage package-lock.json"
 deploy:
