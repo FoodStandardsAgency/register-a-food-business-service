@@ -10,7 +10,7 @@ const notifyClientDouble = {
       ) {
         if (recipientEmail === "fsatestemail.valid@gmail.com") {
           if (templateId === testTemplateID) {
-            resolve({ id: "123-456" });
+            resolve({ body: { id: "123-456" } });
           } else {
             reject(
               `notify.double: reject: template ID ${templateId} not supported by double`

@@ -5,7 +5,14 @@ const { info, error } = require("winston");
 const sendSingleEmail = async (templateId, recipientEmail, data) => {
   info("notify.connector: sendSingleEmail: called");
 
-  const notifyClient = new NotifyClient(process.env.NOTIFY_KEY);
+  let notifyClient;
+
+  if (process.env.DOUBLE_MODE === "true") {
+    info("notify.connector: running in double mode");
+    notifyClient = notifyClientDouble;
+  } else {
+    notifyClient = new NotifyClient(process.env.NOTIFY_KEY);
+  }
 
   try {
     const notifyArguments = [
@@ -14,18 +21,10 @@ const sendSingleEmail = async (templateId, recipientEmail, data) => {
       { personalisation: data }
     ];
 
-    if (process.env.DOUBLE_MODE === "true") {
-      info("notify.connector: running in double mode");
-      const notifyResponseDouble = await notifyClientDouble.sendEmail(
-        ...notifyArguments
-      );
-      return notifyResponseDouble;
-    } else {
-      const notifyResponse = await notifyClient.sendEmail(...notifyArguments);
-      const responseBody = notifyResponse.body;
-      info("notify.connector: sendSingleEmail: successful");
-      return responseBody;
-    }
+    const notifyResponse = await notifyClient.sendEmail(...notifyArguments);
+    const responseBody = notifyResponse.body;
+    info("notify.connector: sendSingleEmail: successful");
+    return responseBody;
   } catch (err) {
     error(`notify.connector: sendSingleEmail: errored with: ${err}`);
     throw new Error(err.message);

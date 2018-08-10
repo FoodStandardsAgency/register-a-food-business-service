@@ -36,7 +36,7 @@ describe("Function: sendSingleEmail", () => {
       jest.clearAllMocks();
       mockNotifyClient = {
         sendEmail: jest.fn(async () => {
-          return "This is a success message from the notify client";
+          return { body: "This is a success message from the notify client" };
         })
       };
       NotifyClient.mockImplementation(() => mockNotifyClient);
@@ -66,9 +66,9 @@ describe("Function: sendSingleEmail", () => {
       process.env.DOUBLE_MODE = true;
       jest.clearAllMocks();
       NotifyClient.mockImplementation(() => ({}));
-      notifyClientDouble.sendEmail.mockImplementation(
-        async () => "Double response"
-      );
+      notifyClientDouble.sendEmail.mockImplementation(async () => ({
+        body: "Double response"
+      }));
     });
 
     it("Should resolve with the double message", async () => {
