@@ -3,6 +3,12 @@
 All notable changes to this projectwill be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## v2.6.0 - 7th August 2018 (unreleased)
+
+### Added
+
+- SDB-241 - Business import export activities
+
 ## v2.5.0 - 7th August 2018 (unreleased)
 
 ### Added

@@ -32,7 +32,8 @@ const errorMessages = {
   customer_type: "Invalid customer type",
   establishment_type: "Invalid establishment type",
   business_type: "Invalid business type",
-  business_type_search_term: "Invalid business type search term"
+  business_type_search_term: "Invalid business type search term",
+  import_export_activities: "Invalid business activities"
 };
 
 const validator = new Validator();
