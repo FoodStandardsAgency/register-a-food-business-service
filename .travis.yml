@@ -11,7 +11,7 @@ stages:
   - name: dev build and deploy
     if: (branch = develop) AND (type != pull_request)
   - name: test build and deploy
-    if: branch = develop
+    if: (branch = develop) AND (type != pull_request)
   - name: staging deploy
     if: branch = release
   - name: prod deploy
