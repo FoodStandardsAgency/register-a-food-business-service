@@ -1,7 +1,8 @@
 {
   "env": {
     "node": true,
-    "jest": true
+    "jest": true,
+    "es6": true
   },
   "parserOptions": {
     "ecmaVersion": 2017
@@ -11,8 +12,5 @@
     "prettier/prettier": "warn"
   },
   "plugins": ["prettier"],
-  "extends": [
-    "eslint:recommended",
-    "prettier"
-  ]
+  "extends": ["eslint:recommended", "prettier"]
 }
