@@ -8,10 +8,8 @@ before_install:
 stages:
   - name: dev build
     if: (branch != master) AND (branch != release) AND (branch != develop)
-  - name: dev build
-    if: (branch = develop) AND (type = pull_request)
   - name: dev build and deploy
-    if: (branch = develop) AND (type != pull_request)
+    if: branch = develop
   - name: test build and deploy
     if: (branch = develop) AND (type != pull_request)
   - name: staging deploy
