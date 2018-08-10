@@ -28,6 +28,11 @@ const errorMessages = {
   establishment_secondary_number: "Invalid operator secondary number",
   establishment_email: "Invalid operator email",
   establishment_trading_name: "Invalid establishment trading name",
+  establishment_opening_date: "Invalid establishment opening date",
+  customer_type: "Invalid customer type",
+  establishment_type: "Invalid establishment type",
+  business_type: "Invalid business type",
+  business_type_search_term: "Invalid business type search term",
   contact_representative_name: "Invalid representive name",
   contact_representative_number: "Invalid representative number",
   contact_representative_role: "Invalid representative role",
@@ -38,8 +43,8 @@ const validator = new Validator();
 
 // Set validation rules on validator
 validator.attributes.validation = (instance, schema, options, ctx) => {
-  const propertyName = ctx.propertyPath.split(".")[1];
-
+  const propertyPathArray = ctx.propertyPath.split(".");
+  const propertyName = propertyPathArray.pop();
   if (instance !== undefined) {
     if (schema.validation(instance) === false) {
       return errorMessages[propertyName];
@@ -50,7 +55,7 @@ validator.attributes.validation = (instance, schema, options, ctx) => {
 module.exports.validate = data => {
   info(`validationService: validate: called`);
   const result = [];
-  const validatorResult = validator.validate(data, schema.establishment);
+  const validatorResult = validator.validate(data, schema.registration);
   // turn errors into key:value pairs
   validatorResult.errors.forEach(error => {
     const key = error.property.split(".")[1];

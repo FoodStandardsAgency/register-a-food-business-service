@@ -1,6 +1,6 @@
 module.exports = {
   verbose: true,
-  collectCoverage: true,
+  testEnvironment: "node",
   collectCoverageFrom: [
     "**/*.{js}",
     "!**/node_modules/**",
@@ -14,6 +14,10 @@ module.exports = {
     "!**/src/rootMutation.js",
     "!**/src/rootQuery.js",
     "!**/src/schema.js",
-    "!**/src/services/validation.schema.js"
+    "!**/src/services/validation.schema.js",
+    "!**/src/db/**",
+    "!**/src/config.js",
+    "!**/tests/*",
+    "!**/src/**/*.double.js"
   ]
 };
