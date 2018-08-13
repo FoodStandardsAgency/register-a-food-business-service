@@ -17,7 +17,7 @@ const {
   validateCustomerType,
   validateBusinessType,
   validateDate,
-  validateBusinessImportExport
+  validateImportExportActivities
 } = require("@slice-and-dice/register-a-food-business-validation");
 
 const schema = {
@@ -206,7 +206,7 @@ const schema = {
               },
               import_export_activities: {
                 type: "string",
-                validation: validateBusinessImportExport
+                validation: validateImportExportActivities
               }
             },
             required: [
