@@ -7,10 +7,14 @@ const {
   sendFboEmail
 } = require("./registration.service");
 
-const { info } = require("winston");
+const { logEmitter } = require("../../services/logging.service");
 
 const createNewRegistration = async registration => {
-  info("registration.controller: createNewRegistration called");
+  logEmitter.emit(
+    "functionCall",
+    "registration.controller",
+    "createNewRegistration"
+  );
   // AUTHENTICATION
 
   // VALIDATION
@@ -46,7 +50,11 @@ const createNewRegistration = async registration => {
     emailSuccessOrFailureFbo
   );
 
-  info("registration.controller: createNewRegistration finished");
+  logEmitter.emit(
+    "functionSuccess",
+    "registration.controller",
+    "createNewRegistration"
+  );
   return combinedResponse;
 };
 
