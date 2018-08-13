@@ -25,9 +25,10 @@ jest.mock("../../db/db", () => ({
   }
 }));
 
-jest.mock("winston", () => ({
-  info: jest.fn(),
-  error: jest.fn()
+jest.mock("../../services/logging.service", () => ({
+  logEmitter: {
+    emit: jest.fn()
+  }
 }));
 
 const {

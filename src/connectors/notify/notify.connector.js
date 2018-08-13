@@ -19,7 +19,12 @@ const sendSingleEmail = async (
     try {
       notifyClient = new NotifyClient(process.env.NOTIFY_KEY);
     } catch (err) {
-      logEmitter.emit("functionFail", "notify.connector", "sendSingleEmail", err);
+      logEmitter.emit(
+        "functionFail",
+        "notify.connector",
+        "sendSingleEmail",
+        err
+      );
       throw new Error(
         "notify.connector: sendSingleEmail: NOTIFY_KEY environment variable either incorrect or missing, or NotifyClient has failed."
       );

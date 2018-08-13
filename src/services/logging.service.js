@@ -19,6 +19,6 @@ logEmitter.on("functionFail", (module, functionName, err) => {
 
 logEmitter.on("doubleMode", (module, functionName) => {
   info(`${module}: ${functionName}: running in double mode`);
-})
+});
 
 module.exports = { logEmitter };

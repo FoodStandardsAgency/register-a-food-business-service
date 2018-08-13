@@ -6,16 +6,29 @@ const {
   Premise,
   Registration
 } = require("../../db/db");
-const { info, error } = require("winston");
+const { logEmitter } = require("../../services/logging.service");
 
 const modelCreate = async (data, model, modelName) => {
-  info(`Function: create${modelName} called`);
+  logEmitter.emit(
+    "functionCall",
+    "registration.connector.js",
+    `create${modelName}`
+  );
   try {
     const response = await model.create(data);
-    info(`Function: create${modelName} successful`);
+    logEmitter.emit(
+      "functionSuccess",
+      "registration.connector.js",
+      `create${modelName}`
+    );
     return response;
   } catch (err) {
-    error(`Function: create${modelName} failed with error: ${err}`);
+    logEmitter.emit(
+      "functionFail",
+      "registration.connector.js",
+      `create${modelName}`,
+      err
+    );
     return err;
   }
 };
@@ -50,13 +63,22 @@ const createRegistration = async registration => {
 };
 
 const modelFindOne = async (query, model, functionName) => {
-  info(`Function: ${functionName} called`);
+  logEmitter.emit("functionCall", "registration.connector.js", functionName);
   try {
     const response = await model.findOne(query);
-    info(`Function: ${functionName} successful`);
+    logEmitter.emit(
+      "functionSuccess",
+      "registration.connector.js",
+      functionName
+    );
     return response;
   } catch (err) {
-    info(`Function ${functionName} failed with error: ${err}`);
+    logEmitter.emit(
+      "functionFail",
+      "registration.connector.js",
+      functionName,
+      err
+    );
     return err;
   }
 };
