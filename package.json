@@ -8,12 +8,12 @@
     "test:watch": "jest --watch",
     "test:integration": "jest tests/integration/*.js",
     "test:contract": "jest tests/contract/*.js",
+    "test:component": "cucumber-js",
     "lint": "eslint ./src",
     "format:verify": "prettier --list-different '{src,tests}/**/*.js'",
     "format": "prettier --write '{src,tests}/**/*.js'",
     "dev": "",
-    "start": "node src/app.js",
-    "component-test": "cucumber-js"
+    "start": "node src/app.js"
   },
   "repository": {
     "type": "git",

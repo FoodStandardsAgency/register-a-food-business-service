@@ -5,42 +5,71 @@ git:
    depth: 9999999
 before_install:
   - echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > .npmrc
-script:
-  - yarn format:verify
-  - yarn lint
-  - yarn test
-before_deploy: "rm -rf node_modules coverage package-lock.json"
-deploy:
-  - provider: azure_web_apps
-    verbose: true
-    on: develop
-    site: dev-register-a-food-business-service
-    skip_cleanup: true
-  - provider: azure_web_apps
-    verbose: true
-    on: develop
-    site: dev-register-a-food-business-service
-    slot: dev-register-a-food-business-service-double
-    skip_cleanup: true
-  - provider: azure_web_apps
-    verbose: true
-    on: develop
-    site: test-register-a-food-business-service
-    skip_cleanup: true
-  - provider: azure_web_apps
-    verbose: true
-    on: develop
-    site: test-register-a-food-business-service
-    slot: test-register-a-food-business-service-double
-    skip_cleanup: true
-  - provider: azure_web_apps
-    verbose: true
-    on: release
-    site: staging-register-a-food-business-service
-    skip_cleanup: true
-  - provider: azure_web_apps
-    verbose: true
-    on: master
-    site: prod-register-a-food-business-service
-    slot: prod-register-a-food-business-service-double
-    skip_cleanup: true
+stages:
+  - name: dev build
+    if: (branch != master) AND (branch != release) AND (branch != develop)
+  - name: dev build and deploy
+    if: branch = develop
+  - name: test build and deploy
+    if: (branch = develop) AND (type != pull_request)
+  - name: staging deploy
+    if: branch = release
+  - name: prod deploy
+    if: branch = master
+jobs:
+  include:
+    - stage: dev build
+      script: 
+        - npm run format:verify
+        - npm run lint
+        - npm run test
+    - stage: dev build and deploy
+      script: 
+        - npm run format:verify
+        - npm run lint
+        - npm run test
+      before_deploy: "rm -rf node_modules coverage package-lock.json"
+      deploy: 
+        - provider: azure_web_apps
+          verbose: true
+          on: develop
+          site: dev-register-a-food-business-service
+          skip_cleanup: true
+        - provider: azure_web_apps
+          verbose: true
+          on: develop
+          site: dev-register-a-food-business-service
+          slot: dev-register-a-food-business-service-double
+          skip_cleanup: true
+    - stage: test build and deploy
+      script: 
+        - npm run test:component
+        - npm run test:integration
+      before_deploy: "rm -rf node_modules coverage package-lock.json"
+      deploy:
+        - provider: azure_web_apps
+          verbose: true
+          site: test-register-a-food-business-service
+          skip_cleanup: true
+        - provider: azure_web_apps
+          verbose: true
+          site: test-register-a-food-business-service
+          slot: test-register-a-food-business-service-double
+          skip_cleanup: true
+    - stage: staging deploy
+      script: echo "No tests to run"
+      before_deploy: "rm -rf node_modules coverage package-lock.json"
+      deploy:  
+        - provider: azure_web_apps
+          verbose: true
+          site: staging-register-a-food-business-service
+          skip_cleanup: true
+      stage: prod deploy
+      script: echo "No tests to run"
+      before_deploy: "rm -rf node_modules coverage package-lock.json"
+      deploy:
+        - provider: azure_web_apps
+          verbose: true
+          site: prod-register-a-food-business-service
+          slot: prod-register-a-food-business-service-double
+          skip_cleanup: true

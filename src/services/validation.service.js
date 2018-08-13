@@ -33,6 +33,10 @@ const errorMessages = {
   establishment_type: "Invalid establishment type",
   business_type: "Invalid business type",
   business_type_search_term: "Invalid business type search term",
+  contact_representative_name: "Invalid representive name",
+  contact_representative_number: "Invalid representative number",
+  contact_representative_role: "Invalid representative role",
+  contact_representative_email: "Invalid representative email",
   import_export_activities: "Invalid business activities"
 };
 
