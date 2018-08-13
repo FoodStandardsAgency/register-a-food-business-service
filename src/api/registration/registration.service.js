@@ -1,4 +1,3 @@
-const { info, error } = require("winston");
 const moment = require("moment");
 const fetch = require("node-fetch");
 
@@ -26,8 +25,10 @@ const {
 
 const { sendSingleEmail } = require("../../connectors/notify/notify.connector");
 
+const { logEmitter } = require("../../services/logging.service");
+
 const saveRegistration = async registration => {
-  info("registration.connector: saveRegistration: called");
+  logEmitter.emit("functionCall", "registration.service", "saveRegistration");
   const reg = await createRegistration({});
   const establishment = await createEstablishment(
     registration.establishment.establishment_details,
@@ -50,7 +51,11 @@ const saveRegistration = async registration => {
   );
 
   const metadata = await createMetadata(registration.metadata, reg.id);
-  info("registration.connector: saveRegistration: successful");
+  logEmitter.emit(
+    "functionSuccess",
+    "registration.service",
+    "saveRegistration"
+  );
   return {
     regId: reg.id,
     establishmentId: establishment.id,
@@ -62,14 +67,22 @@ const saveRegistration = async registration => {
 };
 
 const getFullRegistrationById = async id => {
-  info("registration.connector: getFullRegistrationById: called");
+  logEmitter.emit(
+    "functionCall",
+    "registration.service",
+    "getFullRegistrationById"
+  );
   const registration = await getRegistrationById(id);
   const establishment = await getEstablishmentByRegId(registration.id);
   const metadata = await getMetadataByRegId(registration.id);
   const operator = await getOperatorByEstablishmentId(establishment.id);
   const activities = await getActivitiesByEstablishmentId(establishment.id);
   const premise = await getPremiseByEstablishmentId(establishment.id);
-  info("registration.connector: getFullRegistrationById: successful");
+  logEmitter.emit(
+    "functionSuccess",
+    "registration.service",
+    "getFullRegistrationById"
+  );
   return {
     registration,
     establishment,
@@ -81,14 +94,27 @@ const getFullRegistrationById = async id => {
 };
 
 const sendTascomiRegistration = async (registration, fsa_rn) => {
-  info("registration.connector: sendTascomiRegistration: called");
+  logEmitter.emit(
+    "functionCall",
+    "registration.service",
+    "sendTascomiRegistration"
+  );
   const reg = await createFoodBusinessRegistration(registration, fsa_rn);
   const response = await createReferenceNumber(JSON.parse(reg).id);
-  info("registration.connector: sendTascomiRegistration: successful");
+  logEmitter.emit(
+    "functionSuccess",
+    "registration.service",
+    "sendTascomiRegistration"
+  );
   return response;
 };
 
 const getRegistrationMetaData = async () => {
+  logEmitter.emit(
+    "functionCall",
+    "registration.service",
+    "getRegistrationMetadata"
+  );
   const reg_submission_date = moment().format("YYYY MM DD");
   const fsaRnResponse = await fetch(
     "https://fsa-rn.epimorphics.net/fsa-rn/1000/01"
@@ -97,7 +123,11 @@ const getRegistrationMetaData = async () => {
   if (fsaRnResponse.status === 200) {
     fsa_rn = await fsaRnResponse.json();
   }
-
+  logEmitter.emit(
+    "functionSuccess",
+    "registration.service",
+    "getRegistrationMetadata"
+  );
   return {
     "fsa-rn": fsa_rn ? fsa_rn["fsa-rn"] : undefined,
     reg_submission_date: reg_submission_date
@@ -105,7 +135,7 @@ const getRegistrationMetaData = async () => {
 };
 
 const sendFboEmail = async (registration, postRegistrationMetadata) => {
-  info("registration.service: sendFboEmail called");
+  logEmitter.emit("functionCall", "registration.service", "sendFboEmail");
   const fboEmailSent = { email_fbo: { success: undefined } };
   const fboEmailAddress =
     registration.establishment.operator.operator_email ||
@@ -121,9 +151,9 @@ const sendFboEmail = async (registration, postRegistrationMetadata) => {
     fboEmailSent.email_fbo = { success: true, recipient: fboEmailAddress };
   } catch (err) {
     fboEmailSent.email_fbo = { success: false, recipient: fboEmailAddress };
-    error(`registration.service: sendFboEmail errored: ${err}`);
+    logEmitter.emit("functionFail", "registration.service", "sendFboEmail");
   }
-  info("registration.service: sendFboEmail finished");
+  logEmitter.emit("functionSuccess", "registration.service", "sendFboEmail");
   return fboEmailSent;
 };
 

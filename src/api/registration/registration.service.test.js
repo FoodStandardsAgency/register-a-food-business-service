@@ -22,6 +22,12 @@ jest.mock("../../connectors/tascomi/tascomi.connector", () => ({
   createReferenceNumber: jest.fn()
 }));
 
+jest.mock("../../services/logging.service", () => ({
+  logEmitter: {
+    emit: jest.fn()
+  }
+}));
+
 jest.mock("node-fetch");
 
 const {
