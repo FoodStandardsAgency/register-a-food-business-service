@@ -2,7 +2,10 @@ const { info, error } = require("winston");
 const moment = require("moment");
 const fetch = require("node-fetch");
 
-const { NOTIFY_TEMPLATE_ID_FBO } = require("../../config");
+const {
+  NOTIFY_TEMPLATE_ID_FBO,
+  NOTIFY_TEMPLATE_ID_LC
+} = require("../../config");
 
 const {
   createRegistration,
@@ -127,10 +130,36 @@ const sendFboEmail = async (registration, postRegistrationMetadata) => {
   return fboEmailSent;
 };
 
+const sendLcEmail = async (
+  registration,
+  postRegistrationMetadata,
+  localCouncilEmail
+) => {
+  info("registration.service: sendLcEmail called");
+  const lcEmailSent = { email_lc: { success: undefined } };
+  const lcEmailAddress = localCouncilEmail;
+
+  try {
+    await sendSingleEmail(
+      NOTIFY_TEMPLATE_ID_LC,
+      lcEmailAddress,
+      registration,
+      postRegistrationMetadata
+    );
+    lcEmailSent.email_lc = { success: true, recipient: lcEmailAddress };
+  } catch (err) {
+    lcEmailSent.email_lc = { success: false, recipient: lcEmailAddress };
+    error(`registration.service: sendLcEmail errored: ${err}`);
+  }
+  info("registration.service: sendLcEmail finished");
+  return lcEmailSent;
+};
+
 module.exports = {
   saveRegistration,
   getFullRegistrationById,
   sendTascomiRegistration,
   getRegistrationMetaData,
-  sendFboEmail
+  sendFboEmail,
+  sendLcEmail
 };

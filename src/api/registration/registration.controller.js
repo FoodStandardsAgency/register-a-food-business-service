@@ -4,7 +4,8 @@ const {
   getFullRegistrationById,
   sendTascomiRegistration,
   getRegistrationMetaData,
-  sendFboEmail
+  sendFboEmail,
+  sendLcEmail
 } = require("./registration.service");
 
 const { info } = require("winston");
@@ -23,7 +24,8 @@ const createNewRegistration = async registration => {
   }
 
   // RESOLUTION
-
+  // This is a stubbed email until LC lookup is implemented
+  const localCouncilEmail = "fsatestemail.valid@gmail.com)";
   const metaDataResponse = await getRegistrationMetaData();
   const tascomiResponse = await sendTascomiRegistration(
     registration,
@@ -37,13 +39,20 @@ const createNewRegistration = async registration => {
     metaDataResponse
   );
 
+  const emailSuccessOrFailureLc = await sendLcEmail(
+    registration,
+    metaDataResponse,
+    localCouncilEmail
+  );
+
   const combinedResponse = Object.assign(
     response,
     metaDataResponse,
     {
       tascomiResponse: tascomiObject
     },
-    emailSuccessOrFailureFbo
+    emailSuccessOrFailureFbo,
+    emailSuccessOrFailureLc
   );
 
   info("registration.controller: createNewRegistration finished");
