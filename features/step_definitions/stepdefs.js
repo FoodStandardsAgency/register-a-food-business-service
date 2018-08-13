@@ -139,7 +139,8 @@ Given("I have a new registration with all valid required fields", function() {
         },
         activities: {
           customer_type: "End consumer",
-          business_type: "Livestock farm"
+          business_type: "Livestock farm",
+          import_export_activities: "None"
         }
       },
       metadata: {
