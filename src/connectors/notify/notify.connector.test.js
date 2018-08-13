@@ -1,7 +1,11 @@
 const { NotifyClient } = require("notifications-node-client");
 const { sendSingleEmail } = require("./notify.connector");
 const { notifyClientDouble } = require("./notify.double");
-
+jest.mock("../../services/logging.service", () => ({
+  logEmitter: {
+    emit: jest.fn()
+  }
+}));
 jest.mock("notifications-node-client");
 jest.mock("./notify.double");
 

@@ -26,4 +26,11 @@ describe("logEmitter", () => {
       expect(error).toBeCalled();
     });
   });
+
+  describe("on doubleMode event", () => {
+    it("should call winston info", () => {
+      logEmitter.emit("doubleMode");
+      expect(info).toBeCalled();
+    });
+  });
 });

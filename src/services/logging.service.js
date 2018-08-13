@@ -13,8 +13,12 @@ logEmitter.on("functionSuccess", (module, functionName) => {
   info(`${module}: ${functionName} successful`);
 });
 
-logEmitter.on("functionFail", (module, functionName) => {
-  error(`${module}: ${functionName} failed`);
+logEmitter.on("functionFail", (module, functionName, err) => {
+  error(`${module}: ${functionName} failed with: ${err}`);
 });
+
+logEmitter.on("doubleMode", (module, functionName) => {
+  info(`${module}: ${functionName}: running in double mode`);
+})
 
 module.exports = { logEmitter };

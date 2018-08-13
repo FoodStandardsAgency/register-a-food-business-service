@@ -1,6 +1,6 @@
 const { NotifyClient } = require("notifications-node-client");
 const { notifyClientDouble } = require("./notify.double");
-const { info, error } = require("winston");
+const { logEmitter } = require("../../services/logging.service");
 
 const sendSingleEmail = async (
   templateId,
@@ -8,18 +8,18 @@ const sendSingleEmail = async (
   registration,
   postRegistrationMetadata
 ) => {
-  info("notify.connector: sendSingleEmail: called");
+  logEmitter.emit("functionCall", "notify.connector", "sendSingleEmail");
 
   let notifyClient;
 
   if (process.env.DOUBLE_MODE === "true") {
-    info("notify.connector: running in double mode");
+    logEmitter.emit("doubleMode", "notify.connector", "sendSingleEmail");
     notifyClient = notifyClientDouble;
   } else {
     try {
       notifyClient = new NotifyClient(process.env.NOTIFY_KEY);
     } catch (err) {
-      error(`notify.connector: sendSingleEmail errored: ${err}`);
+      logEmitter.emit("functionFail", "notify.connector", "sendSingleEmail", err);
       throw new Error(
         "notify.connector: sendSingleEmail: NOTIFY_KEY environment variable either incorrect or missing, or NotifyClient has failed."
       );
@@ -45,10 +45,10 @@ const sendSingleEmail = async (
 
     const notifyResponse = await notifyClient.sendEmail(...notifyArguments);
     const responseBody = notifyResponse.body;
-    info("notify.connector: sendSingleEmail: successful");
+    logEmitter.emit("functionSuccess", "notify.connector", "sendSingleEmail");
     return responseBody;
   } catch (err) {
-    error(`notify.connector: sendSingleEmail: errored with: ${err}`);
+    logEmitter.emit("functionFail", "notify.connector", "sendSingleEmail", err);
     throw new Error(err.message);
   }
 };
