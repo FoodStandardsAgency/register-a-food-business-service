@@ -38,6 +38,12 @@ jest.mock("./validation.schema", () => ({
   }
 }));
 
+jest.mock("./logging.service", () => ({
+  logEmitter: {
+    emit: jest.fn()
+  }
+}));
+
 const { validate } = require("./validation.service");
 
 describe("Function: validate", () => {
