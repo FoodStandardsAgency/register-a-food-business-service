@@ -4,7 +4,7 @@ const { Given, When, Then } = require("cucumber");
 
 const sendRequest = async body => {
   const res = await fetch(
-    "https://dev-register-a-food-business-service-double.azurewebsites.net//api/registration/createNewRegistration",
+    "https://dev-register-a-food-business-service-double.azurewebsites.net/api/registration/createNewRegistration",
     {
       method: "POST",
       headers: {
@@ -20,7 +20,7 @@ const sendRequest = async body => {
 
 const getRequest = async id => {
   const res = await fetch(
-    `https://dev-register-a-food-business-service-double.azurewebsites.net//api/registration/${id}`
+    `https://dev-register-a-food-business-service-double.azurewebsites.net/api/registration/${id}`
   );
   return res.json();
 };
@@ -116,7 +116,7 @@ Given("I have a new registration with all valid required fields", function() {
           establishment_trading_name: "Itsu",
           establishment_primary_number: "329857245",
           establishment_secondary_number: "84345245",
-          establishment_email: "django@email.com",
+          establishment_email: "fsatestemail.valid@gmail.com",
           establishment_opening_date: "2018-06-07"
         },
         operator: {
@@ -127,7 +127,7 @@ Given("I have a new registration with all valid required fields", function() {
           operator_street: "Some St.",
           operator_town: "London",
           operator_primary_number: "9827235",
-          operator_email: "operator@email.com",
+          operator_email: "fsatestemail.valid@gmail.com",
           operator_type: "Sole trader"
         },
         premise: {

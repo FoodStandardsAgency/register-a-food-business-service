@@ -9,6 +9,7 @@
     "test:integration": "jest tests/integration/*.js",
     "test:contract": "jest tests/contract/*.js",
     "test:component": "cucumber-js",
+    "test:backendperformance": "artillery run backendPerformance.yml",
     "lint": "eslint ./src",
     "format:verify": "prettier --list-different '{src,tests}/**/*.js'",
     "format": "prettier --write '{src,tests}/**/*.js'",
@@ -17,20 +18,18 @@
   },
   "repository": {
     "type": "git",
-    "url":
-      "git+https://github.com/slice-and-dice/register-a-food-business-service.git"
+    "url": "git+https://github.com/slice-and-dice/register-a-food-business-service.git"
   },
   "author": "",
   "license": "ISC",
   "bugs": {
-    "url":
-      "https://github.com/slice-and-dice/register-a-food-business-service/issues"
+    "url": "https://github.com/slice-and-dice/register-a-food-business-service/issues"
   },
-  "homepage":
-    "https://github.com/slice-and-dice/register-a-food-business-service#readme",
+  "homepage": "https://github.com/slice-and-dice/register-a-food-business-service#readme",
   "dependencies": {
     "@slice-and-dice/fsa-rof": "1.0.3",
     "@slice-and-dice/register-a-food-business-validation": "1.10.1",
+    "artillery": "^1.6.0-22",
     "body-parser": "1.18.3",
     "dotenv": "6.0.0",
     "express": "4.16.3",

@@ -1,0 +1,56 @@
+config:
+  target: 'https://staging-register-a-food-business-service.azurewebsites.net/'
+  phases:
+    - duration: 60
+      arrivalRate: 1
+      rampTo: 10
+scenarios:
+  - flow:
+    - post:
+        url: "/api/registration/createNewRegistration"
+        json:     
+          {
+	"registration": {
+		"establishment": {
+			"establishment_details": {
+				"establishment_trading_name": "Itsu",
+				"establishment_primary_number": "329857245",
+				"establishment_secondary_number": "84345245",
+				"establishment_email": "fsatestemail.valid@gmail.com",
+				"establishment_opening_date": "2018-06-07"
+			},
+			"operator": {
+				"operator_first_name": "Fred",
+				"operator_last_name": "Bloggs",
+				"operator_postcode": "SW12 9RQ",
+				"operator_first_line": "335",
+				"operator_street": "Some St.",
+				"operator_town": "London",
+				"operator_primary_number": "9827235",
+				"operator_email": "fsatestemail.valid@gmail.com",
+				"operator_type": "Sole trader"
+			},
+			"premise": {
+				"establishment_postcode": "SW12 9RQ",
+				"establishment_first_line": "123",
+				"establishment_street": "Street",
+				"establishment_town": "London",
+				"establishment_type": "Home or domestic premises"
+				
+			},
+			"activities": {
+				"customer_type": "End consumer",
+				"business_type": "Restaurant, cafe, canteen or fast food"
+				
+			}
+		},
+		"metadata": {
+			"declaration1": "Declaration",
+			"declaration2": "Declaration",
+			"declaration3": "Declaration"
+		}
+	}
+}
+
+
+       
