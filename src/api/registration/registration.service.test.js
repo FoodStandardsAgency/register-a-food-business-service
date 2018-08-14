@@ -31,7 +31,15 @@ const {
 
 const { sendSingleEmail } = require("../../connectors/notify/notify.connector");
 
-const { NOTIFY_TEMPLATE_ID_FBO } = require("../../config");
+jest.mock("../../config", () => ({
+  NOTIFY_TEMPLATE_ID_FBO: "1234",
+  NOTIFY_TEMPLATE_ID_LC: "5678"
+}));
+
+const {
+  NOTIFY_TEMPLATE_ID_FBO,
+  NOTIFY_TEMPLATE_ID_LC
+} = require("../../config");
 
 const fetch = require("node-fetch");
 
@@ -55,7 +63,8 @@ const {
   getFullRegistrationById,
   sendTascomiRegistration,
   getRegistrationMetaData,
-  sendFboEmail
+  sendFboEmail,
+  sendLcEmail
 } = require("./registration.service");
 
 describe("Function: saveRegistration: ", () => {
@@ -207,6 +216,10 @@ describe("Function: sendFboEmail: ", () => {
     example: "metadata"
   };
 
+  const testLocalCouncilContactDetails = {
+    example: "metadata"
+  };
+
   describe("When the connector responds successfully", () => {
     beforeEach(async () => {
       sendSingleEmail.mockImplementation(() => ({
@@ -218,7 +231,8 @@ describe("Function: sendFboEmail: ", () => {
       beforeEach(async () => {
         result = await sendFboEmail(
           testRegistration,
-          testPostRegistrationMetadata
+          testPostRegistrationMetadata,
+          testLocalCouncilContactDetails
         );
       });
 
@@ -229,10 +243,11 @@ describe("Function: sendFboEmail: ", () => {
 
       it("should have called the connector with the correct arguments", () => {
         expect(sendSingleEmail).toHaveBeenLastCalledWith(
-          NOTIFY_TEMPLATE_ID_FBO,
+          "1234",
           "example@example.com",
           testRegistration,
-          testPostRegistrationMetadata
+          testPostRegistrationMetadata,
+          testLocalCouncilContactDetails
         );
       });
     });
@@ -241,7 +256,8 @@ describe("Function: sendFboEmail: ", () => {
       beforeEach(async () => {
         result = await sendFboEmail(
           testRegistrationWithRepresentativeEmail,
-          testPostRegistrationMetadata
+          testPostRegistrationMetadata,
+          testLocalCouncilContactDetails
         );
       });
 
@@ -255,7 +271,8 @@ describe("Function: sendFboEmail: ", () => {
           NOTIFY_TEMPLATE_ID_FBO,
           "example-rep@example.com",
           testRegistrationWithRepresentativeEmail,
-          testPostRegistrationMetadata
+          testPostRegistrationMetadata,
+          testLocalCouncilContactDetails
         );
       });
     });
@@ -268,12 +285,78 @@ describe("Function: sendFboEmail: ", () => {
       });
       result = await sendFboEmail(
         testRegistration,
-        testPostRegistrationMetadata
+        testPostRegistrationMetadata,
+        testLocalCouncilContactDetails
       );
     });
 
     it("should return an object with success value false", () => {
       expect(result.email_fbo.success).toBe(false);
+    });
+  });
+});
+
+describe("Function: sendLCEmail: ", () => {
+  let result;
+  const testRegistration = {
+    local_council: "example@example.com"
+  };
+
+  const testPostRegistrationMetadata = {
+    example: "metadata"
+  };
+
+  const testLocalCouncilContactDetails = {
+    local_council_email: "example@example.com"
+  };
+
+  describe("When the connector responds successfully", () => {
+    beforeEach(async () => {
+      sendSingleEmail.mockImplementation(() => ({
+        id: "123-456"
+      }));
+    });
+
+    describe("When local_council is defined", () => {
+      beforeEach(async () => {
+        result = await sendLcEmail(
+          testRegistration,
+          testPostRegistrationMetadata,
+          testLocalCouncilContactDetails
+        );
+      });
+
+      it("should return an object with success value true and the correct recipient email", () => {
+        expect(result.email_lc.success).toBe(true);
+        expect(result.email_lc.recipient).toBe("example@example.com");
+      });
+
+      it("should have called the connector with the correct arguments", () => {
+        expect(sendSingleEmail).toHaveBeenLastCalledWith(
+          NOTIFY_TEMPLATE_ID_LC,
+          "example@example.com",
+          testRegistration,
+          testPostRegistrationMetadata,
+          testLocalCouncilContactDetails
+        );
+      });
+    });
+  });
+
+  describe("When the connector throws an error", () => {
+    beforeEach(async () => {
+      sendSingleEmail.mockImplementation(() => {
+        throw new Error();
+      });
+      result = await sendLcEmail(
+        testRegistration,
+        testPostRegistrationMetadata,
+        testLocalCouncilContactDetails
+      );
+    });
+
+    it("should return an object with success value false", () => {
+      expect(result.email_lc.success).toBe(false);
     });
   });
 });
