@@ -333,7 +333,7 @@ describe("Function: sendLCEmail: ", () => {
 
       it("should have called the connector with the correct arguments", () => {
         expect(sendSingleEmail).toHaveBeenLastCalledWith(
-          "5678",
+          NOTIFY_TEMPLATE_ID_LC,
           "example@example.com",
           testRegistration,
           testPostRegistrationMetadata,
