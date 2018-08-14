@@ -7,7 +7,8 @@ jest.mock("./registration.service", () => ({
   getFullRegistrationById: jest.fn(),
   sendTascomiRegistration: jest.fn(),
   getRegistrationMetaData: jest.fn(),
-  sendFboEmail: jest.fn()
+  sendFboEmail: jest.fn(),
+  sendLcEmail: jest.fn()
 }));
 
 const {
@@ -15,7 +16,8 @@ const {
   getFullRegistrationById,
   getRegistrationMetaData,
   sendTascomiRegistration,
-  sendFboEmail
+  sendFboEmail,
+  sendLcEmail
 } = require("./registration.service");
 const { validate } = require("../../services/validation.service");
 const {
@@ -45,6 +47,9 @@ describe("registration controller", () => {
         sendFboEmail.mockImplementation(() => {
           return { email_success_fbo: true };
         });
+        sendLcEmail.mockImplementation(() => {
+          return { email_success_lc: true };
+        });
         result = await createNewRegistration("input");
       });
 
@@ -56,6 +61,9 @@ describe("registration controller", () => {
       });
       it("should return the result of sendFboEmail", () => {
         expect(result.email_success_fbo).toBe(true);
+      });
+      it("should return the result of sendLcEmail", () => {
+        expect(result.email_success_lc).toBe(true);
       });
     });
 

@@ -25,7 +25,11 @@ const createNewRegistration = async registration => {
 
   // RESOLUTION
   // This is a stubbed email until LC lookup is implemented
-  const localCouncilEmail = "fsatestemail.valid@gmail.com)";
+  const localCouncilContactDetails = {
+    local_council: "Rushmoor Borough Council",
+    local_council_email: "fsatestemail.valid@gmail.com",
+    local_council_phone_number: "12345678"
+  };
   const metaDataResponse = await getRegistrationMetaData();
   const tascomiResponse = await sendTascomiRegistration(
     registration,
@@ -36,13 +40,14 @@ const createNewRegistration = async registration => {
 
   const emailSuccessOrFailureFbo = await sendFboEmail(
     registration,
-    metaDataResponse
+    metaDataResponse,
+    localCouncilContactDetails
   );
 
   const emailSuccessOrFailureLc = await sendLcEmail(
     registration,
     metaDataResponse,
-    localCouncilEmail
+    localCouncilContactDetails
   );
 
   const combinedResponse = Object.assign(

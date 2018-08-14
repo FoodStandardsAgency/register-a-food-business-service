@@ -216,6 +216,10 @@ describe("Function: sendFboEmail: ", () => {
     example: "metadata"
   };
 
+  const testLocalCouncilContactDetails = {
+    example: "metadata"
+  };
+
   describe("When the connector responds successfully", () => {
     beforeEach(async () => {
       sendSingleEmail.mockImplementation(() => ({
@@ -227,7 +231,8 @@ describe("Function: sendFboEmail: ", () => {
       beforeEach(async () => {
         result = await sendFboEmail(
           testRegistration,
-          testPostRegistrationMetadata
+          testPostRegistrationMetadata,
+          testLocalCouncilContactDetails
         );
       });
 
@@ -241,7 +246,8 @@ describe("Function: sendFboEmail: ", () => {
           "1234",
           "example@example.com",
           testRegistration,
-          testPostRegistrationMetadata
+          testPostRegistrationMetadata,
+          testLocalCouncilContactDetails
         );
       });
     });
@@ -250,7 +256,8 @@ describe("Function: sendFboEmail: ", () => {
       beforeEach(async () => {
         result = await sendFboEmail(
           testRegistrationWithRepresentativeEmail,
-          testPostRegistrationMetadata
+          testPostRegistrationMetadata,
+          testLocalCouncilContactDetails
         );
       });
 
@@ -264,7 +271,8 @@ describe("Function: sendFboEmail: ", () => {
           NOTIFY_TEMPLATE_ID_FBO,
           "example-rep@example.com",
           testRegistrationWithRepresentativeEmail,
-          testPostRegistrationMetadata
+          testPostRegistrationMetadata,
+          testLocalCouncilContactDetails
         );
       });
     });
@@ -277,7 +285,8 @@ describe("Function: sendFboEmail: ", () => {
       });
       result = await sendFboEmail(
         testRegistration,
-        testPostRegistrationMetadata
+        testPostRegistrationMetadata,
+        testLocalCouncilContactDetails
       );
     });
 
@@ -297,6 +306,10 @@ describe("Function: sendLCEmail: ", () => {
     example: "metadata"
   };
 
+  const testLocalCouncilContactDetails = {
+    local_council_email: "example@example.com"
+  };
+
   describe("When the connector responds successfully", () => {
     beforeEach(async () => {
       sendSingleEmail.mockImplementation(() => ({
@@ -308,7 +321,8 @@ describe("Function: sendLCEmail: ", () => {
       beforeEach(async () => {
         result = await sendLcEmail(
           testRegistration,
-          testPostRegistrationMetadata
+          testPostRegistrationMetadata,
+          testLocalCouncilContactDetails
         );
       });
 
@@ -322,7 +336,8 @@ describe("Function: sendLCEmail: ", () => {
           "5678",
           "example@example.com",
           testRegistration,
-          testPostRegistrationMetadata
+          testPostRegistrationMetadata,
+          testLocalCouncilContactDetails
         );
       });
     });
@@ -335,7 +350,8 @@ describe("Function: sendLCEmail: ", () => {
       });
       result = await sendLcEmail(
         testRegistration,
-        testPostRegistrationMetadata
+        testPostRegistrationMetadata,
+        testLocalCouncilContactDetails
       );
     });
 
