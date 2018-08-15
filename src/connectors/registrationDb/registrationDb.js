@@ -29,7 +29,7 @@ const modelCreate = async (data, model, modelName) => {
       `create${modelName}`,
       err
     );
-    return err;
+    throw err;
   }
 };
 
@@ -79,7 +79,7 @@ const modelFindOne = async (query, model, functionName) => {
       functionName,
       err
     );
-    return err;
+    throw err;
   }
 };
 
