@@ -59,8 +59,7 @@ module.exports.validate = data => {
   const validatorResult = validator.validate(data, schema.registration);
   // turn errors into key:value pairs
   validatorResult.errors.forEach(error => {
-    const key = error.property.split(".")[1];
-    result.push({ key, message: error.message });
+    result.push({ property: error.property, message: error.message });
     logEmitter.emit(
       "functionFail",
       "validation.service",
