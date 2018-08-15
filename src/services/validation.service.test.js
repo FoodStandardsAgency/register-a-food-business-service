@@ -88,14 +88,18 @@ describe("Function: validate", () => {
 
       // Assert
       expect(response.length).toBe(8);
-      expect(response[0].key).toBe("operator_first_name");
-      expect(response[1].key).toBe("operator_last_name");
-      expect(response[2].key).toBe("operator_primary_number");
-      expect(response[3].key).toBe("operator_company_name");
-      expect(response[4].key).toBe("operator_company_house_number");
-      expect(response[5].key).toBe("operator_charity_name");
-      expect(response[6].key).toBe("operator_charity_number");
-      expect(response[7].key).toBe("establishment_primary_number");
+      expect(response[0].property).toBe("instance.operator_first_name");
+      expect(response[1].property).toBe("instance.operator_last_name");
+      expect(response[2].property).toBe("instance.operator_primary_number");
+      expect(response[3].property).toBe("instance.operator_company_name");
+      expect(response[4].property).toBe(
+        "instance.operator_company_house_number"
+      );
+      expect(response[5].property).toBe("instance.operator_charity_name");
+      expect(response[6].property).toBe("instance.operator_charity_number");
+      expect(response[7].property).toBe(
+        "instance.establishment_primary_number"
+      );
     });
   });
 

@@ -36,6 +36,7 @@ describe("registration router", () => {
     });
 
     describe("when an error is thrown", () => {
+      let next;
       beforeEach(async () => {
         registrationController.createNewRegistration.mockImplementation(() => {
           throw new Error("reg error");
@@ -43,10 +44,15 @@ describe("registration router", () => {
         status.mockImplementation(() => ({
           send: jest.fn()
         }));
-        await handler({ body: { registration: "reg" } }, { send, status });
+        next = jest.fn();
+        await handler(
+          { body: { registration: "reg" } },
+          { send, status },
+          next
+        );
       });
-      it("should call res.status", () => {
-        expect(status).toBeCalledWith(500);
+      it("should call next with error", () => {
+        expect(next).toBeCalledWith(new Error("reg error"));
       });
     });
   });

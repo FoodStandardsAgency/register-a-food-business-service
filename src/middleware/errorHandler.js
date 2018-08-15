@@ -89,7 +89,8 @@ const errorHandler = (err, req, res, next) => {
   }
 
   if (err.statusCode === undefined) {
-    err.statusCode = 500;
+    errorDetail.statusCode = 500;
+    errorDetail.developerMessage = "Something went wrong, we don't understand";
   }
   res.status(errorDetail.statusCode).send({
     errorCode: errorDetail.code,

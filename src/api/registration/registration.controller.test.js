@@ -77,8 +77,8 @@ describe("registration controller", () => {
         }
       });
 
-      it("should return the registration", () => {
-        expect(result.message).toEqual('["ERROR"]');
+      it("should throw a validation error", () => {
+        expect(result.name).toEqual("validationError");
       });
     });
 

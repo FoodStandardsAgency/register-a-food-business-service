@@ -11,7 +11,7 @@ const registrationRouter = () => {
       );
       res.send(response);
     } catch (err) {
-      return next(err);
+      next(err);
     }
   });
 
