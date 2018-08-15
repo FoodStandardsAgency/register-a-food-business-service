@@ -109,7 +109,10 @@ const createFoodBusinessRegistration = async (registration, fsa_rn) => {
       "createFoodBusinessRegistration",
       err
     );
-    return err;
+    if (err.statusCode === 401) {
+      err.name = "tascomiAuth";
+    }
+    throw err;
   }
 };
 
@@ -137,7 +140,10 @@ const createReferenceNumber = async id => {
       "createReferenceNumber",
       err
     );
-    return err;
+    if (err.statusCode === 401) {
+      err.name = "tascomiAuth";
+    }
+    throw err;
   }
 };
 
