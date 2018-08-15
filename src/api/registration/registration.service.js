@@ -105,6 +105,8 @@ const sendTascomiRegistration = async (registration, fsa_rn) => {
   try {
     const reg = await createFoodBusinessRegistration(registration, fsa_rn);
     const response = await createReferenceNumber(JSON.parse(reg).id);
+    console.log(response);
+    console.log(JSON.parse(response).id);
     if (JSON.parse(response).id === 0) {
       const err = new Error("createReferenceNumber failed");
       err.name = "tascomiRefNumber";
@@ -201,7 +203,12 @@ const sendLcEmail = async (
     lcEmailSent.email_lc = { success: true, recipient: lcEmailAddress };
   } catch (err) {
     lcEmailSent.email_lc = { success: false, recipient: lcEmailAddress };
-    logEmitter.emit("functionFail", "registration.service", "sendFboEmail", err);
+    logEmitter.emit(
+      "functionFail",
+      "registration.service",
+      "sendFboEmail",
+      err
+    );
   }
   logEmitter.emit("functionSuccess", "registration.service", "sendLcEmail");
   return lcEmailSent;

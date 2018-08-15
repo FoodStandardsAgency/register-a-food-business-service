@@ -70,11 +70,36 @@ describe("Function: createFoodBusinessRegistration", () => {
       request.mockImplementation(() => {
         throw new Error("Request error");
       });
-      result = await createFoodBusinessRegistration(registration);
+      try {
+        await createFoodBusinessRegistration(registration);
+      } catch (err) {
+        result = err;
+      }
     });
 
-    it("should return the error", () => {
+    it("should throw the error", () => {
       expect(result.message).toBe("Request error");
+    });
+  });
+
+  describe("When request throws a tascomi auth error", () => {
+    beforeEach(async () => {
+      process.env.DOUBLE_MODE = false;
+      jest.clearAllMocks();
+      request.mockImplementation(() => {
+        const err = new Error("Request error");
+        err.statusCode = 401;
+        throw err;
+      });
+      try {
+        await createFoodBusinessRegistration(registration);
+      } catch (err) {
+        result = err;
+      }
+    });
+
+    it("Should throw the error", () => {
+      expect(result.name).toBe("tascomiAuth");
     });
   });
 
@@ -133,11 +158,36 @@ describe("Function: createReferenceNumber", () => {
       request.mockImplementation(() => {
         throw new Error("Request error");
       });
-      result = await createReferenceNumber("35");
+      try {
+        await createReferenceNumber("35");
+      } catch (err) {
+        result = err;
+      }
     });
 
-    it("Should return the error", () => {
+    it("Should throw the error", () => {
       expect(result.message).toBe("Request error");
+    });
+  });
+
+  describe("When request throws a tascomi auth error", () => {
+    beforeEach(async () => {
+      process.env.DOUBLE_MODE = false;
+      jest.clearAllMocks();
+      request.mockImplementation(() => {
+        const err = new Error("Request error");
+        err.statusCode = 401;
+        throw err;
+      });
+      try {
+        await createReferenceNumber("35");
+      } catch (err) {
+        result = err;
+      }
+    });
+
+    it("Should throw the error", () => {
+      expect(result.name).toBe("tascomiAuth");
     });
   });
 

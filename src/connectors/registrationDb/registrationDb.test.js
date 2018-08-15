@@ -67,7 +67,11 @@ describe("RegistrationDb connector", () => {
         Activities.create.mockImplementation(() => {
           throw new Error("Failed");
         });
-        result = await createActivities({}, "45");
+        try {
+          await createActivities({}, "45");
+        } catch (err) {
+          result = err;
+        }
       });
 
       it("Should return the error", () => {
@@ -102,7 +106,11 @@ describe("RegistrationDb connector", () => {
         Establishment.create.mockImplementation(() => {
           throw new Error("Failed");
         });
-        result = await createEstablishment({}, "45");
+        try {
+          await createEstablishment({}, "45");
+        } catch (err) {
+          result = err;
+        }
       });
 
       it("Should return the error", () => {
@@ -132,12 +140,16 @@ describe("RegistrationDb connector", () => {
   });
 
   describe("Function: createMetadata", () => {
-    describe("When Establishment.create fails", () => {
+    describe("When Metadata.create fails", () => {
       beforeEach(async () => {
-        Establishment.create.mockImplementation(() => {
+        Metadata.create.mockImplementation(() => {
           throw new Error("Failed");
         });
-        result = await createEstablishment({}, "45");
+        try {
+          await createMetadata({}, "45");
+        } catch (err) {
+          result = err;
+        }
       });
 
       it("Should return the error", () => {
@@ -172,7 +184,11 @@ describe("RegistrationDb connector", () => {
         Operator.create.mockImplementation(() => {
           throw new Error("Failed");
         });
-        result = await createOperator({}, "45");
+        try {
+          await createOperator({}, "45");
+        } catch (err) {
+          result = err;
+        }
       });
 
       it("Should return the error", () => {
@@ -207,7 +223,11 @@ describe("RegistrationDb connector", () => {
         Premise.create.mockImplementation(() => {
           throw new Error("Failed");
         });
-        result = await createPremise({}, "45");
+        try {
+          await createPremise({}, "45");
+        } catch (err) {
+          result = err;
+        }
       });
 
       it("Should return the error", () => {
@@ -242,7 +262,11 @@ describe("RegistrationDb connector", () => {
         Registration.create.mockImplementation(() => {
           throw new Error("Failed");
         });
-        result = await createRegistration({});
+        try {
+          await createRegistration({}, "45");
+        } catch (err) {
+          result = err;
+        }
       });
 
       it("Should return the error", () => {
@@ -276,7 +300,11 @@ describe("RegistrationDb connector", () => {
         Registration.findOne.mockImplementation(() => {
           throw new Error("Failed");
         });
-        result = await getRegistrationById("45");
+        try {
+          await getRegistrationById("45");
+        } catch (err) {
+          result = err;
+        }
       });
 
       it("Should return the error", () => {
@@ -310,7 +338,11 @@ describe("RegistrationDb connector", () => {
         Establishment.findOne.mockImplementation(() => {
           throw new Error("Failed");
         });
-        result = await getEstablishmentByRegId("45");
+        try {
+          await getEstablishmentByRegId("45");
+        } catch (err) {
+          result = err;
+        }
       });
 
       it("Should return the error", () => {
@@ -344,7 +376,11 @@ describe("RegistrationDb connector", () => {
         Metadata.findOne.mockImplementation(() => {
           throw new Error("Failed");
         });
-        result = await getMetadataByRegId("45");
+        try {
+          await getMetadataByRegId("45");
+        } catch (err) {
+          result = err;
+        }
       });
 
       it("Should return the error", () => {
@@ -378,7 +414,11 @@ describe("RegistrationDb connector", () => {
         Operator.findOne.mockImplementation(() => {
           throw new Error("Failed");
         });
-        result = await getOperatorByEstablishmentId("45");
+        try {
+          await getOperatorByEstablishmentId("45");
+        } catch (err) {
+          result = err;
+        }
       });
 
       it("Should return the error", () => {
@@ -412,7 +452,11 @@ describe("RegistrationDb connector", () => {
         Premise.findOne.mockImplementation(() => {
           throw new Error("Failed");
         });
-        result = await getPremiseByEstablishmentId("45");
+        try {
+          await getPremiseByEstablishmentId("45");
+        } catch (err) {
+          result = err;
+        }
       });
 
       it("Should return the error", () => {
@@ -446,7 +490,11 @@ describe("RegistrationDb connector", () => {
         Activities.findOne.mockImplementation(() => {
           throw new Error("Failed");
         });
-        result = await getActivitiesByEstablishmentId("45");
+        try {
+          await getActivitiesByEstablishmentId("45");
+        } catch (err) {
+          result = err;
+        }
       });
 
       it("Should return the error", () => {

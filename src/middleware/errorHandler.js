@@ -57,7 +57,7 @@ const errorDetails = [
     name: "notifyInvalidTemplate",
     code: "6",
     developerMessage:
-      "Notify template ID is not valid, check credentials provided to app. Raw error: ",
+      "Notify template ID is not valid, check credentials provided to app. Raw error:",
     userMessages: "",
     statusCode: 500
   },
@@ -65,38 +65,44 @@ const errorDetails = [
     name: "notifyMissingPersonalisation",
     code: "7",
     developerMessage:
-      "Notify personalisation is missing, check data sent to Notify API. Raw error: ",
+      "Notify personalisation is missing, check data sent to Notify API. Raw error:",
     userMessages: "",
     statusCode: 500
   }
 ];
 
 const errorHandler = (err, req, res, next) => {
-  const errorDetail = errorDetails.find(error => {
-    return error.name === err.name;
-  });
-  if (errorDetail.name === "validationError") {
-    errorDetail.userMessages = err.validationErrors;
-  }
+  if (err.name) {
+    const errorDetail = errorDetails.find(error => {
+      return error.name === err.name;
+    });
+    if (errorDetail.name === "validationError") {
+      errorDetail.userMessages = err.validationErrors;
+    }
+  
+    if (
+      errorDetail.name === "notifyInvalidTemplate" ||
+      errorDetail.name === "notifyMissingPersonalisation"
+    ) {
+      errorDetail.developerMessage = `${errorDetail.developerMessage} ${
+        err.message
+      }`;
+    }
 
-  if (
-    errorDetail.name === "notifyInvalidTemplate" ||
-    errorDetail.name === "notifyMissingPersonalisation"
-  ) {
-    errorDetail.developerMessage = `${errorDetail.developerMessage} ${
-      err.message
-    }`;
+    res.status(errorDetail.statusCode);
+    res.send({
+      errorCode: errorDetail.code,
+      developerMessage: errorDetail.developerMessage,
+      userMessages: errorDetail.userMessages
+    });
+  } else {
+    res.status(500);
+    res.send({
+      errorCode: "Unknown",
+      developerMessage: "Unkown error found, debug and add to error cases",
+      userMessages: ""
+    });
   }
-
-  if (err.statusCode === undefined) {
-    errorDetail.statusCode = 500;
-    errorDetail.developerMessage = "Something went wrong, we don't understand";
-  }
-  res.status(errorDetail.statusCode).send({
-    errorCode: errorDetail.code,
-    developerMessage: errorDetail.developerMessage,
-    userMessages: errorDetail.userMessages
-  });
 };
 
 module.exports = { errorHandler };
