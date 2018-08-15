@@ -4,7 +4,8 @@ const {
   getFullRegistrationById,
   sendTascomiRegistration,
   getRegistrationMetaData,
-  sendFboEmail
+  sendFboEmail,
+  sendLcEmail
 } = require("./registration.service");
 
 const { logEmitter } = require("../../services/logging.service");
@@ -30,7 +31,12 @@ const createNewRegistration = async registration => {
   }
 
   // RESOLUTION
-
+  // This is a stubbed email until LC lookup is implemented
+  const localCouncilContactDetails = {
+    local_council: "Rushmoor Borough Council",
+    local_council_email: "fsatestemail.valid@gmail.com",
+    local_council_phone_number: "12345678"
+  };
   const metaDataResponse = await getRegistrationMetaData();
   const tascomiResponse = await sendTascomiRegistration(
     registration,
@@ -41,7 +47,14 @@ const createNewRegistration = async registration => {
 
   const emailSuccessOrFailureFbo = await sendFboEmail(
     registration,
-    metaDataResponse
+    metaDataResponse,
+    localCouncilContactDetails
+  );
+
+  const emailSuccessOrFailureLc = await sendLcEmail(
+    registration,
+    metaDataResponse,
+    localCouncilContactDetails
   );
 
   const combinedResponse = Object.assign(
@@ -50,7 +63,8 @@ const createNewRegistration = async registration => {
     {
       tascomiResponse: tascomiObject
     },
-    emailSuccessOrFailureFbo
+    emailSuccessOrFailureFbo,
+    emailSuccessOrFailureLc
   );
 
   logEmitter.emit(

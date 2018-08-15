@@ -1,12 +1,37 @@
 const { NotifyClient } = require("notifications-node-client");
 const { notifyClientDouble } = require("./notify.double");
 const { logEmitter } = require("../../services/logging.service");
+const optionalData = [
+  "operator_first_name",
+  "operator_last_name",
+  "operator_street",
+  "operator_town",
+  "operator_primary_number",
+  "operator_secondary_number",
+  "operator_email",
+  "operator_company_name",
+  "operator_company_house_number",
+  "operator_charity_name",
+  "operator_charity_number",
+  "establishment_street",
+  "establishment_town",
+  "establishment_primary_number",
+  "establishment_secondary_number",
+  "establishment_email",
+  "establishment_trading_name",
+  "establishment_opening_date",
+  "contact_representative_name",
+  "contact_representative_number",
+  "contact_representative_role",
+  "contact_representative_email"
+];
 
 const sendSingleEmail = async (
   templateId,
   recipientEmail,
   registration,
-  postRegistrationMetadata
+  postRegistrationMetadata,
+  localCouncilContactDetails
 ) => {
   logEmitter.emit("functionCall", "notify.connector", "sendSingleEmail");
 
@@ -26,8 +51,18 @@ const sendSingleEmail = async (
     registration.establishment.operator,
     registration.establishment.activities,
     registration.metadata,
-    postRegistrationMetadata
+    postRegistrationMetadata,
+    localCouncilContactDetails
   );
+
+  optionalData.forEach(key => {
+    if (flattenedData[key]) {
+      flattenedData[`${key}_exists`] = "yes";
+    } else {
+      flattenedData[key] = "";
+      flattenedData[`${key}_exists`] = "no";
+    }
+  });
 
   try {
     const notifyArguments = [

@@ -1,7 +1,10 @@
 const moment = require("moment");
 const fetch = require("node-fetch");
 
-const { NOTIFY_TEMPLATE_ID_FBO } = require("../../config");
+const {
+  NOTIFY_TEMPLATE_ID_FBO,
+  NOTIFY_TEMPLATE_ID_LC
+} = require("../../config");
 
 const {
   createRegistration,
@@ -149,7 +152,11 @@ const getRegistrationMetaData = async () => {
   };
 };
 
-const sendFboEmail = async (registration, postRegistrationMetadata) => {
+const sendFboEmail = async (
+  registration,
+  postRegistrationMetadata,
+  localCouncilContactDetails
+) => {
   logEmitter.emit("functionCall", "registration.service", "sendFboEmail");
   const fboEmailSent = { email_fbo: { success: undefined } };
   const fboEmailAddress =
@@ -161,7 +168,8 @@ const sendFboEmail = async (registration, postRegistrationMetadata) => {
       NOTIFY_TEMPLATE_ID_FBO,
       fboEmailAddress,
       registration,
-      postRegistrationMetadata
+      postRegistrationMetadata,
+      localCouncilContactDetails
     );
     fboEmailSent.email_fbo = { success: true, recipient: fboEmailAddress };
   } catch (err) {
@@ -173,10 +181,37 @@ const sendFboEmail = async (registration, postRegistrationMetadata) => {
   return fboEmailSent;
 };
 
+const sendLcEmail = async (
+  registration,
+  postRegistrationMetadata,
+  localCouncilContactDetails
+) => {
+  logEmitter.emit("functionCall", "registration.service", "sendLcEmail");
+  const lcEmailSent = { email_lc: { success: undefined } };
+  const lcEmailAddress = localCouncilContactDetails.local_council_email;
+
+  try {
+    await sendSingleEmail(
+      NOTIFY_TEMPLATE_ID_LC,
+      lcEmailAddress,
+      registration,
+      postRegistrationMetadata,
+      localCouncilContactDetails
+    );
+    lcEmailSent.email_lc = { success: true, recipient: lcEmailAddress };
+  } catch (err) {
+    lcEmailSent.email_lc = { success: false, recipient: lcEmailAddress };
+    logEmitter.emit("functionFail", "registration.service", "sendFboEmail", err);
+  }
+  logEmitter.emit("functionSuccess", "registration.service", "sendLcEmail");
+  return lcEmailSent;
+};
+
 module.exports = {
   saveRegistration,
   getFullRegistrationById,
   sendTascomiRegistration,
   getRegistrationMetaData,
-  sendFboEmail
+  sendFboEmail,
+  sendLcEmail
 };
