@@ -4,14 +4,14 @@ const registrationController = require("./registration.controller");
 const registrationRouter = () => {
   const router = Router();
 
-  router.post("/createNewRegistration", async (req, res) => {
+  router.post("/createNewRegistration", async (req, res, next) => {
     try {
       const response = await registrationController.createNewRegistration(
         req.body.registration
       );
       res.send(response);
     } catch (err) {
-      res.status(500).send({ error: err.message });
+      return next(err);
     }
   });
 
