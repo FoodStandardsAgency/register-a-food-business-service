@@ -23,7 +23,10 @@ const createNewRegistration = async registration => {
   }
   const errors = validate(registration);
   if (errors.length) {
-    throw new Error(JSON.stringify(errors));
+    const err = new Error("validationError");
+    err.name = "validationError";
+    err.validationErrors = errors;
+    throw err;
   }
 
   // RESOLUTION
