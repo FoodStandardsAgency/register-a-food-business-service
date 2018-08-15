@@ -16,19 +16,7 @@ const sendSingleEmail = async (
     logEmitter.emit("doubleMode", "notify.connector", "sendSingleEmail");
     notifyClient = notifyClientDouble;
   } else {
-    try {
-      notifyClient = new NotifyClient(process.env.NOTIFY_KEY);
-    } catch (err) {
-      logEmitter.emit(
-        "functionFail",
-        "notify.connector",
-        "sendSingleEmail",
-        err
-      );
-      throw new Error(
-        "notify.connector: sendSingleEmail: NOTIFY_KEY environment variable either incorrect or missing, or NotifyClient has failed."
-      );
-    }
+    notifyClient = new NotifyClient(process.env.NOTIFY_KEY);
   }
 
   const flattenedData = Object.assign(
@@ -54,7 +42,21 @@ const sendSingleEmail = async (
     return responseBody;
   } catch (err) {
     logEmitter.emit("functionFail", "notify.connector", "sendSingleEmail", err);
-    throw new Error(err.message);
+    const newError = new Error();
+    if (err.message === "secretOrPrivateKey must have a value") {
+      newError.name = "notifyMissingKey";
+    }
+    if (err.statusCode === 400) {
+      if (err.error.errors[0].error === "ValidationError") {
+        newError.name = "notifyInvalidTemplate";
+        newError.message = err.message;
+      }
+      if (err.error.errors[0].error === "BadRequestError") {
+        newError.name = "notifyMissingPersonalisation";
+        newError.message = err.message;
+      }
+    }
+    throw newError;
   }
 };
 
