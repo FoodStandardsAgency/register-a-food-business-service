@@ -99,14 +99,29 @@ const sendTascomiRegistration = async (registration, fsa_rn) => {
     "registration.service",
     "sendTascomiRegistration"
   );
-  const reg = await createFoodBusinessRegistration(registration, fsa_rn);
-  const response = await createReferenceNumber(JSON.parse(reg).id);
-  logEmitter.emit(
-    "functionSuccess",
-    "registration.service",
-    "sendTascomiRegistration"
-  );
-  return response;
+  try {
+    const reg = await createFoodBusinessRegistration(registration, fsa_rn);
+    const response = await createReferenceNumber(JSON.parse(reg).id);
+    if (JSON.parse(response).id === 0) {
+      const err = new Error("createReferenceNumber failed");
+      err.name = "tascomiRefNumber";
+      throw err;
+    }
+    logEmitter.emit(
+      "functionSuccess",
+      "registration.service",
+      "sendTascomiRegistration"
+    );
+    return response;
+  } catch (err) {
+    logEmitter.emit(
+      "functionFail",
+      "registrationService",
+      "sendTascomiRegistration",
+      err
+    );
+    throw err;
+  }
 };
 
 const getRegistrationMetaData = async () => {
@@ -152,6 +167,7 @@ const sendFboEmail = async (registration, postRegistrationMetadata) => {
   } catch (err) {
     fboEmailSent.email_fbo = { success: false, recipient: fboEmailAddress };
     logEmitter.emit("functionFail", "registration.service", "sendFboEmail");
+    throw err;
   }
   logEmitter.emit("functionSuccess", "registration.service", "sendFboEmail");
   return fboEmailSent;
