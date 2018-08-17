@@ -1,7 +1,7 @@
 const express = require("express");
 const winston = require("winston");
 const bodyParser = require("body-parser");
-const helmet = require("helmet")
+const helmet = require("helmet");
 
 const { routers } = require("./api/routers");
 
