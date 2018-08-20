@@ -9,7 +9,8 @@
   },
   "rules": {
     "curly": "warn",
-    "prettier/prettier": "warn"
+    "prettier/prettier": "warn",
+    "no-unused-vars": ["error", { "argsIgnorePattern": "^next" }]
   },
   "plugins": ["prettier"],
   "extends": ["eslint:recommended", "prettier"]

@@ -22,6 +22,12 @@ jest.mock("../../connectors/tascomi/tascomi.connector", () => ({
   createReferenceNumber: jest.fn()
 }));
 
+jest.mock("../../services/logging.service", () => ({
+  logEmitter: {
+    emit: jest.fn()
+  }
+}));
+
 jest.mock("node-fetch");
 
 const {
@@ -147,25 +153,44 @@ describe("Function: getFullRegistrationById: ", () => {
 
 describe("Function: sendTascomiRegistration: ", () => {
   let result;
+  describe("When calls are successful", () => {
+    beforeEach(async () => {
+      jest.clearAllMocks();
+      createFoodBusinessRegistration.mockImplementation(() => '{ "id": "123"}');
+      createReferenceNumber.mockImplementation(
+        () => '{ "id": "123", "online_reference": "0000123"}'
+      );
+      result = await sendTascomiRegistration();
+    });
 
-  beforeEach(async () => {
-    jest.clearAllMocks();
-    createFoodBusinessRegistration.mockImplementation(() => '{ "id": "123"}');
+    it("should call createFoodBusinessRegistration", () => {
+      expect(createFoodBusinessRegistration).toBeCalled();
+    });
 
-    createReferenceNumber.mockImplementation(() => "0000123");
-    result = await sendTascomiRegistration();
+    it("should call createReferenceNumber with result of previous call", () => {
+      expect(createReferenceNumber).toBeCalledWith("123");
+    });
+
+    it("should return response of createReferenceNumber", () => {
+      expect(result).toBe('{ "id": "123", "online_reference": "0000123"}');
+    });
   });
 
-  it("should call createFoodBusinessRegistration", () => {
-    expect(createFoodBusinessRegistration).toBeCalled();
-  });
+  describe("When createReferenceNumber fails", () => {
+    beforeEach(async () => {
+      jest.clearAllMocks();
+      createFoodBusinessRegistration.mockImplementation(() => '{ "id": "123"}');
+      createReferenceNumber.mockImplementation(() => '{ "id": 0 }');
+      try {
+        await sendTascomiRegistration();
+      } catch (err) {
+        result = err;
+      }
+    });
 
-  it("should call createReferenceNumber with result of previous call", () => {
-    expect(createReferenceNumber).toBeCalledWith("123");
-  });
-
-  it("should return response of createReferenceNumber", () => {
-    expect(result).toBe("0000123");
+    it("Should throw tascomiRefNumber error", () => {
+      expect(result.name).toBe("tascomiRefNumber");
+    });
   });
 });
 
@@ -281,17 +306,21 @@ describe("Function: sendFboEmail: ", () => {
   describe("When the connector throws an error", () => {
     beforeEach(async () => {
       sendSingleEmail.mockImplementation(() => {
-        throw new Error();
+        throw new Error("message");
       });
-      result = await sendFboEmail(
-        testRegistration,
-        testPostRegistrationMetadata,
-        testLocalCouncilContactDetails
-      );
+      try {
+        await sendFboEmail(
+          testRegistration,
+          testPostRegistrationMetadata,
+          testLocalCouncilContactDetails
+        );
+      } catch (err) {
+        result = err;
+      }
     });
 
     it("should return an object with success value false", () => {
-      expect(result.email_fbo.success).toBe(false);
+      expect(result.message).toBe("message");
     });
   });
 });

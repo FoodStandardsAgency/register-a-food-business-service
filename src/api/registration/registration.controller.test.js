@@ -2,6 +2,12 @@ jest.mock("../../services/validation.service", () => ({
   validate: jest.fn()
 }));
 
+jest.mock("../../services/logging.service", () => ({
+  logEmitter: {
+    emit: jest.fn()
+  }
+}));
+
 jest.mock("./registration.service", () => ({
   saveRegistration: jest.fn(),
   getFullRegistrationById: jest.fn(),
@@ -79,8 +85,8 @@ describe("registration controller", () => {
         }
       });
 
-      it("should return the registration", () => {
-        expect(result.message).toEqual('["ERROR"]');
+      it("should throw a validation error", () => {
+        expect(result.name).toEqual("validationError");
       });
     });
 

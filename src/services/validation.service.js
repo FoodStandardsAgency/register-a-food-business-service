@@ -1,5 +1,5 @@
 const { Validator } = require("jsonschema");
-const { info } = require("winston");
+const { logEmitter } = require("./logging.service");
 const schema = require("./validation.schema");
 
 const errorMessages = {
@@ -54,14 +54,19 @@ validator.attributes.validation = (instance, schema, options, ctx) => {
 };
 
 module.exports.validate = data => {
-  info(`validationService: validate: called`);
+  logEmitter.emit("functionCall", "validation.service", "validate");
   const result = [];
   const validatorResult = validator.validate(data, schema.registration);
   // turn errors into key:value pairs
   validatorResult.errors.forEach(error => {
-    const key = error.property.split(".")[1];
-    result.push({ key, message: error.message });
+    result.push({ property: error.property, message: error.message });
+    logEmitter.emit(
+      "functionFail",
+      "validation.service",
+      "validate",
+      error.message
+    );
   });
-  info(`validationService: validate: finished`);
+  logEmitter.emit("functionSuccess", "validation.service", "validate");
   return result;
 };

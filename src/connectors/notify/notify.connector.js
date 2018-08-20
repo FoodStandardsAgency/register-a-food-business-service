@@ -1,6 +1,6 @@
 const { NotifyClient } = require("notifications-node-client");
 const { notifyClientDouble } = require("./notify.double");
-const { info, error } = require("winston");
+const { logEmitter } = require("../../services/logging.service");
 const optionalData = [
   "operator_first_name",
   "operator_last_name",
@@ -33,22 +33,15 @@ const sendSingleEmail = async (
   postRegistrationMetadata,
   localCouncilContactDetails
 ) => {
-  info("notify.connector: sendSingleEmail: called");
+  logEmitter.emit("functionCall", "notify.connector", "sendSingleEmail");
 
   let notifyClient;
 
   if (process.env.DOUBLE_MODE === "true") {
-    info("notify.connector: running in double mode");
+    logEmitter.emit("doubleMode", "notify.connector", "sendSingleEmail");
     notifyClient = notifyClientDouble;
   } else {
-    try {
-      notifyClient = new NotifyClient(process.env.NOTIFY_KEY);
-    } catch (err) {
-      error(`notify.connector: sendSingleEmail errored: ${err}`);
-      throw new Error(
-        "notify.connector: sendSingleEmail: NOTIFY_KEY environment variable either incorrect or missing, or NotifyClient has failed."
-      );
-    }
+    notifyClient = new NotifyClient(process.env.NOTIFY_KEY);
   }
 
   const flattenedData = Object.assign(
@@ -80,12 +73,25 @@ const sendSingleEmail = async (
 
     const notifyResponse = await notifyClient.sendEmail(...notifyArguments);
     const responseBody = notifyResponse.body;
-
-    info("notify.connector: sendSingleEmail: successful");
+    logEmitter.emit("functionSuccess", "notify.connector", "sendSingleEmail");
     return responseBody;
   } catch (err) {
-    error(`notify.connector: sendSingleEmail: errored with: ${err}`);
-    throw new Error(err.message);
+    logEmitter.emit("functionFail", "notify.connector", "sendSingleEmail", err);
+    const newError = new Error();
+    if (err.message === "secretOrPrivateKey must have a value") {
+      newError.name = "notifyMissingKey";
+    }
+    if (err.statusCode === 400) {
+      if (err.error.errors[0].error === "ValidationError") {
+        newError.name = "notifyInvalidTemplate";
+        newError.message = err.message;
+      }
+      if (err.error.errors[0].error === "BadRequestError") {
+        newError.name = "notifyMissingPersonalisation";
+        newError.message = err.message;
+      }
+    }
+    throw newError;
   }
 };
 

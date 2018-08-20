@@ -8,10 +8,14 @@ const {
   sendLcEmail
 } = require("./registration.service");
 
-const { info } = require("winston");
+const { logEmitter } = require("../../services/logging.service");
 
 const createNewRegistration = async registration => {
-  info("registration.controller: createNewRegistration called");
+  logEmitter.emit(
+    "functionCall",
+    "registration.controller",
+    "createNewRegistration"
+  );
   // AUTHENTICATION
 
   // VALIDATION
@@ -20,7 +24,10 @@ const createNewRegistration = async registration => {
   }
   const errors = validate(registration);
   if (errors.length) {
-    throw new Error(JSON.stringify(errors));
+    const err = new Error();
+    err.name = "validationError";
+    err.validationErrors = errors;
+    throw err;
   }
 
   // RESOLUTION
@@ -60,7 +67,11 @@ const createNewRegistration = async registration => {
     emailSuccessOrFailureLc
   );
 
-  info("registration.controller: createNewRegistration finished");
+  logEmitter.emit(
+    "functionSuccess",
+    "registration.controller",
+    "createNewRegistration"
+  );
   return combinedResponse;
 };
 
