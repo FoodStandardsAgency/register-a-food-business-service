@@ -22,7 +22,9 @@ describe("logEmitter", () => {
 
   describe("on functionFail event", () => {
     it("should call winston error", () => {
-      logEmitter.emit("functionFail");
+      logEmitter.emit("functionFail", "module", "function", {
+        message: "error"
+      });
       expect(error).toBeCalled();
     });
   });
