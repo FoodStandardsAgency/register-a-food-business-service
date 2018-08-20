@@ -105,8 +105,6 @@ const sendTascomiRegistration = async (registration, fsa_rn) => {
   try {
     const reg = await createFoodBusinessRegistration(registration, fsa_rn);
     const response = await createReferenceNumber(JSON.parse(reg).id);
-    console.log(response);
-    console.log(JSON.parse(response).id);
     if (JSON.parse(response).id === 0) {
       const err = new Error("createReferenceNumber failed");
       err.name = "tascomiRefNumber";
