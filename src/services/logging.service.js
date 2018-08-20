@@ -14,7 +14,7 @@ logEmitter.on("functionSuccess", (module, functionName) => {
 });
 
 logEmitter.on("functionFail", (module, functionName, err) => {
-  error(`${module}: ${functionName} failed with: ${err}`);
+  error(`${module}: ${functionName} failed with: ${err.message}`);
 });
 
 logEmitter.on("doubleMode", (module, functionName) => {
