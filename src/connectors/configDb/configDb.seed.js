@@ -17,19 +17,19 @@ const arrayToInsert = [
     _id: 4221,
     lcName: "West Dorset District Council",
     lcEmails: ["fsatestemail.valid@gmail.com"],
-    standardsCouncil: 4226
+    separateStandardsCouncil: 4226
   },
   {
     _id: 4223,
     lcName: "North Dorset District Council",
     lcEmails: ["fsatestemail.valid@gmail.com"],
-    standardsCouncil: 4226
+    separateStandardsCouncil: 4226
   },
   {
     _id: 4220,
     lcName: "Weymouth and Portland Borough Council",
     lcEmails: ["fsatestemail.valid@gmail.com"],
-    standardsCouncil: 4226
+    separateStandardsCouncil: 4226
   },
   {
     _id: 4226,
