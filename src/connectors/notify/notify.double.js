@@ -9,8 +9,7 @@ const notifyClientDouble = {
     return new Promise((resolve, reject) => {
       if (
         templateId &&
-        recipientEmail &&
-        options.personalisation.test_variable
+        recipientEmail
       ) {
         if (recipientEmail === "fsatestemail.valid@gmail.com") {
           if (
