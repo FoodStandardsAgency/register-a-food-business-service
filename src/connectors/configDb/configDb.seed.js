@@ -4,6 +4,7 @@ const { info } = require("winston");
 
 const arrayToInsert = [
   {
+    // IDs are from https://data.food.gov.uk/codes/reference-number/_authority
     _id: 6008,
     lcName: "Mid & East Antrim Borough Council",
     lcEmails: ["fsatestemail.valid@gmail.com"]
