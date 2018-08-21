@@ -14,7 +14,7 @@
     "format": "prettier --write '{src,tests}/**/*.js'",
     "dev": "",
     "start": "node src/app.js",
-    "seed-config-db": "node src/connectors/configDb/seedConfigDb"
+    "seed-config-db": "node src/connectors/configDb/configDb.seed.js"
   },
   "repository": {
     "type": "git",

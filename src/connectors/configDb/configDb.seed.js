@@ -1,5 +1,6 @@
 const mongoClient = require("mongodb").MongoClient;
 const { MONGO_CONFIGDB_CONNECTION_STRING } = require("../../config");
+const { info } = require("winston");
 
 const arrayToInsert = [
   {
@@ -62,7 +63,7 @@ const seedDb = async () => {
 
   // finds and logs all entries
   const searchResult = await lcConfigCollection.find({});
-  await searchResult.forEach(console.log);
+  await searchResult.forEach(info);
 
   process.exit(0);
 };

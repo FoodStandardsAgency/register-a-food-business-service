@@ -18,6 +18,7 @@ module.exports = {
     "!**/src/db/**",
     "!**/src/config.js",
     "!**/tests/*",
-    "!**/src/**/*.double.js"
+    "!**/src/**/*.double.js",
+    "!**/src/**/*.seed.js"
   ]
 };
