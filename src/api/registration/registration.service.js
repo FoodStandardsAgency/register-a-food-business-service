@@ -206,12 +206,7 @@ const sendLcEmail = async (
     lcEmailSent.email_lc = { success: true, recipient: lcEmailAddress };
   } catch (err) {
     lcEmailSent.email_lc = { success: false, recipient: lcEmailAddress };
-    logEmitter.emit(
-      "functionFail",
-      "registration.service",
-      "sendFboEmail",
-      err
-    );
+    logEmitter.emit("functionFail", "registration.service", "sendLcEmail", err);
   }
   logEmitter.emit("functionSuccess", "registration.service", "sendLcEmail");
   return lcEmailSent;
