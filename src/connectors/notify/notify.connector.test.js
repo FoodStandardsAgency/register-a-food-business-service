@@ -70,7 +70,7 @@ describe("Function: sendSingleEmail", () => {
         NotifyClient.mockImplementation(() => mockNotifyClient);
       });
       it("Should reject with the error message", async () => {
-        const response = new Error();
+        const response = new Error("Notify error");
         response.name = "notifyMissingKey";
         await expect(sendSingleEmail(...args)).rejects.toEqual(response);
       });

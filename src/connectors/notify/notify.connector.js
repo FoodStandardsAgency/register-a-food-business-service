@@ -78,8 +78,7 @@ const sendSingleEmail = async (
     logEmitter.emit("functionSuccess", "notify.connector", "sendSingleEmail");
     return responseBody;
   } catch (err) {
-    logEmitter.emit("functionFail", "notify.connector", "sendSingleEmail", err);
-    const newError = new Error();
+    const newError = new Error("Notify error");
     if (err.message === "secretOrPrivateKey must have a value") {
       newError.name = "notifyMissingKey";
     }
@@ -93,6 +92,12 @@ const sendSingleEmail = async (
         newError.message = err.message;
       }
     }
+    logEmitter.emit(
+      "functionFail",
+      "notify.connector",
+      "sendSingleEmail",
+      newError
+    );
     throw newError;
   }
 };

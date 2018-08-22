@@ -18,6 +18,15 @@ describe("Middleware: errorHandler", () => {
       expect(res.status).toBeCalledWith(500);
       expect(res.send.mock.calls[0][0].errorCode).toBe("1");
     });
+
+    it("should handle not finding error in errorDetails", () => {
+      const error = {
+        name: "randomUnkownError"
+      };
+      errorHandler(error, "request", res);
+      expect(res.status).toBeCalledWith(500);
+      expect(res.send.mock.calls[0][0].errorCode).toBe("Unknown");
+    });
   });
 
   describe("When given a validationError", () => {
