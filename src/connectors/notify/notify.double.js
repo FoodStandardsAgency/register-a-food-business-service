@@ -7,10 +7,7 @@ const {
 const notifyClientDouble = {
   sendEmail: (templateId, recipientEmail, options) => {
     return new Promise((resolve, reject) => {
-      if (
-        templateId &&
-        recipientEmail
-      ) {
+      if (templateId && recipientEmail) {
         if (recipientEmail === "fsatestemail.valid@gmail.com") {
           if (
             templateId === NOTIFY_TEMPLATE_ID_TEST ||

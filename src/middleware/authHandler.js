@@ -13,7 +13,12 @@ const authHandler = (req, res, next) => {
   if (!clientSecret) {
     const err = new Error("Client secret not found");
     err.name = "clientSecretNotFound";
-    logEmitter.emit("functionFail", "authHandler.middleware", "authHandler", err);
+    logEmitter.emit(
+      "functionFail",
+      "authHandler.middleware",
+      "authHandler",
+      err
+    );
     throw err;
   }
 
@@ -21,7 +26,12 @@ const authHandler = (req, res, next) => {
   if (!client) {
     const err = new Error("Client not found");
     err.name = "clientNotFound";
-    logEmitter.emit("functionFail", "authHandler.middleware", "authHandler", err);
+    logEmitter.emit(
+      "functionFail",
+      "authHandler.middleware",
+      "authHandler",
+      err
+    );
     throw err;
   }
   const secret = secrets[client];
@@ -31,7 +41,12 @@ const authHandler = (req, res, next) => {
   if (!secret) {
     const err = new Error("Client not supported");
     err.name = "clientNotSupported";
-    logEmitter.emit("functionFail", "authHandler.middleware", "authHandler", err);
+    logEmitter.emit(
+      "functionFail",
+      "authHandler.middleware",
+      "authHandler",
+      err
+    );
     throw err;
   }
 
@@ -39,7 +54,12 @@ const authHandler = (req, res, next) => {
   if (secret !== clientSecret) {
     const err = new Error("Secret invalid");
     err.name = "secretInvalid";
-    logEmitter.emit("functionFail", "authHandler.middleware", "authHandler", err);
+    logEmitter.emit(
+      "functionFail",
+      "authHandler.middleware",
+      "authHandler",
+      err
+    );
     throw err;
   }
   logEmitter.emit("functionSuccess", "authHandler.middleware", "authHandler");
