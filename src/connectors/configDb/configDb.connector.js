@@ -7,6 +7,8 @@ let client;
 let configDB;
 let lcConfigCollection;
 
+let allLcConfigData = [];
+
 const establishConnectionToMongo = async () => {
   if (process.env.DOUBLE_MODE === "true") {
     logEmitter.emit(
@@ -29,32 +31,40 @@ const establishConnectionToMongo = async () => {
 const getAllLocalCouncilConfig = async () => {
   logEmitter.emit("functionCall", "configDb.connector", "sendSingleEmail");
 
-  try {
-    await establishConnectionToMongo();
+  if (allLcConfigData.length === 0) {
+    try {
+      await establishConnectionToMongo();
 
-    const allLcConfigDataCursor = await lcConfigCollection.find({});
-    const allLcConfigData = allLcConfigDataCursor.toArray();
+      const allLcConfigDataCursor = await lcConfigCollection.find({});
+      allLcConfigData = allLcConfigDataCursor.toArray();
+    } catch (err) {
+      logEmitter.emit(
+        "functionFail",
+        "configDb.connector",
+        "getAllLocalCouncilConfig",
+        err
+      );
 
-    logEmitter.emit(
-      "functionSuccess",
-      "configDb.connector",
-      "getAllLocalCouncilConfig"
-    );
-    return allLcConfigData;
-  } catch (err) {
-    logEmitter.emit(
-      "functionFail",
-      "configDb.connector",
-      "getAllLocalCouncilConfig",
-      err
-    );
+      const newError = new Error();
+      newError.name = "mongoConnectionError";
+      newError.message = err.message;
 
-    const newError = new Error();
-    newError.name = "mongoConnectionError";
-    newError.message = err.message;
-
-    throw newError;
+      throw newError;
+    }
   }
+
+  logEmitter.emit(
+    "functionSuccess",
+    "configDb.connector",
+    "getAllLocalCouncilConfig"
+  );
+
+  return allLcConfigData;
 };
 
-module.exports = { getAllLocalCouncilConfig };
+const clearLcConfigCache = () => {
+  allLcConfigData = [];
+  return allLcConfigData;
+};
+
+module.exports = { getAllLocalCouncilConfig, clearLcConfigCache };
