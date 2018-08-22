@@ -1,35 +1,15 @@
 const mongodb = require("mongodb");
 const { getAllLocalCouncilConfig } = require("./configDb.connector");
-const { mongoClientDouble } = require("./configDb.double");
+const mockLocalCouncilConfig = require("./mockLocalCouncilConfig.json");
+const { lcConfigCollectionDouble } = require("./configDb.double");
 
 jest.mock("mongodb");
+jest.mock("./configDb.double");
 jest.mock("../../services/logging.service", () => ({
   logEmitter: {
     emit: jest.fn()
   }
 }));
-
-const testLocalCouncilConfig = [
-  {
-    _id: 6008,
-    lcName: "Mid & East Antrim Borough Council",
-    lcEmails: ["antrim1@email.com", "antrim2@email.com"],
-    urlString: "mid-and-east-antrim"
-  },
-  {
-    _id: 4221,
-    lcName: "West Dorset District Council",
-    lcEmails: ["westdorset@email.com"],
-    urlString: "west-dorset",
-    separateStandardsCouncil: 4226
-  },
-  {
-    _id: 4226,
-    lcName: "Dorset County Council",
-    lcEmails: ["dorsetcounty@email.com"],
-    urlString: "dorset"
-  }
-];
 
 let result;
 
@@ -62,7 +42,7 @@ describe("Function: getLocalCouncilDetails", () => {
       mongodb.MongoClient.connect.mockImplementation(() => ({
         db: () => ({
           collection: () => ({
-            find: () => ({ toArray: () => testLocalCouncilConfig })
+            find: () => ({ toArray: () => mockLocalCouncilConfig })
           })
         })
       }));
@@ -70,22 +50,23 @@ describe("Function: getLocalCouncilDetails", () => {
 
     it("should return the data from the find() response", async () => {
       await expect(getAllLocalCouncilConfig()).resolves.toEqual(
-        testLocalCouncilConfig
+        mockLocalCouncilConfig
       );
     });
   });
 
-  // describe("when running in double mode", () => {
-  //   beforeEach(() => {
-  //     process.env.DOUBLE_MODE = true;
-  //     mongodb.mockImplementation(() => ({
-  //       MongoClient: {}
-  //     }));
-  //     mongoClientDouble.find.mockImplementation(async () => testLocalCouncilConfig);
-  //   });
+  describe("when running in double mode", () => {
+    beforeEach(() => {
+      process.env.DOUBLE_MODE = true;
+      lcConfigCollectionDouble.find.mockImplementation(() => ({
+        toArray: () => mockLocalCouncilConfig
+      }));
+    });
 
-  //   it("should resolve with the data from the double's find() response", async () => {
-  //     await expect(getAllLocalCouncilConfig()).resolves.toEqual(testLocalCouncilConfig);
-  //   });
-  // });
+    it("should resolve with the data from the double's find() response", async () => {
+      await expect(getAllLocalCouncilConfig()).resolves.toEqual(
+        mockLocalCouncilConfig
+      );
+    });
+  });
 });

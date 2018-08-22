@@ -1,5 +1,5 @@
 const mongodb = require("mongodb");
-const { mongoClientDouble } = require("./configDb.double");
+const { lcConfigCollectionDouble } = require("./configDb.double");
 const { MONGO_CONFIGDB_CONNECTION_STRING } = require("../../config");
 const { logEmitter } = require("../../services/logging.service");
 
@@ -8,24 +8,25 @@ let configDB;
 let lcConfigCollection;
 
 const establishConnectionToMongo = async () => {
-  // if (process.env.DOUBLE_MODE === "true") {
-  //   logEmitter.emit(
-  //     "doubleMode",
-  //     "configDb.connector",
-  //     "getAllLocalCouncilConfig"
-  //   );
-  //   mongoClient = mongoClientDouble;
-  // } else {
-  //   mongoClient = mongodb.MongoClient;
-  // }
+  if (process.env.DOUBLE_MODE === "true") {
+    logEmitter.emit(
+      "doubleMode",
+      "configDb.connector",
+      "getAllLocalCouncilConfig"
+    );
+    lcConfigCollection = lcConfigCollectionDouble;
+  } else {
+    client = await mongodb.MongoClient.connect(
+      MONGO_CONFIGDB_CONNECTION_STRING,
+      {
+        useNewUrlParser: true
+      }
+    );
 
-  client = await mongodb.MongoClient.connect(MONGO_CONFIGDB_CONNECTION_STRING, {
-    useNewUrlParser: true
-  });
+    configDB = client.db("register_a_food_business_config");
 
-  configDB = client.db("register_a_food_business_config");
-
-  lcConfigCollection = configDB.collection("lcConfig");
+    lcConfigCollection = configDB.collection("lcConfig");
+  }
 };
 
 const getAllLocalCouncilConfig = async () => {
