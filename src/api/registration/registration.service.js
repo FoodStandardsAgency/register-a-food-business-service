@@ -174,7 +174,12 @@ const sendFboEmail = async (
     fboEmailSent.email_fbo = { success: true, recipient: fboEmailAddress };
   } catch (err) {
     fboEmailSent.email_fbo = { success: false, recipient: fboEmailAddress };
-    logEmitter.emit("functionFail", "registration.service", "sendFboEmail");
+    logEmitter.emit(
+      "functionFail",
+      "registration.service",
+      "sendFboEmail",
+      err
+    );
     throw err;
   }
   logEmitter.emit("functionSuccess", "registration.service", "sendFboEmail");

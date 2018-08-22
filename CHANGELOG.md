@@ -3,6 +3,12 @@
 All notable changes to this projectwill be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## v3.0.0 - 21st August 2018 (unreleased)
+
+### Added
+
+* Added secret and name based authentication to all API routes
+
 ## v2.7.0 - 7th August 2018 (unreleased)
 
 ### Added

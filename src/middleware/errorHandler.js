@@ -19,25 +19,34 @@ const errorHandler = (err, req, res, next) => {
     const errorDetail = errorDetails.find(error => {
       return error.name === err.name;
     });
-    if (errorDetail.name === "validationError") {
-      errorDetail.userMessages = err.validationErrors;
-    }
+    if (errorDetail) {
+      if (errorDetail.name === "validationError") {
+        errorDetail.userMessages = err.validationErrors;
+      }
 
-    if (
-      errorDetail.name === "notifyInvalidTemplate" ||
-      errorDetail.name === "notifyMissingPersonalisation"
-    ) {
-      errorDetail.developerMessage = `${errorDetail.developerMessage} ${
-        err.message
-      }`;
-    }
+      if (
+        errorDetail.name === "notifyInvalidTemplate" ||
+        errorDetail.name === "notifyMissingPersonalisation"
+      ) {
+        errorDetail.developerMessage = `${errorDetail.developerMessage} ${
+          err.message
+        }`;
+      }
 
-    res.status(errorDetail.statusCode);
-    res.send({
-      errorCode: errorDetail.code,
-      developerMessage: errorDetail.developerMessage,
-      userMessages: errorDetail.userMessages
-    });
+      res.status(errorDetail.statusCode);
+      res.send({
+        errorCode: errorDetail.code,
+        developerMessage: errorDetail.developerMessage,
+        userMessages: errorDetail.userMessages
+      });
+    } else {
+      res.status(500);
+      res.send({
+        errorCode: "Unknown",
+        developerMessage: "Unkown error found, debug and add to error cases",
+        userMessages: ""
+      });
+    }
   } else {
     res.status(500);
     res.send({
