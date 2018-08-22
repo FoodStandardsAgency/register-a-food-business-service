@@ -1,16 +1,19 @@
 const assert = require("assert");
 const fetch = require("node-fetch");
 const { Given, When, Then } = require("cucumber");
+const { FRONT_END_NAME, FRONT_END_SECRET } = require("../../src/config");
 
 const sendRequest = async body => {
+  const headers = {
+    "Content-Type": "application/json",
+    "api-secret": FRONT_END_SECRET,
+    "client-name": FRONT_END_NAME
+  };
   const res = await fetch(
-    "https://dev-register-a-food-business-service-double.azurewebsites.net//api/registration/createNewRegistration",
+    "https://dev-register-a-food-business-service-double.azurewebsites.net/api/registration/createNewRegistration",
     {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Accept: "application/json"
-      },
+      headers,
       body: JSON.stringify(body)
     }
   );
@@ -19,8 +22,16 @@ const sendRequest = async body => {
 };
 
 const getRequest = async id => {
+  const headers = {
+    "Content-Type": "application/json",
+    "api-secret": FRONT_END_SECRET,
+    "client-name": FRONT_END_NAME
+  };
   const res = await fetch(
-    `https://dev-register-a-food-business-service-double.azurewebsites.net//api/registration/${id}`
+    `http://dev-register-a-food-business-service-double.azurewebsites.net/api/registration/${id}`,
+    {
+      headers
+    }
   );
   return res.json();
 };
@@ -116,7 +127,7 @@ Given("I have a new registration with all valid required fields", function() {
           establishment_trading_name: "Itsu",
           establishment_primary_number: "329857245",
           establishment_secondary_number: "84345245",
-          establishment_email: "django@email.com",
+          establishment_email: "fsatestemail.valid@gmail.com",
           establishment_opening_date: "2018-06-07"
         },
         operator: {
@@ -127,7 +138,7 @@ Given("I have a new registration with all valid required fields", function() {
           operator_street: "Some St.",
           operator_town: "London",
           operator_primary_number: "9827235",
-          operator_email: "operator@email.com",
+          operator_email: "fsatestemail.valid@gmail.com",
           operator_type: "Sole trader"
         },
         premise: {
@@ -173,7 +184,7 @@ Given(
             operator_street: "Some St.",
             operator_town: "London",
             operator_primary_number: "9827235",
-            operator_email: "operator@email.com",
+            operator_email: "fsatestemail.valid@gmail.com",
             operator_type: "Sole trader"
           },
           premise: {
@@ -236,7 +247,7 @@ Then("I get a success response", function() {
 });
 
 Then("I get an error response", function() {
-  assert.ok(this.response.error);
+  assert.ok(this.response.errorCode);
 });
 
 Then("The non personal information is saved to the database", async function() {
