@@ -132,7 +132,7 @@ describe("Function: sendSingleEmail", () => {
           result = err;
         }
       });
-      it("Should throw notifyInvalidTemplate error", async () => {
+      it("Should throw notifyMissingPersonalisation error", async () => {
         expect(result.name).toBe("notifyMissingPersonalisation");
         expect(result.message).toBe("notify error");
       });

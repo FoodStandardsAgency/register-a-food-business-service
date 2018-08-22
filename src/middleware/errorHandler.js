@@ -12,6 +12,8 @@
 // 5 - notifyMissingKey
 // 6 - notifyInvalidTemplate
 // 7 - notifyMissingPersonalisation
+// 8 - mongoConnectionError
+
 const errorDetails = require("./errors.json");
 
 const errorHandler = (err, req, res, next) => {
@@ -27,6 +29,12 @@ const errorHandler = (err, req, res, next) => {
       errorDetail.name === "notifyInvalidTemplate" ||
       errorDetail.name === "notifyMissingPersonalisation"
     ) {
+      errorDetail.developerMessage = `${errorDetail.developerMessage} ${
+        err.message
+      }`;
+    }
+
+    if (errorDetail.name === "mongoConnectionError") {
       errorDetail.developerMessage = `${errorDetail.developerMessage} ${
         err.message
       }`;

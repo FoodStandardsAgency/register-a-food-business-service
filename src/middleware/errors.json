@@ -53,5 +53,13 @@
       "Notify personalisation is missing, check data sent to Notify API. Raw error:",
     "userMessages": "",
     "statusCode": 500
+  },
+  {
+    "name": "mongoConnectionError",
+    "code": "8",
+    "developerMessage":
+      "MongoDB (Azure CosmosDB) connection failed, check credentials provided to app and status of database. Raw error:",
+    "userMessages": "",
+    "statusCode": 500
   }
 ]

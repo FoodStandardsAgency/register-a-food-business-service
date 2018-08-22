@@ -1,6 +1,8 @@
 const { NotifyClient } = require("notifications-node-client");
 const { notifyClientDouble } = require("./notify.double");
+const { NOTIFY_KEY } = require("../../config");
 const { logEmitter } = require("../../services/logging.service");
+
 const optionalData = [
   "operator_first_name",
   "operator_last_name",
@@ -41,7 +43,7 @@ const sendSingleEmail = async (
     logEmitter.emit("doubleMode", "notify.connector", "sendSingleEmail");
     notifyClient = notifyClientDouble;
   } else {
-    notifyClient = new NotifyClient(process.env.NOTIFY_KEY);
+    notifyClient = new NotifyClient(NOTIFY_KEY);
   }
 
   const flattenedData = Object.assign(
