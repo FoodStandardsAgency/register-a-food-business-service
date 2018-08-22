@@ -1,6 +1,6 @@
 const mongodb = require("mongodb");
 const { lcConfigCollectionDouble } = require("./configDb.double");
-const { MONGO_CONFIGDB_CONNECTION_STRING } = require("../../config");
+const { CONFIGDB_URL } = require("../../config");
 const { logEmitter } = require("../../services/logging.service");
 
 let client;
@@ -16,12 +16,9 @@ const establishConnectionToMongo = async () => {
     );
     lcConfigCollection = lcConfigCollectionDouble;
   } else {
-    client = await mongodb.MongoClient.connect(
-      MONGO_CONFIGDB_CONNECTION_STRING,
-      {
-        useNewUrlParser: true
-      }
-    );
+    client = await mongodb.MongoClient.connect(CONFIGDB_URL, {
+      useNewUrlParser: true
+    });
 
     configDB = client.db("register_a_food_business_config");
 
