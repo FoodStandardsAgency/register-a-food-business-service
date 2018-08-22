@@ -2,6 +2,23 @@ require("dotenv").config();
 const {
   getAllLocalCouncilConfig
 } = require("../../src/connectors/configDb/configDb.connector");
+const { Validator } = require("jsonschema");
+
+const validator = new Validator();
+
+const lcConfigSchema = {
+  type: "array",
+  items: {
+    type: "object",
+    properties: {
+      _id: { type: "number", required: true },
+      lcName: { type: "string", required: true },
+      lcEmails: { type: "array", required: true, items: { type: "string" } },
+      urlString: { type: "string", required: true },
+      separateStandardsCouncil: { type: "number", required: false }
+    }
+  }
+};
 
 let doubleResult;
 let realResult;
@@ -16,8 +33,12 @@ describe("configDb contract: getAllLocalCouncilConfig", () => {
   });
 
   it("Should both pass format validation", async () => {
-    // expect(doubleResult.id).toBeDefined();
-    // expect(realResult.id).toBeDefined();
+    expect(validator.validate(doubleResult, lcConfigSchema).errors.length).toBe(
+      0
+    );
+    expect(validator.validate(realResult, lcConfigSchema).errors.length).toBe(
+      0
+    );
   });
 
   it("Should both contain two example sets of council data that are unlikely to change", async () => {
