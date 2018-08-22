@@ -1,5 +1,5 @@
 const mongoClient = require("mongodb").MongoClient;
-const { MONGO_CONFIGDB_CONNECTION_STRING } = require("../../config");
+const { CONFIGDB_URL } = require("../../config");
 const { info } = require("winston");
 
 const arrayToInsert = [
@@ -50,7 +50,7 @@ let configDB;
 let lcConfigCollection;
 
 const establishConnectionToMongo = async () => {
-  client = await mongoClient.connect(MONGO_CONFIGDB_CONNECTION_STRING, {
+  client = await mongoClient.connect(CONFIGDB_URL, {
     useNewUrlParser: true
   });
 
