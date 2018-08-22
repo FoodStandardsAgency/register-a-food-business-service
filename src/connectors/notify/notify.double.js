@@ -5,7 +5,7 @@ const {
 } = require("../../config");
 
 const notifyClientDouble = {
-  sendEmail: (templateId, recipientEmail, options) => {
+  sendEmail: (templateId, recipientEmail) => {
     return new Promise((resolve, reject) => {
       if (templateId && recipientEmail) {
         if (recipientEmail === "fsatestemail.valid@gmail.com") {

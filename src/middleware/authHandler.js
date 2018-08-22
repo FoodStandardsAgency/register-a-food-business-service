@@ -37,7 +37,6 @@ const authHandler = (req, res, next) => {
   const secret = secrets[client];
 
   // Check that client is supported
-  console.log(client);
   if (!secret) {
     const err = new Error("Client not supported");
     err.name = "clientNotSupported";
