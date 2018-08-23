@@ -7,40 +7,46 @@ const arrayToInsert = [
     // IDs are from https://data.food.gov.uk/codes/reference-number/_authority
     _id: 6008,
     lcName: "Mid & East Antrim Borough Council",
-    lcEmails: ["fsatestemail.valid@gmail.com"],
+    lcNotificationEmails: [],
+    lcContactEmail: "fsatestemail.valid@gmail.com",
     urlString: ""
   },
   {
     _id: 8020,
     lcName: "Bridgend County Borough Council",
-    lcEmails: [],
+    lcNotificationEmails: [],
+    lcContactEmail: "fsatestemail.valid@gmail.com",
     urlString: ""
   },
   {
     _id: 4221,
     lcName: "West Dorset District Council",
-    lcEmails: ["fsatestemail.valid@gmail.com"],
+    lcNotificationEmails: [],
+    lcContactEmail: "fsatestemail.valid@gmail.com",
     urlString: "",
     separateStandardsCouncil: 4226
   },
   {
     _id: 4223,
     lcName: "North Dorset District Council",
-    lcEmails: ["fsatestemail.valid@gmail.com"],
+    lcNotificationEmails: [],
+    lcContactEmail: "fsatestemail.valid@gmail.com",
     urlString: "",
     separateStandardsCouncil: 4226
   },
   {
     _id: 4220,
     lcName: "Weymouth and Portland Borough Council",
-    lcEmails: ["fsatestemail.valid@gmail.com"],
+    lcNotificationEmails: [],
+    lcContactEmail: "fsatestemail.valid@gmail.com",
     urlString: "",
     separateStandardsCouncil: 4226
   },
   {
     _id: 4226,
     lcName: "Dorset County Council",
-    lcEmails: ["fsatestemail.valid@gmail.com"],
+    lcNotificationEmails: [],
+    lcContactEmail: "fsatestemail.valid@gmail.com",
     urlString: ""
   }
 ];

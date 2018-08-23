@@ -2,20 +2,23 @@
   {
     "_id": 6008,
     "lcName": "Mid & East Antrim Borough Council",
-    "lcEmails": ["antrim1@email.com", "antrim2@email.com"],
+    "lcNotificationEmails": ["antrim1@email.com", "antrim2@email.com"],
+    "lcContactEmail": "info-antrim@email.com",
     "urlString": "mid-and-east-antrim"
   },
   {
     "_id": 4221,
     "lcName": "West Dorset District Council",
-    "lcEmails": ["westdorset@email.com"],
+    "lcNotificationEmails": ["westdorset@email.com"],
+    "lcContactEmail": "info-westdorset@email.com",
     "urlString": "west-dorset",
     "separateStandardsCouncil": 4226
   },
   {
     "_id": 4226,
     "lcName": "Dorset County Council",
-    "lcEmails": ["dorsetcounty@email.com"],
+    "lcNotificationEmails": ["dorsetcounty@email.com"],
+    "lcContactEmail": "info-dorsetcounty@email.com",
     "urlString": "dorset"
   }
 ]

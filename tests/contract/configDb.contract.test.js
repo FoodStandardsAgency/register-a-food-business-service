@@ -13,7 +13,12 @@ const lcConfigSchema = {
     properties: {
       _id: { type: "number", required: true },
       lcName: { type: "string", required: true },
-      lcEmails: { type: "array", required: true, items: { type: "string" } },
+      lcNotificationEmails: {
+        type: "array",
+        required: true,
+        items: { type: "string" }
+      },
+      lcContactEmail: { type: "string", required: true },
       urlString: { type: "string", required: true },
       separateStandardsCouncil: { type: "number", required: false }
     }
