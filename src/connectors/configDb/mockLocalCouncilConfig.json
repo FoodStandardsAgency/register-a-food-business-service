@@ -20,5 +20,13 @@
     "lcNotificationEmails": ["dorsetcounty@email.com"],
     "lcContactEmail": "info-dorsetcounty@email.com",
     "urlString": "dorset"
+  },
+  {
+    "_id": 9999,
+    "lcName": "Example council that has no matching standards council",
+    "lcNotificationEmails": ["example@email.com"],
+    "lcContactEmail": "example@email.com",
+    "urlString": "example-with-missing-standards-council",
+    "separateStandardsCouncil": 100000
   }
 ]

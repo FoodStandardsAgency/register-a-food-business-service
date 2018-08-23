@@ -28,6 +28,10 @@ const {
 
 const { sendSingleEmail } = require("../../connectors/notify/notify.connector");
 
+const {
+  getAllLocalCouncilConfig
+} = require("../../connectors/configDb/configDb.connector");
+
 const { logEmitter } = require("../../services/logging.service");
 
 const saveRegistration = async registration => {
@@ -212,11 +216,78 @@ const sendLcEmail = async (
   return lcEmailSent;
 };
 
+const getLcEmailConfig = async localCouncilUrl => {
+  if (localCouncilUrl) {
+    const allLcConfigData = await getAllLocalCouncilConfig();
+
+    const urlLcConfig = allLcConfigData.find(
+      localCouncil => localCouncil.urlString === localCouncilUrl
+    );
+
+    if (urlLcConfig) {
+      if (urlLcConfig.separateStandardsCouncil) {
+        const standardsLcConfig = allLcConfigData.find(
+          localCouncil =>
+            localCouncil._id === urlLcConfig.separateStandardsCouncil
+        );
+
+        if (standardsLcConfig) {
+          const separateCouncils = {
+            hygiene: {
+              code: urlLcConfig._id,
+              lcName: urlLcConfig.lcName,
+              lcNotificationEmails: urlLcConfig.lcNotificationEmails,
+              lcContactEmail: urlLcConfig.lcContactEmail
+            },
+            standards: {
+              code: standardsLcConfig._id,
+              lcName: standardsLcConfig.lcName,
+              lcNotificationEmails: standardsLcConfig.lcNotificationEmails,
+              lcContactEmail: standardsLcConfig.lcContactEmail
+            }
+          };
+
+          return separateCouncils;
+        } else {
+          const newError = new Error();
+          newError.name = "localCouncilNotFound";
+          newError.message = `A separate standards council config with the code "${
+            urlLcConfig.separateStandardsCouncil
+          }" was expected for "${localCouncilUrl}" but does not exist`;
+          throw newError;
+        }
+      } else {
+        const hygieneAndStandardsCouncil = {
+          hygieneAndStandards: {
+            code: urlLcConfig._id,
+            lcName: urlLcConfig.lcName,
+            lcNotificationEmails: urlLcConfig.lcNotificationEmails,
+            lcContactEmail: urlLcConfig.lcContactEmail
+          }
+        };
+
+        return hygieneAndStandardsCouncil;
+      }
+    } else {
+      const newError = new Error();
+      newError.name = "localCouncilNotFound";
+      newError.message = `Config for "${localCouncilUrl}" not found`;
+      throw newError;
+    }
+  } else {
+    const newError = new Error();
+    newError.name = "localCouncilNotFound";
+    newError.message = "Local council URL is undefined";
+    throw newError;
+  }
+};
+
 module.exports = {
   saveRegistration,
   getFullRegistrationById,
   sendTascomiRegistration,
   getRegistrationMetaData,
   sendFboEmail,
-  sendLcEmail
+  sendLcEmail,
+  getLcEmailConfig
 };

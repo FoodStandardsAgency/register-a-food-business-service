@@ -41,6 +41,12 @@ const errorHandler = (err, req, res, next) => {
         }`;
       }
 
+      if (errorDetail.name === "localCouncilNotFound") {
+        errorDetail.developerMessage = `${errorDetail.developerMessage} ${
+          err.message
+        }`;
+      }
+
       res.status(errorDetail.statusCode);
       res.send({
         errorCode: errorDetail.code,

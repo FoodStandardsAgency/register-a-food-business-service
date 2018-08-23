@@ -22,25 +22,35 @@ jest.mock("../../connectors/tascomi/tascomi.connector", () => ({
   createReferenceNumber: jest.fn()
 }));
 
+jest.mock("../../connectors/configDb/configDb.connector", () => ({
+  getAllLocalCouncilConfig: jest.fn()
+}));
+
 jest.mock("../../services/logging.service", () => ({
   logEmitter: {
     emit: jest.fn()
   }
 }));
 
+jest.mock("../../config", () => ({
+  NOTIFY_TEMPLATE_ID_FBO: "1234",
+  NOTIFY_TEMPLATE_ID_LC: "5678"
+}));
+
 jest.mock("node-fetch");
+
+const { sendSingleEmail } = require("../../connectors/notify/notify.connector");
 
 const {
   createFoodBusinessRegistration,
   createReferenceNumber
 } = require("../../connectors/tascomi/tascomi.connector");
 
-const { sendSingleEmail } = require("../../connectors/notify/notify.connector");
+const {
+  getAllLocalCouncilConfig
+} = require("../../connectors/configDb/configDb.connector");
 
-jest.mock("../../config", () => ({
-  NOTIFY_TEMPLATE_ID_FBO: "1234",
-  NOTIFY_TEMPLATE_ID_LC: "5678"
-}));
+const mockLocalCouncilConfig = require("../../connectors/configDb/mockLocalCouncilConfig.json");
 
 const {
   NOTIFY_TEMPLATE_ID_FBO,
@@ -70,7 +80,8 @@ const {
   sendTascomiRegistration,
   getRegistrationMetaData,
   sendFboEmail,
-  sendLcEmail
+  sendLcEmail,
+  getLcEmailConfig
 } = require("./registration.service");
 
 describe("Function: saveRegistration: ", () => {
@@ -386,6 +397,102 @@ describe("Function: sendLCEmail: ", () => {
 
     it("should return an object with success value false", () => {
       expect(result.email_lc.success).toBe(false);
+    });
+  });
+});
+
+describe("Function: getLcEmailConfig: ", () => {
+  beforeEach(() => {
+    getAllLocalCouncilConfig.mockImplementation(() => mockLocalCouncilConfig);
+  });
+
+  describe("given a valid localCouncilUrl", () => {
+    describe("given the local council does not have a separate standards council", () => {
+      beforeEach(async () => {
+        result = await getLcEmailConfig("mid-and-east-antrim");
+      });
+
+      it("should return an object with a hygieneAndStandards key only", () => {
+        expect(Object.keys(result).length).toBe(1);
+        expect(result.hygieneAndStandards).toBeDefined();
+      });
+
+      it("the hygieneAndStandards object should contain the necessary data fields", () => {
+        expect(result.hygieneAndStandards.code).toBeDefined();
+        expect(result.hygieneAndStandards.lcName).toBeDefined();
+        expect(result.hygieneAndStandards.lcNotificationEmails).toBeDefined();
+        expect(result.hygieneAndStandards.lcContactEmail).toBeDefined();
+      });
+    });
+
+    describe("given the local council has a separate standards council", () => {
+      beforeEach(async () => {
+        result = await getLcEmailConfig("west-dorset");
+      });
+
+      it("should return an object with a hygiene key and a standards key", () => {
+        expect(Object.keys(result).length).toBe(2);
+        expect(result.hygiene).toBeDefined();
+        expect(result.standards).toBeDefined();
+      });
+
+      it("each nested object should contain the necessary data fields", () => {
+        for (let typeOfCouncil in result) {
+          expect(result[typeOfCouncil].code).toBeDefined();
+          expect(result[typeOfCouncil].lcName).toBeDefined();
+          expect(result[typeOfCouncil].lcNotificationEmails).toBeDefined();
+          expect(result[typeOfCouncil].lcContactEmail).toBeDefined();
+        }
+      });
+    });
+  });
+
+  describe("given a valid localCouncilUrl that specifies a non-existent standards council", () => {
+    beforeEach(async () => {
+      try {
+        await getLcEmailConfig("example-with-missing-standards-council");
+      } catch (err) {
+        result = err;
+      }
+    });
+
+    it("should throw localCouncilNotFound error with the URL", () => {
+      expect(result.name).toBe("localCouncilNotFound");
+      expect(result.message).toBe(
+        `A separate standards council config with the code "100000" was expected for "example-with-missing-standards-council" but does not exist`
+      );
+    });
+  });
+
+  describe("given an invalid localCouncilUrl", () => {
+    beforeEach(async () => {
+      try {
+        await getLcEmailConfig("some-invalid-local-council");
+      } catch (err) {
+        result = err;
+      }
+    });
+
+    it("should throw localCouncilNotFound error with the URL", () => {
+      expect(result.name).toBe("localCouncilNotFound");
+      expect(result.message).toBe(
+        `Config for "some-invalid-local-council" not found`
+      );
+    });
+  });
+
+  describe("given a missing localCouncilUrl", () => {
+    beforeEach(async () => {
+      try {
+        await getLcEmailConfig(undefined);
+      } catch (err) {
+        result = err;
+      }
+    });
+
+    it("should throw localCouncilNotFound error with an explanation", () => {
+      expect(result.name).toBe("localCouncilNotFound");
+      expect(result.message).toBe("Local council URL is undefined");
     });
   });
 });
