@@ -4,7 +4,7 @@
   "description": "",
   "main": "src/app.js",
   "scripts": {
-    "test": "snyk test && jest ./src --coverage",
+    "test": "jest ./src --coverage",
     "test:watch": "jest --watch",
     "test:integration": "jest tests/integration/*.js",
     "test:contract": "jest tests/contract/*.js",
