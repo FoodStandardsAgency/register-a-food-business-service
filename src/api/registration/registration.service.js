@@ -217,6 +217,8 @@ const sendLcEmail = async (
 };
 
 const getLcEmailConfig = async localCouncilUrl => {
+  logEmitter.emit("functionCall", "registration.service", "getLcEmailConfig");
+
   if (localCouncilUrl) {
     const allLcConfigData = await getAllLocalCouncilConfig();
 
@@ -247,6 +249,12 @@ const getLcEmailConfig = async localCouncilUrl => {
             }
           };
 
+          logEmitter.emit(
+            "functionSuccess",
+            "registration.service",
+            "getLcEmailConfig"
+          );
+
           return separateCouncils;
         } else {
           const newError = new Error();
@@ -254,6 +262,12 @@ const getLcEmailConfig = async localCouncilUrl => {
           newError.message = `A separate standards council config with the code "${
             urlLcConfig.separateStandardsCouncil
           }" was expected for "${localCouncilUrl}" but does not exist`;
+          logEmitter.emit(
+            "functionFail",
+            "registration.service",
+            "getLcEmailConfig",
+            newError
+          );
           throw newError;
         }
       } else {
@@ -266,18 +280,36 @@ const getLcEmailConfig = async localCouncilUrl => {
           }
         };
 
+        logEmitter.emit(
+          "functionSuccess",
+          "registration.service",
+          "getLcEmailConfig"
+        );
+
         return hygieneAndStandardsCouncil;
       }
     } else {
       const newError = new Error();
       newError.name = "localCouncilNotFound";
       newError.message = `Config for "${localCouncilUrl}" not found`;
+      logEmitter.emit(
+        "functionFail",
+        "registration.service",
+        "getLcEmailConfig",
+        newError
+      );
       throw newError;
     }
   } else {
     const newError = new Error();
     newError.name = "localCouncilNotFound";
     newError.message = "Local council URL is undefined";
+    logEmitter.emit(
+      "functionFail",
+      "registration.service",
+      "getLcEmailConfig",
+      newError
+    );
     throw newError;
   }
 };
