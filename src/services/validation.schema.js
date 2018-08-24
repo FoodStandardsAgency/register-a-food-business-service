@@ -229,7 +229,8 @@ const schema = {
       }
     },
     required: ["establishment", "metadata"]
-  }
+  },
+  local_council_url: { type: "string" }
 };
 
 module.exports = schema;

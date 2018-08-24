@@ -21,7 +21,7 @@ describe("Middleware: errorHandler", () => {
 
     it("should handle not finding error in errorDetails", () => {
       const error = {
-        name: "randomUnkownError"
+        name: "randomUnknownError"
       };
       errorHandler(error, "request", res);
       expect(res.status).toBeCalledWith(500);
@@ -96,7 +96,7 @@ describe("Middleware: errorHandler", () => {
   describe("When given an unknown error", () => {
     it("should return 500 error", () => {
       const error = {
-        message: "Unkown error"
+        message: "Unknown error"
       };
       errorHandler(error, "request", res);
       expect(res.status).toBeCalledWith(500);

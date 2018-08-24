@@ -7,7 +7,8 @@ const registrationRouter = () => {
   router.post("/createNewRegistration", async (req, res, next) => {
     try {
       const response = await registrationController.createNewRegistration(
-        req.body.registration
+        req.body.registration,
+        req.body.local_council_url
       );
       res.send(response);
     } catch (err) {

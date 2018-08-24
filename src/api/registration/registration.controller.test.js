@@ -13,9 +13,8 @@ jest.mock("./registration.service", () => ({
   getFullRegistrationById: jest.fn(),
   sendTascomiRegistration: jest.fn(),
   getRegistrationMetaData: jest.fn(),
-  sendFboEmail: jest.fn(),
-  sendLcEmail: jest.fn(),
-  getLcEmailConfig: jest.fn()
+  sendEmailOfType: jest.fn(),
+  getLcContactConfig: jest.fn()
 }));
 
 const {
@@ -23,9 +22,8 @@ const {
   getFullRegistrationById,
   getRegistrationMetaData,
   sendTascomiRegistration,
-  sendFboEmail,
-  sendLcEmail,
-  getLcEmailConfig
+  sendEmailOfType,
+  getLcContactConfig
 } = require("./registration.service");
 const { validate } = require("../../services/validation.service");
 const {
@@ -38,11 +36,39 @@ describe("registration controller", () => {
   const exampleLcConfig = {
     hygieneAndStandards: {
       code: 1234,
-      lcName: "Example council name",
-      lcNotificationEmails: ["example@example.com"],
-      lcContactEmail: "example@example.com"
+      local_council: "Example council name",
+      local_council_notify_emails: ["example@example.com"],
+      local_council_email: "example@example.com"
     }
   };
+
+  const exampleMultiLcConfig = {
+    hygiene: {
+      code: 1234,
+      local_council: "Example council name",
+      local_council_notify_emails: ["example@example.com"],
+      local_council_email: "example@example.com"
+    },
+    standards: {
+      code: 2345,
+      local_council: "Another council name",
+      local_council_notify_emails: [
+        "another@example.com",
+        "alsothisone@example.com"
+      ],
+      local_council_email: "another@example.com"
+    }
+  };
+
+  const testRegistration = {
+    establishment: { operator: { operator_email: "operator@example.com" } }
+  };
+  const testRegistrationWithRepresentative = {
+    establishment: {
+      operator: { contact_representative_email: "representative@example.com" }
+    }
+  };
+  const testLocalCouncilUrl = "example-council-url";
 
   describe("Function: createNewRegistration", () => {
     describe("when given valid data", () => {
@@ -60,14 +86,14 @@ describe("registration controller", () => {
         getRegistrationMetaData.mockImplementation(() => {
           return { reg_submission_date: 1 };
         });
-        getLcEmailConfig.mockImplementation(() => exampleLcConfig);
-        sendFboEmail.mockImplementation(() => {
-          return true;
+        getLcContactConfig.mockImplementation(() => exampleLcConfig);
+        sendEmailOfType.mockImplementation(() => {
+          return { success: true, recipient: "recipient@example.com" };
         });
-        sendLcEmail.mockImplementation(() => {
-          return true;
-        });
-        result = await createNewRegistration("input");
+        result = await createNewRegistration(
+          testRegistration,
+          testLocalCouncilUrl
+        );
       });
 
       it("should return the result of saveRegistration", () => {
@@ -76,111 +102,88 @@ describe("registration controller", () => {
       it("should return the result of getRegistrationMetaData", () => {
         expect(result.reg_submission_date).toBe(1);
       });
-      it("should return the result of sendFboEmail", () => {
-        expect(result.email_success_fbo).toBe(true);
+      it("should return the result of sendEmailOfType", () => {
+        expect(result.email_success_fbo).toEqual({
+          recipient: "recipient@example.com",
+          success: true
+        });
+      });
+      it("should have last called sendEmailOfType with the operator_email", () => {
+        expect(sendEmailOfType).toHaveBeenLastCalledWith(
+          "FBO",
+          expect.anything(),
+          expect.anything(),
+          expect.anything(),
+          "operator@example.com"
+        );
       });
 
       describe("given the Local Council is responsible for both hygiene and standards", () => {
         beforeEach(async () => {
-          getLcEmailConfig.mockImplementation(() => exampleLcConfig);
-          result = await createNewRegistration("input");
+          getLcContactConfig.mockImplementation(() => exampleLcConfig);
+          result = await createNewRegistration(
+            testRegistration,
+            testLocalCouncilUrl
+          );
         });
 
         it("should return email_success_lc as an object with hygieneAndStandards only", () => {
           expect(Object.keys(result.email_success_lc).length).toBe(1);
-          expect(result.email_success_lc.hygieneAndStandards).toBe(true);
+          expect(result.email_success_lc.hygieneAndStandards).toEqual({
+            recipient: "recipient@example.com",
+            success: true
+          });
         });
 
-        it("should return an lc_config object with the response of getLcEmailConfig", () => {
+        it("should return an lc_config object with the response of getLcContactConfig", () => {
           expect(result.lc_config).toEqual(exampleLcConfig);
-        });
-
-        it("should have called sendFboEmail with single-LC data", () => {
-          expect(sendFboEmail).toHaveBeenLastCalledWith(
-            expect.anything(),
-            expect.anything(),
-            {
-              local_council: "Example council name",
-              local_council_email: "example@example.com"
-            }
-          );
-        });
-
-        it("should have called sendLcEmail once with single-LC data", () => {
-          expect(sendLcEmail).toHaveBeenLastCalledWith(
-            expect.anything(),
-            expect.anything(),
-            {
-              local_council: "Example council name",
-              local_council_email: "example@example.com"
-            }
-          );
         });
       });
 
       describe("given the hygiene and standards Local Councils are separate", () => {
-        const exampleMultiLcConfig = {
-          hygiene: {
-            code: 1234,
-            lcName: "Example council name",
-            lcNotificationEmails: ["example@example.com"],
-            lcContactEmail: "example@example.com"
-          },
-          standards: {
-            code: 2345,
-            lcName: "Another council name",
-            lcNotificationEmails: ["another@example.com"],
-            lcContactEmail: "another@example.com"
-          }
-        };
-
         beforeEach(async () => {
-          getLcEmailConfig.mockImplementation(() => exampleMultiLcConfig);
-          result = await createNewRegistration("input");
+          getLcContactConfig.mockImplementation(() => exampleMultiLcConfig);
+          result = await createNewRegistration(
+            testRegistration,
+            testLocalCouncilUrl
+          );
         });
 
         it("should return email_success_lc as an object with hygiene and standards objects", () => {
           expect(Object.keys(result.email_success_lc).length).toBe(2);
-          expect(result.email_success_lc.hygiene).toBe(true);
-          expect(result.email_success_lc.standards).toBe(true);
+          expect(result.email_success_lc.hygiene).toEqual({
+            recipient: "recipient@example.com",
+            success: true
+          });
+          expect(result.email_success_lc.standards).toEqual({
+            recipient: "recipient@example.com",
+            success: true
+          });
         });
 
-        it("should return an lc_config object with the response of getLcEmailConfig", () => {
+        it("should return an lc_config object with the response of getLcContactConfig", () => {
           expect(result.lc_config).toEqual(exampleMultiLcConfig);
         });
+      });
+    });
 
-        it("should have called sendFboEmail with multi-LC data", () => {
-          expect(sendFboEmail).toHaveBeenLastCalledWith(
-            expect.anything(),
-            expect.anything(),
-            {
-              local_council_hygiene: "Example council name",
-              local_council_hygiene_email: "example@example.com",
-              local_council_standards: "Another council name",
-              local_council_standards_email: "another@example.com"
-            }
-          );
-        });
+    describe("given the operator_email field does not exist, but contact_representative_email does", () => {
+      beforeEach(async () => {
+        getLcContactConfig.mockImplementation(() => exampleLcConfig);
+        result = await createNewRegistration(
+          testRegistrationWithRepresentative,
+          testLocalCouncilUrl
+        );
+      });
 
-        it("should have called sendLcEmail TWICE with multi-LC data", async () => {
-          sendLcEmail.mockClear();
-          sendLcEmail.mockImplementation(() => {
-            return true;
-          });
-          result = await createNewRegistration("input");
-
-          expect(sendLcEmail).toHaveBeenCalledTimes(2);
-          expect(sendLcEmail).toHaveBeenLastCalledWith(
-            expect.anything(),
-            expect.anything(),
-            {
-              local_council_hygiene: "Example council name",
-              local_council_hygiene_email: "example@example.com",
-              local_council_standards: "Another council name",
-              local_council_standards_email: "another@example.com"
-            }
-          );
-        });
+      it("should have last called sendEmailOfType with the contact_representative_email", () => {
+        expect(sendEmailOfType).toHaveBeenLastCalledWith(
+          "FBO",
+          expect.anything(),
+          expect.anything(),
+          expect.anything(),
+          "representative@example.com"
+        );
       });
     });
 
@@ -190,7 +193,7 @@ describe("registration controller", () => {
           return ["ERROR"];
         });
         try {
-          result = await createNewRegistration("input");
+          result = await createNewRegistration(testRegistration);
         } catch (err) {
           result = err;
         }

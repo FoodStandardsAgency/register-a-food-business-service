@@ -1,32 +1,32 @@
 [
   {
     "_id": 6008,
-    "lcName": "Mid & East Antrim Borough Council",
-    "lcNotificationEmails": ["antrim1@email.com", "antrim2@email.com"],
-    "lcContactEmail": "info-antrim@email.com",
-    "urlString": "mid-and-east-antrim"
+    "local_council": "Mid & East Antrim Borough Council",
+    "local_council_notify_emails": ["antrim1@email.com", "antrim2@email.com"],
+    "local_council_email": "info-antrim@email.com",
+    "local_council_url": "mid-and-east-antrim"
   },
   {
     "_id": 4221,
-    "lcName": "West Dorset District Council",
-    "lcNotificationEmails": ["westdorset@email.com"],
-    "lcContactEmail": "info-westdorset@email.com",
-    "urlString": "west-dorset",
-    "separateStandardsCouncil": 4226
+    "local_council": "West Dorset District Council",
+    "local_council_notify_emails": ["westdorset@email.com"],
+    "local_council_email": "info-westdorset@email.com",
+    "local_council_url": "west-dorset",
+    "separate_standards_council": 4226
   },
   {
     "_id": 4226,
-    "lcName": "Dorset County Council",
-    "lcNotificationEmails": ["dorsetcounty@email.com"],
-    "lcContactEmail": "info-dorsetcounty@email.com",
-    "urlString": "dorset"
+    "local_council": "Dorset County Council",
+    "local_council_notify_emails": ["dorsetcounty@email.com"],
+    "local_council_email": "info-dorsetcounty@email.com",
+    "local_council_url": "dorset"
   },
   {
     "_id": 9999,
-    "lcName": "Example council that has no matching standards council",
-    "lcNotificationEmails": ["example@email.com"],
-    "lcContactEmail": "example@email.com",
-    "urlString": "example-with-missing-standards-council",
-    "separateStandardsCouncil": 100000
+    "local_council": "Example council that has no matching standards council",
+    "local_council_notify_emails": ["example@email.com"],
+    "local_council_email": "example@email.com",
+    "local_council_url": "example-with-missing-standards-council",
+    "separate_standards_council": 100000
   }
 ]
