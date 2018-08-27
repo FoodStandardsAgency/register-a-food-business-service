@@ -76,8 +76,8 @@ const createNewRegistration = async (registration, localCouncilUrl) => {
     {
       tascomiResponse: tascomiObject
     },
-    { email_success_fbo: notifySuccessOrFailureFbo },
-    { email_success_lc: notifySuccessOrFailureLc },
+    { email_fbo: notifySuccessOrFailureFbo },
+    { email_lc: notifySuccessOrFailureLc },
     { lc_config: lcContactConfig }
   );
 
