@@ -7,35 +7,16 @@ const { NOTIFY_TEMPLATE_ID_TEST } = require("../../src/config");
 const invalidTemplateId = "1a1aaa-11aa-11a1-111a-Z11111a11a19";
 const validRecipientEmail = "fsatestemail.valid@gmail.com";
 const invalidRecipientEmail = "not-in-an-email-format";
-const testRegistration = {
-  establishment: {
-    establishment_details: {
-      establishment_trading_name: "Itsu",
-      test_variable: "example"
-    },
-    operator: {
-      operator_first_name: "Fred"
-    },
-    premise: {
-      establishment_postcode: "SW12 9RQ"
-    },
-    activities: {
-      customer_type: "End consumer"
-    }
-  },
-  metadata: {
-    declaration1: "Declaration"
-  }
+const testFlattenedData = {
+  establishment_trading_name: "example"
 };
-const testPostRegistrationMetadata = { example: "test" };
 
 describe("Notify contract: sendSingleEmail", () => {
   describe("When given valid request", () => {
     const notifyArguments = [
       NOTIFY_TEMPLATE_ID_TEST,
       validRecipientEmail,
-      testRegistration,
-      testPostRegistrationMetadata
+      testFlattenedData
     ];
 
     it("Should both return an ID showing a successful email send (but not necessarily that it has arrived - this will not be tested)", async () => {
@@ -52,8 +33,7 @@ describe("Notify contract: sendSingleEmail", () => {
     const notifyArguments = [
       NOTIFY_TEMPLATE_ID_TEST,
       invalidRecipientEmail,
-      testRegistration,
-      testPostRegistrationMetadata
+      testFlattenedData
     ];
 
     it("Should both reject", async () => {
@@ -68,8 +48,7 @@ describe("Notify contract: sendSingleEmail", () => {
     const notifyArguments = [
       invalidTemplateId,
       validRecipientEmail,
-      testRegistration,
-      testPostRegistrationMetadata
+      testFlattenedData
     ];
 
     it("Should both reject", async () => {
@@ -84,8 +63,7 @@ describe("Notify contract: sendSingleEmail", () => {
     const notifyArguments = [
       NOTIFY_TEMPLATE_ID_TEST,
       validRecipientEmail,
-      {},
-      {}
+      { this_should_include_estabishment_trading_name: "not there" }
     ];
 
     it("Should both reject", async () => {
