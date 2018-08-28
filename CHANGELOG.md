@@ -3,125 +3,149 @@
 All notable changes to this projectwill be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## v3.1.0 - 28th August 2018 (unreleased)
+
+### Added
+
+* SBD-6 LC lookup
+
+## v3.0.0 - 21st August 2018 (unreleased)
+
+### Added
+
+* Added secret and name based authentication to all API routes
+
+## v2.7.0 - 7th August 2018 (unreleased)
+
+### Added
+
+* SDB-22 Local council email notifications
+
+## v2.6.0 - 7th August 2018 (unreleased)
+
+### Added
+
+* SDB-241 - Business import export activities
+
 ## v2.5.0 - 7th August 2018 (unreleased)
 
 ### Added
 
-- SDB-5 - Business types - type in
+* SDB-5 - Business types - type in
 
 ## v2.4.0 - 3rd August 2018 (unreleased)
 
 ### Added
 
-- SDB-521 - Tascomi integration
+* SDB-521 - Tascomi integration
 
 ## v2.3.0 - 1st August 2018 (unreleased)
 
 ### Added
 
-- SDB-47 - Registration confirmation number
+* SDB-47 - Registration confirmation number
 
 ## v2.2.0 - 30th July 2018 (unreleased)
 
 ### Added
 
-- SDB-236 - Registration submission date
+* SDB-236 - Registration submission date
 
 ## v2.1.0 - 30th July 2018 (unreleased)
 
 ### Added
 
-- SDB-50 - Establishment Type
+* SDB-50 - Establishment Type
 
 ## v2.0.0 - 27th July 2018 (unreleased)
 
 ### Modified
 
-- Changed API from GraphQL to REST API, after reassessing benefits of GraphQL in our service context.
+* Changed API from GraphQL to REST API, after reassessing benefits of GraphQL in our service context.
 
 ## v1.13.0 - 18th July 2018 (unreleased)
 
 ### Added
 
-- Database layer
+* Database layer
 
 ## v1.12.0 - 11th July 2018 (unreleased)
 
 ### Added
 
-- SDB-114 / 115 - Establishment opening date
+* SDB-114 / 115 - Establishment opening date
 
 ## v1.11.0 - 11th July 2018 (unreleased)
 
 ### Added
 
-- SDB-40 - Customer Type
+* SDB-40 - Customer Type
 
 ## v1.10.1 - 6th July 2018 (unreleased)
 
 ### Modified
 
-- Removal of registration role from backend
+* Removal of registration role from backend
 
 ## v1.10.0 - 6th July 2018 (unreleased)
 
 ### Added
 
-- SDB-113 - Establishment Contact Details
+* SDB-113 - Establishment Contact Details
 
 ## v1.9.0 - 28th June 2018 (unreleased)
 
 ### Added
 
-- SDB-40 - Charity details
+* SDB-40 - Charity details
 
 ## v1.8.0 - 28th June 2018 (unreleased)
 
 ### Added
 
-- SDB-1 - Operator Address
+* SDB-1 - Operator Address
 
 ## v1.7.0 - 25th June 2018 (unreleased)
 
 ### Added
 
-- SDB-36 - Limited company details
+* SDB-36 - Limited company details
 
 ## v1.6.0 - 25th June 2018 (unreleased)
 
 ### Added
 
-- SDB-55 - Operator type
+* SDB-55 - Operator type
 
 ## v1.5.0 - 25th June 2018 (unreleased)
 
 ### Modified
 
-- SDB-247 - Validation refactor
+* SDB-247 - Validation refactor
 
 ## v1.4.0 - 18th June 2018 (unreleased)
 
 ### Added
 
-- SDB-156 - Simple contact details
+* SDB-156 - Simple contact details
 
 ## v1.3.0 - 18th June 2018 (unreleased)
 
 ### Added
 
-- SDB-144 - Backed data schema visualisation with Voyager
+* SDB-144 - Backed data schema visualisation with Voyager
 
 ## v1.2.0 - 13th June 2018 (unreleased)
 
 ### Added
 
-- SDB-4 - Establishment trading name
-- SDB-49 - Establishment address (with info drop down)
+* SDB-4 - Establishment trading name
+* SDB-49 - Establishment address (with info drop down)
 
 ## v1.1.0 - 6th June 2018 (unreleased)
 
 ### Added
 
-- SDB-44 - Back end connection
-- SDB-34 - Submit a registration
-- SDB-49 - Establishment address (without info drop down)
+* SDB-44 - Back end connection
+* SDB-34 - Submit a registration
+* SDB-49 - Establishment address (without info drop down)

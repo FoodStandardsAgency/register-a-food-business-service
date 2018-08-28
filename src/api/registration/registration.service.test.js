@@ -13,16 +13,56 @@ jest.mock("../../connectors/registrationDb/registrationDb", () => ({
   getActivitiesByEstablishmentId: jest.fn()
 }));
 
+jest.mock("../../connectors/notify/notify.connector", () => ({
+  sendSingleEmail: jest.fn()
+}));
+
 jest.mock("../../connectors/tascomi/tascomi.connector", () => ({
   createFoodBusinessRegistration: jest.fn(),
   createReferenceNumber: jest.fn()
 }));
+
+jest.mock("../../connectors/configDb/configDb.connector", () => ({
+  getAllLocalCouncilConfig: jest.fn()
+}));
+
+jest.mock("../../services/notifications.service");
+
+jest.mock("../../services/logging.service", () => ({
+  logEmitter: {
+    emit: jest.fn()
+  }
+}));
+
+jest.mock("../../config", () => ({
+  NOTIFY_TEMPLATE_ID_FBO: "1234",
+  NOTIFY_TEMPLATE_ID_LC: "5678"
+}));
+
 jest.mock("node-fetch");
+
+const { sendSingleEmail } = require("../../connectors/notify/notify.connector");
 
 const {
   createFoodBusinessRegistration,
   createReferenceNumber
 } = require("../../connectors/tascomi/tascomi.connector");
+
+const {
+  getAllLocalCouncilConfig
+} = require("../../connectors/configDb/configDb.connector");
+
+const mockLocalCouncilConfig = require("../../connectors/configDb/mockLocalCouncilConfig.json");
+
+const {
+  transformDataForNotify
+} = require("../../services/notifications.service");
+
+const {
+  NOTIFY_TEMPLATE_ID_FBO,
+  NOTIFY_TEMPLATE_ID_LC
+} = require("../../config");
+
 const fetch = require("node-fetch");
 
 const {
@@ -44,11 +84,14 @@ const {
   saveRegistration,
   getFullRegistrationById,
   sendTascomiRegistration,
-  getRegistrationMetaData
+  getRegistrationMetaData,
+  sendEmailOfType,
+  getLcContactConfig
 } = require("./registration.service");
 
+let result;
+
 describe("Function: saveRegistration: ", () => {
-  let result;
   beforeEach(async () => {
     createRegistration.mockImplementation(() => {
       return { id: "435" };
@@ -127,25 +170,44 @@ describe("Function: getFullRegistrationById: ", () => {
 
 describe("Function: sendTascomiRegistration: ", () => {
   let result;
+  describe("When calls are successful", () => {
+    beforeEach(async () => {
+      jest.clearAllMocks();
+      createFoodBusinessRegistration.mockImplementation(() => '{ "id": "123"}');
+      createReferenceNumber.mockImplementation(
+        () => '{ "id": "123", "online_reference": "0000123"}'
+      );
+      result = await sendTascomiRegistration();
+    });
 
-  beforeEach(async () => {
-    jest.clearAllMocks();
-    createFoodBusinessRegistration.mockImplementation(() => '{ "id": "123"}');
+    it("should call createFoodBusinessRegistration", () => {
+      expect(createFoodBusinessRegistration).toBeCalled();
+    });
 
-    createReferenceNumber.mockImplementation(() => "0000123");
-    result = await sendTascomiRegistration();
+    it("should call createReferenceNumber with result of previous call", () => {
+      expect(createReferenceNumber).toBeCalledWith("123");
+    });
+
+    it("should return response of createReferenceNumber", () => {
+      expect(result).toBe('{ "id": "123", "online_reference": "0000123"}');
+    });
   });
 
-  it("should call createFoodBusinessRegistration", () => {
-    expect(createFoodBusinessRegistration).toBeCalled();
-  });
+  describe("When createReferenceNumber fails", () => {
+    beforeEach(async () => {
+      jest.clearAllMocks();
+      createFoodBusinessRegistration.mockImplementation(() => '{ "id": "123"}');
+      createReferenceNumber.mockImplementation(() => '{ "id": 0 }');
+      try {
+        await sendTascomiRegistration();
+      } catch (err) {
+        result = err;
+      }
+    });
 
-  it("should call createReferenceNumber with result of previous call", () => {
-    expect(createReferenceNumber).toBeCalledWith("123");
-  });
-
-  it("should return response of createReferenceNumber", () => {
-    expect(result).toBe("0000123");
+    it("Should throw tascomiRefNumber error", () => {
+      expect(result.name).toBe("tascomiRefNumber");
+    });
   });
 });
 
@@ -176,6 +238,208 @@ describe("Function: getRegistrationMetaData: ", () => {
     });
     it("should return an object that contains fsa_rn", () => {
       expect(result["fsa-rn"]).toBe(undefined);
+    });
+  });
+});
+
+describe("Function: sendEmailOfType: ", () => {
+  beforeEach(() => {
+    transformDataForNotify.mockImplementation(() => testTransformedData);
+  });
+
+  let result;
+
+  const testRecipient = "recipient@example.com";
+
+  const testRegistration = {
+    local_council: "example@example.com"
+  };
+
+  const testPostRegistrationMetadata = {
+    example: "metadata"
+  };
+
+  const testlcContactConfig = {
+    local_council_email: "example@example.com"
+  };
+
+  const testTransformedData = {
+    example: "value"
+  };
+
+  describe("When the connector responds successfully", () => {
+    beforeEach(async () => {
+      sendSingleEmail.mockImplementation(() => ({
+        id: "123-456"
+      }));
+      result = await sendEmailOfType(
+        "LC",
+        testRegistration,
+        testPostRegistrationMetadata,
+        testlcContactConfig,
+        testRecipient
+      );
+    });
+
+    it("should have called the connector with the correct arguments", () => {
+      expect(sendSingleEmail).toHaveBeenLastCalledWith(
+        NOTIFY_TEMPLATE_ID_LC,
+        testRecipient,
+        testTransformedData
+      );
+    });
+
+    it("should return an object with success value true and the correct recipient email", () => {
+      expect(result.success).toBe(true);
+      expect(result.recipient).toBe(testRecipient);
+    });
+  });
+
+  describe("When the connector throws an error", () => {
+    beforeEach(async () => {
+      sendSingleEmail.mockImplementation(() => {
+        throw new Error();
+      });
+      result = await sendEmailOfType(
+        "LC",
+        testRegistration,
+        testPostRegistrationMetadata,
+        testlcContactConfig,
+        testRecipient
+      );
+    });
+
+    it("should return an object with success value false and still return a recipient", () => {
+      expect(result.success).toBe(false);
+      expect(result.recipient).toBe(testRecipient);
+    });
+  });
+
+  describe("When called with typeOfEmail FBO", () => {
+    beforeEach(async () => {
+      sendSingleEmail.mockImplementation(() => ({
+        id: "123-456"
+      }));
+      result = await sendEmailOfType(
+        "FBO",
+        testRegistration,
+        testPostRegistrationMetadata,
+        testlcContactConfig,
+        testRecipient
+      );
+    });
+
+    it("should have called the connector with the correct arguments", () => {
+      expect(sendSingleEmail).toHaveBeenLastCalledWith(
+        NOTIFY_TEMPLATE_ID_FBO,
+        testRecipient,
+        testTransformedData
+      );
+    });
+
+    it("should return an object with success value true and the correct recipient email", () => {
+      expect(result.success).toBe(true);
+      expect(result.recipient).toBe(testRecipient);
+    });
+  });
+});
+
+describe("Function: getLcContactConfig: ", () => {
+  beforeEach(() => {
+    getAllLocalCouncilConfig.mockImplementation(() => mockLocalCouncilConfig);
+  });
+
+  describe("given a valid localCouncilUrl", () => {
+    describe("given the local council does not have a separate standards council", () => {
+      beforeEach(async () => {
+        result = await getLcContactConfig("mid-and-east-antrim");
+      });
+
+      it("should return an object with a hygieneAndStandards key only", () => {
+        expect(Object.keys(result).length).toBe(1);
+        expect(result.hygieneAndStandards).toBeDefined();
+      });
+
+      it("the hygieneAndStandards object should contain the necessary data fields", () => {
+        expect(result.hygieneAndStandards.code).toBeDefined();
+        expect(result.hygieneAndStandards.local_council).toBeDefined();
+        expect(
+          result.hygieneAndStandards.local_council_notify_emails
+        ).toBeDefined();
+        expect(result.hygieneAndStandards.local_council_email).toBeDefined();
+      });
+    });
+
+    describe("given the local council has a separate standards council", () => {
+      beforeEach(async () => {
+        result = await getLcContactConfig("west-dorset");
+      });
+
+      it("should return an object with a hygiene key and a standards key", () => {
+        expect(Object.keys(result).length).toBe(2);
+        expect(result.hygiene).toBeDefined();
+        expect(result.standards).toBeDefined();
+      });
+
+      it("each nested object should contain the necessary data fields", () => {
+        for (let typeOfCouncil in result) {
+          expect(result[typeOfCouncil].code).toBeDefined();
+          expect(result[typeOfCouncil].local_council).toBeDefined();
+          expect(
+            result[typeOfCouncil].local_council_notify_emails
+          ).toBeDefined();
+          expect(result[typeOfCouncil].local_council_email).toBeDefined();
+        }
+      });
+    });
+  });
+
+  describe("given a valid localCouncilUrl that specifies a non-existent standards council", () => {
+    beforeEach(async () => {
+      try {
+        await getLcContactConfig("example-with-missing-standards-council");
+      } catch (err) {
+        result = err;
+      }
+    });
+
+    it("should throw localCouncilNotFound error with the URL", () => {
+      expect(result.name).toBe("localCouncilNotFound");
+      expect(result.message).toBe(
+        `A separate standards council config with the code "100000" was expected for "example-with-missing-standards-council" but does not exist`
+      );
+    });
+  });
+
+  describe("given an invalid localCouncilUrl", () => {
+    beforeEach(async () => {
+      try {
+        await getLcContactConfig("some-invalid-local-council");
+      } catch (err) {
+        result = err;
+      }
+    });
+
+    it("should throw localCouncilNotFound error with the URL", () => {
+      expect(result.name).toBe("localCouncilNotFound");
+      expect(result.message).toBe(
+        `Config for "some-invalid-local-council" not found`
+      );
+    });
+  });
+
+  describe("given a missing localCouncilUrl", () => {
+    beforeEach(async () => {
+      try {
+        await getLcContactConfig(undefined);
+      } catch (err) {
+        result = err;
+      }
+    });
+
+    it("should throw localCouncilNotFound error with an explanation", () => {
+      expect(result.name).toBe("localCouncilNotFound");
+      expect(result.message).toBe("Local council URL is undefined");
     });
   });
 });

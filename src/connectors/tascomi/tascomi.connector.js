@@ -1,7 +1,7 @@
 const request = require("request-promise-native");
-const { info, error } = require("winston");
 const { tascomiAuth } = require("@slice-and-dice/fsa-rof");
 const { doubleRequest } = require("./tascomi.double");
+const { logEmitter } = require("../../services/logging.service");
 
 const sendRequest = async (url, method, body) => {
   const auth = await tascomiAuth.generateSyncHash(
@@ -19,16 +19,20 @@ const sendRequest = async (url, method, body) => {
     form: body
   };
   if (process.env.DOUBLE_MODE === "true") {
-    info("tascomi.connector: running in double mode");
+    logEmitter.emit("doubleMode", "tascomi.connector", "sendRequest");
     return doubleRequest(tascomiApiOptions);
   }
   return request(tascomiApiOptions);
 };
 
 const createFoodBusinessRegistration = async (registration, fsa_rn) => {
-  info("tascomi.connector: createFoodBusinessRegistration: called");
+  logEmitter.emit(
+    "functionCall",
+    "tascomi.connector",
+    "createFoodBusinessRegistration"
+  );
   try {
-    const url = `${process.env.TASCOMI_URL}online_food_business_registrations`;
+    const url = `${process.env.TASCOMI_URL}/online_food_business_registrations`;
     const premiseDetails = Object.assign(
       {},
       registration.establishment.premise
@@ -92,32 +96,54 @@ const createFoodBusinessRegistration = async (registration, fsa_rn) => {
     }
 
     const response = await sendRequest(url, "PUT", requestData);
-    info("tascomi.connector: createFoodBusinessRegistration: successful");
+    logEmitter.emit(
+      "functionSuccess",
+      "tascomi.connector",
+      "createFoodBusinessRegistration"
+    );
     return response;
   } catch (err) {
-    error(
-      `tascomi.connector: createFoodBusinessRegistration: errored with: ${err}`
+    logEmitter.emit(
+      "functionFail",
+      "tascomi.connector",
+      "createFoodBusinessRegistration",
+      err
     );
-    return err;
+    if (err.statusCode === 401) {
+      err.name = "tascomiAuth";
+    }
+    throw err;
   }
 };
 
 const createReferenceNumber = async id => {
-  info("tascomi.connector: createReferenceNumber: called");
+  logEmitter.emit("functionCall", "tascomi.connector", "createReferenceNumber");
   try {
     const url = `${
       process.env.TASCOMI_URL
-    }online_food_business_registrations/${id}`;
+    }/online_food_business_registrations/${id}`;
     const online_reference = id.padStart(7, "0");
     const requestData = {
       online_reference
     };
     const response = await sendRequest(url, "POST", requestData);
-    info("tascomi.connector: createReferenceNumber: successful");
+    logEmitter.emit(
+      "functionSuccess",
+      "tascomi.connector",
+      "createReferenceNumber"
+    );
     return response;
   } catch (err) {
-    error(`tascomi.connector: createReferenceNumber: errored with: ${err}`);
-    return err;
+    logEmitter.emit(
+      "functionFail",
+      "tascomi.connector",
+      "createReferenceNumber",
+      err
+    );
+    if (err.statusCode === 401) {
+      err.name = "tascomiAuth";
+    }
+    throw err;
   }
 };
 

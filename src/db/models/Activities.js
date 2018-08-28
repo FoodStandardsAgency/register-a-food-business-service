@@ -7,7 +7,8 @@ const activities = (db, Sequelize) => {
     },
     customer_type: { type: Sequelize.STRING },
     business_type: { type: Sequelize.STRING },
-    business_type_search_term: { type: Sequelize.STRING }
+    business_type_search_term: { type: Sequelize.STRING },
+    import_export_activities: { type: Sequelize.STRING }
   });
 };
 

@@ -2,18 +2,28 @@ jest.mock("../../services/validation.service", () => ({
   validate: jest.fn()
 }));
 
+jest.mock("../../services/logging.service", () => ({
+  logEmitter: {
+    emit: jest.fn()
+  }
+}));
+
 jest.mock("./registration.service", () => ({
   saveRegistration: jest.fn(),
   getFullRegistrationById: jest.fn(),
   sendTascomiRegistration: jest.fn(),
-  getRegistrationMetaData: jest.fn()
+  getRegistrationMetaData: jest.fn(),
+  sendEmailOfType: jest.fn(),
+  getLcContactConfig: jest.fn()
 }));
 
 const {
   saveRegistration,
   getFullRegistrationById,
   getRegistrationMetaData,
-  sendTascomiRegistration
+  sendTascomiRegistration,
+  sendEmailOfType,
+  getLcContactConfig
 } = require("./registration.service");
 const { validate } = require("../../services/validation.service");
 const {
@@ -23,6 +33,42 @@ const {
 
 describe("registration controller", () => {
   let result;
+  const exampleLcConfig = {
+    hygieneAndStandards: {
+      code: 1234,
+      local_council: "Example council name",
+      local_council_notify_emails: ["example@example.com"],
+      local_council_email: "example@example.com"
+    }
+  };
+
+  const exampleMultiLcConfig = {
+    hygiene: {
+      code: 1234,
+      local_council: "Example council name",
+      local_council_notify_emails: ["example@example.com"],
+      local_council_email: "example@example.com"
+    },
+    standards: {
+      code: 2345,
+      local_council: "Another council name",
+      local_council_notify_emails: [
+        "another@example.com",
+        "alsothisone@example.com"
+      ],
+      local_council_email: "another@example.com"
+    }
+  };
+
+  const testRegistration = {
+    establishment: { operator: { operator_email: "operator@example.com" } }
+  };
+  const testRegistrationWithRepresentative = {
+    establishment: {
+      operator: { contact_representative_email: "representative@example.com" }
+    }
+  };
+  const testLocalCouncilUrl = "example-council-url";
 
   describe("Function: createNewRegistration", () => {
     describe("when given valid data", () => {
@@ -40,7 +86,14 @@ describe("registration controller", () => {
         getRegistrationMetaData.mockImplementation(() => {
           return { reg_submission_date: 1 };
         });
-        result = await createNewRegistration("input");
+        getLcContactConfig.mockImplementation(() => exampleLcConfig);
+        sendEmailOfType.mockImplementation(() => {
+          return { success: true, recipient: "recipient@example.com" };
+        });
+        result = await createNewRegistration(
+          testRegistration,
+          testLocalCouncilUrl
+        );
       });
 
       it("should return the result of saveRegistration", () => {
@@ -48,6 +101,89 @@ describe("registration controller", () => {
       });
       it("should return the result of getRegistrationMetaData", () => {
         expect(result.reg_submission_date).toBe(1);
+      });
+      it("should return the result of sendEmailOfType", () => {
+        expect(result.email_success_fbo).toEqual({
+          recipient: "recipient@example.com",
+          success: true
+        });
+      });
+      it("should have last called sendEmailOfType with the operator_email", () => {
+        expect(sendEmailOfType).toHaveBeenLastCalledWith(
+          "FBO",
+          expect.anything(),
+          expect.anything(),
+          expect.anything(),
+          "operator@example.com"
+        );
+      });
+
+      describe("given the Local Council is responsible for both hygiene and standards", () => {
+        beforeEach(async () => {
+          getLcContactConfig.mockImplementation(() => exampleLcConfig);
+          result = await createNewRegistration(
+            testRegistration,
+            testLocalCouncilUrl
+          );
+        });
+
+        it("should return email_success_lc as an object with hygieneAndStandards only", () => {
+          expect(Object.keys(result.email_success_lc).length).toBe(1);
+          expect(result.email_success_lc.hygieneAndStandards).toEqual({
+            recipient: "recipient@example.com",
+            success: true
+          });
+        });
+
+        it("should return an lc_config object with the response of getLcContactConfig", () => {
+          expect(result.lc_config).toEqual(exampleLcConfig);
+        });
+      });
+
+      describe("given the hygiene and standards Local Councils are separate", () => {
+        beforeEach(async () => {
+          getLcContactConfig.mockImplementation(() => exampleMultiLcConfig);
+          result = await createNewRegistration(
+            testRegistration,
+            testLocalCouncilUrl
+          );
+        });
+
+        it("should return email_success_lc as an object with hygiene and standards objects", () => {
+          expect(Object.keys(result.email_success_lc).length).toBe(2);
+          expect(result.email_success_lc.hygiene).toEqual({
+            recipient: "recipient@example.com",
+            success: true
+          });
+          expect(result.email_success_lc.standards).toEqual({
+            recipient: "recipient@example.com",
+            success: true
+          });
+        });
+
+        it("should return an lc_config object with the response of getLcContactConfig", () => {
+          expect(result.lc_config).toEqual(exampleMultiLcConfig);
+        });
+      });
+    });
+
+    describe("given the operator_email field does not exist, but contact_representative_email does", () => {
+      beforeEach(async () => {
+        getLcContactConfig.mockImplementation(() => exampleLcConfig);
+        result = await createNewRegistration(
+          testRegistrationWithRepresentative,
+          testLocalCouncilUrl
+        );
+      });
+
+      it("should have last called sendEmailOfType with the contact_representative_email", () => {
+        expect(sendEmailOfType).toHaveBeenLastCalledWith(
+          "FBO",
+          expect.anything(),
+          expect.anything(),
+          expect.anything(),
+          "representative@example.com"
+        );
       });
     });
 
@@ -57,14 +193,14 @@ describe("registration controller", () => {
           return ["ERROR"];
         });
         try {
-          result = await createNewRegistration("input");
+          result = await createNewRegistration(testRegistration);
         } catch (err) {
           result = err;
         }
       });
 
-      it("should return the registration", () => {
-        expect(result.message).toEqual('["ERROR"]');
+      it("should throw a validation error", () => {
+        expect(result.name).toEqual("validationError");
       });
     });
 
