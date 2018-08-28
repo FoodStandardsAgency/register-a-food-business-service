@@ -4,13 +4,13 @@ const {
   getFullRegistrationById,
   sendTascomiRegistration,
   getRegistrationMetaData,
-  sendFboEmail,
-  sendLcEmail
+  sendEmailOfType,
+  getLcContactConfig
 } = require("./registration.service");
 
 const { logEmitter } = require("../../services/logging.service");
 
-const createNewRegistration = async registration => {
+const createNewRegistration = async (registration, localCouncilUrl) => {
   logEmitter.emit(
     "functionCall",
     "registration.controller",
@@ -31,40 +31,54 @@ const createNewRegistration = async registration => {
   }
 
   // RESOLUTION
-  // This is a stubbed email until LC lookup is implemented
-  const localCouncilContactDetails = {
-    local_council: "Rushmoor Borough Council",
-    local_council_email: "fsatestemail.valid@gmail.com",
-    local_council_phone_number: "12345678"
-  };
-  const metaDataResponse = await getRegistrationMetaData();
+  const postRegistrationMetadata = await getRegistrationMetaData();
   const tascomiResponse = await sendTascomiRegistration(
     registration,
-    metaDataResponse["fsa-rn"]
+    postRegistrationMetadata["fsa-rn"]
   );
   const tascomiObject = JSON.parse(tascomiResponse);
   const response = await saveRegistration(registration);
 
-  const emailSuccessOrFailureFbo = await sendFboEmail(
-    registration,
-    metaDataResponse,
-    localCouncilContactDetails
-  );
+  const lcContactConfig = await getLcContactConfig(localCouncilUrl);
 
-  const emailSuccessOrFailureLc = await sendLcEmail(
+  const notifySuccessOrFailureLc = {};
+
+  for (let typeOfCouncil in lcContactConfig) {
+    const lcNotificationEmailAddresses =
+      lcContactConfig[typeOfCouncil].local_council_notify_emails;
+
+    for (let recipientEmailAddress in lcNotificationEmailAddresses) {
+      notifySuccessOrFailureLc[typeOfCouncil] = await sendEmailOfType(
+        "LC",
+        registration,
+        postRegistrationMetadata,
+        lcContactConfig,
+        lcNotificationEmailAddresses[recipientEmailAddress]
+      );
+    }
+  }
+
+  const fboEmailAddress =
+    registration.establishment.operator.operator_email ||
+    registration.establishment.operator.contact_representative_email;
+
+  const notifySuccessOrFailureFbo = await sendEmailOfType(
+    "FBO",
     registration,
-    metaDataResponse,
-    localCouncilContactDetails
+    postRegistrationMetadata,
+    lcContactConfig,
+    fboEmailAddress
   );
 
   const combinedResponse = Object.assign(
     response,
-    metaDataResponse,
+    postRegistrationMetadata,
     {
       tascomiResponse: tascomiObject
     },
-    emailSuccessOrFailureFbo,
-    emailSuccessOrFailureLc
+    { email_success_fbo: notifySuccessOrFailureFbo },
+    { email_success_lc: notifySuccessOrFailureLc },
+    { lc_config: lcContactConfig }
   );
 
   logEmitter.emit(
@@ -72,6 +86,7 @@ const createNewRegistration = async registration => {
     "registration.controller",
     "createNewRegistration"
   );
+
   return combinedResponse;
 };
 

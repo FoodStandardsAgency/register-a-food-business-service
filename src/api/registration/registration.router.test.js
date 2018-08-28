@@ -27,7 +27,15 @@ describe("registration router", () => {
 
     describe("when making a valid request", () => {
       beforeEach(async () => {
-        await handler({ body: { registration: "reg" } }, { send, status });
+        await handler(
+          {
+            body: {
+              registration: "reg",
+              local_council_url: "example-council-url"
+            }
+          },
+          { send, status }
+        );
       });
 
       it("should call res.send", () => {
@@ -46,7 +54,12 @@ describe("registration router", () => {
         }));
         next = jest.fn();
         await handler(
-          { body: { registration: "reg" } },
+          {
+            body: {
+              registration: "reg",
+              local_council_url: "example-council-url"
+            }
+          },
           { send, status },
           next
         );

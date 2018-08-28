@@ -5,9 +5,13 @@ const {
 } = require("../../config");
 
 const notifyClientDouble = {
-  sendEmail: (templateId, recipientEmail) => {
+  sendEmail: (templateId, recipientEmail, personalisation) => {
     return new Promise((resolve, reject) => {
-      if (templateId && recipientEmail) {
+      if (
+        templateId &&
+        recipientEmail &&
+        personalisation.personalisation.establishment_trading_name
+      ) {
         if (recipientEmail === "fsatestemail.valid@gmail.com") {
           if (
             templateId === NOTIFY_TEMPLATE_ID_TEST ||
@@ -28,7 +32,7 @@ const notifyClientDouble = {
         }
       } else {
         reject(
-          "notify.double: reject: missing argument or test_variable not provided in data"
+          "notify.double: reject: missing argument or establishment_trading_name not provided in data"
         );
       }
     });

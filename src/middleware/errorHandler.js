@@ -41,6 +41,12 @@ const errorHandler = (err, req, res, next) => {
         }`;
       }
 
+      if (errorDetail.name === "localCouncilNotFound") {
+        errorDetail.developerMessage = `${errorDetail.developerMessage} ${
+          err.message
+        }`;
+      }
+
       res.status(errorDetail.statusCode);
       res.send({
         errorCode: errorDetail.code,
@@ -51,7 +57,7 @@ const errorHandler = (err, req, res, next) => {
       res.status(500);
       res.send({
         errorCode: "Unknown",
-        developerMessage: "Unkown error found, debug and add to error cases",
+        developerMessage: "Unknown error found, debug and add to error cases",
         userMessages: ""
       });
     }
@@ -59,7 +65,7 @@ const errorHandler = (err, req, res, next) => {
     res.status(500);
     res.send({
       errorCode: "Unknown",
-      developerMessage: "Unkown error found, debug and add to error cases",
+      developerMessage: "Unknown error found, debug and add to error cases",
       userMessages: ""
     });
   }

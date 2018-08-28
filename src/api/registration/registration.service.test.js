@@ -22,25 +22,41 @@ jest.mock("../../connectors/tascomi/tascomi.connector", () => ({
   createReferenceNumber: jest.fn()
 }));
 
+jest.mock("../../connectors/configDb/configDb.connector", () => ({
+  getAllLocalCouncilConfig: jest.fn()
+}));
+
+jest.mock("../../services/notifications.service");
+
 jest.mock("../../services/logging.service", () => ({
   logEmitter: {
     emit: jest.fn()
   }
 }));
 
+jest.mock("../../config", () => ({
+  NOTIFY_TEMPLATE_ID_FBO: "1234",
+  NOTIFY_TEMPLATE_ID_LC: "5678"
+}));
+
 jest.mock("node-fetch");
+
+const { sendSingleEmail } = require("../../connectors/notify/notify.connector");
 
 const {
   createFoodBusinessRegistration,
   createReferenceNumber
 } = require("../../connectors/tascomi/tascomi.connector");
 
-const { sendSingleEmail } = require("../../connectors/notify/notify.connector");
+const {
+  getAllLocalCouncilConfig
+} = require("../../connectors/configDb/configDb.connector");
 
-jest.mock("../../config", () => ({
-  NOTIFY_TEMPLATE_ID_FBO: "1234",
-  NOTIFY_TEMPLATE_ID_LC: "5678"
-}));
+const mockLocalCouncilConfig = require("../../connectors/configDb/mockLocalCouncilConfig.json");
+
+const {
+  transformDataForNotify
+} = require("../../services/notifications.service");
 
 const {
   NOTIFY_TEMPLATE_ID_FBO,
@@ -69,12 +85,13 @@ const {
   getFullRegistrationById,
   sendTascomiRegistration,
   getRegistrationMetaData,
-  sendFboEmail,
-  sendLcEmail
+  sendEmailOfType,
+  getLcContactConfig
 } = require("./registration.service");
 
+let result;
+
 describe("Function: saveRegistration: ", () => {
-  let result;
   beforeEach(async () => {
     createRegistration.mockImplementation(() => {
       return { id: "435" };
@@ -225,108 +242,15 @@ describe("Function: getRegistrationMetaData: ", () => {
   });
 });
 
-describe("Function: sendFboEmail: ", () => {
-  let result;
-  const testRegistration = {
-    establishment: { operator: { operator_email: "example@example.com" } }
-  };
-
-  const testRegistrationWithRepresentativeEmail = {
-    establishment: {
-      operator: { contact_representative_email: "example-rep@example.com" }
-    }
-  };
-
-  const testPostRegistrationMetadata = {
-    example: "metadata"
-  };
-
-  const testLocalCouncilContactDetails = {
-    example: "metadata"
-  };
-
-  describe("When the connector responds successfully", () => {
-    beforeEach(async () => {
-      sendSingleEmail.mockImplementation(() => ({
-        id: "123-456"
-      }));
-    });
-
-    describe("When operator_address is defined, but contact_representative_email is not", () => {
-      beforeEach(async () => {
-        result = await sendFboEmail(
-          testRegistration,
-          testPostRegistrationMetadata,
-          testLocalCouncilContactDetails
-        );
-      });
-
-      it("should return an object with success value true and the correct recipient email", () => {
-        expect(result.email_fbo.success).toBe(true);
-        expect(result.email_fbo.recipient).toBe("example@example.com");
-      });
-
-      it("should have called the connector with the correct arguments", () => {
-        expect(sendSingleEmail).toHaveBeenLastCalledWith(
-          "1234",
-          "example@example.com",
-          testRegistration,
-          testPostRegistrationMetadata,
-          testLocalCouncilContactDetails
-        );
-      });
-    });
-
-    describe("When contact_representative_email is defined, but operator_address is not", () => {
-      beforeEach(async () => {
-        result = await sendFboEmail(
-          testRegistrationWithRepresentativeEmail,
-          testPostRegistrationMetadata,
-          testLocalCouncilContactDetails
-        );
-      });
-
-      it("should return an object with success value true and the correct recipient email", () => {
-        expect(result.email_fbo.success).toBe(true);
-        expect(result.email_fbo.recipient).toBe("example-rep@example.com");
-      });
-
-      it("should have called the connector with the correct arguments", () => {
-        expect(sendSingleEmail).toHaveBeenLastCalledWith(
-          NOTIFY_TEMPLATE_ID_FBO,
-          "example-rep@example.com",
-          testRegistrationWithRepresentativeEmail,
-          testPostRegistrationMetadata,
-          testLocalCouncilContactDetails
-        );
-      });
-    });
+describe("Function: sendEmailOfType: ", () => {
+  beforeEach(() => {
+    transformDataForNotify.mockImplementation(() => testTransformedData);
   });
 
-  describe("When the connector throws an error", () => {
-    beforeEach(async () => {
-      sendSingleEmail.mockImplementation(() => {
-        throw new Error("message");
-      });
-      try {
-        await sendFboEmail(
-          testRegistration,
-          testPostRegistrationMetadata,
-          testLocalCouncilContactDetails
-        );
-      } catch (err) {
-        result = err;
-      }
-    });
-
-    it("should return an object with success value false", () => {
-      expect(result.message).toBe("message");
-    });
-  });
-});
-
-describe("Function: sendLCEmail: ", () => {
   let result;
+
+  const testRecipient = "recipient@example.com";
+
   const testRegistration = {
     local_council: "example@example.com"
   };
@@ -335,8 +259,12 @@ describe("Function: sendLCEmail: ", () => {
     example: "metadata"
   };
 
-  const testLocalCouncilContactDetails = {
+  const testlcContactConfig = {
     local_council_email: "example@example.com"
+  };
+
+  const testTransformedData = {
+    example: "value"
   };
 
   describe("When the connector responds successfully", () => {
@@ -344,31 +272,26 @@ describe("Function: sendLCEmail: ", () => {
       sendSingleEmail.mockImplementation(() => ({
         id: "123-456"
       }));
+      result = await sendEmailOfType(
+        "LC",
+        testRegistration,
+        testPostRegistrationMetadata,
+        testlcContactConfig,
+        testRecipient
+      );
     });
 
-    describe("When local_council is defined", () => {
-      beforeEach(async () => {
-        result = await sendLcEmail(
-          testRegistration,
-          testPostRegistrationMetadata,
-          testLocalCouncilContactDetails
-        );
-      });
+    it("should have called the connector with the correct arguments", () => {
+      expect(sendSingleEmail).toHaveBeenLastCalledWith(
+        NOTIFY_TEMPLATE_ID_LC,
+        testRecipient,
+        testTransformedData
+      );
+    });
 
-      it("should return an object with success value true and the correct recipient email", () => {
-        expect(result.email_lc.success).toBe(true);
-        expect(result.email_lc.recipient).toBe("example@example.com");
-      });
-
-      it("should have called the connector with the correct arguments", () => {
-        expect(sendSingleEmail).toHaveBeenLastCalledWith(
-          NOTIFY_TEMPLATE_ID_LC,
-          "example@example.com",
-          testRegistration,
-          testPostRegistrationMetadata,
-          testLocalCouncilContactDetails
-        );
-      });
+    it("should return an object with success value true and the correct recipient email", () => {
+      expect(result.success).toBe(true);
+      expect(result.recipient).toBe(testRecipient);
     });
   });
 
@@ -377,15 +300,146 @@ describe("Function: sendLCEmail: ", () => {
       sendSingleEmail.mockImplementation(() => {
         throw new Error();
       });
-      result = await sendLcEmail(
+      result = await sendEmailOfType(
+        "LC",
         testRegistration,
         testPostRegistrationMetadata,
-        testLocalCouncilContactDetails
+        testlcContactConfig,
+        testRecipient
       );
     });
 
-    it("should return an object with success value false", () => {
-      expect(result.email_lc.success).toBe(false);
+    it("should return an object with success value false and still return a recipient", () => {
+      expect(result.success).toBe(false);
+      expect(result.recipient).toBe(testRecipient);
+    });
+  });
+
+  describe("When called with typeOfEmail FBO", () => {
+    beforeEach(async () => {
+      sendSingleEmail.mockImplementation(() => ({
+        id: "123-456"
+      }));
+      result = await sendEmailOfType(
+        "FBO",
+        testRegistration,
+        testPostRegistrationMetadata,
+        testlcContactConfig,
+        testRecipient
+      );
+    });
+
+    it("should have called the connector with the correct arguments", () => {
+      expect(sendSingleEmail).toHaveBeenLastCalledWith(
+        NOTIFY_TEMPLATE_ID_FBO,
+        testRecipient,
+        testTransformedData
+      );
+    });
+
+    it("should return an object with success value true and the correct recipient email", () => {
+      expect(result.success).toBe(true);
+      expect(result.recipient).toBe(testRecipient);
+    });
+  });
+});
+
+describe("Function: getLcContactConfig: ", () => {
+  beforeEach(() => {
+    getAllLocalCouncilConfig.mockImplementation(() => mockLocalCouncilConfig);
+  });
+
+  describe("given a valid localCouncilUrl", () => {
+    describe("given the local council does not have a separate standards council", () => {
+      beforeEach(async () => {
+        result = await getLcContactConfig("mid-and-east-antrim");
+      });
+
+      it("should return an object with a hygieneAndStandards key only", () => {
+        expect(Object.keys(result).length).toBe(1);
+        expect(result.hygieneAndStandards).toBeDefined();
+      });
+
+      it("the hygieneAndStandards object should contain the necessary data fields", () => {
+        expect(result.hygieneAndStandards.code).toBeDefined();
+        expect(result.hygieneAndStandards.local_council).toBeDefined();
+        expect(
+          result.hygieneAndStandards.local_council_notify_emails
+        ).toBeDefined();
+        expect(result.hygieneAndStandards.local_council_email).toBeDefined();
+      });
+    });
+
+    describe("given the local council has a separate standards council", () => {
+      beforeEach(async () => {
+        result = await getLcContactConfig("west-dorset");
+      });
+
+      it("should return an object with a hygiene key and a standards key", () => {
+        expect(Object.keys(result).length).toBe(2);
+        expect(result.hygiene).toBeDefined();
+        expect(result.standards).toBeDefined();
+      });
+
+      it("each nested object should contain the necessary data fields", () => {
+        for (let typeOfCouncil in result) {
+          expect(result[typeOfCouncil].code).toBeDefined();
+          expect(result[typeOfCouncil].local_council).toBeDefined();
+          expect(
+            result[typeOfCouncil].local_council_notify_emails
+          ).toBeDefined();
+          expect(result[typeOfCouncil].local_council_email).toBeDefined();
+        }
+      });
+    });
+  });
+
+  describe("given a valid localCouncilUrl that specifies a non-existent standards council", () => {
+    beforeEach(async () => {
+      try {
+        await getLcContactConfig("example-with-missing-standards-council");
+      } catch (err) {
+        result = err;
+      }
+    });
+
+    it("should throw localCouncilNotFound error with the URL", () => {
+      expect(result.name).toBe("localCouncilNotFound");
+      expect(result.message).toBe(
+        `A separate standards council config with the code "100000" was expected for "example-with-missing-standards-council" but does not exist`
+      );
+    });
+  });
+
+  describe("given an invalid localCouncilUrl", () => {
+    beforeEach(async () => {
+      try {
+        await getLcContactConfig("some-invalid-local-council");
+      } catch (err) {
+        result = err;
+      }
+    });
+
+    it("should throw localCouncilNotFound error with the URL", () => {
+      expect(result.name).toBe("localCouncilNotFound");
+      expect(result.message).toBe(
+        `Config for "some-invalid-local-council" not found`
+      );
+    });
+  });
+
+  describe("given a missing localCouncilUrl", () => {
+    beforeEach(async () => {
+      try {
+        await getLcContactConfig(undefined);
+      } catch (err) {
+        result = err;
+      }
+    });
+
+    it("should throw localCouncilNotFound error with an explanation", () => {
+      expect(result.name).toBe("localCouncilNotFound");
+      expect(result.message).toBe("Local council URL is undefined");
     });
   });
 });

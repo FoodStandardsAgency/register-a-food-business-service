@@ -6,42 +6,48 @@ const arrayToInsert = [
   {
     // IDs are from https://data.food.gov.uk/codes/reference-number/_authority
     _id: 6008,
-    lcName: "Mid & East Antrim Borough Council",
-    lcEmails: ["fsatestemail.valid@gmail.com"],
-    urlString: ""
+    local_council: "Mid & East Antrim Borough Council",
+    local_council_email: "food@midandeastantrim.gov.uk",
+    local_council_notify_emails: ["fsatestemail.valid@gmail.com"],
+    local_council_url: "mid-and-east-antrim"
   },
   {
     _id: 8020,
-    lcName: "Bridgend County Borough Council",
-    lcEmails: [],
-    urlString: ""
+    local_council: "Bridgend County Borough Council",
+    local_council_email: "fsatestemail.valid@gmail.com",
+    local_council_notify_emails: ["fsatestemail.valid@gmail.com"],
+    local_council_url: "bridgend"
   },
   {
     _id: 4221,
-    lcName: "West Dorset District Council",
-    lcEmails: ["fsatestemail.valid@gmail.com"],
-    urlString: "",
-    separateStandardsCouncil: 4226
+    local_council: "West Dorset District Council",
+    local_council_email: "fsatestemail.valid@gmail.com",
+    local_council_notify_emails: ["fsatestemail.valid@gmail.com"],
+    local_council_url: "west-dorset",
+    separate_standards_council: 4226
   },
   {
     _id: 4223,
-    lcName: "North Dorset District Council",
-    lcEmails: ["fsatestemail.valid@gmail.com"],
-    urlString: "",
-    separateStandardsCouncil: 4226
+    local_council: "North Dorset District Council",
+    local_council_email: "fsatestemail.valid@gmail.com",
+    local_council_notify_emails: ["fsatestemail.valid@gmail.com"],
+    local_council_url: "north-dorset",
+    separate_standards_council: 4226
   },
   {
     _id: 4220,
-    lcName: "Weymouth and Portland Borough Council",
-    lcEmails: ["fsatestemail.valid@gmail.com"],
-    urlString: "",
-    separateStandardsCouncil: 4226
+    local_council: "Weymouth and Portland Borough Council",
+    local_council_email: "fsatestemail.valid@gmail.com",
+    local_council_notify_emails: ["fsatestemail.valid@gmail.com"],
+    local_council_url: "weymouth-and-portland",
+    separate_standards_council: 4226
   },
   {
     _id: 4226,
-    lcName: "Dorset County Council",
-    lcEmails: ["fsatestemail.valid@gmail.com"],
-    urlString: ""
+    local_council: "Dorset County Council",
+    local_council_email: "fsatestemail.valid@gmail.com",
+    local_council_notify_emails: ["fsatestemail.valid@gmail.com"],
+    local_council_url: ""
   }
 ];
 

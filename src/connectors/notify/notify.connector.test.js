@@ -13,33 +13,11 @@ describe("Function: sendSingleEmail", () => {
   let mockNotifyClient;
   const testTemplateId = "123456";
   const testRecipient = "email@email.com";
-  const testRegistration = {
-    establishment: {
-      establishment_details: {
-        establishment_trading_name: "Itsu"
-      },
-      operator: {
-        operator_first_name: "Fred"
-      },
-      premise: {
-        establishment_postcode: "SW12 9RQ"
-      },
-      activities: {
-        customer_type: "End consumer"
-      }
-    },
-    metadata: {
-      declaration1: "Declaration"
-    }
+  const testFlattenedData = {
+    example: "value"
   };
-  const testPostRegistrationMetadata = { example: "metadata" };
 
-  const args = [
-    testTemplateId,
-    testRecipient,
-    testRegistration,
-    testPostRegistrationMetadata
-  ];
+  const args = [testTemplateId, testRecipient, testFlattenedData];
 
   describe("given the NotifyClient constructor throws an error when used", () => {
     beforeEach(async () => {
@@ -157,58 +135,7 @@ describe("Function: sendSingleEmail", () => {
       );
     });
 
-    it("Should have called the Notify sendEmail function with the template ID, recipient, and a flattened version of the personalisation/data", () => {
-      const testFlattenedData = {
-        contact_representative_email: "",
-        contact_representative_email_exists: "no",
-        contact_representative_name: "",
-        contact_representative_name_exists: "no",
-        contact_representative_number: "",
-        contact_representative_number_exists: "no",
-        contact_representative_role: "",
-        contact_representative_role_exists: "no",
-        customer_type: "End consumer",
-        declaration1: "Declaration",
-        establishment_email: "",
-        establishment_email_exists: "no",
-        establishment_opening_date: "",
-        establishment_opening_date_exists: "no",
-        establishment_postcode: "SW12 9RQ",
-        establishment_primary_number: "",
-        establishment_primary_number_exists: "no",
-        establishment_secondary_number: "",
-        establishment_secondary_number_exists: "no",
-        establishment_street: "",
-        establishment_street_exists: "no",
-        establishment_town: "",
-        establishment_town_exists: "no",
-        establishment_trading_name: "Itsu",
-        establishment_trading_name_exists: "yes",
-        example: "metadata",
-        operator_charity_name: "",
-        operator_charity_name_exists: "no",
-        operator_charity_number: "",
-        operator_charity_number_exists: "no",
-        operator_company_house_number: "",
-        operator_company_house_number_exists: "no",
-        operator_company_name: "",
-        operator_company_name_exists: "no",
-        operator_email: "",
-        operator_email_exists: "no",
-        operator_first_name: "Fred",
-        operator_first_name_exists: "yes",
-        operator_last_name: "",
-        operator_last_name_exists: "no",
-        operator_primary_number: "",
-        operator_primary_number_exists: "no",
-        operator_secondary_number: "",
-        operator_secondary_number_exists: "no",
-        operator_street: "",
-        operator_street_exists: "no",
-        operator_town: "",
-        operator_town_exists: "no"
-      };
-
+    it("Should have called the Notify sendEmail function with the template ID, recipient, and flattenedData (within an object)", () => {
       return sendSingleEmail(...args).then(() => {
         expect(mockNotifyClient.sendEmail).toHaveBeenLastCalledWith(
           testTemplateId,

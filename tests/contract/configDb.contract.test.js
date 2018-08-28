@@ -12,10 +12,15 @@ const lcConfigSchema = {
     type: "object",
     properties: {
       _id: { type: "number", required: true },
-      lcName: { type: "string", required: true },
-      lcEmails: { type: "array", required: true, items: { type: "string" } },
-      urlString: { type: "string", required: true },
-      separateStandardsCouncil: { type: "number", required: false }
+      local_council: { type: "string", required: true },
+      local_council_notify_emails: {
+        type: "array",
+        required: true,
+        items: { type: "string" }
+      },
+      local_council_email: { type: "string", required: true },
+      local_council_url: { type: "string", required: true },
+      separate_standards_council: { type: "number", required: false }
     }
   }
 };
@@ -44,17 +49,21 @@ describe("configDb contract: getAllLocalCouncilConfig", () => {
   it("Should both contain two example sets of council data that are unlikely to change", async () => {
     const westDorsetDouble = doubleResult.find(council => council._id === 4221);
     const westDorsetReal = realResult.find(council => council._id === 4221);
-    expect(westDorsetDouble.lcName).toEqual(westDorsetReal.lcName);
-    expect(westDorsetDouble.separateStandardsCouncil).toEqual(
-      westDorsetReal.separateStandardsCouncil
+    expect(westDorsetDouble.local_council).toEqual(
+      westDorsetReal.local_council
+    );
+    expect(westDorsetDouble.separate_standards_council).toEqual(
+      westDorsetReal.separate_standards_council
     );
 
     const dorsetCountyDouble = doubleResult.find(
-      council => council._id === westDorsetDouble.separateStandardsCouncil
+      council => council._id === westDorsetDouble.separate_standards_council
     );
     const dorsetCountyReal = realResult.find(
-      council => council._id === westDorsetReal.separateStandardsCouncil
+      council => council._id === westDorsetReal.separate_standards_council
     );
-    expect(dorsetCountyDouble.lcName).toEqual(dorsetCountyReal.lcName);
+    expect(dorsetCountyDouble.local_council).toEqual(
+      dorsetCountyReal.local_council
+    );
   });
 });
