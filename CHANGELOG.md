@@ -3,6 +3,12 @@
 All notable changes to this projectwill be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## v3.1.0 - 28th August 2018 (unreleased)
+
+### Added
+
+* SBD-6 LC lookup
+
 ## v3.0.0 - 21st August 2018 (unreleased)
 
 ### Added
