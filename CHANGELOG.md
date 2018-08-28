@@ -3,6 +3,13 @@
 All notable changes to this projectwill be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## v3.1.1 - 28th August 2018 (unreleased)
+
+### Modified
+
+* Returned data name modified from email_success_fbo to email_fbo
+* Returned data name modified from email_success_lc to email_lc
+
 ## v3.1.0 - 28th August 2018 (unreleased)
 
 ### Added

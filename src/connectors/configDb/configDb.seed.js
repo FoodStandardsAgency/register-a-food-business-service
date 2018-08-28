@@ -7,30 +7,28 @@ const arrayToInsert = [
   {
     _id: 8020,
     local_council: "Bridgend County Borough Council",
-    local_council_email: "publicprotection@bridgend.gov.uk",
-    local_council_notify_emails: ["publicprotection@bridgend.gov.uk"],
+    local_council_email: "fsatestemail.valid@gmail.com",
+    local_council_notify_emails: ["fsatestemail.valid@gmail.com"],
     local_council_url: "bridgend"
   },
   {
     _id: 8015,
     local_council: "City of Cardiff Council",
-    local_council_email: "foodteam@cardiff.gov.uk",
-    local_council_notify_emails: ["foodteam@cardiff.gov.uk"],
+    local_council_email: "fsatestemail.valid@gmail.com",
+    local_council_notify_emails: ["fsatestemail.valid@gmail.com"],
     local_council_url: "cardiff"
   },
   {
     _id: 8002,
     local_council: "Vale of Glamorgan Council",
-    local_council_email: "AdminSupport-SRSVale@valeofglamorgan.gov.uk",
-    local_council_notify_emails: [
-      "AdminSupport-SRSVale@valeofglamorgan.gov.uk"
-    ],
+    local_council_email: "fsatestemail.valid@gmail.com",
+    local_council_notify_emails: ["fsatestemail.valid@gmail.com"],
     local_council_url: "the-vale-of-glamorgan"
   }
   // {
   //   _id: 6008,
   //   local_council: "Mid & East Antrim Borough Council",
-  //   local_council_email: "food@midandeastantrim.gov.uk",
+  //   local_council_email: "fsatestemail.valid@gmail.com,
   //   local_council_notify_emails: ["fsatestemail.valid@gmail.com"],
   //   local_council_url: "mid-and-east-antrim"
   // },
