@@ -103,7 +103,7 @@ describe("registration controller", () => {
         expect(result.reg_submission_date).toBe(1);
       });
       it("should return the result of sendEmailOfType", () => {
-        expect(result.email_success_fbo).toEqual({
+        expect(result.email_fbo).toEqual({
           recipient: "recipient@example.com",
           success: true
         });
@@ -127,9 +127,9 @@ describe("registration controller", () => {
           );
         });
 
-        it("should return email_success_lc as an object with hygieneAndStandards only", () => {
-          expect(Object.keys(result.email_success_lc).length).toBe(1);
-          expect(result.email_success_lc.hygieneAndStandards).toEqual({
+        it("should return email_lc as an object with hygieneAndStandards only", () => {
+          expect(Object.keys(result.email_lc).length).toBe(1);
+          expect(result.email_lc.hygieneAndStandards).toEqual({
             recipient: "recipient@example.com",
             success: true
           });
@@ -149,13 +149,13 @@ describe("registration controller", () => {
           );
         });
 
-        it("should return email_success_lc as an object with hygiene and standards objects", () => {
-          expect(Object.keys(result.email_success_lc).length).toBe(2);
-          expect(result.email_success_lc.hygiene).toEqual({
+        it("should return email_lc as an object with hygiene and standards objects", () => {
+          expect(Object.keys(result.email_lc).length).toBe(2);
+          expect(result.email_lc.hygiene).toEqual({
             recipient: "recipient@example.com",
             success: true
           });
-          expect(result.email_success_lc.standards).toEqual({
+          expect(result.email_lc.standards).toEqual({
             recipient: "recipient@example.com",
             success: true
           });
