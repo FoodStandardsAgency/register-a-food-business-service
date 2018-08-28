@@ -1,0 +1,32 @@
+[
+  {
+    "_id": 6008,
+    "local_council": "Mid & East Antrim Borough Council",
+    "local_council_notify_emails": ["antrim1@email.com", "antrim2@email.com"],
+    "local_council_email": "info-antrim@email.com",
+    "local_council_url": "mid-and-east-antrim"
+  },
+  {
+    "_id": 4221,
+    "local_council": "West Dorset District Council",
+    "local_council_notify_emails": ["westdorset@email.com"],
+    "local_council_email": "info-westdorset@email.com",
+    "local_council_url": "west-dorset",
+    "separate_standards_council": 4226
+  },
+  {
+    "_id": 4226,
+    "local_council": "Dorset County Council",
+    "local_council_notify_emails": ["dorsetcounty@email.com"],
+    "local_council_email": "info-dorsetcounty@email.com",
+    "local_council_url": "dorset"
+  },
+  {
+    "_id": 9999,
+    "local_council": "Example council that has no matching standards council",
+    "local_council_notify_emails": ["example@email.com"],
+    "local_council_email": "example@email.com",
+    "local_council_url": "example-with-missing-standards-council",
+    "separate_standards_council": 100000
+  }
+]

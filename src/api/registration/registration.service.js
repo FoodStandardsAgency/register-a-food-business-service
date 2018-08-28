@@ -28,6 +28,14 @@ const {
 
 const { sendSingleEmail } = require("../../connectors/notify/notify.connector");
 
+const {
+  getAllLocalCouncilConfig
+} = require("../../connectors/configDb/configDb.connector");
+
+const {
+  transformDataForNotify
+} = require("../../services/notifications.service");
+
 const { logEmitter } = require("../../services/logging.service");
 
 const saveRegistration = async registration => {
@@ -37,22 +45,18 @@ const saveRegistration = async registration => {
     registration.establishment.establishment_details,
     reg.id
   );
-
   const operator = await createOperator(
     registration.establishment.operator,
     establishment.id
   );
-
   const activities = await createActivities(
     registration.establishment.activities,
     establishment.id
   );
-
   const premise = await createPremise(
     registration.establishment.premise,
     establishment.id
   );
-
   const metadata = await createMetadata(registration.metadata, reg.id);
   logEmitter.emit(
     "functionSuccess",
@@ -152,64 +156,146 @@ const getRegistrationMetaData = async () => {
   };
 };
 
-const sendFboEmail = async (
+const sendEmailOfType = async (
+  typeOfEmail,
   registration,
   postRegistrationMetadata,
-  localCouncilContactDetails
+  lcContactConfig,
+  recipientEmailAddress
 ) => {
-  logEmitter.emit("functionCall", "registration.service", "sendFboEmail");
-  const fboEmailSent = { email_fbo: { success: undefined } };
-  const fboEmailAddress =
-    registration.establishment.operator.operator_email ||
-    registration.establishment.operator.contact_representative_email;
+  logEmitter.emit("functionCall", "registration.service", "sendEmailOfType");
 
-  try {
-    await sendSingleEmail(
-      NOTIFY_TEMPLATE_ID_FBO,
-      fboEmailAddress,
-      registration,
-      postRegistrationMetadata,
-      localCouncilContactDetails
-    );
-    fboEmailSent.email_fbo = { success: true, recipient: fboEmailAddress };
-  } catch (err) {
-    fboEmailSent.email_fbo = { success: false, recipient: fboEmailAddress };
-    logEmitter.emit("functionFail", "registration.service", "sendFboEmail");
-    throw err;
+  const emailSent = { success: undefined, recipient: recipientEmailAddress };
+
+  let templateId;
+
+  if (typeOfEmail === "LC") {
+    templateId = NOTIFY_TEMPLATE_ID_LC;
   }
-  logEmitter.emit("functionSuccess", "registration.service", "sendFboEmail");
-  return fboEmailSent;
-};
-
-const sendLcEmail = async (
-  registration,
-  postRegistrationMetadata,
-  localCouncilContactDetails
-) => {
-  logEmitter.emit("functionCall", "registration.service", "sendLcEmail");
-  const lcEmailSent = { email_lc: { success: undefined } };
-  const lcEmailAddress = localCouncilContactDetails.local_council_email;
+  if (typeOfEmail === "FBO") {
+    templateId = NOTIFY_TEMPLATE_ID_FBO;
+  }
 
   try {
-    await sendSingleEmail(
-      NOTIFY_TEMPLATE_ID_LC,
-      lcEmailAddress,
+    const data = transformDataForNotify(
       registration,
       postRegistrationMetadata,
-      localCouncilContactDetails
+      lcContactConfig
     );
-    lcEmailSent.email_lc = { success: true, recipient: lcEmailAddress };
+    await sendSingleEmail(templateId, recipientEmailAddress, data);
+    emailSent.success = true;
   } catch (err) {
-    lcEmailSent.email_lc = { success: false, recipient: lcEmailAddress };
+    emailSent.success = false;
     logEmitter.emit(
       "functionFail",
       "registration.service",
-      "sendFboEmail",
+      "sendEmailOfType",
       err
     );
   }
-  logEmitter.emit("functionSuccess", "registration.service", "sendLcEmail");
-  return lcEmailSent;
+  logEmitter.emit("functionSuccess", "registration.service", "sendEmailOfType");
+  return emailSent;
+};
+
+const getLcContactConfig = async localCouncilUrl => {
+  logEmitter.emit("functionCall", "registration.service", "getLcContactConfig");
+
+  if (localCouncilUrl) {
+    const allLcConfigData = await getAllLocalCouncilConfig();
+
+    const urlLcConfig = allLcConfigData.find(
+      localCouncil => localCouncil.local_council_url === localCouncilUrl
+    );
+
+    if (urlLcConfig) {
+      if (urlLcConfig.separate_standards_council) {
+        const standardsLcConfig = allLcConfigData.find(
+          localCouncil =>
+            localCouncil._id === urlLcConfig.separate_standards_council
+        );
+
+        if (standardsLcConfig) {
+          const separateCouncils = {
+            hygiene: {
+              code: urlLcConfig._id,
+              local_council: urlLcConfig.local_council,
+              local_council_notify_emails:
+                urlLcConfig.local_council_notify_emails,
+              local_council_email: urlLcConfig.local_council_email
+            },
+            standards: {
+              code: standardsLcConfig._id,
+              local_council: standardsLcConfig.local_council,
+              local_council_notify_emails:
+                standardsLcConfig.local_council_notify_emails,
+              local_council_email: standardsLcConfig.local_council_email
+            }
+          };
+
+          logEmitter.emit(
+            "functionSuccess",
+            "registration.service",
+            "getLcContactConfig"
+          );
+
+          return separateCouncils;
+        } else {
+          const newError = new Error();
+          newError.name = "localCouncilNotFound";
+          newError.message = `A separate standards council config with the code "${
+            urlLcConfig.separate_standards_council
+          }" was expected for "${localCouncilUrl}" but does not exist`;
+          logEmitter.emit(
+            "functionFail",
+            "registration.service",
+            "getLcContactConfig",
+            newError
+          );
+          throw newError;
+        }
+      } else {
+        const hygieneAndStandardsCouncil = {
+          hygieneAndStandards: {
+            code: urlLcConfig._id,
+            local_council: urlLcConfig.local_council,
+            local_council_notify_emails:
+              urlLcConfig.local_council_notify_emails,
+            local_council_email: urlLcConfig.local_council_email
+          }
+        };
+
+        logEmitter.emit(
+          "functionSuccess",
+          "registration.service",
+          "getLcContactConfig"
+        );
+
+        return hygieneAndStandardsCouncil;
+      }
+    } else {
+      const newError = new Error();
+      newError.name = "localCouncilNotFound";
+      newError.message = `Config for "${localCouncilUrl}" not found`;
+      logEmitter.emit(
+        "functionFail",
+        "registration.service",
+        "getLcContactConfig",
+        newError
+      );
+      throw newError;
+    }
+  } else {
+    const newError = new Error();
+    newError.name = "localCouncilNotFound";
+    newError.message = "Local council URL is undefined";
+    logEmitter.emit(
+      "functionFail",
+      "registration.service",
+      "getLcContactConfig",
+      newError
+    );
+    throw newError;
+  }
 };
 
 module.exports = {
@@ -217,6 +303,6 @@ module.exports = {
   getFullRegistrationById,
   sendTascomiRegistration,
   getRegistrationMetaData,
-  sendFboEmail,
-  sendLcEmail
+  sendEmailOfType,
+  getLcContactConfig
 };

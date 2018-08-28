@@ -53,5 +53,49 @@
       "Notify personalisation is missing, check data sent to Notify API. Raw error:",
     "userMessages": "",
     "statusCode": 500
+  },
+  {
+    "name": "clientSecretNotFound",
+    "code": "8",
+    "developerMessage": "Client secret not found",
+    "userMessages": "",
+    "statusCode": 403
+  },
+  {
+    "name": "clientNotFound",
+    "code": "9",
+    "developerMessage": "Client not found",
+    "userMessages": "",
+    "statusCode": 403
+  },
+  {
+    "name": "clientNotSupported",
+    "code": "10",
+    "developerMessage": "Client not supported",
+    "userMessages": "",
+    "statusCode": 403
+  },
+  {
+    "name": "secretInvalid",
+    "code": "11",
+    "developerMessage": "Secret is invalid",
+    "userMessages": "",
+    "statusCode": 403
+  },
+  {
+    "name": "mongoConnectionError",
+    "code": "12",
+    "developerMessage":
+      "MongoDB (Azure CosmosDB) connection failed, check credentials provided to app and status of database. Raw error:",
+    "userMessages": "",
+    "statusCode": 500
+  },
+  {
+    "name": "localCouncilNotFound",
+    "code": "13",
+    "developerMessage":
+      "The local council url has not matched any records in the config database. Raw error:",
+    "userMessages": "",
+    "statusCode": 400
   }
 ]

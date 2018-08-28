@@ -7,27 +7,9 @@ const validTemplateId = "integration-test";
 const invalidTemplateId = "1a1aaa-11aa-11a1-111a-Z11111a11a19";
 const validRecipientEmail = "fsatestemail.valid@gmail.com";
 const invalidRecipientEmail = "not-in-an-email-format";
-const testRegistration = {
-  establishment: {
-    establishment_details: {
-      establishment_trading_name: "Itsu",
-      test_variable: "example"
-    },
-    operator: {
-      operator_first_name: "Fred"
-    },
-    premise: {
-      establishment_postcode: "SW12 9RQ"
-    },
-    activities: {
-      customer_type: "End consumer"
-    }
-  },
-  metadata: {
-    declaration1: "Declaration"
-  }
+const testFlattenedData = {
+  establishment_trading_name: "example"
 };
-const testPostRegistrationMetadata = { example: "test" };
 
 describe("Notify integration: sendSingleEmail", () => {
   beforeEach(() => {
@@ -38,8 +20,7 @@ describe("Notify integration: sendSingleEmail", () => {
     const notifyArguments = [
       validTemplateId,
       validRecipientEmail,
-      testRegistration,
-      testPostRegistrationMetadata
+      testFlattenedData
     ];
 
     it("Should return an ID showing a successful email send", async () => {
@@ -52,8 +33,7 @@ describe("Notify integration: sendSingleEmail", () => {
     const notifyArguments = [
       validTemplateId,
       invalidRecipientEmail,
-      testRegistration,
-      testPostRegistrationMetadata
+      testFlattenedData
     ];
 
     it("Should reject", async () => {
@@ -65,8 +45,7 @@ describe("Notify integration: sendSingleEmail", () => {
     const notifyArguments = [
       invalidTemplateId,
       validRecipientEmail,
-      testRegistration,
-      testPostRegistrationMetadata
+      testFlattenedData
     ];
 
     it("Should reject", async () => {
@@ -75,7 +54,11 @@ describe("Notify integration: sendSingleEmail", () => {
   });
 
   describe("When missing required data", () => {
-    const notifyArguments = [validTemplateId, validRecipientEmail, {}, {}];
+    const notifyArguments = [
+      validTemplateId,
+      validRecipientEmail,
+      { this_should_include_estabishment_trading_name: "not there" }
+    ];
 
     it("Should reject", async () => {
       await expect(sendSingleEmail(...notifyArguments)).rejects.toBeDefined();

@@ -49,10 +49,12 @@ jobs:
       deploy:
         - provider: azure_web_apps
           verbose: true
+          on: develop
           site: test-register-a-food-business-service
           skip_cleanup: true
         - provider: azure_web_apps
           verbose: true
+          on: develop
           site: test-register-a-food-business-service
           slot: test-register-a-food-business-service-double
           skip_cleanup: true
@@ -62,6 +64,7 @@ jobs:
       deploy:  
         - provider: azure_web_apps
           verbose: true
+          on: release
           site: staging-register-a-food-business-service
           skip_cleanup: true
           on:
@@ -72,6 +75,7 @@ jobs:
       deploy:
         - provider: azure_web_apps
           verbose: true
+          on: master
           site: prod-register-a-food-business-service
           slot: prod-register-a-food-business-service-double
           skip_cleanup: true
