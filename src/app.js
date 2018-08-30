@@ -12,7 +12,7 @@ const port = process.env.PORT || 4000;
 
 app.use(helmet());
 app.use(bodyParser.json());
-app.use(authHandler);
+// app.use(authHandler);
 app.use("/", routers());
 app.use(errorHandler);
 
