@@ -6,6 +6,7 @@ jest.mock("../../connectors/registrationDb/registrationDb", () => ({
   createPremise: jest.fn(),
   createRegistration: jest.fn(),
   getRegistrationById: jest.fn(),
+  getRegistrationByFsaRn: jest.fn(),
   getEstablishmentByRegId: jest.fn(),
   getMetadataByRegId: jest.fn(),
   getOperatorByEstablishmentId: jest.fn(),
@@ -72,7 +73,7 @@ const {
   createActivities,
   createPremise,
   createMetadata,
-  getRegistrationById,
+  getRegistrationByFsaRn,
   getEstablishmentByRegId,
   getMetadataByRegId,
   getOperatorByEstablishmentId,
@@ -82,7 +83,7 @@ const {
 
 const {
   saveRegistration,
-  getFullRegistrationById,
+  getFullRegistrationByFsaRn,
   sendTascomiRegistration,
   getRegistrationMetaData,
   sendEmailOfType,
@@ -130,11 +131,11 @@ describe("Function: saveRegistration: ", () => {
   });
 });
 
-describe("Function: getFullRegistrationById: ", () => {
+describe("Function: getFullRegistrationByFsaRn: ", () => {
   let result;
 
   beforeEach(async () => {
-    getRegistrationById.mockImplementation(() => {
+    getRegistrationByFsaRn.mockImplementation(() => {
       return { id: "1" };
     });
     getEstablishmentByRegId.mockImplementation(() => {
@@ -153,7 +154,7 @@ describe("Function: getFullRegistrationById: ", () => {
       return "activities";
     });
 
-    result = await getFullRegistrationById();
+    result = await getFullRegistrationByFsaRn();
   });
 
   it("Should return the result of the get functions", () => {

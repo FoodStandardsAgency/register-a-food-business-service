@@ -10,7 +10,7 @@ jest.mock("../../services/logging.service", () => ({
 
 jest.mock("./registration.service", () => ({
   saveRegistration: jest.fn(),
-  getFullRegistrationById: jest.fn(),
+  getFullRegistrationByFsaRn: jest.fn(),
   sendTascomiRegistration: jest.fn(),
   getRegistrationMetaData: jest.fn(),
   sendEmailOfType: jest.fn(),
@@ -19,7 +19,7 @@ jest.mock("./registration.service", () => ({
 
 const {
   saveRegistration,
-  getFullRegistrationById,
+  getFullRegistrationByFsaRn,
   getRegistrationMetaData,
   sendTascomiRegistration,
   sendEmailOfType,
@@ -218,7 +218,7 @@ describe("registration controller", () => {
   describe("Function: getRegistration", () => {
     describe("when given an id", () => {
       beforeEach(async () => {
-        getFullRegistrationById.mockImplementation(() => {
+        getFullRegistrationByFsaRn.mockImplementation(() => {
           return "response";
         });
         result = await getRegistration();

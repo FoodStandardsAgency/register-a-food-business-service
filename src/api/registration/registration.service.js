@@ -13,7 +13,7 @@ const {
   createActivities,
   createPremise,
   createMetadata,
-  getRegistrationById,
+  getRegistrationByFsaRn,
   getEstablishmentByRegId,
   getMetadataByRegId,
   getOperatorByEstablishmentId,
@@ -38,9 +38,9 @@ const {
 
 const { logEmitter } = require("../../services/logging.service");
 
-const saveRegistration = async registration => {
+const saveRegistration = async (registration, fsa_rn) => {
   logEmitter.emit("functionCall", "registration.service", "saveRegistration");
-  const reg = await createRegistration({});
+  const reg = await createRegistration(fsa_rn);
   const establishment = await createEstablishment(
     registration.establishment.establishment_details,
     reg.id
@@ -73,13 +73,13 @@ const saveRegistration = async registration => {
   };
 };
 
-const getFullRegistrationById = async id => {
+const getFullRegistrationByFsaRn = async fsa_rn => {
   logEmitter.emit(
     "functionCall",
     "registration.service",
-    "getFullRegistrationById"
+    "getFullRegistrationByFsaRn"
   );
-  const registration = await getRegistrationById(id);
+  const registration = await getRegistrationByFsaRn(fsa_rn);
   const establishment = await getEstablishmentByRegId(registration.id);
   const metadata = await getMetadataByRegId(registration.id);
   const operator = await getOperatorByEstablishmentId(establishment.id);
@@ -88,7 +88,7 @@ const getFullRegistrationById = async id => {
   logEmitter.emit(
     "functionSuccess",
     "registration.service",
-    "getFullRegistrationById"
+    "getFullRegistrationByFsaRn"
   );
   return {
     registration,
@@ -300,7 +300,7 @@ const getLcContactConfig = async localCouncilUrl => {
 
 module.exports = {
   saveRegistration,
-  getFullRegistrationById,
+  getFullRegistrationByFsaRn,
   sendTascomiRegistration,
   getRegistrationMetaData,
   sendEmailOfType,

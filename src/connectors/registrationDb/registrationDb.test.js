@@ -48,6 +48,7 @@ const {
   createPremise,
   createRegistration,
   getRegistrationById,
+  getRegistrationByFsaRn,
   getEstablishmentByRegId,
   getMetadataByRegId,
   getOperatorByEstablishmentId,
@@ -274,21 +275,21 @@ describe("RegistrationDb connector", () => {
       });
     });
 
-    describe("When Premise.create succeeds", () => {
+    describe("When Registration.create succeeds", () => {
       beforeEach(async () => {
         Registration.create.mockImplementation(() => {
           return "success";
         });
-        result = await createRegistration({ some: "data" });
+        result = await createRegistration("fsa-rn");
       });
 
       it("Should return the response", () => {
         expect(result).toBe("success");
       });
 
-      it("Should call the create model with registration data", () => {
+      it("Should call the create model with fsa rn", () => {
         expect(Registration.create).toBeCalledWith({
-          some: "data"
+          fsa_rn: "fsa-rn"
         });
       });
     });
@@ -327,6 +328,44 @@ describe("RegistrationDb connector", () => {
       it("Should call the findOne model with query", () => {
         expect(Registration.findOne).toBeCalledWith({
           where: { id: "45" }
+        });
+      });
+    });
+  });
+
+  describe("Function: getRegistrationByFsaRn", () => {
+    describe("When Registration.findOne fails", () => {
+      beforeEach(async () => {
+        Registration.findOne.mockImplementation(() => {
+          throw new Error("Failed");
+        });
+        try {
+          await getRegistrationByFsaRn("ASH-89K");
+        } catch (err) {
+          result = err;
+        }
+      });
+
+      it("Should return the error", () => {
+        expect(result.message).toBe("Failed");
+      });
+    });
+
+    describe("When Registration.findOne succeeds", () => {
+      beforeEach(async () => {
+        Registration.findOne.mockImplementation(() => {
+          return "success";
+        });
+        result = await getRegistrationByFsaRn("ASH-89K");
+      });
+
+      it("Should return the response", () => {
+        expect(result).toBe("success");
+      });
+
+      it("Should call the findOne model with query", () => {
+        expect(Registration.findOne).toBeCalledWith({
+          where: { fsa_rn: "ASH-89K" }
         });
       });
     });

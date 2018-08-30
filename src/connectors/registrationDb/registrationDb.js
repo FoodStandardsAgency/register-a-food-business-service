@@ -58,8 +58,8 @@ const createPremise = async (premise, establishmentId) => {
   return modelCreate(data, Premise, "Premise");
 };
 
-const createRegistration = async registration => {
-  return modelCreate(registration, Registration, "Registration");
+const createRegistration = async fsa_rn => {
+  return modelCreate({ fsa_rn }, Registration, "Registration");
 };
 
 const modelFindOne = async (query, model, functionName) => {
@@ -88,6 +88,14 @@ const getRegistrationById = async id => {
     { where: { id: id } },
     Registration,
     "getRegistrationByRegId"
+  );
+};
+
+const getRegistrationByFsaRn = async fsa_rn => {
+  return modelFindOne(
+    { where: { fsa_rn: fsa_rn } },
+    Registration,
+    "getRegistrationByFsaRn"
   );
 };
 
@@ -139,6 +147,7 @@ module.exports = {
   createPremise,
   createRegistration,
   getRegistrationById,
+  getRegistrationByFsaRn,
   getEstablishmentByRegId,
   getMetadataByRegId,
   getOperatorByEstablishmentId,

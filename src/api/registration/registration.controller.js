@@ -1,7 +1,7 @@
 const { validate } = require("../../services/validation.service");
 const {
   saveRegistration,
-  getFullRegistrationById,
+  getFullRegistrationByFsaRn,
   sendTascomiRegistration,
   getRegistrationMetaData,
   sendEmailOfType,
@@ -16,7 +16,6 @@ const createNewRegistration = async (registration, localCouncilUrl) => {
     "registration.controller",
     "createNewRegistration"
   );
-  // AUTHENTICATION
 
   // VALIDATION
   if (registration === undefined) {
@@ -37,7 +36,7 @@ const createNewRegistration = async (registration, localCouncilUrl) => {
     postRegistrationMetadata["fsa-rn"]
   );
   const tascomiObject = JSON.parse(tascomiResponse);
-  const response = await saveRegistration(registration);
+  const response = await saveRegistration(registration, postRegistrationMetadata["fsa-rn"]);
 
   const lcContactConfig = await getLcContactConfig(localCouncilUrl);
 
@@ -90,11 +89,8 @@ const createNewRegistration = async (registration, localCouncilUrl) => {
   return combinedResponse;
 };
 
-const getRegistration = async id => {
-  // AUTHENTICATION
-
-  // RESOLUTION
-  const response = await getFullRegistrationById(id);
+const getRegistration = async fsa_rn => {
+  const response = await getFullRegistrationByFsaRn(fsa_rn);
 
   return response;
 };
