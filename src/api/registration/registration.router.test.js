@@ -22,7 +22,7 @@ describe("registration router", () => {
 
   describe("Post to /createNewRegistration", () => {
     beforeEach(() => {
-      handler = router.post.mock.calls[0][1];
+      handler = router.post.mock.calls[0][2];
     });
 
     describe("when making a valid request", () => {
@@ -72,12 +72,12 @@ describe("registration router", () => {
 
   describe("Get to /:id", () => {
     beforeEach(() => {
-      handler = router.get.mock.calls[0][1];
+      handler = router.get.mock.calls[0][2];
     });
 
     describe("when making a valid request", () => {
       beforeEach(async () => {
-        await handler({ params: { id: "1" } }, { send });
+        await handler({ params: { fsa_rn: "1" } }, { send });
       });
 
       it("should call res.send", () => {
