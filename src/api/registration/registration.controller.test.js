@@ -11,6 +11,7 @@ jest.mock("../../services/logging.service", () => ({
 jest.mock("./registration.service", () => ({
   saveRegistration: jest.fn(),
   getFullRegistrationByFsaRn: jest.fn(),
+  deleteRegistrationByFsaRn: jest.fn(),
   sendTascomiRegistration: jest.fn(),
   getRegistrationMetaData: jest.fn(),
   sendEmailOfType: jest.fn(),
@@ -20,6 +21,7 @@ jest.mock("./registration.service", () => ({
 const {
   saveRegistration,
   getFullRegistrationByFsaRn,
+  deleteRegistrationByFsaRn,
   getRegistrationMetaData,
   sendTascomiRegistration,
   sendEmailOfType,
@@ -28,7 +30,8 @@ const {
 const { validate } = require("../../services/validation.service");
 const {
   createNewRegistration,
-  getRegistration
+  getRegistration,
+  deleteRegistration
 } = require("./registration.controller");
 
 describe("registration controller", () => {
@@ -225,6 +228,21 @@ describe("registration controller", () => {
       });
 
       it("should return the result of getFullRegistrationById", () => {
+        expect(result).toEqual("response");
+      });
+    });
+  });
+
+  describe("Function: deleteRegistration", () => {
+    describe("when given an fsa_rn", () => {
+      beforeEach(async () => {
+        deleteRegistrationByFsaRn.mockImplementation(() => {
+          return "response";
+        });
+        result = await deleteRegistration();
+      });
+
+      it("should return the result of deleteRegistrationById", () => {
         expect(result).toEqual("response");
       });
     });

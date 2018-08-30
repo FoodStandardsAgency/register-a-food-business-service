@@ -159,7 +159,8 @@ Given("I have a new registration with all valid required fields", function() {
         declaration2: "Declaration",
         declaration3: "Declaration"
       }
-    }
+    },
+    local_council_url: "dorset"
   };
 });
 
@@ -203,7 +204,8 @@ Given(
           declaration2: "Declaration",
           declaration3: "Declaration"
         }
-      }
+      },
+      local_council_url: "dorset"
     };
   }
 );

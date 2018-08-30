@@ -2,6 +2,7 @@ const { validate } = require("../../services/validation.service");
 const {
   saveRegistration,
   getFullRegistrationByFsaRn,
+  deleteRegistrationByFsaRn,
   sendTascomiRegistration,
   getRegistrationMetaData,
   sendEmailOfType,
@@ -36,7 +37,10 @@ const createNewRegistration = async (registration, localCouncilUrl) => {
     postRegistrationMetadata["fsa-rn"]
   );
   const tascomiObject = JSON.parse(tascomiResponse);
-  const response = await saveRegistration(registration, postRegistrationMetadata["fsa-rn"]);
+  const response = await saveRegistration(
+    registration,
+    postRegistrationMetadata["fsa-rn"]
+  );
 
   const lcContactConfig = await getLcContactConfig(localCouncilUrl);
 
@@ -95,4 +99,10 @@ const getRegistration = async fsa_rn => {
   return response;
 };
 
-module.exports = { createNewRegistration, getRegistration };
+const deleteRegistration = async fsa_rn => {
+  const response = await deleteRegistrationByFsaRn(fsa_rn);
+
+  return response;
+};
+
+module.exports = { createNewRegistration, getRegistration, deleteRegistration };

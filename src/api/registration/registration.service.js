@@ -18,7 +18,13 @@ const {
   getMetadataByRegId,
   getOperatorByEstablishmentId,
   getPremiseByEstablishmentId,
-  getActivitiesByEstablishmentId
+  getActivitiesByEstablishmentId,
+  destroyRegistrationById,
+  destroyEstablishmentByRegId,
+  destroyMetadataByRegId,
+  destroyOperatorByEstablishmentId,
+  destroyPremiseByEstablishmentId,
+  destroyActivitiesByEstablishmentId
 } = require("../../connectors/registrationDb/registrationDb");
 
 const {
@@ -29,7 +35,8 @@ const {
 const { sendSingleEmail } = require("../../connectors/notify/notify.connector");
 
 const {
-  getAllLocalCouncilConfig
+  getAllLocalCouncilConfig,
+  addDeletedId
 } = require("../../connectors/configDb/configDb.connector");
 
 const {
@@ -80,6 +87,9 @@ const getFullRegistrationByFsaRn = async fsa_rn => {
     "getFullRegistrationByFsaRn"
   );
   const registration = await getRegistrationByFsaRn(fsa_rn);
+  if (!registration) {
+    return `No registration found for fsa_rn: ${fsa_rn}`;
+  }
   const establishment = await getEstablishmentByRegId(registration.id);
   const metadata = await getMetadataByRegId(registration.id);
   const operator = await getOperatorByEstablishmentId(establishment.id);
@@ -98,6 +108,32 @@ const getFullRegistrationByFsaRn = async fsa_rn => {
     premise,
     metadata
   };
+};
+
+const deleteRegistrationByFsaRn = async fsa_rn => {
+  logEmitter.emit(
+    "functionCall",
+    "registration.service",
+    "deleteFullRegistrationByFsaRn"
+  );
+  const registration = await getRegistrationByFsaRn(fsa_rn);
+  if (!registration) {
+    return `No registration found for fsa_rn: ${fsa_rn}`;
+  }
+  const establishment = await getEstablishmentByRegId(registration.id);
+  await destroyMetadataByRegId(registration.id);
+  await destroyOperatorByEstablishmentId(establishment.id);
+  await destroyActivitiesByEstablishmentId(establishment.id);
+  await destroyPremiseByEstablishmentId(establishment.id);
+  await destroyEstablishmentByRegId(registration.id);
+  await destroyRegistrationById(registration.id);
+  await addDeletedId(fsa_rn);
+  logEmitter.emit(
+    "functionSuccess",
+    "registration.service",
+    "deleteFullRegistrationByFsaRn"
+  );
+  return "Registration succesfully deleted";
 };
 
 const sendTascomiRegistration = async (registration, fsa_rn) => {
@@ -301,6 +337,7 @@ const getLcContactConfig = async localCouncilUrl => {
 module.exports = {
   saveRegistration,
   getFullRegistrationByFsaRn,
+  deleteRegistrationByFsaRn,
   sendTascomiRegistration,
   getRegistrationMetaData,
   sendEmailOfType,
