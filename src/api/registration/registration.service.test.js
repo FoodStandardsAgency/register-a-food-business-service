@@ -30,7 +30,8 @@ jest.mock("../../connectors/tascomi/tascomi.connector", () => ({
 }));
 
 jest.mock("../../connectors/configDb/configDb.connector", () => ({
-  getAllLocalCouncilConfig: jest.fn()
+  getAllLocalCouncilConfig: jest.fn(),
+  addDeletedId: jest.fn()
 }));
 
 jest.mock("../../services/notifications.service");

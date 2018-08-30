@@ -35,7 +35,8 @@ const {
 const { sendSingleEmail } = require("../../connectors/notify/notify.connector");
 
 const {
-  getAllLocalCouncilConfig
+  getAllLocalCouncilConfig,
+  addDeletedId
 } = require("../../connectors/configDb/configDb.connector");
 
 const {
@@ -121,6 +122,7 @@ const deleteRegistrationByFsaRn = async fsa_rn => {
   await destroyPremiseByEstablishmentId(establishment.id);
   await destroyEstablishmentByRegId(registration.id);
   await destroyRegistrationById(registration.id);
+  await addDeletedId(fsa_rn);
   logEmitter.emit(
     "functionSuccess",
     "registration.service",
