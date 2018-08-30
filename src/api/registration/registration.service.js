@@ -111,6 +111,11 @@ const getFullRegistrationByFsaRn = async fsa_rn => {
 };
 
 const deleteRegistrationByFsaRn = async fsa_rn => {
+  logEmitter.emit(
+    "functionCall",
+    "registration.service",
+    "deleteFullRegistrationByFsaRn"
+  );
   const registration = await getRegistrationByFsaRn(fsa_rn);
   if (!registration) {
     return `No registration found for fsa_rn: ${fsa_rn}`;
@@ -126,7 +131,7 @@ const deleteRegistrationByFsaRn = async fsa_rn => {
   logEmitter.emit(
     "functionSuccess",
     "registration.service",
-    "getFullRegistrationByFsaRn"
+    "deleteFullRegistrationByFsaRn"
   );
   return "Registration succesfully deleted";
 };
