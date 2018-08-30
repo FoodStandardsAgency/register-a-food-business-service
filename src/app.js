@@ -5,7 +5,6 @@ const helmet = require("helmet");
 
 const { routers } = require("./api/routers");
 const { errorHandler } = require("./middleware/errorHandler");
-const { authHandler } = require("./middleware/authHandler");
 
 const app = express();
 const port = process.env.PORT || 4000;
