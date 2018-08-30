@@ -11,5 +11,7 @@ module.exports = {
   NOTIFY_TEMPLATE_ID_TEST: process.env.NOTIFY_TEMPLATE_ID_TEST,
   FRONT_END_NAME: process.env.FRONT_END_NAME,
   FRONT_END_SECRET: process.env.FRONT_END_SECRET,
+  ADMIN_NAME: process.env.ADMIN_NAME,
+  ADMIN_SECRET: process.env.ADMIN_SECRET,
   CONFIGDB_URL: process.env.CONFIGDB_URL
 };
