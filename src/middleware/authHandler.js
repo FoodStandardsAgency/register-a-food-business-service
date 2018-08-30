@@ -76,11 +76,9 @@ const createRegistrationAuth = (req, res, next) => {
 };
 
 const viewDeleteRegistrationAuth = (req, res, next) => {
-  console.log("VIEW DELETE CALLED");
   const secrets = {
     [ADMIN_NAME]: ADMIN_SECRET
   };
-  console.log(secrets);
   authHandler(req, res, secrets);
   next();
 };
