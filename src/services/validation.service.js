@@ -60,12 +60,9 @@ module.exports.validate = data => {
   // turn errors into key:value pairs
   validatorResult.errors.forEach(error => {
     result.push({ property: error.property, message: error.message });
-    logEmitter.emit(
-      "functionFail",
-      "validation.service",
-      "validate",
-      error.message
-    );
+
+    const newError = new Error(`${(error.property, error.message)}`);
+    logEmitter.emit("functionFail", "validation.service", "validate", newError);
   });
   logEmitter.emit("functionSuccess", "validation.service", "validate");
   return result;

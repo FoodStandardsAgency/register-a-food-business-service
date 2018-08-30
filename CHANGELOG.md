@@ -3,6 +3,12 @@
 All notable changes to this projectwill be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## v3.1.2 - 30th August 2018 (unreleased)
+
+### Modified
+
+* Fix bug that prevented validation errors from being logged correctly
+
 ## v3.1.1 - 28th August 2018 (unreleased)
 
 ### Modified
