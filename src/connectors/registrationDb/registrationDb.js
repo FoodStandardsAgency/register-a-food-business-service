@@ -139,6 +139,75 @@ const getActivitiesByEstablishmentId = async id => {
   );
 };
 
+const modelDestroy = async (query, model, functionName) => {
+  logEmitter.emit("functionCall", "registration.connector.js", functionName);
+  try {
+    const response = await model.destroy(query);
+    logEmitter.emit(
+      "functionSuccess",
+      "registration.connector.js",
+      functionName
+    );
+    return response;
+  } catch (err) {
+    logEmitter.emit(
+      "functionFail",
+      "registration.connector.js",
+      functionName,
+      err
+    );
+    throw err;
+  }
+};
+
+const destroyRegistrationById = async id => {
+  return modelDestroy(
+    { where: { id: id } },
+    Registration,
+    "destroyRegistrationByRegId"
+  );
+};
+
+const destroyEstablishmentByRegId = async id => {
+  return modelDestroy(
+    { where: { registrationId: id } },
+    Establishment,
+    "destroyEstablishmentByRegId"
+  );
+};
+
+const destroyMetadataByRegId = async id => {
+  return modelDestroy(
+    { where: { registrationId: id } },
+    Metadata,
+    "destroyMetadataByRegId"
+  );
+};
+
+const destroyOperatorByEstablishmentId = async id => {
+  return modelDestroy(
+    { where: { establishmentId: id } },
+    Operator,
+    "destroyOperatorByEstablishmentId"
+  );
+};
+
+const destroyPremiseByEstablishmentId = async id => {
+  return modelDestroy(
+    { where: { establishmentId: id } },
+    Premise,
+    "destroyPremiseByEstablishmentId"
+  );
+};
+
+const destroyActivitiesByEstablishmentId = async id => {
+  return modelDestroy(
+    { where: { establishmentId: id } },
+    Activities,
+    "destroyActivitiesByEstablishmentId"
+  );
+};
+
 module.exports = {
   createActivities,
   createEstablishment,
@@ -152,5 +221,11 @@ module.exports = {
   getMetadataByRegId,
   getOperatorByEstablishmentId,
   getPremiseByEstablishmentId,
-  getActivitiesByEstablishmentId
+  getActivitiesByEstablishmentId,
+  destroyRegistrationById,
+  destroyEstablishmentByRegId,
+  destroyMetadataByRegId,
+  destroyOperatorByEstablishmentId,
+  destroyPremiseByEstablishmentId,
+  destroyActivitiesByEstablishmentId
 };

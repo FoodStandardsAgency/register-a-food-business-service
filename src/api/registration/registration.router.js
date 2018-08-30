@@ -31,6 +31,13 @@ const registrationRouter = () => {
     res.send(response);
   });
 
+  router.delete("/:fsa_rn", viewDeleteRegistrationAuth, async (req, res) => {
+    const response = await registrationController.deleteRegistration(
+      req.params.fsa_rn
+    );
+    res.send(response);
+  });
+
   return router;
 };
 

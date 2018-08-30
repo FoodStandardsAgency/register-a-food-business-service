@@ -11,7 +11,13 @@ jest.mock("../../connectors/registrationDb/registrationDb", () => ({
   getMetadataByRegId: jest.fn(),
   getOperatorByEstablishmentId: jest.fn(),
   getPremiseByEstablishmentId: jest.fn(),
-  getActivitiesByEstablishmentId: jest.fn()
+  getActivitiesByEstablishmentId: jest.fn(),
+  destroyRegistrationById: jest.fn(),
+  destroyEstablishmentByRegId: jest.fn(),
+  destroyMetadataByRegId: jest.fn(),
+  destroyOperatorByEstablishmentId: jest.fn(),
+  destroyPremiseByEstablishmentId: jest.fn(),
+  destroyActivitiesByEstablishmentId: jest.fn()
 }));
 
 jest.mock("../../connectors/notify/notify.connector", () => ({
@@ -78,12 +84,19 @@ const {
   getMetadataByRegId,
   getOperatorByEstablishmentId,
   getPremiseByEstablishmentId,
-  getActivitiesByEstablishmentId
+  getActivitiesByEstablishmentId,
+  destroyRegistrationById,
+  destroyEstablishmentByRegId,
+  destroyMetadataByRegId,
+  destroyOperatorByEstablishmentId,
+  destroyPremiseByEstablishmentId,
+  destroyActivitiesByEstablishmentId
 } = require("../../connectors/registrationDb/registrationDb");
 
 const {
   saveRegistration,
   getFullRegistrationByFsaRn,
+  deleteRegistrationByFsaRn,
   sendTascomiRegistration,
   getRegistrationMetaData,
   sendEmailOfType,
@@ -134,37 +147,99 @@ describe("Function: saveRegistration: ", () => {
 describe("Function: getFullRegistrationByFsaRn: ", () => {
   let result;
 
-  beforeEach(async () => {
-    getRegistrationByFsaRn.mockImplementation(() => {
-      return { id: "1" };
-    });
-    getEstablishmentByRegId.mockImplementation(() => {
-      return { id: "1" };
-    });
-    getMetadataByRegId.mockImplementation(() => {
-      return "metadata";
-    });
-    getOperatorByEstablishmentId.mockImplementation(() => {
-      return "operator";
-    });
-    getPremiseByEstablishmentId.mockImplementation(() => {
-      return "premise";
-    });
-    getActivitiesByEstablishmentId.mockImplementation(() => {
-      return "activities";
+  describe("When getRegistrationByFsaRn is successful", () => {
+    beforeEach(async () => {
+      getRegistrationByFsaRn.mockImplementation(() => {
+        return { id: "1" };
+      });
+      getEstablishmentByRegId.mockImplementation(() => {
+        return { id: "1" };
+      });
+      getMetadataByRegId.mockImplementation(() => {
+        return "metadata";
+      });
+      getOperatorByEstablishmentId.mockImplementation(() => {
+        return "operator";
+      });
+      getPremiseByEstablishmentId.mockImplementation(() => {
+        return "premise";
+      });
+      getActivitiesByEstablishmentId.mockImplementation(() => {
+        return "activities";
+      });
+
+      result = await getFullRegistrationByFsaRn();
     });
 
-    result = await getFullRegistrationByFsaRn();
+    it("Should return the result of the get functions", () => {
+      expect(result).toEqual({
+        registration: { id: "1" },
+        establishment: { id: "1" },
+        operator: "operator",
+        activities: "activities",
+        premise: "premise",
+        metadata: "metadata"
+      });
+    });
   });
 
-  it("Should return the result of the get functions", () => {
-    expect(result).toEqual({
-      registration: { id: "1" },
-      establishment: { id: "1" },
-      operator: "operator",
-      activities: "activities",
-      premise: "premise",
-      metadata: "metadata"
+  describe("When getRegistrationByFsaRn fails", () => {
+    beforeEach(async () => {
+      getRegistrationByFsaRn.mockImplementation(() => null);
+
+      result = await getFullRegistrationByFsaRn("987");
+    });
+
+    it("Should return string", () => {
+      expect(result).toEqual("No registration found for fsa_rn: 987");
+    });
+  });
+});
+
+describe("Function: deleteRegistrationByFsaRn: ", () => {
+  let result;
+
+  describe("When getRegistrationByFsaRn is successul", () => {
+    beforeEach(async () => {
+      getRegistrationByFsaRn.mockImplementation(() => ({
+        id: 1
+      }));
+      destroyRegistrationById.mockImplementation(() => {
+        return "";
+      });
+      destroyEstablishmentByRegId.mockImplementation(() => {
+        return "";
+      });
+      destroyMetadataByRegId.mockImplementation(() => {
+        return "";
+      });
+      destroyOperatorByEstablishmentId.mockImplementation(() => {
+        return "";
+      });
+      destroyPremiseByEstablishmentId.mockImplementation(() => {
+        return "";
+      });
+      destroyActivitiesByEstablishmentId.mockImplementation(() => {
+        return "";
+      });
+
+      result = await deleteRegistrationByFsaRn();
+    });
+
+    it("Should return string when all destroy functions are successful", () => {
+      expect(result).toEqual("Registration succesfully deleted");
+    });
+  });
+
+  describe("When getRegistrationByFsaRn fails", () => {
+    beforeEach(async () => {
+      getRegistrationByFsaRn.mockImplementation(() => null);
+
+      result = await deleteRegistrationByFsaRn("678");
+    });
+
+    it("Should return string", () => {
+      expect(result).toEqual("No registration found for fsa_rn: 678");
     });
   });
 });

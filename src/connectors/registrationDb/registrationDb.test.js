@@ -1,27 +1,33 @@
 jest.mock("../../db/db", () => ({
   Activities: {
     create: jest.fn(),
-    findOne: jest.fn()
+    findOne: jest.fn(),
+    destroy: jest.fn()
   },
   Establishment: {
     create: jest.fn(),
-    findOne: jest.fn()
+    findOne: jest.fn(),
+    destroy: jest.fn()
   },
   Metadata: {
     create: jest.fn(),
-    findOne: jest.fn()
+    findOne: jest.fn(),
+    destroy: jest.fn()
   },
   Operator: {
     create: jest.fn(),
-    findOne: jest.fn()
+    findOne: jest.fn(),
+    destroy: jest.fn()
   },
   Premise: {
     create: jest.fn(),
-    findOne: jest.fn()
+    findOne: jest.fn(),
+    destroy: jest.fn()
   },
   Registration: {
     create: jest.fn(),
-    findOne: jest.fn()
+    findOne: jest.fn(),
+    destroy: jest.fn()
   }
 }));
 
@@ -53,7 +59,13 @@ const {
   getMetadataByRegId,
   getOperatorByEstablishmentId,
   getPremiseByEstablishmentId,
-  getActivitiesByEstablishmentId
+  getActivitiesByEstablishmentId,
+  destroyRegistrationById,
+  destroyEstablishmentByRegId,
+  destroyMetadataByRegId,
+  destroyOperatorByEstablishmentId,
+  destroyPremiseByEstablishmentId,
+  destroyActivitiesByEstablishmentId
 } = require("./registrationDb");
 
 describe("RegistrationDb connector", () => {
@@ -555,6 +567,234 @@ describe("RegistrationDb connector", () => {
 
       it("Should call the findOne model with query", () => {
         expect(Activities.findOne).toBeCalledWith({
+          where: { establishmentId: "45" }
+        });
+      });
+    });
+  });
+
+  describe("Function: destroyRegistrationById", () => {
+    describe("When Registration.destroy fails", () => {
+      beforeEach(async () => {
+        Registration.destroy.mockImplementation(() => {
+          throw new Error("Failed");
+        });
+        try {
+          await destroyRegistrationById("45");
+        } catch (err) {
+          result = err;
+        }
+      });
+
+      it("Should return the error", () => {
+        expect(result.message).toBe("Failed");
+      });
+    });
+
+    describe("When Registration.destroy succeeds", () => {
+      beforeEach(async () => {
+        Registration.destroy.mockImplementation(() => {
+          return "success";
+        });
+        result = await destroyRegistrationById("45");
+      });
+
+      it("Should return the response", () => {
+        expect(result).toBe("success");
+      });
+
+      it("Should call the destroy model with query", () => {
+        expect(Registration.destroy).toBeCalledWith({
+          where: { id: "45" }
+        });
+      });
+    });
+  });
+
+  describe("Function: destroyEstablishmentByRegId", () => {
+    describe("When Establishment.destroy fails", () => {
+      beforeEach(async () => {
+        Establishment.destroy.mockImplementation(() => {
+          throw new Error("Failed");
+        });
+        try {
+          await destroyEstablishmentByRegId("45");
+        } catch (err) {
+          result = err;
+        }
+      });
+
+      it("Should return the error", () => {
+        expect(result.message).toBe("Failed");
+      });
+    });
+
+    describe("When Establishment.destroy succeeds", () => {
+      beforeEach(async () => {
+        Establishment.destroy.mockImplementation(() => {
+          return "success";
+        });
+        result = await destroyEstablishmentByRegId("45");
+      });
+
+      it("Should return the response", () => {
+        expect(result).toBe("success");
+      });
+
+      it("Should call the destroy model with query", () => {
+        expect(Establishment.destroy).toBeCalledWith({
+          where: { registrationId: "45" }
+        });
+      });
+    });
+  });
+
+  describe("Function: destroyMetadataByRegId", () => {
+    describe("When Metadata.destroy fails", () => {
+      beforeEach(async () => {
+        Metadata.destroy.mockImplementation(() => {
+          throw new Error("Failed");
+        });
+        try {
+          await destroyMetadataByRegId("45");
+        } catch (err) {
+          result = err;
+        }
+      });
+
+      it("Should return the error", () => {
+        expect(result.message).toBe("Failed");
+      });
+    });
+
+    describe("When Metadata.destroy succeeds", () => {
+      beforeEach(async () => {
+        Metadata.destroy.mockImplementation(() => {
+          return "success";
+        });
+        result = await destroyMetadataByRegId("45");
+      });
+
+      it("Should return the response", () => {
+        expect(result).toBe("success");
+      });
+
+      it("Should call the destroy model with query", () => {
+        expect(Metadata.destroy).toBeCalledWith({
+          where: { registrationId: "45" }
+        });
+      });
+    });
+  });
+
+  describe("Function: destroyOperatorByEstablishmentId", () => {
+    describe("When Operator.destroy fails", () => {
+      beforeEach(async () => {
+        Operator.destroy.mockImplementation(() => {
+          throw new Error("Failed");
+        });
+        try {
+          await destroyOperatorByEstablishmentId("45");
+        } catch (err) {
+          result = err;
+        }
+      });
+
+      it("Should return the error", () => {
+        expect(result.message).toBe("Failed");
+      });
+    });
+
+    describe("When Operator.destroy succeeds", () => {
+      beforeEach(async () => {
+        Operator.destroy.mockImplementation(() => {
+          return "success";
+        });
+        result = await destroyOperatorByEstablishmentId("45");
+      });
+
+      it("Should return the response", () => {
+        expect(result).toBe("success");
+      });
+
+      it("Should call the destroy model with query", () => {
+        expect(Operator.destroy).toBeCalledWith({
+          where: { establishmentId: "45" }
+        });
+      });
+    });
+  });
+
+  describe("Function: destroyPremiseByEstablishmentId", () => {
+    describe("When Premise.destroy fails", () => {
+      beforeEach(async () => {
+        Premise.destroy.mockImplementation(() => {
+          throw new Error("Failed");
+        });
+        try {
+          await destroyPremiseByEstablishmentId("45");
+        } catch (err) {
+          result = err;
+        }
+      });
+
+      it("Should return the error", () => {
+        expect(result.message).toBe("Failed");
+      });
+    });
+
+    describe("When Premise.destroy succeeds", () => {
+      beforeEach(async () => {
+        Premise.destroy.mockImplementation(() => {
+          return "success";
+        });
+        result = await destroyPremiseByEstablishmentId("45");
+      });
+
+      it("Should return the response", () => {
+        expect(result).toBe("success");
+      });
+
+      it("Should call the destroy model with query", () => {
+        expect(Premise.destroy).toBeCalledWith({
+          where: { establishmentId: "45" }
+        });
+      });
+    });
+  });
+
+  describe("Function: destroyActivitiesByEstablishmentId", () => {
+    describe("When Activities.destroy fails", () => {
+      beforeEach(async () => {
+        Activities.destroy.mockImplementation(() => {
+          throw new Error("Failed");
+        });
+        try {
+          await destroyActivitiesByEstablishmentId("45");
+        } catch (err) {
+          result = err;
+        }
+      });
+
+      it("Should return the error", () => {
+        expect(result.message).toBe("Failed");
+      });
+    });
+
+    describe("When Activities.destroy succeeds", () => {
+      beforeEach(async () => {
+        Activities.destroy.mockImplementation(() => {
+          return "success";
+        });
+        result = await destroyActivitiesByEstablishmentId("45");
+      });
+
+      it("Should return the response", () => {
+        expect(result).toBe("success");
+      });
+
+      it("Should call the destroy model with query", () => {
+        expect(Activities.destroy).toBeCalledWith({
           where: { establishmentId: "45" }
         });
       });

@@ -1,12 +1,14 @@
 jest.mock("express", () => ({
   Router: jest.fn(() => ({
     post: jest.fn(),
-    get: jest.fn()
+    get: jest.fn(),
+    delete: jest.fn()
   }))
 }));
 jest.mock("./registration.controller", () => ({
   createNewRegistration: jest.fn(),
-  getRegistration: jest.fn()
+  getRegistration: jest.fn(),
+  deleteRegistration: jest.fn()
 }));
 const registrationController = require("./registration.controller");
 const { registrationRouter } = require("./registration.router");
@@ -70,7 +72,7 @@ describe("registration router", () => {
     });
   });
 
-  describe("Get to /:id", () => {
+  describe("Get to /:fsa_rn", () => {
     beforeEach(() => {
       handler = router.get.mock.calls[0][2];
     });
@@ -86,6 +88,26 @@ describe("registration router", () => {
 
       it("should call getRegistration", () => {
         expect(registrationController.getRegistration).toBeCalled();
+      });
+    });
+  });
+
+  describe("Delete to /:fsa_rn", () => {
+    beforeEach(() => {
+      handler = router.delete.mock.calls[0][2];
+    });
+
+    describe("when making a valid request", () => {
+      beforeEach(async () => {
+        await handler({ params: { fsa_rn: "1" } }, { send });
+      });
+
+      it("should call res.send", () => {
+        expect(send).toBeCalled();
+      });
+
+      it("should call getRegistration", () => {
+        expect(registrationController.deleteRegistration).toBeCalled();
       });
     });
   });
