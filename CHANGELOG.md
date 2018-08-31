@@ -3,6 +3,12 @@
 All notable changes to this projectwill be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## v3.3.0 - 31st August 2018 (unreleased)
+
+### Added
+
+* Added connection to cacheDB to cache every new registration for 72 hours
+
 ## v3.2.1 - 31st August 2018 (unreleased)
 
 ### Added
