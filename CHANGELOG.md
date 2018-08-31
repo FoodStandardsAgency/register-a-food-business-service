@@ -3,6 +3,12 @@
 All notable changes to this projectwill be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## v3.2.1 - 31st August 2018 (unreleased)
+
+### Added
+
+* Added business_type and import / export activities to tascomi connector
+
 ## v3.2.0 - 30th August 2018 (unreleased)
 
 ### Added
