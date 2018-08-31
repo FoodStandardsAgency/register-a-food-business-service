@@ -18,6 +18,10 @@ jest.mock("./registration.service", () => ({
   getLcContactConfig: jest.fn()
 }));
 
+jest.mock("../../connectors/cacheDb/cacheDb.connector", () => ({
+  cacheRegistration: jest.fn()
+}));
+
 const {
   saveRegistration,
   getFullRegistrationByFsaRn,
