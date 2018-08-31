@@ -9,6 +9,10 @@ const {
   getLcContactConfig
 } = require("./registration.service");
 
+const {
+  cacheRegistration
+} = require("../../connectors/cacheDb/cacheDb.connector");
+
 const { logEmitter } = require("../../services/logging.service");
 
 const createNewRegistration = async (registration, localCouncilUrl) => {
@@ -18,10 +22,12 @@ const createNewRegistration = async (registration, localCouncilUrl) => {
     "createNewRegistration"
   );
 
-  // VALIDATION
   if (registration === undefined) {
     throw new Error("registration is undefined");
   }
+
+  cacheRegistration(registration);
+
   const errors = validate(registration);
   if (errors.length) {
     const err = new Error();

@@ -13,5 +13,6 @@ module.exports = {
   FRONT_END_SECRET: process.env.FRONT_END_SECRET,
   ADMIN_NAME: process.env.ADMIN_NAME,
   ADMIN_SECRET: process.env.ADMIN_SECRET,
-  CONFIGDB_URL: process.env.CONFIGDB_URL
+  CONFIGDB_URL: process.env.CONFIGDB_URL,
+  CACHEDB_URL: process.env.CACHEDB_URL
 };
