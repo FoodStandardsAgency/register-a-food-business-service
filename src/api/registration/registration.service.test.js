@@ -60,7 +60,8 @@ const {
 
 const {
   NOTIFY_TEMPLATE_ID_FBO,
-  NOTIFY_TEMPLATE_ID_LC
+  NOTIFY_TEMPLATE_ID_LC,
+  NODE_ENV
 } = require("../../config");
 
 const fetch = require("node-fetch");
@@ -213,13 +214,19 @@ describe("Function: sendTascomiRegistration: ", () => {
 
 describe("Function: getRegistrationMetaData: ", () => {
   let result;
-  describe("When fsaRnResponse is 200", () => {
+  describe("When fsaRnResponse is 200 and NODE_ENV is not production", () => {
     beforeEach(async () => {
+      process.env.NODE_ENV = "not production";
       fetch.mockImplementation(() => ({
         status: 200,
         json: () => ({ "fsa-rn": "12345", reg_submission_date: "18/03/2018" })
       }));
-      result = await getRegistrationMetaData();
+      result = await getRegistrationMetaData(1234);
+    });
+    it("fetch should be called with the passed councilCode and a typeCode of 000", () => {
+      expect(fetch).toHaveBeenLastCalledWith(
+        "https://fsa-reference-numbers.epimorphics.net/generate/1234/000"
+      );
     });
     it("should return an object that contains fsa-rn", () => {
       expect(result["fsa-rn"]).toBeDefined();
@@ -228,6 +235,29 @@ describe("Function: getRegistrationMetaData: ", () => {
       expect(result.reg_submission_date).toBeDefined();
     });
   });
+
+  describe("When fsaRnResponse is 200 and NODE_ENV is 'production'", () => {
+    beforeEach(async () => {
+      process.env.NODE_ENV = "production";
+      fetch.mockImplementation(() => ({
+        status: 200,
+        json: () => ({ "fsa-rn": "12345", reg_submission_date: "18/03/2018" })
+      }));
+      result = await getRegistrationMetaData(1234);
+    });
+    it("fetch should be called with the passed councilCode and a typeCode of 001", () => {
+      expect(fetch).toHaveBeenLastCalledWith(
+        "https://fsa-reference-numbers.epimorphics.net/generate/1234/001"
+      );
+    });
+    it("should return an object that contains fsa-rn", () => {
+      expect(result["fsa-rn"]).toBeDefined();
+    });
+    it("should return an object that contains reg_submission_date", () => {
+      expect(result.reg_submission_date).toBeDefined();
+    });
+  });
+
   describe("When fsaRnResponse is not 200", () => {
     beforeEach(async () => {
       fetch.mockImplementation(() => ({

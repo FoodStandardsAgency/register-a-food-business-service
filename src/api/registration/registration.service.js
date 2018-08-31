@@ -3,7 +3,8 @@ const fetch = require("node-fetch");
 
 const {
   NOTIFY_TEMPLATE_ID_FBO,
-  NOTIFY_TEMPLATE_ID_LC
+  NOTIFY_TEMPLATE_ID_LC,
+  NODE_ENV
 } = require("../../config");
 
 const {
@@ -131,15 +132,16 @@ const sendTascomiRegistration = async (registration, fsa_rn) => {
   }
 };
 
-const getRegistrationMetaData = async () => {
+const getRegistrationMetaData = async councilCode => {
   logEmitter.emit(
     "functionCall",
     "registration.service",
     "getRegistrationMetadata"
   );
+  const typeCode = NODE_ENV === "production" ? "001" : "000";
   const reg_submission_date = moment().format("YYYY MM DD");
   const fsaRnResponse = await fetch(
-    "https://fsa-rn.epimorphics.net/fsa-rn/1000/01"
+    `https://fsa-reference-numbers.epimorphics.net/generate/${councilCode}/${typeCode}`
   );
   let fsa_rn;
   if (fsaRnResponse.status === 200) {
