@@ -26,7 +26,7 @@ const createNewRegistration = async (registration, localCouncilUrl) => {
     throw new Error("registration is undefined");
   }
 
-  await cacheRegistration(registration);
+  cacheRegistration(registration);
 
   const errors = validate(registration);
   if (errors.length) {
