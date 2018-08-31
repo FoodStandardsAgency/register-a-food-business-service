@@ -134,6 +134,58 @@ describe("Function: createFoodBusinessRegistration", () => {
     });
   });
 
+  describe("When import_export_activities is directly import", () => {
+    beforeEach(async () => {
+      jest.clearAllMocks();
+      process.env.DOUBLE_MODE = false;
+      request.mockImplementation(() => {
+        return "request response";
+      });
+      registration.establishment.activities.import_export_activities =
+        "Directly import";
+      result = await createFoodBusinessRegistration(registration);
+    });
+
+    it("should call api with correct form data", () => {
+      expect(request.mock.calls[0][0].form.import_food).toBe("t");
+    });
+  });
+
+  describe("When import_export_activities is directly export", () => {
+    beforeEach(async () => {
+      jest.clearAllMocks();
+      process.env.DOUBLE_MODE = false;
+      request.mockImplementation(() => {
+        return "request response";
+      });
+      registration.establishment.activities.import_export_activities =
+        "Directly export";
+      result = await createFoodBusinessRegistration(registration);
+    });
+
+    it("should call api with correct form data", () => {
+      expect(request.mock.calls[0][0].form.export_food).toBe("t");
+    });
+  });
+
+  describe("When import_export_activities is directly import and export", () => {
+    beforeEach(async () => {
+      jest.clearAllMocks();
+      process.env.DOUBLE_MODE = false;
+      request.mockImplementation(() => {
+        return "request response";
+      });
+      registration.establishment.activities.import_export_activities =
+        "Directly import and export";
+      result = await createFoodBusinessRegistration(registration);
+    });
+
+    it("should call api with correct form data", () => {
+      expect(request.mock.calls[0][0].form.export_food).toBe("t");
+      expect(request.mock.calls[0][0].form.import_food).toBe("t");
+    });
+  });
+
   describe("When running in double mode", () => {
     beforeEach(async () => {
       jest.clearAllMocks();
