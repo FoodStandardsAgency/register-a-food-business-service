@@ -269,6 +269,22 @@ describe("Function: getRegistrationMetaData: ", () => {
       expect(result["fsa-rn"]).toBe(undefined);
     });
   });
+
+  describe("When the request to fsa-rn generator fails", () => {
+    beforeEach(async () => {
+      fetch.mockImplementation(() => {
+        throw new Error("test error");
+      });
+      try {
+        result = await getRegistrationMetaData();
+      } catch (err) {
+        result = err;
+      }
+    });
+    it("should throw the error from the fetch attempt", () => {
+      expect(result.message).toBe("test error");
+    });
+  });
 });
 
 describe("Function: sendEmailOfType: ", () => {

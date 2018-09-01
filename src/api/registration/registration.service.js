@@ -137,24 +137,41 @@ const getRegistrationMetaData = async councilCode => {
     "registration.service",
     "getRegistrationMetadata"
   );
+
   const typeCode = process.env.NODE_ENV === "production" ? "001" : "000";
   const reg_submission_date = moment().format("YYYY MM DD");
-  const fsaRnResponse = await fetch(
-    `https://fsa-reference-numbers.epimorphics.net/generate/${councilCode}/${typeCode}`
-  );
   let fsa_rn;
-  if (fsaRnResponse.status === 200) {
-    fsa_rn = await fsaRnResponse.json();
+
+  try {
+    const fsaRnResponse = await fetch(
+      `https://fsa-reference-numbers.epimorphics.net/generate/${councilCode}/${typeCode}`
+    );
+    if (fsaRnResponse.status === 200) {
+      fsa_rn = await fsaRnResponse.json();
+    }
+    logEmitter.emit(
+      "functionSuccess",
+      "registration.service",
+      "getRegistrationMetadata"
+    );
+    return {
+      "fsa-rn": fsa_rn ? fsa_rn["fsa-rn"] : undefined,
+      reg_submission_date: reg_submission_date
+    };
+  } catch (err) {
+    logEmitter.emit(
+      "functionFail",
+      "registrationService",
+      "getRegistrationMetaData",
+      err
+    );
+
+    const newError = new Error();
+    newError.name = "fsaRnFetchError";
+    newError.message = err.message;
+
+    throw newError;
   }
-  logEmitter.emit(
-    "functionSuccess",
-    "registration.service",
-    "getRegistrationMetadata"
-  );
-  return {
-    "fsa-rn": fsa_rn ? fsa_rn["fsa-rn"] : undefined,
-    reg_submission_date: reg_submission_date
-  };
 };
 
 const sendEmailOfType = async (
