@@ -3,8 +3,7 @@ const fetch = require("node-fetch");
 
 const {
   NOTIFY_TEMPLATE_ID_FBO,
-  NOTIFY_TEMPLATE_ID_LC,
-  NODE_ENV
+  NOTIFY_TEMPLATE_ID_LC
 } = require("../../config");
 
 const {
@@ -138,7 +137,7 @@ const getRegistrationMetaData = async councilCode => {
     "registration.service",
     "getRegistrationMetadata"
   );
-  const typeCode = NODE_ENV === "production" ? "001" : "000";
+  const typeCode = process.env.NODE_ENV === "production" ? "001" : "000";
   const reg_submission_date = moment().format("YYYY MM DD");
   const fsaRnResponse = await fetch(
     `https://fsa-reference-numbers.epimorphics.net/generate/${councilCode}/${typeCode}`

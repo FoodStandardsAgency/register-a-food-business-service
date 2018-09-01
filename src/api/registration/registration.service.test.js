@@ -60,8 +60,7 @@ const {
 
 const {
   NOTIFY_TEMPLATE_ID_FBO,
-  NOTIFY_TEMPLATE_ID_LC,
-  NODE_ENV
+  NOTIFY_TEMPLATE_ID_LC
 } = require("../../config");
 
 const fetch = require("node-fetch");
