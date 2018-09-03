@@ -49,10 +49,13 @@ const createNewRegistration = async (registration, localCouncilUrl) => {
   const postRegistrationMetadata = await getRegistrationMetaData(
     hygieneCouncilCode
   );
+  postRegistrationMetadata.hygiene_council_code = hygieneCouncilCode;
+
   const tascomiResponse = await sendTascomiRegistration(
     registration,
-    postRegistrationMetadata["fsa-rn"]
+    postRegistrationMetadata
   );
+
   const tascomiObject = JSON.parse(tascomiResponse);
   const response = await saveRegistration(
     registration,

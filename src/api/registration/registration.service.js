@@ -136,14 +136,20 @@ const deleteRegistrationByFsaRn = async fsa_rn => {
   return "Registration succesfully deleted";
 };
 
-const sendTascomiRegistration = async (registration, fsa_rn) => {
+const sendTascomiRegistration = async (
+  registration,
+  postRegistrationMetadata
+) => {
   logEmitter.emit(
     "functionCall",
     "registration.service",
     "sendTascomiRegistration"
   );
   try {
-    const reg = await createFoodBusinessRegistration(registration, fsa_rn);
+    const reg = await createFoodBusinessRegistration(
+      registration,
+      postRegistrationMetadata
+    );
     const response = await createReferenceNumber(JSON.parse(reg).id);
     if (JSON.parse(response).id === 0) {
       const err = new Error("createReferenceNumber failed");
