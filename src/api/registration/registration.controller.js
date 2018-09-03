@@ -1,6 +1,6 @@
 const { validate } = require("../../services/validation.service");
 const {
-  saveRegistration,
+  // saveRegistration,
   getFullRegistrationByFsaRn,
   deleteRegistrationByFsaRn,
   sendTascomiRegistration,
@@ -54,10 +54,10 @@ const createNewRegistration = async (registration, localCouncilUrl) => {
     postRegistrationMetadata["fsa-rn"]
   );
   const tascomiObject = JSON.parse(tascomiResponse);
-  const response = await saveRegistration(
-    registration,
-    postRegistrationMetadata["fsa-rn"]
-  );
+  // const response = await saveRegistration(
+  //   registration,
+  //   postRegistrationMetadata["fsa-rn"]
+  // );
 
   const notifySuccessOrFailureLc = {};
 
@@ -89,7 +89,7 @@ const createNewRegistration = async (registration, localCouncilUrl) => {
   );
 
   const combinedResponse = Object.assign(
-    response,
+    // response,
     postRegistrationMetadata,
     {
       tascomiResponse: tascomiObject

@@ -41,18 +41,18 @@ setupRelationships({
   Registration
 });
 
-db.sync({
-  force: true
-});
+// db.sync({
+//   force: true
+// });
 
-db
-  .authenticate()
-  .then(() => {
-    info("Connection to postgres db has been established successfully.");
-  })
-  .catch(err => {
-    info("Unable to connect to the database:", err);
-  });
+// db
+//   .authenticate()
+//   .then(() => {
+//     info("Connection to postgres db has been established successfully.");
+//   })
+//   .catch(err => {
+//     info("Unable to connect to the database:", err);
+//   });
 
 module.exports = {
   Activities,
