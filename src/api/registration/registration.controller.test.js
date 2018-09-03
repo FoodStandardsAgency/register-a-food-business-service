@@ -83,15 +83,15 @@ describe("registration controller", () => {
         validate.mockImplementation(() => {
           return [];
         });
+        getRegistrationMetaData.mockImplementation(() => {
+          return { reg_submission_date: 1, "fsa-rn": "AA1AAA-AA11AA-A1AAA1" };
+        });
         sendTascomiRegistration.mockImplementation(
           () =>
             '{"accepted": "f", "ceased": "f", "declined": "f", "fsa_rn": "23589-DHF375"}'
         );
         saveRegistration.mockImplementation(() => {
           return { regId: 1 };
-        });
-        getRegistrationMetaData.mockImplementation(() => {
-          return { reg_submission_date: 1 };
         });
         getLcContactConfig.mockImplementation(() => exampleLcConfig);
         sendEmailOfType.mockImplementation(() => {
@@ -108,6 +108,13 @@ describe("registration controller", () => {
       });
       it("should return the result of getRegistrationMetaData", () => {
         expect(result.reg_submission_date).toBe(1);
+      });
+      it("should call sendTascomiRegistration with the registration and full postRegistrationMetadata", () => {
+        expect(sendTascomiRegistration.mock.calls[0][1]).toEqual({
+          reg_submission_date: 1,
+          "fsa-rn": "AA1AAA-AA11AA-A1AAA1",
+          hygiene_council_code: 1234
+        });
       });
       it("should return the result of sendEmailOfType", () => {
         expect(result.email_fbo).toEqual({
