@@ -1,7 +1,7 @@
 ## Change Log
 
 All notable changes to this projectwill be documented in this file.
-This project adheres to [Semantic Versioning](http://semver.org/).
+This project adheres to [Semantic Versioning](http://semver.org/).Test.
 
 ## v3.3.1 - 3rd September 2018 (unreleased)
 
