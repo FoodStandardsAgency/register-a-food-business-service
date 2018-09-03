@@ -51,7 +51,7 @@ describe("registration controller", () => {
 
   const exampleMultiLcConfig = {
     hygiene: {
-      code: 1234,
+      code: 5678,
       local_council: "Example council name",
       local_council_notify_emails: ["example@example.com"],
       local_council_email: "example@example.com"
@@ -142,6 +142,12 @@ describe("registration controller", () => {
           });
         });
 
+        it("should call getRegistrationMetaData with the hygieneAndStandards council code response from getLcContactConfig", () => {
+          expect(getRegistrationMetaData).toHaveBeenLastCalledWith(
+            exampleLcConfig.hygieneAndStandards.code
+          );
+        });
+
         it("should return an lc_config object with the response of getLcContactConfig", () => {
           expect(result.lc_config).toEqual(exampleLcConfig);
         });
@@ -166,6 +172,12 @@ describe("registration controller", () => {
             recipient: "recipient@example.com",
             success: true
           });
+        });
+
+        it("should call getRegistrationMetaData with the hygiene council code response from getLcContactConfig", () => {
+          expect(getRegistrationMetaData).toHaveBeenLastCalledWith(
+            exampleMultiLcConfig.hygiene.code
+          );
         });
 
         it("should return an lc_config object with the response of getLcContactConfig", () => {

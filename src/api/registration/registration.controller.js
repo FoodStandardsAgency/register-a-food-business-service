@@ -37,7 +37,18 @@ const createNewRegistration = async (registration, localCouncilUrl) => {
   }
 
   // RESOLUTION
-  const postRegistrationMetadata = await getRegistrationMetaData();
+  const lcContactConfig = await getLcContactConfig(localCouncilUrl);
+
+  let hygieneCouncilCode;
+  if (lcContactConfig.hygieneAndStandards) {
+    hygieneCouncilCode = lcContactConfig.hygieneAndStandards.code;
+  } else {
+    hygieneCouncilCode = lcContactConfig.hygiene.code;
+  }
+
+  const postRegistrationMetadata = await getRegistrationMetaData(
+    hygieneCouncilCode
+  );
   const tascomiResponse = await sendTascomiRegistration(
     registration,
     postRegistrationMetadata["fsa-rn"]
@@ -47,8 +58,6 @@ const createNewRegistration = async (registration, localCouncilUrl) => {
     registration,
     postRegistrationMetadata["fsa-rn"]
   );
-
-  const lcContactConfig = await getLcContactConfig(localCouncilUrl);
 
   const notifySuccessOrFailureLc = {};
 
