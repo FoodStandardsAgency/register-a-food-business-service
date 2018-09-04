@@ -25,7 +25,10 @@ const sendRequest = async (url, method, body) => {
   return request(tascomiApiOptions);
 };
 
-const createFoodBusinessRegistration = async (registration, fsa_rn) => {
+const createFoodBusinessRegistration = async (
+  registration,
+  postRegistrationMetadata
+) => {
   logEmitter.emit(
     "functionCall",
     "tascomi.connector",
@@ -51,7 +54,8 @@ const createFoodBusinessRegistration = async (registration, fsa_rn) => {
     );
 
     const requestData = {
-      fsa_rn: fsa_rn,
+      fsa_rn: postRegistrationMetadata["fsa-rn"],
+      fsa_council_id: postRegistrationMetadata.hygiene_council_code,
       premise_name: establishmentDetails.establishment_trading_name,
       premise_building_number: premiseDetails.establishment_first_line,
       premise_street_name: premiseDetails.establishment_street,
@@ -86,6 +90,7 @@ const createFoodBusinessRegistration = async (registration, fsa_rn) => {
       owner_telephone: operatorDetails.operator_primary_number,
       owner_email: operatorDetails.operator_email,
       sales_activities_string: activitiesDetails.customer_type,
+      business_type: activitiesDetails.business_type,
       accepted: "f",
       declined: "f"
     };
@@ -93,6 +98,19 @@ const createFoodBusinessRegistration = async (registration, fsa_rn) => {
       requestData.premise_domestic_premises = "t";
     } else {
       requestData.premise_domestic_premises = "f";
+    }
+    if (activitiesDetails.import_export_activities === "Directly import") {
+      requestData.import_food = "t";
+    } else if (
+      activitiesDetails.import_export_activities === "Directly export"
+    ) {
+      requestData.export_food = "t";
+    } else if (
+      activitiesDetails.import_export_activities ===
+      "Directly import and export"
+    ) {
+      requestData.import_food = "t";
+      requestData.export_food = "t";
     }
 
     const response = await sendRequest(url, "PUT", requestData);

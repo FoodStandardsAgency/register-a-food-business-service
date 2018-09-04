@@ -4,6 +4,9 @@ const registration = (db, Sequelize) => {
       type: Sequelize.INTEGER,
       primaryKey: true,
       autoIncrement: true
+    },
+    fsa_rn: {
+      type: Sequelize.STRING
     }
   });
 };

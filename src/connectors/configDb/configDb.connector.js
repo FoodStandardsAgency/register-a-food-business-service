@@ -5,7 +5,7 @@ const { logEmitter } = require("../../services/logging.service");
 
 let client;
 let configDB;
-let lcConfigCollection;
+let lcConfigCollection, deletedIdsCollection;
 
 let allLcConfigData = [];
 
@@ -25,6 +25,7 @@ const establishConnectionToMongo = async () => {
     configDB = client.db("register_a_food_business_config");
 
     lcConfigCollection = configDB.collection("lcConfig");
+    deletedIdsCollection = configDB.collection("deletedIds");
   }
 };
 
@@ -67,4 +68,10 @@ const clearLcConfigCache = () => {
   return allLcConfigData;
 };
 
-module.exports = { getAllLocalCouncilConfig, clearLcConfigCache };
+const addDeletedId = async id => {
+  await establishConnectionToMongo();
+
+  return deletedIdsCollection.insertOne({ id: id });
+};
+
+module.exports = { getAllLocalCouncilConfig, clearLcConfigCache, addDeletedId };

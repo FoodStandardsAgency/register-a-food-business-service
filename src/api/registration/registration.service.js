@@ -13,12 +13,18 @@ const {
   createActivities,
   createPremise,
   createMetadata,
-  getRegistrationById,
+  getRegistrationByFsaRn,
   getEstablishmentByRegId,
   getMetadataByRegId,
   getOperatorByEstablishmentId,
   getPremiseByEstablishmentId,
-  getActivitiesByEstablishmentId
+  getActivitiesByEstablishmentId,
+  destroyRegistrationById,
+  destroyEstablishmentByRegId,
+  destroyMetadataByRegId,
+  destroyOperatorByEstablishmentId,
+  destroyPremiseByEstablishmentId,
+  destroyActivitiesByEstablishmentId
 } = require("../../connectors/registrationDb/registrationDb");
 
 const {
@@ -29,7 +35,8 @@ const {
 const { sendSingleEmail } = require("../../connectors/notify/notify.connector");
 
 const {
-  getAllLocalCouncilConfig
+  getAllLocalCouncilConfig,
+  addDeletedId
 } = require("../../connectors/configDb/configDb.connector");
 
 const {
@@ -38,9 +45,9 @@ const {
 
 const { logEmitter } = require("../../services/logging.service");
 
-const saveRegistration = async registration => {
+const saveRegistration = async (registration, fsa_rn) => {
   logEmitter.emit("functionCall", "registration.service", "saveRegistration");
-  const reg = await createRegistration({});
+  const reg = await createRegistration(fsa_rn);
   const establishment = await createEstablishment(
     registration.establishment.establishment_details,
     reg.id
@@ -73,13 +80,16 @@ const saveRegistration = async registration => {
   };
 };
 
-const getFullRegistrationById = async id => {
+const getFullRegistrationByFsaRn = async fsa_rn => {
   logEmitter.emit(
     "functionCall",
     "registration.service",
-    "getFullRegistrationById"
+    "getFullRegistrationByFsaRn"
   );
-  const registration = await getRegistrationById(id);
+  const registration = await getRegistrationByFsaRn(fsa_rn);
+  if (!registration) {
+    return `No registration found for fsa_rn: ${fsa_rn}`;
+  }
   const establishment = await getEstablishmentByRegId(registration.id);
   const metadata = await getMetadataByRegId(registration.id);
   const operator = await getOperatorByEstablishmentId(establishment.id);
@@ -88,7 +98,7 @@ const getFullRegistrationById = async id => {
   logEmitter.emit(
     "functionSuccess",
     "registration.service",
-    "getFullRegistrationById"
+    "getFullRegistrationByFsaRn"
   );
   return {
     registration,
@@ -100,14 +110,46 @@ const getFullRegistrationById = async id => {
   };
 };
 
-const sendTascomiRegistration = async (registration, fsa_rn) => {
+const deleteRegistrationByFsaRn = async fsa_rn => {
+  logEmitter.emit(
+    "functionCall",
+    "registration.service",
+    "deleteFullRegistrationByFsaRn"
+  );
+  const registration = await getRegistrationByFsaRn(fsa_rn);
+  if (!registration) {
+    return `No registration found for fsa_rn: ${fsa_rn}`;
+  }
+  const establishment = await getEstablishmentByRegId(registration.id);
+  await destroyMetadataByRegId(registration.id);
+  await destroyOperatorByEstablishmentId(establishment.id);
+  await destroyActivitiesByEstablishmentId(establishment.id);
+  await destroyPremiseByEstablishmentId(establishment.id);
+  await destroyEstablishmentByRegId(registration.id);
+  await destroyRegistrationById(registration.id);
+  await addDeletedId(fsa_rn);
+  logEmitter.emit(
+    "functionSuccess",
+    "registration.service",
+    "deleteFullRegistrationByFsaRn"
+  );
+  return "Registration succesfully deleted";
+};
+
+const sendTascomiRegistration = async (
+  registration,
+  postRegistrationMetadata
+) => {
   logEmitter.emit(
     "functionCall",
     "registration.service",
     "sendTascomiRegistration"
   );
   try {
-    const reg = await createFoodBusinessRegistration(registration, fsa_rn);
+    const reg = await createFoodBusinessRegistration(
+      registration,
+      postRegistrationMetadata
+    );
     const response = await createReferenceNumber(JSON.parse(reg).id);
     if (JSON.parse(response).id === 0) {
       const err = new Error("createReferenceNumber failed");
@@ -131,29 +173,47 @@ const sendTascomiRegistration = async (registration, fsa_rn) => {
   }
 };
 
-const getRegistrationMetaData = async () => {
+const getRegistrationMetaData = async councilCode => {
   logEmitter.emit(
     "functionCall",
     "registration.service",
     "getRegistrationMetadata"
   );
+
+  const typeCode = process.env.NODE_ENV === "production" ? "001" : "000";
   const reg_submission_date = moment().format("YYYY MM DD");
-  const fsaRnResponse = await fetch(
-    "https://fsa-rn.epimorphics.net/fsa-rn/1000/01"
-  );
   let fsa_rn;
-  if (fsaRnResponse.status === 200) {
-    fsa_rn = await fsaRnResponse.json();
+
+  try {
+    const fsaRnResponse = await fetch(
+      `https://fsa-reference-numbers.epimorphics.net/generate/${councilCode}/${typeCode}`
+    );
+    if (fsaRnResponse.status === 200) {
+      fsa_rn = await fsaRnResponse.json();
+    }
+    logEmitter.emit(
+      "functionSuccess",
+      "registration.service",
+      "getRegistrationMetadata"
+    );
+    return {
+      "fsa-rn": fsa_rn ? fsa_rn["fsa-rn"] : undefined,
+      reg_submission_date: reg_submission_date
+    };
+  } catch (err) {
+    logEmitter.emit(
+      "functionFail",
+      "registrationService",
+      "getRegistrationMetaData",
+      err
+    );
+
+    const newError = new Error();
+    newError.name = "fsaRnFetchError";
+    newError.message = err.message;
+
+    throw newError;
   }
-  logEmitter.emit(
-    "functionSuccess",
-    "registration.service",
-    "getRegistrationMetadata"
-  );
-  return {
-    "fsa-rn": fsa_rn ? fsa_rn["fsa-rn"] : undefined,
-    reg_submission_date: reg_submission_date
-  };
 };
 
 const sendEmailOfType = async (
@@ -300,7 +360,8 @@ const getLcContactConfig = async localCouncilUrl => {
 
 module.exports = {
   saveRegistration,
-  getFullRegistrationById,
+  getFullRegistrationByFsaRn,
+  deleteRegistrationByFsaRn,
   sendTascomiRegistration,
   getRegistrationMetaData,
   sendEmailOfType,

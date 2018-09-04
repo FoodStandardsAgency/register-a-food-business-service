@@ -58,8 +58,8 @@ const createPremise = async (premise, establishmentId) => {
   return modelCreate(data, Premise, "Premise");
 };
 
-const createRegistration = async registration => {
-  return modelCreate(registration, Registration, "Registration");
+const createRegistration = async fsa_rn => {
+  return modelCreate({ fsa_rn }, Registration, "Registration");
 };
 
 const modelFindOne = async (query, model, functionName) => {
@@ -88,6 +88,14 @@ const getRegistrationById = async id => {
     { where: { id: id } },
     Registration,
     "getRegistrationByRegId"
+  );
+};
+
+const getRegistrationByFsaRn = async fsa_rn => {
+  return modelFindOne(
+    { where: { fsa_rn: fsa_rn } },
+    Registration,
+    "getRegistrationByFsaRn"
   );
 };
 
@@ -131,6 +139,75 @@ const getActivitiesByEstablishmentId = async id => {
   );
 };
 
+const modelDestroy = async (query, model, functionName) => {
+  logEmitter.emit("functionCall", "registration.connector.js", functionName);
+  try {
+    const response = await model.destroy(query);
+    logEmitter.emit(
+      "functionSuccess",
+      "registration.connector.js",
+      functionName
+    );
+    return response;
+  } catch (err) {
+    logEmitter.emit(
+      "functionFail",
+      "registration.connector.js",
+      functionName,
+      err
+    );
+    throw err;
+  }
+};
+
+const destroyRegistrationById = async id => {
+  return modelDestroy(
+    { where: { id: id } },
+    Registration,
+    "destroyRegistrationByRegId"
+  );
+};
+
+const destroyEstablishmentByRegId = async id => {
+  return modelDestroy(
+    { where: { registrationId: id } },
+    Establishment,
+    "destroyEstablishmentByRegId"
+  );
+};
+
+const destroyMetadataByRegId = async id => {
+  return modelDestroy(
+    { where: { registrationId: id } },
+    Metadata,
+    "destroyMetadataByRegId"
+  );
+};
+
+const destroyOperatorByEstablishmentId = async id => {
+  return modelDestroy(
+    { where: { establishmentId: id } },
+    Operator,
+    "destroyOperatorByEstablishmentId"
+  );
+};
+
+const destroyPremiseByEstablishmentId = async id => {
+  return modelDestroy(
+    { where: { establishmentId: id } },
+    Premise,
+    "destroyPremiseByEstablishmentId"
+  );
+};
+
+const destroyActivitiesByEstablishmentId = async id => {
+  return modelDestroy(
+    { where: { establishmentId: id } },
+    Activities,
+    "destroyActivitiesByEstablishmentId"
+  );
+};
+
 module.exports = {
   createActivities,
   createEstablishment,
@@ -139,9 +216,16 @@ module.exports = {
   createPremise,
   createRegistration,
   getRegistrationById,
+  getRegistrationByFsaRn,
   getEstablishmentByRegId,
   getMetadataByRegId,
   getOperatorByEstablishmentId,
   getPremiseByEstablishmentId,
-  getActivitiesByEstablishmentId
+  getActivitiesByEstablishmentId,
+  destroyRegistrationById,
+  destroyEstablishmentByRegId,
+  destroyMetadataByRegId,
+  destroyOperatorByEstablishmentId,
+  destroyPremiseByEstablishmentId,
+  destroyActivitiesByEstablishmentId
 };

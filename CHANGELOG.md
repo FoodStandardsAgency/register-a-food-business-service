@@ -3,6 +3,43 @@
 All notable changes to this projectwill be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## v3.3.1 - 3rd September 2018 (unreleased)
+
+### Modified
+
+* Tascomi connector now sends the hygiene council ID
+
+## v3.3.0 - 31st August 2018 (unreleased)
+
+### Added
+
+* Added connection to cacheDB to cache every new registration for 72 hours
+
+## v3.2.1 - 31st August 2018 (unreleased)
+
+### Added
+
+* Added business_type and import / export activities to tascomi connector
+
+## v3.2.0 - 30th August 2018 (unreleased)
+
+### Added
+
+* Added return and delete records
+
+## v3.1.2 - 30th August 2018 (unreleased)
+
+### Modified
+
+* Fix bug that prevented validation errors from being logged correctly
+
+## v3.1.1 - 28th August 2018 (unreleased)
+
+### Modified
+
+* Returned data name modified from email_success_fbo to email_fbo
+* Returned data name modified from email_success_lc to email_lc
+
 ## v3.1.0 - 28th August 2018 (unreleased)
 
 ### Added

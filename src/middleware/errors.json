@@ -97,5 +97,13 @@
       "The local council url has not matched any records in the config database. Raw error:",
     "userMessages": "",
     "statusCode": 400
+  },
+  {
+    "name": "fsaRnFetchError",
+    "code": "14",
+    "developerMessage":
+      "Fetch to the FSA-RN generator service failed, check status of service and authentication. Raw error:",
+    "userMessages": "",
+    "statusCode": 500
   }
 ]

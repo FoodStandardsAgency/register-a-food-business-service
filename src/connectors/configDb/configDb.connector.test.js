@@ -1,7 +1,8 @@
 const mongodb = require("mongodb");
 const {
   getAllLocalCouncilConfig,
-  clearLcConfigCache
+  clearLcConfigCache,
+  addDeletedId
 } = require("./configDb.connector");
 const mockLocalCouncilConfig = require("./mockLocalCouncilConfig.json");
 const { lcConfigCollectionDouble } = require("./configDb.double");
@@ -118,5 +119,25 @@ describe("Function: getLocalCouncilDetails", () => {
       await getAllLocalCouncilConfig();
       expect(mongodb.MongoClient.connect).toHaveBeenCalledTimes(1);
     });
+  });
+});
+
+describe("Function: addDeletedId", () => {
+  let response;
+  beforeEach(async () => {
+    process.env.DOUBLE_MODE = false;
+    mongodb.MongoClient.connect.mockImplementation(() => ({
+      db: () => ({
+        collection: () => ({
+          insertOne: jest.fn(() => "inserted")
+        })
+      })
+    }));
+
+    response = await addDeletedId();
+  });
+
+  it("should return the response from the insertOne()", async () => {
+    expect(response).toBe("inserted");
   });
 });

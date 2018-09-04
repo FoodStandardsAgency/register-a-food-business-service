@@ -1,11 +1,14 @@
-const { FRONT_END_NAME, FRONT_END_SECRET } = require("../config");
+const {
+  ADMIN_NAME,
+  ADMIN_SECRET,
+  FRONT_END_NAME,
+  FRONT_END_SECRET
+} = require("../config");
 const { logEmitter } = require("../../src/services/logging.service");
 
-const authHandler = (req, res, next) => {
+const authHandler = (req, res, secrets) => {
   logEmitter.emit("functionCall", "authHandler.middleware", "authHandler");
-  const secrets = {
-    [FRONT_END_NAME]: FRONT_END_SECRET
-  };
+
   const clientSecret = req.headers["api-secret"];
   const client = req.headers["client-name"];
 
@@ -62,7 +65,22 @@ const authHandler = (req, res, next) => {
     throw err;
   }
   logEmitter.emit("functionSuccess", "authHandler.middleware", "authHandler");
+};
+
+const createRegistrationAuth = (req, res, next) => {
+  const secrets = {
+    [FRONT_END_NAME]: FRONT_END_SECRET
+  };
+  authHandler(req, res, secrets);
   next();
 };
 
-module.exports = { authHandler };
+const viewDeleteRegistrationAuth = (req, res, next) => {
+  const secrets = {
+    [ADMIN_NAME]: ADMIN_SECRET
+  };
+  authHandler(req, res, secrets);
+  next();
+};
+
+module.exports = { createRegistrationAuth, viewDeleteRegistrationAuth };
