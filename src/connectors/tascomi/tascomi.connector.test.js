@@ -61,6 +61,12 @@ const registration = {
   }
 };
 
+const postRegistrationMetadata = {
+  reg_submission_date: 1,
+  "fsa-rn": "AA1AAA-AA11AA-A1AAA1",
+  hygiene_council_code: 1234
+};
+
 describe("Function: createFoodBusinessRegistration", () => {
   let result;
   describe("When request throws an error", () => {
@@ -71,7 +77,10 @@ describe("Function: createFoodBusinessRegistration", () => {
         throw new Error("Request error");
       });
       try {
-        await createFoodBusinessRegistration(registration);
+        await createFoodBusinessRegistration(
+          registration,
+          postRegistrationMetadata
+        );
       } catch (err) {
         result = err;
       }
@@ -92,7 +101,10 @@ describe("Function: createFoodBusinessRegistration", () => {
         throw err;
       });
       try {
-        await createFoodBusinessRegistration(registration);
+        await createFoodBusinessRegistration(
+          registration,
+          postRegistrationMetadata
+        );
       } catch (err) {
         result = err;
       }
@@ -109,7 +121,10 @@ describe("Function: createFoodBusinessRegistration", () => {
       request.mockImplementation(() => {
         return "request response";
       });
-      result = await createFoodBusinessRegistration(registration);
+      result = await createFoodBusinessRegistration(
+        registration,
+        postRegistrationMetadata
+      );
     });
 
     it("should return the response", () => {
@@ -126,11 +141,75 @@ describe("Function: createFoodBusinessRegistration", () => {
       });
       registration.establishment.premise.establishment_type =
         "Home or domestic premises";
-      result = await createFoodBusinessRegistration(registration);
+      result = await createFoodBusinessRegistration(
+        registration,
+        postRegistrationMetadata
+      );
     });
 
     it("should call api with correct form data", () => {
       expect(request.mock.calls[0][0].form.premise_domestic_premises).toBe("t");
+    });
+  });
+
+  describe("When import_export_activities is directly import", () => {
+    beforeEach(async () => {
+      jest.clearAllMocks();
+      process.env.DOUBLE_MODE = false;
+      request.mockImplementation(() => {
+        return "request response";
+      });
+      registration.establishment.activities.import_export_activities =
+        "Directly import";
+      result = await createFoodBusinessRegistration(
+        registration,
+        postRegistrationMetadata
+      );
+    });
+
+    it("should call api with correct form data", () => {
+      expect(request.mock.calls[0][0].form.import_food).toBe("t");
+    });
+  });
+
+  describe("When import_export_activities is directly export", () => {
+    beforeEach(async () => {
+      jest.clearAllMocks();
+      process.env.DOUBLE_MODE = false;
+      request.mockImplementation(() => {
+        return "request response";
+      });
+      registration.establishment.activities.import_export_activities =
+        "Directly export";
+      result = await createFoodBusinessRegistration(
+        registration,
+        postRegistrationMetadata
+      );
+    });
+
+    it("should call api with correct form data", () => {
+      expect(request.mock.calls[0][0].form.export_food).toBe("t");
+    });
+  });
+
+  describe("When import_export_activities is directly import and export", () => {
+    beforeEach(async () => {
+      jest.clearAllMocks();
+      process.env.DOUBLE_MODE = false;
+      request.mockImplementation(() => {
+        return "request response";
+      });
+      registration.establishment.activities.import_export_activities =
+        "Directly import and export";
+      result = await createFoodBusinessRegistration(
+        registration,
+        postRegistrationMetadata
+      );
+    });
+
+    it("should call api with correct form data", () => {
+      expect(request.mock.calls[0][0].form.export_food).toBe("t");
+      expect(request.mock.calls[0][0].form.import_food).toBe("t");
     });
   });
 
@@ -141,7 +220,10 @@ describe("Function: createFoodBusinessRegistration", () => {
       doubleRequest.mockImplementation(() => {
         return "doubleRequest response";
       });
-      result = await createFoodBusinessRegistration(registration);
+      result = await createFoodBusinessRegistration(
+        registration,
+        postRegistrationMetadata
+      );
     });
     it("should call double request", () => {
       expect(result).toBe("doubleRequest response");

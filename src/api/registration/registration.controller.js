@@ -1,12 +1,17 @@
 const { validate } = require("../../services/validation.service");
 const {
   saveRegistration,
-  getFullRegistrationById,
+  getFullRegistrationByFsaRn,
+  deleteRegistrationByFsaRn,
   sendTascomiRegistration,
   getRegistrationMetaData,
   sendEmailOfType,
   getLcContactConfig
 } = require("./registration.service");
+
+const {
+  cacheRegistration
+} = require("../../connectors/cacheDb/cacheDb.connector");
 
 const { logEmitter } = require("../../services/logging.service");
 
@@ -16,12 +21,13 @@ const createNewRegistration = async (registration, localCouncilUrl) => {
     "registration.controller",
     "createNewRegistration"
   );
-  // AUTHENTICATION
 
-  // VALIDATION
   if (registration === undefined) {
     throw new Error("registration is undefined");
   }
+
+  cacheRegistration(registration);
+
   const errors = validate(registration);
   if (errors.length) {
     const err = new Error();
@@ -31,15 +37,31 @@ const createNewRegistration = async (registration, localCouncilUrl) => {
   }
 
   // RESOLUTION
-  const postRegistrationMetadata = await getRegistrationMetaData();
+  const lcContactConfig = await getLcContactConfig(localCouncilUrl);
+
+  let hygieneCouncilCode;
+  if (lcContactConfig.hygieneAndStandards) {
+    hygieneCouncilCode = lcContactConfig.hygieneAndStandards.code;
+  } else {
+    hygieneCouncilCode = lcContactConfig.hygiene.code;
+  }
+
+  const postRegistrationMetadata = await getRegistrationMetaData(
+    hygieneCouncilCode
+  );
+
   const tascomiResponse = await sendTascomiRegistration(
+    registration,
+    Object.assign({}, postRegistrationMetadata, {
+      hygiene_council_code: hygieneCouncilCode
+    })
+  );
+
+  const tascomiObject = JSON.parse(tascomiResponse);
+  const response = await saveRegistration(
     registration,
     postRegistrationMetadata["fsa-rn"]
   );
-  const tascomiObject = JSON.parse(tascomiResponse);
-  const response = await saveRegistration(registration);
-
-  const lcContactConfig = await getLcContactConfig(localCouncilUrl);
 
   const notifySuccessOrFailureLc = {};
 
@@ -76,8 +98,8 @@ const createNewRegistration = async (registration, localCouncilUrl) => {
     {
       tascomiResponse: tascomiObject
     },
-    { email_success_fbo: notifySuccessOrFailureFbo },
-    { email_success_lc: notifySuccessOrFailureLc },
+    { email_fbo: notifySuccessOrFailureFbo },
+    { email_lc: notifySuccessOrFailureLc },
     { lc_config: lcContactConfig }
   );
 
@@ -90,13 +112,16 @@ const createNewRegistration = async (registration, localCouncilUrl) => {
   return combinedResponse;
 };
 
-const getRegistration = async id => {
-  // AUTHENTICATION
-
-  // RESOLUTION
-  const response = await getFullRegistrationById(id);
+const getRegistration = async fsa_rn => {
+  const response = await getFullRegistrationByFsaRn(fsa_rn);
 
   return response;
 };
 
-module.exports = { createNewRegistration, getRegistration };
+const deleteRegistration = async fsa_rn => {
+  const response = await deleteRegistrationByFsaRn(fsa_rn);
+
+  return response;
+};
+
+module.exports = { createNewRegistration, getRegistration, deleteRegistration };

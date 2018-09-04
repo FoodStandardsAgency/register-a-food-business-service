@@ -35,6 +35,12 @@ const errorHandler = (err, req, res, next) => {
         }`;
       }
 
+      if (errorDetail.name === "fsaRnFetchError") {
+        errorDetail.developerMessage = `${errorDetail.developerMessage} ${
+          err.message
+        }`;
+      }
+
       if (errorDetail.name === "mongoConnectionError") {
         errorDetail.developerMessage = `${errorDetail.developerMessage} ${
           err.message

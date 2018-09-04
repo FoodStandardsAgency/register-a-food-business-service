@@ -3,6 +3,9 @@ const doubleRequest = options => {
   if (target === "online_food_business_registrations") {
     const response = Object.assign(options.form, { id: "25" });
     return JSON.stringify(response);
+  } else if (target === "1111") {
+    const response = { id: "1111", online_reference: "0001111" };
+    return JSON.stringify(response);
   } else {
     let response;
     if (isNaN(target)) {

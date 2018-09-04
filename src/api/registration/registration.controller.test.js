@@ -10,16 +10,22 @@ jest.mock("../../services/logging.service", () => ({
 
 jest.mock("./registration.service", () => ({
   saveRegistration: jest.fn(),
-  getFullRegistrationById: jest.fn(),
+  getFullRegistrationByFsaRn: jest.fn(),
+  deleteRegistrationByFsaRn: jest.fn(),
   sendTascomiRegistration: jest.fn(),
   getRegistrationMetaData: jest.fn(),
   sendEmailOfType: jest.fn(),
   getLcContactConfig: jest.fn()
 }));
 
+jest.mock("../../connectors/cacheDb/cacheDb.connector", () => ({
+  cacheRegistration: jest.fn()
+}));
+
 const {
   saveRegistration,
-  getFullRegistrationById,
+  getFullRegistrationByFsaRn,
+  deleteRegistrationByFsaRn,
   getRegistrationMetaData,
   sendTascomiRegistration,
   sendEmailOfType,
@@ -28,7 +34,8 @@ const {
 const { validate } = require("../../services/validation.service");
 const {
   createNewRegistration,
-  getRegistration
+  getRegistration,
+  deleteRegistration
 } = require("./registration.controller");
 
 describe("registration controller", () => {
@@ -44,7 +51,7 @@ describe("registration controller", () => {
 
   const exampleMultiLcConfig = {
     hygiene: {
-      code: 1234,
+      code: 5678,
       local_council: "Example council name",
       local_council_notify_emails: ["example@example.com"],
       local_council_email: "example@example.com"
@@ -76,15 +83,15 @@ describe("registration controller", () => {
         validate.mockImplementation(() => {
           return [];
         });
+        getRegistrationMetaData.mockImplementation(() => {
+          return { reg_submission_date: 1, "fsa-rn": "AA1AAA-AA11AA-A1AAA1" };
+        });
         sendTascomiRegistration.mockImplementation(
           () =>
             '{"accepted": "f", "ceased": "f", "declined": "f", "fsa_rn": "23589-DHF375"}'
         );
         saveRegistration.mockImplementation(() => {
           return { regId: 1 };
-        });
-        getRegistrationMetaData.mockImplementation(() => {
-          return { reg_submission_date: 1 };
         });
         getLcContactConfig.mockImplementation(() => exampleLcConfig);
         sendEmailOfType.mockImplementation(() => {
@@ -102,8 +109,15 @@ describe("registration controller", () => {
       it("should return the result of getRegistrationMetaData", () => {
         expect(result.reg_submission_date).toBe(1);
       });
+      it("should call sendTascomiRegistration with the registration and full postRegistrationMetadata", () => {
+        expect(sendTascomiRegistration.mock.calls[0][1]).toEqual({
+          reg_submission_date: 1,
+          "fsa-rn": "AA1AAA-AA11AA-A1AAA1",
+          hygiene_council_code: 1234
+        });
+      });
       it("should return the result of sendEmailOfType", () => {
-        expect(result.email_success_fbo).toEqual({
+        expect(result.email_fbo).toEqual({
           recipient: "recipient@example.com",
           success: true
         });
@@ -127,12 +141,18 @@ describe("registration controller", () => {
           );
         });
 
-        it("should return email_success_lc as an object with hygieneAndStandards only", () => {
-          expect(Object.keys(result.email_success_lc).length).toBe(1);
-          expect(result.email_success_lc.hygieneAndStandards).toEqual({
+        it("should return email_lc as an object with hygieneAndStandards only", () => {
+          expect(Object.keys(result.email_lc).length).toBe(1);
+          expect(result.email_lc.hygieneAndStandards).toEqual({
             recipient: "recipient@example.com",
             success: true
           });
+        });
+
+        it("should call getRegistrationMetaData with the hygieneAndStandards council code response from getLcContactConfig", () => {
+          expect(getRegistrationMetaData).toHaveBeenLastCalledWith(
+            exampleLcConfig.hygieneAndStandards.code
+          );
         });
 
         it("should return an lc_config object with the response of getLcContactConfig", () => {
@@ -149,16 +169,22 @@ describe("registration controller", () => {
           );
         });
 
-        it("should return email_success_lc as an object with hygiene and standards objects", () => {
-          expect(Object.keys(result.email_success_lc).length).toBe(2);
-          expect(result.email_success_lc.hygiene).toEqual({
+        it("should return email_lc as an object with hygiene and standards objects", () => {
+          expect(Object.keys(result.email_lc).length).toBe(2);
+          expect(result.email_lc.hygiene).toEqual({
             recipient: "recipient@example.com",
             success: true
           });
-          expect(result.email_success_lc.standards).toEqual({
+          expect(result.email_lc.standards).toEqual({
             recipient: "recipient@example.com",
             success: true
           });
+        });
+
+        it("should call getRegistrationMetaData with the hygiene council code response from getLcContactConfig", () => {
+          expect(getRegistrationMetaData).toHaveBeenLastCalledWith(
+            exampleMultiLcConfig.hygiene.code
+          );
         });
 
         it("should return an lc_config object with the response of getLcContactConfig", () => {
@@ -218,13 +244,28 @@ describe("registration controller", () => {
   describe("Function: getRegistration", () => {
     describe("when given an id", () => {
       beforeEach(async () => {
-        getFullRegistrationById.mockImplementation(() => {
+        getFullRegistrationByFsaRn.mockImplementation(() => {
           return "response";
         });
         result = await getRegistration();
       });
 
       it("should return the result of getFullRegistrationById", () => {
+        expect(result).toEqual("response");
+      });
+    });
+  });
+
+  describe("Function: deleteRegistration", () => {
+    describe("when given an fsa_rn", () => {
+      beforeEach(async () => {
+        deleteRegistrationByFsaRn.mockImplementation(() => {
+          return "response";
+        });
+        result = await deleteRegistration();
+      });
+
+      it("should return the result of deleteRegistrationById", () => {
         expect(result).toEqual("response");
       });
     });

@@ -79,6 +79,20 @@ describe("Middleware: errorHandler", () => {
     });
   });
 
+  describe("When given a fsaRnFetchError error", () => {
+    it("should append developer mesage with raw error", () => {
+      const error = {
+        name: "fsaRnFetchError",
+        message: "unable to verify the first certificate"
+      };
+      errorHandler(error, "request", res);
+      expect(res.status).toBeCalledWith(500);
+      expect(res.send.mock.calls[0][0].developerMessage).toEqual(
+        "Fetch to the FSA-RN generator service failed, check status of service and authentication. Raw error: unable to verify the first certificate"
+      );
+    });
+  });
+
   describe("When given a localCouncilNotFound error", () => {
     it("should append developer mesage with the URL", () => {
       const error = {
