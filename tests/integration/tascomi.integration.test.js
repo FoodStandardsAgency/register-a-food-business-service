@@ -69,10 +69,10 @@ describe("Tascomi integration: createFoodBusinessRegistration", () => {
           declaration3: "Declaration"
         }
       };
-      const result = await createFoodBusinessRegistration(
-        registration,
-        "23589-DHF375"
-      );
+      const result = await createFoodBusinessRegistration(registration, {
+        "fsa-rn": "23589-DHF375",
+        hygiene_council_code: 8015
+      });
       const jsonResult = JSON.parse(result);
       expect(jsonResult.fsa_rn).toBe("23589-DHF375");
       expect(jsonResult.owner_email).toBe("operator@email.com");
