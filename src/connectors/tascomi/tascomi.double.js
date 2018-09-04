@@ -4,7 +4,7 @@ const doubleRequest = options => {
     const response = Object.assign(options.form, { id: "25" });
     return JSON.stringify(response);
   } else if (target === "1111") {
-    response = { id: "1111", online_reference: "0001111" };
+    const response = { id: "1111", online_reference: "0001111" };
     return JSON.stringify(response);
   } else {
     let response;
