@@ -71,16 +71,16 @@ describe("Tascomi contract: createFoodBusinessRegistration", () => {
         }
       };
       process.env.DOUBLE_MODE = true;
-      const doubleResult = await createFoodBusinessRegistration(
-        registration,
-        "23589-DHF375"
-      );
+      const doubleResult = await createFoodBusinessRegistration(registration, {
+        "fsa-rn": "23589-DHF375",
+        hygiene_council_code: 8015
+      });
       const doubleJson = JSON.parse(doubleResult);
       process.env.DOUBLE_MODE = false;
-      const realResult = await createFoodBusinessRegistration(
-        registration,
-        "23589-DHF375"
-      );
+      const realResult = await createFoodBusinessRegistration(registration, {
+        "fsa-rn": "23589-DHF375",
+        hygiene_council_code: 8015
+      });
       const realJson = JSON.parse(realResult);
       expect(doubleJson.owner_email).toEqual(realJson.owner_email);
       expect(doubleJson.fsa_rn).toEqual(realJson.fsa_rn);
