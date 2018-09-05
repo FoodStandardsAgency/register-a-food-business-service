@@ -473,45 +473,87 @@ describe("Function: getLcContactConfig: ", () => {
 
   describe("given a valid localCouncilUrl", () => {
     describe("given the local council does not have a separate standards council", () => {
-      beforeEach(async () => {
-        result = await getLcContactConfig("mid-and-east-antrim");
-      });
+      describe("given LC phone number exists", () => {
+        beforeEach(async () => {
+          result = await getLcContactConfig("mid-and-east-antrim");
+        });
+        it("should return an object with a hygieneAndStandards key only", () => {
+          expect(Object.keys(result).length).toBe(1);
+          expect(result.hygieneAndStandards).toBeDefined();
+        });
 
-      it("should return an object with a hygieneAndStandards key only", () => {
-        expect(Object.keys(result).length).toBe(1);
-        expect(result.hygieneAndStandards).toBeDefined();
+        it("the hygieneAndStandards object should contain the necessary data fields", () => {
+          expect(result.hygieneAndStandards.code).toBeDefined();
+          expect(result.hygieneAndStandards.local_council).toBeDefined();
+          expect(
+            result.hygieneAndStandards.local_council_notify_emails
+          ).toBeDefined();
+          expect(result.hygieneAndStandards.local_council_email).toBeDefined();
+          expect(
+            result.hygieneAndStandards.local_council_phone_number
+          ).toBeDefined();
+        });
       });
-
-      it("the hygieneAndStandards object should contain the necessary data fields", () => {
-        expect(result.hygieneAndStandards.code).toBeDefined();
-        expect(result.hygieneAndStandards.local_council).toBeDefined();
-        expect(
-          result.hygieneAndStandards.local_council_notify_emails
-        ).toBeDefined();
-        expect(result.hygieneAndStandards.local_council_email).toBeDefined();
+      describe("given phone number does not exist", () => {
+        beforeEach(async () => {
+          result = await getLcContactConfig("dorset");
+        });
+        it("the hygieneAndStandards object not contain the phone number field", () => {
+          expect(
+            result.hygieneAndStandards.local_council_phone_number
+          ).not.toBeDefined();
+        });
       });
     });
 
     describe("given the local council has a separate standards council", () => {
-      beforeEach(async () => {
-        result = await getLcContactConfig("west-dorset");
-      });
+      describe("given LC phone number exists", () => {
+        beforeEach(async () => {
+          result = await getLcContactConfig("west-dorset");
+        });
 
-      it("should return an object with a hygiene key and a standards key", () => {
-        expect(Object.keys(result).length).toBe(2);
-        expect(result.hygiene).toBeDefined();
-        expect(result.standards).toBeDefined();
-      });
+        it("should return an object with a hygiene key and a standards key", () => {
+          expect(Object.keys(result).length).toBe(2);
+          expect(result.hygiene).toBeDefined();
+          expect(result.standards).toBeDefined();
+        });
 
-      it("each nested object should contain the necessary data fields", () => {
-        for (let typeOfCouncil in result) {
-          expect(result[typeOfCouncil].code).toBeDefined();
-          expect(result[typeOfCouncil].local_council).toBeDefined();
-          expect(
-            result[typeOfCouncil].local_council_notify_emails
-          ).toBeDefined();
-          expect(result[typeOfCouncil].local_council_email).toBeDefined();
-        }
+        it("each nested object should contain the necessary data fields", () => {
+          for (let typeOfCouncil in result) {
+            expect(result[typeOfCouncil].code).toBeDefined();
+            expect(result[typeOfCouncil].local_council).toBeDefined();
+            expect(
+              result[typeOfCouncil].local_council_notify_emails
+            ).toBeDefined();
+            expect(result[typeOfCouncil].local_council_email).toBeDefined();
+          }
+          expect(result.hygiene.local_council_phone_number).toBeDefined();
+          expect(result.standards.local_council_phone_number).not.toBeDefined();
+        });
+      });
+      describe("given LC phone number doesn't exists", () => {
+        beforeEach(async () => {
+          result = await getLcContactConfig("example-no-phone-number");
+        });
+
+        it("should return an object with a hygiene key and a standards key", () => {
+          expect(Object.keys(result).length).toBe(2);
+          expect(result.hygiene).toBeDefined();
+          expect(result.standards).toBeDefined();
+        });
+
+        it("each nested object should contain the necessary data fields", () => {
+          for (let typeOfCouncil in result) {
+            expect(result[typeOfCouncil].code).toBeDefined();
+            expect(result[typeOfCouncil].local_council).toBeDefined();
+            expect(
+              result[typeOfCouncil].local_council_notify_emails
+            ).toBeDefined();
+            expect(result[typeOfCouncil].local_council_email).toBeDefined();
+          }
+          expect(result.hygiene.local_council_phone_number).not.toBeDefined();
+          expect(result.standards.local_council_phone_number).toBeDefined();
+        });
       });
     });
   });

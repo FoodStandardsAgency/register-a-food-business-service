@@ -19,6 +19,7 @@ const lcConfigSchema = {
         items: { type: "string" }
       },
       local_council_email: { type: "string", required: true },
+      local_council_phone_number: { type: "string", required: false },
       local_council_url: { type: "string", required: true },
       separate_standards_council: { type: "number", required: false }
     }
