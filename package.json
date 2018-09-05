@@ -33,7 +33,7 @@
     "https://github.com/FoodStandardsAgency/register-a-food-business-service#readme",
   "dependencies": {
     "@slice-and-dice/fsa-rof": "1.0.3",
-    "@slice-and-dice/register-a-food-business-validation": "1.10.3",
+    "@slice-and-dice/register-a-food-business-validation": "1.10.4",
     "body-parser": "1.18.3",
     "dotenv": "6.0.0",
     "express": "4.16.3",
