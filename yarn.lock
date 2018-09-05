@@ -24,9 +24,9 @@
     moment-timezone "^0.5.16"
     sntp "^3.0.1"
 
-"@slice-and-dice/register-a-food-business-validation@1.10.4":
-  version "1.10.4"
-  resolved "https://registry.yarnpkg.com/@slice-and-dice/register-a-food-business-validation/-/register-a-food-business-validation-1.10.4.tgz#79f1d2e9484516b2c381b350859d93ece052e619"
+"@slice-and-dice/register-a-food-business-validation@1.10.5":
+  version "1.10.5"
+  resolved "https://registry.yarnpkg.com/@slice-and-dice/register-a-food-business-validation/-/register-a-food-business-validation-1.10.5.tgz#e516febbe632fe7e5439ba066bef5d6462561a16"
   dependencies:
     moment "^2.22.2"
     validator "^10.4.0"
