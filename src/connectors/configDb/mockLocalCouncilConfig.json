@@ -33,7 +33,7 @@
   },
   {
     "_id": 6769,
-    "local_council": "Example council with no phone numbers",
+    "local_council": "Example council with phone numbers",
     "local_council_notify_emails": ["example@email.com"],
     "local_council_email": "example@email.com",
     "local_council_url": "example",

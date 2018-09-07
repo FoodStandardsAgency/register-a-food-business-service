@@ -507,7 +507,7 @@ describe("Function: getLcContactConfig: ", () => {
     });
 
     describe("given the local council has a separate standards council", () => {
-      describe("given LC phone number exists", () => {
+      describe("given hygiene LC phone number exists and standards phone number does not", () => {
         beforeEach(async () => {
           result = await getLcContactConfig("west-dorset");
         });
@@ -531,7 +531,7 @@ describe("Function: getLcContactConfig: ", () => {
           expect(result.standards.local_council_phone_number).not.toBeDefined();
         });
       });
-      describe("given LC phone number doesn't exists", () => {
+      describe("given hygiene LC phone number does not exist and standards phone number exists", () => {
         beforeEach(async () => {
           result = await getLcContactConfig("example-no-phone-number");
         });
