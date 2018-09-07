@@ -152,6 +152,26 @@ describe("Function: createFoodBusinessRegistration", () => {
     });
   });
 
+  describe("When establishment_type is Mobile or moveable premises", () => {
+    beforeEach(async () => {
+      jest.clearAllMocks();
+      process.env.DOUBLE_MODE = false;
+      request.mockImplementation(() => {
+        return "request response";
+      });
+      registration.establishment.premise.establishment_type =
+        "Mobile or moveable premises";
+      result = await createFoodBusinessRegistration(
+        registration,
+        postRegistrationMetadata
+      );
+    });
+
+    it("should call api with correct form data", () => {
+      expect(request.mock.calls[0][0].form.premise_mobile_premises).toBe("t");
+    });
+  });
+
   describe("When import_export_activities is directly import", () => {
     beforeEach(async () => {
       jest.clearAllMocks();
