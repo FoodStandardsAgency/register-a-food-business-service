@@ -11,16 +11,30 @@ const transformDataForNotify = (
 
     lcInfo.local_council_email =
       lcContactConfig.hygieneAndStandards.local_council_email;
+
+    if (lcContactConfig.hygieneAndStandards.local_council_phone_number) {
+      lcInfo.local_council_phone_number =
+        lcContactConfig.hygieneAndStandards.local_council_phone_number;
+    }
   } else {
     lcInfo.local_council_hygiene = lcContactConfig.hygiene.local_council;
 
     lcInfo.local_council_email_hygiene =
       lcContactConfig.hygiene.local_council_email;
 
+    if (lcContactConfig.hygiene.local_council_phone_number) {
+      lcInfo.local_council_phone_number_hygiene =
+        lcContactConfig.hygiene.local_council_phone_number;
+    }
     lcInfo.local_council_standards = lcContactConfig.standards.local_council;
 
     lcInfo.local_council_email_standards =
       lcContactConfig.standards.local_council_email;
+
+    if (lcContactConfig.standards.local_council_phone_number) {
+      lcInfo.local_council_phone_number_standards =
+        lcContactConfig.standards.local_council_phone_number;
+    }
   }
 
   const flattenedData = Object.assign(

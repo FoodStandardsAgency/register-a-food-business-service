@@ -3,6 +3,12 @@
 All notable changes to this projectwill be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## v3.3.2 - 7th September 2018 (unreleased)
+
+### Added
+
+* Added local council number to lc info
+
 ## v3.3.1 - 3rd September 2018 (unreleased)
 
 ### Modified
