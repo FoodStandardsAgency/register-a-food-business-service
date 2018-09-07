@@ -61,9 +61,10 @@ const createFoodBusinessRegistration = async (
       premise_street_name: premiseDetails.establishment_street,
       premise_town: premiseDetails.establishment_town,
       premise_postcode: premiseDetails.establishment_postcode,
-      premise_primary_number: premiseDetails.establishment_primary_number,
-      premise_secondary_number: premiseDetails.establishment_secondary_number,
-      premise_email: premiseDetails.establishment_email,
+      premise_primary_number: establishmentDetails.establishment_primary_number,
+      premise_secondary_number:
+        establishmentDetails.establishment_secondary_number,
+      premise_email: establishmentDetails.establishment_email,
       premise_typical_trading_days_monday: "f",
       premise_typical_trading_days_tuesday: "f",
       premise_typical_trading_days_wednesday: "f",
@@ -97,6 +98,7 @@ const createFoodBusinessRegistration = async (
       accepted: "f",
       declined: "f"
     };
+
     if (premiseDetails.establishment_type === "Home or domestic premises") {
       requestData.premise_domestic_premises = "t";
     } else {
