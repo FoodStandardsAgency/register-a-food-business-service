@@ -123,8 +123,6 @@ const createFoodBusinessRegistration = async (
       requestData.export_food = "t";
     }
 
-    console.log(requestData);
-
     const response = await sendRequest(url, "PUT", requestData);
     logEmitter.emit(
       "functionSuccess",
