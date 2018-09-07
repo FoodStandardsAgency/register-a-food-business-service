@@ -9,7 +9,7 @@ const arrayToInsert = [
     local_council: "Bridgend County Borough Council",
     local_council_email: "fsatestemail.valid@gmail.com",
     local_council_notify_emails: ["fsatestemail.valid@gmail.com"],
-    local_council_phone_number: "123456789",
+    local_council_phone_number: "0300 123 6696",
     local_council_url: "bridgend"
   },
   {
@@ -17,7 +17,7 @@ const arrayToInsert = [
     local_council: "City of Cardiff Council",
     local_council_email: "fsatestemail.valid@gmail.com",
     local_council_notify_emails: ["fsatestemail.valid@gmail.com"],
-    local_council_phone_number: "123456789",
+    local_council_phone_number: "0300 123 6696",
     local_council_url: "cardiff"
   },
   {
@@ -25,6 +25,7 @@ const arrayToInsert = [
     local_council: "Vale of Glamorgan Council",
     local_council_email: "fsatestemail.valid@gmail.com",
     local_council_notify_emails: ["fsatestemail.valid@gmail.com"],
+    local_council_phone_number: "0300 123 6696",
     local_council_url: "the-vale-of-glamorgan"
   }
   // {
