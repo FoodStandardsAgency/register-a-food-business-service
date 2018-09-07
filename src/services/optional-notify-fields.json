@@ -23,8 +23,11 @@
   "contact_representative_email",
   "local_council",
   "local_council_email",
+  "local_council_phone_number",
   "local_council_hygiene",
-  "local_council_hygiene_email",
+  "local_council_email_hygiene",
+  "local_council_phone_number_hygiene",
   "local_council_standards",
-  "local_council_standards_email"
+  "local_council_email_standards",
+  "local_council_phone_number_standards"
 ]

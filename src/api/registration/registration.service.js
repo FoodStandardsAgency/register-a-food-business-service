@@ -292,6 +292,15 @@ const getLcContactConfig = async localCouncilUrl => {
             }
           };
 
+          if (urlLcConfig.local_council_phone_number) {
+            separateCouncils.hygiene.local_council_phone_number =
+              urlLcConfig.local_council_phone_number;
+          }
+          if (standardsLcConfig.local_council_phone_number) {
+            separateCouncils.standards.local_council_phone_number =
+              standardsLcConfig.local_council_phone_number;
+          }
+
           logEmitter.emit(
             "functionSuccess",
             "registration.service",
@@ -323,6 +332,11 @@ const getLcContactConfig = async localCouncilUrl => {
             local_council_email: urlLcConfig.local_council_email
           }
         };
+
+        if (urlLcConfig.local_council_phone_number) {
+          hygieneAndStandardsCouncil.hygieneAndStandards.local_council_phone_number =
+            urlLcConfig.local_council_phone_number;
+        }
 
         logEmitter.emit(
           "functionSuccess",
