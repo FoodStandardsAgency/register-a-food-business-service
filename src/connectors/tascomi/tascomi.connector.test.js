@@ -5,11 +5,7 @@ jest.mock("@slice-and-dice/fsa-rof", () => ({
     generateSyncHash: jest.fn()
   }
 }));
-jest.mock("../../services/logging.service", () => ({
-  logEmitter: {
-    emit: jest.fn()
-  }
-}));
+
 const { tascomiAuth } = require("@slice-and-dice/fsa-rof");
 tascomiAuth.generateSyncHash.mockImplementation(() => ({
   auth: "some auth",

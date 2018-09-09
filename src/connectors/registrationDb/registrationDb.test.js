@@ -31,12 +31,6 @@ jest.mock("../../db/db", () => ({
   }
 }));
 
-jest.mock("../../services/logging.service", () => ({
-  logEmitter: {
-    emit: jest.fn()
-  }
-}));
-
 const {
   Activities,
   Establishment,

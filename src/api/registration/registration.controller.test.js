@@ -2,12 +2,6 @@ jest.mock("../../services/validation.service", () => ({
   validate: jest.fn()
 }));
 
-jest.mock("../../services/logging.service", () => ({
-  logEmitter: {
-    emit: jest.fn()
-  }
-}));
-
 jest.mock("./registration.service", () => ({
   saveRegistration: jest.fn(),
   getFullRegistrationByFsaRn: jest.fn(),

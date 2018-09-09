@@ -44,40 +44,65 @@ const {
 } = require("../../services/notifications.service");
 
 const { logEmitter } = require("../../services/logging.service");
+const { statusEmitter } = require("../../services/statusEmitter.service");
 
 const saveRegistration = async (registration, fsa_rn) => {
   logEmitter.emit("functionCall", "registration.service", "saveRegistration");
-  const reg = await createRegistration(fsa_rn);
-  const establishment = await createEstablishment(
-    registration.establishment.establishment_details,
-    reg.id
-  );
-  const operator = await createOperator(
-    registration.establishment.operator,
-    establishment.id
-  );
-  const activities = await createActivities(
-    registration.establishment.activities,
-    establishment.id
-  );
-  const premise = await createPremise(
-    registration.establishment.premise,
-    establishment.id
-  );
-  const metadata = await createMetadata(registration.metadata, reg.id);
-  logEmitter.emit(
-    "functionSuccess",
-    "registration.service",
-    "saveRegistration"
-  );
-  return {
-    regId: reg.id,
-    establishmentId: establishment.id,
-    operatorId: operator.id,
-    activitiesId: activities.id,
-    premiseId: premise.id,
-    metadataId: metadata.id
-  };
+
+  try {
+    const reg = await createRegistration(fsa_rn);
+    const establishment = await createEstablishment(
+      registration.establishment.establishment_details,
+      reg.id
+    );
+    const operator = await createOperator(
+      registration.establishment.operator,
+      establishment.id
+    );
+    const activities = await createActivities(
+      registration.establishment.activities,
+      establishment.id
+    );
+    const premise = await createPremise(
+      registration.establishment.premise,
+      establishment.id
+    );
+    const metadata = await createMetadata(registration.metadata, reg.id);
+
+    statusEmitter.emit("incrementCount", "storeRegistrationsInDbSucceeded");
+    statusEmitter.emit(
+      "setStatus",
+      "mostRecentStoreRegistrationInDbSucceeded",
+      true
+    );
+    logEmitter.emit(
+      "functionSuccess",
+      "registration.service",
+      "saveRegistration"
+    );
+    return {
+      regId: reg.id,
+      establishmentId: establishment.id,
+      operatorId: operator.id,
+      activitiesId: activities.id,
+      premiseId: premise.id,
+      metadataId: metadata.id
+    };
+  } catch (err) {
+    statusEmitter.emit("incrementCount", "storeRegistrationsInDbFailed");
+    statusEmitter.emit(
+      "setStatus",
+      "mostRecentStoreRegistrationInDbSucceeded",
+      false
+    );
+    logEmitter.emit(
+      "functionFail",
+      "registration.service",
+      "saveRegistration",
+      err
+    );
+    throw err;
+  }
 };
 
 const getFullRegistrationByFsaRn = async fsa_rn => {
@@ -191,6 +216,9 @@ const getRegistrationMetaData = async councilCode => {
     if (fsaRnResponse.status === 200) {
       fsa_rn = await fsaRnResponse.json();
     }
+
+    statusEmitter.emit("incrementCount", "fsaRnCallsSucceeded");
+    statusEmitter.emit("setStatus", "mostRecentFsaRnCallSucceeded", true);
     logEmitter.emit(
       "functionSuccess",
       "registration.service",
@@ -201,6 +229,8 @@ const getRegistrationMetaData = async councilCode => {
       reg_submission_date: reg_submission_date
     };
   } catch (err) {
+    statusEmitter.emit("incrementCount", "fsaRnCallsFailed");
+    statusEmitter.emit("setStatus", "mostRecentFsaRnCallSucceeded", false);
     logEmitter.emit(
       "functionFail",
       "registrationService",
@@ -244,8 +274,26 @@ const sendEmailOfType = async (
     );
     await sendSingleEmail(templateId, recipientEmailAddress, data);
     emailSent.success = true;
+
+    statusEmitter.emit("incrementCount", "emailNotificationsSucceeded");
+    statusEmitter.emit(
+      "setStatus",
+      "mostRecentEmailNotificationSucceeded",
+      true
+    );
+    logEmitter.emit(
+      "functionSuccess",
+      "registration.service",
+      "sendEmailOfType"
+    );
   } catch (err) {
     emailSent.success = false;
+    statusEmitter.emit("incrementCount", "emailNotificationsFailed");
+    statusEmitter.emit(
+      "setStatus",
+      "mostRecentEmailNotificationSucceeded",
+      false
+    );
     logEmitter.emit(
       "functionFail",
       "registration.service",
@@ -253,7 +301,6 @@ const sendEmailOfType = async (
       err
     );
   }
-  logEmitter.emit("functionSuccess", "registration.service", "sendEmailOfType");
   return emailSent;
 };
 

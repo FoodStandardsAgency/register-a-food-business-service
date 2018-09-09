@@ -8,6 +8,10 @@ jest.mock("./registration/registration.router", () => ({
   registrationRouter: jest.fn()
 }));
 
+jest.mock("./status/status.router", () => ({
+  statusRouter: jest.fn()
+}));
+
 const { routers } = require("./routers");
 
 describe("Function: routers", () => {
@@ -24,5 +28,6 @@ describe("Function: routers", () => {
   it("Should call router.use", () => {
     expect(result.use).toBeCalled();
     expect(result.use.mock.calls[0][0]).toBe("/api/registration");
+    expect(result.use.mock.calls[1][0]).toBe("/api/status");
   });
 });

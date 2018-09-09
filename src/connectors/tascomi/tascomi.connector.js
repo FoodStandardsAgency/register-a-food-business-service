@@ -2,6 +2,7 @@ const request = require("request-promise-native");
 const { tascomiAuth } = require("@slice-and-dice/fsa-rof");
 const { doubleRequest } = require("./tascomi.double");
 const { logEmitter } = require("../../services/logging.service");
+const { statusEmitter } = require("../../services/statusEmitter.service");
 
 const sendRequest = async (url, method, body) => {
   const auth = await tascomiAuth.generateSyncHash(
@@ -124,6 +125,16 @@ const createFoodBusinessRegistration = async (
     }
 
     const response = await sendRequest(url, "PUT", requestData);
+
+    statusEmitter.emit(
+      "incrementCount",
+      "tascomiCreateRegistrationCallsSucceeded"
+    );
+    statusEmitter.emit(
+      "setStatus",
+      "mostRecentTascomiCreateRegistrationSucceeded",
+      true
+    );
     logEmitter.emit(
       "functionSuccess",
       "tascomi.connector",
@@ -131,6 +142,15 @@ const createFoodBusinessRegistration = async (
     );
     return response;
   } catch (err) {
+    statusEmitter.emit(
+      "incrementCount",
+      "tascomiCreateRegistrationCallsFailed"
+    );
+    statusEmitter.emit(
+      "setStatus",
+      "mostRecentTascomiCreateRegistrationSucceeded",
+      false
+    );
     logEmitter.emit(
       "functionFail",
       "tascomi.connector",
@@ -155,6 +175,16 @@ const createReferenceNumber = async id => {
       online_reference
     };
     const response = await sendRequest(url, "POST", requestData);
+
+    statusEmitter.emit(
+      "incrementCount",
+      "tascomiCreateRefnumberCallsSucceeded"
+    );
+    statusEmitter.emit(
+      "setStatus",
+      "mostRecentTascomiCreateRefnumberSucceeded",
+      true
+    );
     logEmitter.emit(
       "functionSuccess",
       "tascomi.connector",
@@ -162,6 +192,12 @@ const createReferenceNumber = async id => {
     );
     return response;
   } catch (err) {
+    statusEmitter.emit("incrementCount", "tascomiCreateRefnumberCallsFailed");
+    statusEmitter.emit(
+      "setStatus",
+      "mostRecentTascomiCreateRefnumberSucceeded",
+      false
+    );
     logEmitter.emit(
       "functionFail",
       "tascomi.connector",
