@@ -2,6 +2,7 @@ const mongodb = require("mongodb");
 const { lcConfigCollectionDouble } = require("./configDb.double");
 const { CONFIGDB_URL } = require("../../config");
 const { logEmitter } = require("../../services/logging.service");
+const { statusEmitter } = require("../../services/statusEmitter.service");
 
 let client;
 let configDB;
@@ -38,7 +39,20 @@ const getAllLocalCouncilConfig = async () => {
 
       const allLcConfigDataCursor = await lcConfigCollection.find({});
       allLcConfigData = allLcConfigDataCursor.toArray();
+
+      statusEmitter.emit("incrementCount", "getConfigFromDbSucceeded");
+      statusEmitter.emit(
+        "setStatus",
+        "mostRecentGetConfigFromDbSucceeded",
+        true
+      );
     } catch (err) {
+      statusEmitter.emit("incrementCount", "getConfigFromDbFailed");
+      statusEmitter.emit(
+        "setStatus",
+        "mostRecentGetConfigFromDbSucceeded",
+        false
+      );
       logEmitter.emit(
         "functionFail",
         "configDb.connector",

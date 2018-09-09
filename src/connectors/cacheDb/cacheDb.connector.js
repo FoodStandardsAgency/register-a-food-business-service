@@ -2,6 +2,7 @@ const mongodb = require("mongodb");
 const { CACHEDB_URL } = require("../../config");
 const { cachedRegistrationsDouble } = require("./cacheDb.double");
 const { logEmitter } = require("../../services/logging.service");
+const { statusEmitter } = require("../../services/statusEmitter.service");
 
 let client;
 let cacheDB;
@@ -32,6 +33,12 @@ const cacheRegistration = async registration => {
     await establishConnectionToMongo();
     const response = await cachedRegistrations.insertOne(registration);
 
+    statusEmitter.emit("incrementCount", "storeRegistrationsInCacheSucceeded");
+    statusEmitter.emit(
+      "setStatus",
+      "mostRecentRegistrationInCacheSucceeded",
+      true
+    );
     logEmitter.emit(
       "functionSuccess",
       "cacheDb.connector",
@@ -40,6 +47,12 @@ const cacheRegistration = async registration => {
 
     return response;
   } catch (err) {
+    statusEmitter.emit("incrementCount", "storeRegistrationsInCacheFailed");
+    statusEmitter.emit(
+      "setStatus",
+      "mostRecentRegistrationInCacheSucceeded",
+      false
+    );
     logEmitter.emit(
       "functionFail",
       "cacheDb.connector",

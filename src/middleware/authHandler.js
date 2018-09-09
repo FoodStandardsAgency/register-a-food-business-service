@@ -5,6 +5,7 @@ const {
   FRONT_END_SECRET
 } = require("../config");
 const { logEmitter } = require("../../src/services/logging.service");
+const { statusEmitter } = require("../../src/services/statusEmitter.service");
 
 const authHandler = (req, res, secrets) => {
   logEmitter.emit("functionCall", "authHandler.middleware", "authHandler");
@@ -22,6 +23,7 @@ const authHandler = (req, res, secrets) => {
       "authHandler",
       err
     );
+    statusEmitter.emit("incrementCount", "authenticationsBlocked");
     throw err;
   }
 
@@ -35,6 +37,7 @@ const authHandler = (req, res, secrets) => {
       "authHandler",
       err
     );
+    statusEmitter.emit("incrementCount", "authenticationsBlocked");
     throw err;
   }
   const secret = secrets[client];
@@ -49,6 +52,7 @@ const authHandler = (req, res, secrets) => {
       "authHandler",
       err
     );
+    statusEmitter.emit("incrementCount", "authenticationsBlocked");
     throw err;
   }
 
@@ -62,8 +66,10 @@ const authHandler = (req, res, secrets) => {
       "authHandler",
       err
     );
+    statusEmitter.emit("incrementCount", "authenticationsBlocked");
     throw err;
   }
+  statusEmitter.emit("incrementCount", "authenticationsPassed");
   logEmitter.emit("functionSuccess", "authHandler.middleware", "authHandler");
 };
 

@@ -36,12 +36,6 @@ jest.mock("../../connectors/configDb/configDb.connector", () => ({
 
 jest.mock("../../services/notifications.service");
 
-jest.mock("../../services/logging.service", () => ({
-  logEmitter: {
-    emit: jest.fn()
-  }
-}));
-
 jest.mock("../../config", () => ({
   NOTIFY_TEMPLATE_ID_FBO: "1234",
   NOTIFY_TEMPLATE_ID_LC: "5678"
@@ -141,6 +135,29 @@ describe("Function: saveRegistration: ", () => {
       activitiesId: "562",
       premiseId: "495",
       metadataId: "901"
+    });
+  });
+
+  // TODO JMB: add proper error case for this in handler.
+  describe("Given one of the calls fails", () => {
+    beforeEach(async () => {
+      createMetadata.mockImplementation(() => {
+        throw new Error();
+      });
+
+      try {
+        result = await saveRegistration({
+          establishment: {
+            establishment_details: {}
+          }
+        });
+      } catch (err) {
+        result = err;
+      }
+    });
+
+    it("Should throw an error", () => {
+      expect(result.message).toBeDefined();
     });
   });
 });
