@@ -5,7 +5,7 @@ const {
   FRONT_END_SECRET
 } = require("../config");
 const { logEmitter } = require("../../src/services/logging.service");
-const { statusEmitter } = require("../../services/statusEmitter.service");
+const { statusEmitter } = require("../../src/services/statusEmitter.service");
 
 const authHandler = (req, res, secrets) => {
   logEmitter.emit("functionCall", "authHandler.middleware", "authHandler");
