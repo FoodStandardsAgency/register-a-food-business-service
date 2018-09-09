@@ -9,11 +9,6 @@ const { lcConfigCollectionDouble } = require("./configDb.double");
 
 jest.mock("mongodb");
 jest.mock("./configDb.double");
-jest.mock("../../services/logging.service", () => ({
-  logEmitter: {
-    emit: jest.fn()
-  }
-}));
 
 let result;
 

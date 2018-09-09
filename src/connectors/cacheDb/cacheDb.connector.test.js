@@ -2,11 +2,6 @@ const mongodb = require("mongodb");
 const { cacheRegistration } = require("./cacheDb.connector");
 
 jest.mock("mongodb");
-jest.mock("../../services/logging.service", () => ({
-  logEmitter: {
-    emit: jest.fn()
-  }
-}));
 
 describe("Connector: cacheDb", () => {
   let response;

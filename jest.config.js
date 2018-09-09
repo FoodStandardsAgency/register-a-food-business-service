@@ -1,6 +1,10 @@
 module.exports = {
   verbose: true,
   testEnvironment: "node",
+  moduleNameMapper: {
+    "logging.service": "<rootDir>/src/__mocks__/logging.service.js",
+    "statusEmitter.service": "<rootDir>/src/__mocks__/statusEmitter.service.js"
+  },
   collectCoverageFrom: [
     "**/*.{js}",
     "!**/node_modules/**",

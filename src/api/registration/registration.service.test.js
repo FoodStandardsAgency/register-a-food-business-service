@@ -36,12 +36,6 @@ jest.mock("../../connectors/configDb/configDb.connector", () => ({
 
 jest.mock("../../services/notifications.service");
 
-jest.mock("../../services/logging.service", () => ({
-  logEmitter: {
-    emit: jest.fn()
-  }
-}));
-
 jest.mock("../../config", () => ({
   NOTIFY_TEMPLATE_ID_FBO: "1234",
   NOTIFY_TEMPLATE_ID_LC: "5678"
