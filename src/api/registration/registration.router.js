@@ -5,6 +5,7 @@ const {
   viewDeleteRegistrationAuth
 } = require("../../middleware/authHandler");
 const { logEmitter } = require("../../services/logging.service");
+const { statusEmitter } = require("../../services/statusEmitter.service");
 
 const registrationRouter = () => {
   const router = Router();
@@ -19,9 +20,18 @@ const registrationRouter = () => {
         "createNewRegistration"
       );
       try {
+        statusEmitter.emit("incrementCount", "submissionsReceived");
+
         const response = await registrationController.createNewRegistration(
           req.body.registration,
           req.body.local_council_url
+        );
+
+        statusEmitter.emit("incrementCount", "endToEndRegistrationsSucceeded");
+        statusEmitter.emit(
+          "setStatus",
+          "mostRecentEndToEndRegistrationSucceeded",
+          true
         );
         logEmitter.emit(
           "functionSuccess",
@@ -30,6 +40,12 @@ const registrationRouter = () => {
         );
         res.send(response);
       } catch (err) {
+        statusEmitter.emit("incrementCount", "endToEndRegistrationsFailed");
+        statusEmitter.emit(
+          "setStatus",
+          "mostRecentEndToEndRegistrationSucceeded",
+          false
+        );
         logEmitter.emit(
           "functionFail",
           "registration.router",

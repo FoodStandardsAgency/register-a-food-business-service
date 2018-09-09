@@ -137,6 +137,29 @@ describe("Function: saveRegistration: ", () => {
       metadataId: "901"
     });
   });
+
+  // TODO JMB: add proper error case for this in handler.
+  describe("Given one of the calls fails", () => {
+    beforeEach(async () => {
+      createMetadata.mockImplementation(() => {
+        throw new Error();
+      });
+
+      try {
+        result = await saveRegistration({
+          establishment: {
+            establishment_details: {}
+          }
+        });
+      } catch (err) {
+        result = err;
+      }
+    });
+
+    it("Should throw an error", () => {
+      expect(result.message).toBeDefined();
+    });
+  });
 });
 
 describe("Function: getFullRegistrationByFsaRn: ", () => {
