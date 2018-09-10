@@ -1,7 +1,12 @@
 const assert = require("assert");
 const fetch = require("node-fetch");
 const { Given, When, Then } = require("cucumber");
-const { FRONT_END_NAME, FRONT_END_SECRET } = require("../../src/config");
+const {
+  FRONT_END_NAME,
+  FRONT_END_SECRET,
+  ADMIN_NAME,
+  ADMIN_SECRET
+} = require("../../src/config");
 
 const sendRequest = async body => {
   const headers = {
@@ -10,7 +15,7 @@ const sendRequest = async body => {
     "client-name": FRONT_END_NAME
   };
   const res = await fetch(
-    "https://dev-register-a-food-business-service-double.azurewebsites.net/api/registration/createNewRegistration",
+    "https://dev-register-a-food-business-service.azurewebsites.net/api/registration/createNewRegistration",
     {
       method: "POST",
       headers,
@@ -24,11 +29,11 @@ const sendRequest = async body => {
 const getRequest = async id => {
   const headers = {
     "Content-Type": "application/json",
-    "api-secret": FRONT_END_SECRET,
-    "client-name": FRONT_END_NAME
+    "api-secret": ADMIN_SECRET,
+    "client-name": ADMIN_NAME
   };
   const res = await fetch(
-    `http://dev-register-a-food-business-service-double.azurewebsites.net/api/registration/${id}`,
+    `http://dev-register-a-food-business-service.azurewebsites.net/api/registration/${id}`,
     {
       headers
     }
@@ -78,7 +83,7 @@ Given("I have a new registration with all valid required fields", function() {
         declaration3: "Declaration"
       }
     },
-    local_council_url: "dorset"
+    local_council_url: "cardiff"
   };
 });
 
@@ -123,7 +128,7 @@ Given(
           declaration3: "Declaration"
         }
       },
-      local_council_url: "dorset"
+      local_council_url: "cardiff"
     };
   }
 );
@@ -171,14 +176,14 @@ Then("I get an error response", function() {
 });
 
 Then("The non personal information is saved to the database", async function() {
-  const id = this.response.regId;
+  const id = this.response["fsa-rn"];
   this.response = await getRequest(id);
-  console.log(this.response);
+
   assert.equal(this.response.establishment.establishment_trading_name, "Itsu");
 });
 
 Then("The personal information is not saved to the database", async function() {
-  const id = this.response.regId;
+  const id = this.response["fsa-rn"];
   this.response = await getRequest(id);
   assert.equal(this.response.establishment.operator_first_name, null);
 });
