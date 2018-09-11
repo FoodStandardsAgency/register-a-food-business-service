@@ -7,6 +7,10 @@ pool:
   vmImage: 'Ubuntu 16.04'
 
 steps:
+- task: npmAuthenticate@0
+  inputs:
+    customEndpoint: fsa-rof
+
 - script: npm install
   displayName: 'Install'
 
