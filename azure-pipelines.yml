@@ -17,5 +17,13 @@ steps:
   inputs:
     testRunner: JUnit
     testResultsFile: ./reports/TEST-unit.xml
+    testRunTitle: Unit tests
+
+- task: ArchiveFiles@2
+  inputs:
+    rootFolderOrFile: '$(System.DefaultWorkingDirectory)'
+    includeRootFolder: false
+
+- task: PublishBuildArtifacts@1
 
 
