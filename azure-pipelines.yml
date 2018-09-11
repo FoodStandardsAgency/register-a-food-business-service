@@ -13,10 +13,10 @@ steps:
 - script: echo $SYSTEM_DEBUG
   displayName: 'Echo'
 
-- script: echo $system.debug
+- script: echo $SYSTEM_NPM
   displayName: 'Echo'
 
-- script: echo $SYSTEM_NPMTOKEN
+- script: echo $NPM
   displayName: 'Echo'
 
 - script: npm install
