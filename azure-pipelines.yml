@@ -7,7 +7,7 @@ pool:
   vmImage: 'Ubuntu 16.04'
 
 steps:
-- task: npmAuthenticate@0
+- task: Npm@1
   inputs:
     customEndpoint: fsa
 
