@@ -16,6 +16,6 @@ steps:
 - task: PublishTestResults@2
   inputs:
     testRunner: JUnit
-    testResultsFile: ./junit.xml
+    testResultsFile: ./reports/TEST-unit.xml
 
 

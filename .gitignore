@@ -61,4 +61,4 @@ typings/
 .next
 
 # junit test report output
-junit.xml
+reports/
