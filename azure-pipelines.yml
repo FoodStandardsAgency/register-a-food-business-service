@@ -13,4 +13,9 @@ steps:
 - script: npm test
   displayName: 'Unit tests'
 
+- task: PublishTestResults@2
+  inputs:
+    testRunner: JUnit
+    testResultsFile: ./junit.xml
+
 
