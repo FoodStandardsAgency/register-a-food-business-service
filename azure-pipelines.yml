@@ -7,9 +7,9 @@ pool:
   vmImage: 'Ubuntu 16.04'
 
 steps:
-- task: Npm@1
-  inputs:
-    customEndpoint: fsa
+# - task: Npm@1
+#   inputs:
+#     customEndpoint: fsa
 
 - script: npm install
   displayName: 'Install'
