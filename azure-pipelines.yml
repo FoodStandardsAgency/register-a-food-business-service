@@ -10,6 +10,8 @@ steps:
 # - task: Npm@1
 #   inputs:
 #     customEndpoint: fsa
+- script: echo $NPM_TOKEN
+  displayName: 'Echo'
 
 - script: npm install
   displayName: 'Install'
