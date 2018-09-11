@@ -16,7 +16,7 @@ steps:
 - script: echo $TEST
   displayName: 'Echo'
 
-  - script: echo $NPMTEST
+- script: echo $NPMTEST
   displayName: 'Echo'
 
 - script: echo $SYSTEM_NPM
