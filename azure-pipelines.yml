@@ -10,19 +10,11 @@ steps:
 # - task: Npm@1
 #   inputs:
 #     customEndpoint: fsa
-- script: echo $SYSTEM_DEBUG
-  displayName: 'Echo'
 
 - script: echo $TEST
   displayName: 'Echo'
 
-- script: echo $NPMTEST
-  displayName: 'Echo'
-
-- script: echo $SYSTEM_NPM
-  displayName: 'Echo'
-
-- script: echo $NPM
+- script: echo $NPM_TOKEN
   displayName: 'Echo'
 
 - script: npm install
