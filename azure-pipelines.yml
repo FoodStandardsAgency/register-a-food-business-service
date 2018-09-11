@@ -7,10 +7,10 @@ pool:
   vmImage: 'Ubuntu 16.04'
 
 steps:
-- script: echo Building...
-  displayName: 'npm install'
+- script: npm install
+  displayName: 'Install'
 
-- script: echo Testing...
-  displayName: 'npm test'
+- script: npm test
+  displayName: 'Unit tests'
 
 
