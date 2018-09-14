@@ -6,26 +6,6 @@ jest.mock("./optional-notify-fields.json", () => [
   "example_optional_field"
 ]);
 
-const testRegistrationData = {
-  establishment: {
-    establishment_details: {
-      establishment_trading_name: "Itsu"
-    },
-    operator: {
-      operator_first_name: "Fred"
-    },
-    premise: {
-      establishment_postcode: "SW12 9RQ"
-    },
-    activities: {
-      customer_type: "End consumer"
-    }
-  },
-  metadata: {
-    declaration1: "Declaration"
-  }
-};
-
 const testPostRegistrationMetadata = {
   example: "value"
 };
@@ -69,8 +49,33 @@ const testLcContactConfigCombined = {
   }
 };
 
+let testRegistrationData;
+
 describe("Function: transformDataForNotify", () => {
   let result;
+
+  beforeEach(() => {
+    testRegistrationData = {
+      establishment: {
+        establishment_details: {
+          establishment_trading_name: "Itsu",
+          establishment_opening_date: "2017-12-30"
+        },
+        operator: {
+          operator_first_name: "Fred"
+        },
+        premise: {
+          establishment_postcode: "SW12 9RQ"
+        },
+        activities: {
+          customer_type: "End consumer"
+        }
+      },
+      metadata: {
+        declaration1: "Declaration"
+      }
+    };
+  });
 
   describe("given separate hygiene and standards councils with a phone number", () => {
     beforeEach(() => {
@@ -88,6 +93,7 @@ describe("Function: transformDataForNotify", () => {
         operator_first_name: "Fred",
         operator_first_name_exists: "yes",
         establishment_postcode: "SW12 9RQ",
+        establishment_opening_date: "30 Dec 2017",
         customer_type: "End consumer",
         declaration1: "Declaration",
         example: "value",
@@ -121,6 +127,7 @@ describe("Function: transformDataForNotify", () => {
         operator_first_name: "Fred",
         operator_first_name_exists: "yes",
         establishment_postcode: "SW12 9RQ",
+        establishment_opening_date: "30 Dec 2017",
         customer_type: "End consumer",
         declaration1: "Declaration",
         example: "value",
@@ -151,6 +158,7 @@ describe("Function: transformDataForNotify", () => {
         operator_first_name: "Fred",
         operator_first_name_exists: "yes",
         establishment_postcode: "SW12 9RQ",
+        establishment_opening_date: "30 Dec 2017",
         customer_type: "End consumer",
         declaration1: "Declaration",
         example: "value",
@@ -180,6 +188,7 @@ describe("Function: transformDataForNotify", () => {
         operator_first_name: "Fred",
         operator_first_name_exists: "yes",
         establishment_postcode: "SW12 9RQ",
+        establishment_opening_date: "30 Dec 2017",
         customer_type: "End consumer",
         declaration1: "Declaration",
         example: "value",
