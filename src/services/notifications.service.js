@@ -37,6 +37,10 @@ const transformDataForNotify = (
     }
   }
 
+  registration.establishment.establishment_details.establishment_opening_date = moment(
+    registration.establishment.establishment_details.establishment_opening_date
+  ).format("DD MMM YYYY");
+
   const flattenedData = Object.assign(
     {},
     registration.establishment.premise,
