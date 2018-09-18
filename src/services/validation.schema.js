@@ -207,6 +207,10 @@ const schema = {
               import_export_activities: {
                 type: "string",
                 validation: validateImportExportActivities
+              },
+              business_other_details: {
+                type: "string",
+                validation: validateOptionalString
               }
             },
             required: [
