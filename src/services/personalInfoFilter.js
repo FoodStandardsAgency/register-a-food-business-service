@@ -12,7 +12,8 @@ const personalInfo = [
   "operator_charity_name",
   "establishment_primary_number",
   "establishment_secondary_number",
-  "establishment_email"
+  "establishment_email",
+  "business_other_details"
 ];
 
 const personalInfoFilter = info => {
