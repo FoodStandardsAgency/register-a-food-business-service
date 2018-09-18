@@ -8,10 +8,10 @@ describe("Tascomi contract: createReferenceNumber", () => {
   describe("When given valid request", () => {
     it("Should return same resposne", async () => {
       process.env.DOUBLE_MODE = true;
-      const doubleResult = await createReferenceNumber("1111");
+      const doubleResult = await createReferenceNumber("1234");
       const doubleJson = JSON.parse(doubleResult);
       process.env.DOUBLE_MODE = false;
-      const realResult = await createReferenceNumber("1111");
+      const realResult = await createReferenceNumber("1234");
       const realJson = JSON.parse(realResult);
       expect(doubleJson).toEqual(realJson);
     });
