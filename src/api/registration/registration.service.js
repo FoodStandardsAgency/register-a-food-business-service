@@ -163,7 +163,8 @@ const deleteRegistrationByFsaRn = async fsa_rn => {
 
 const sendTascomiRegistration = async (
   registration,
-  postRegistrationMetadata
+  postRegistrationMetadata,
+  localCouncil
 ) => {
   logEmitter.emit(
     "functionCall",
@@ -171,11 +172,13 @@ const sendTascomiRegistration = async (
     "sendTascomiRegistration"
   );
   try {
+    const auth = await getLcAuth(localCouncil);
     const reg = await createFoodBusinessRegistration(
       registration,
-      postRegistrationMetadata
+      postRegistrationMetadata,
+      auth
     );
-    const response = await createReferenceNumber(JSON.parse(reg).id);
+    const response = await createReferenceNumber(JSON.parse(reg).id, auth);
     if (JSON.parse(response).id === 0) {
       const err = new Error("createReferenceNumber failed");
       err.name = "tascomiRefNumber";
@@ -206,7 +209,7 @@ const getRegistrationMetaData = async councilCode => {
   );
 
   const typeCode = process.env.NODE_ENV === "production" ? "001" : "000";
-  const reg_submission_date = moment().format("YYYY MM DD");
+  const reg_submission_date = moment().format("YYYY-MM-DD");
   let fsa_rn;
 
   try {
@@ -419,6 +422,45 @@ const getLcContactConfig = async localCouncilUrl => {
   }
 };
 
+const getLcAuth = async localCouncilUrl => {
+  logEmitter.emit("functionCall", "registration.service", "getLcAuth");
+
+  if (localCouncilUrl) {
+    const allLcConfigData = await getAllLocalCouncilConfig();
+
+    const urlLcConfig = allLcConfigData.find(
+      localCouncil => localCouncil.local_council_url === localCouncilUrl
+    );
+
+    if (urlLcConfig) {
+      logEmitter.emit("functionSuccess", "registration.service", "getLcAuth");
+      return urlLcConfig.auth;
+    } else {
+      const newError = new Error();
+      newError.name = "localCouncilNotFound";
+      newError.message = `Config for "${localCouncilUrl}" not found`;
+      logEmitter.emit(
+        "functionFail",
+        "registration.service",
+        "getLcAuth",
+        newError
+      );
+      throw newError;
+    }
+  } else {
+    const newError = new Error();
+    newError.name = "localCouncilNotFound";
+    newError.message = "Local council URL is undefined";
+    logEmitter.emit(
+      "functionFail",
+      "registration.service",
+      "getLcAuth",
+      newError
+    );
+    throw newError;
+  }
+};
+
 module.exports = {
   saveRegistration,
   getFullRegistrationByFsaRn,
@@ -426,5 +468,6 @@ module.exports = {
   sendTascomiRegistration,
   getRegistrationMetaData,
   sendEmailOfType,
-  getLcContactConfig
+  getLcContactConfig,
+  getLcAuth
 };

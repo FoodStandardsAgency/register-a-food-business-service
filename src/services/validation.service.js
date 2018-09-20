@@ -37,7 +37,8 @@ const errorMessages = {
   contact_representative_number: "Invalid representative number",
   contact_representative_role: "Invalid representative role",
   contact_representative_email: "Invalid representative email",
-  import_export_activities: "Invalid business activities"
+  import_export_activities: "Invalid business activities",
+  business_other_details: "Invalid business other details"
 };
 
 const validator = new Validator();

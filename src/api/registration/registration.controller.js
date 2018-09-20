@@ -54,7 +54,8 @@ const createNewRegistration = async (registration, localCouncilUrl) => {
     registration,
     Object.assign({}, postRegistrationMetadata, {
       hygiene_council_code: hygieneCouncilCode
-    })
+    }),
+    localCouncilUrl
   );
 
   const tascomiObject = JSON.parse(tascomiResponse);
