@@ -1,8 +1,16 @@
 ## Change Log
 
-All notable changes to this projectwill be documented in this file.
-This project adheres to [Semantic Versioning](http://semver.org/).
+All notable changes to this project will be documented in this file.
+This project adheres to [Semantic Versioning]
+(http://semver.org/).
 
+
+## v3.4.1 - 20th September 2018 (unreleased)
+
+### Added
+
+* Added abilitiy to send registrations to multiple locations
+  
 ## v3.4.0 - 18th September 2018 (unreleased)
 
 ### Added
