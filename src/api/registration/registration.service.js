@@ -209,7 +209,7 @@ const getRegistrationMetaData = async councilCode => {
   );
 
   const typeCode = process.env.NODE_ENV === "production" ? "001" : "000";
-  const reg_submission_date = moment().format("YYYY MM DD");
+  const reg_submission_date = moment().format("YYYY-MM-DD");
   let fsa_rn;
 
   try {

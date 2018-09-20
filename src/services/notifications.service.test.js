@@ -9,7 +9,8 @@ jest.mock("./optional-notify-fields.json", () => [
 const testRegistrationData = {
   establishment: {
     establishment_details: {
-      establishment_trading_name: "Itsu"
+      establishment_trading_name: "Itsu",
+      establishment_opening_date: "2017-12-30"
     },
     operator: {
       operator_first_name: "Fred"
@@ -27,7 +28,8 @@ const testRegistrationData = {
 };
 
 const testPostRegistrationMetadata = {
-  example: "value"
+  example: "value",
+  reg_submission_date: "2018-12-01"
 };
 
 const testLcContactConfigSplitWithPhoneNumber = {
@@ -88,6 +90,7 @@ describe("Function: transformDataForNotify", () => {
         operator_first_name: "Fred",
         operator_first_name_exists: "yes",
         establishment_postcode: "SW12 9RQ",
+        establishment_opening_date: "30 Dec 2017",
         customer_type: "End consumer",
         declaration1: "Declaration",
         example: "value",
@@ -98,7 +101,8 @@ describe("Function: transformDataForNotify", () => {
         local_council_email_standards: "standards@example.com",
         local_council_phone_number_standards: "123456789",
         example_optional_field: "",
-        example_optional_field_exists: "no"
+        example_optional_field_exists: "no",
+        reg_submission_date: "01 Dec 2018"
       };
 
       expect(result).toEqual(expectedFormat);
@@ -121,6 +125,7 @@ describe("Function: transformDataForNotify", () => {
         operator_first_name: "Fred",
         operator_first_name_exists: "yes",
         establishment_postcode: "SW12 9RQ",
+        establishment_opening_date: "30 Dec 2017",
         customer_type: "End consumer",
         declaration1: "Declaration",
         example: "value",
@@ -128,7 +133,8 @@ describe("Function: transformDataForNotify", () => {
         local_council_email: "both@example.com",
         local_council_phone_number: "123456789",
         example_optional_field: "",
-        example_optional_field_exists: "no"
+        example_optional_field_exists: "no",
+        reg_submission_date: "01 Dec 2018"
       };
 
       expect(result).toEqual(expectedFormat);
@@ -151,13 +157,15 @@ describe("Function: transformDataForNotify", () => {
         operator_first_name: "Fred",
         operator_first_name_exists: "yes",
         establishment_postcode: "SW12 9RQ",
+        establishment_opening_date: "30 Dec 2017",
         customer_type: "End consumer",
         declaration1: "Declaration",
         example: "value",
         local_council: "Hygiene and standards council name",
         local_council_email: "both@example.com",
         example_optional_field: "",
-        example_optional_field_exists: "no"
+        example_optional_field_exists: "no",
+        reg_submission_date: "01 Dec 2018"
       };
 
       expect(result).toEqual(expectedFormat);
@@ -180,6 +188,7 @@ describe("Function: transformDataForNotify", () => {
         operator_first_name: "Fred",
         operator_first_name_exists: "yes",
         establishment_postcode: "SW12 9RQ",
+        establishment_opening_date: "30 Dec 2017",
         customer_type: "End consumer",
         declaration1: "Declaration",
         example: "value",
@@ -188,7 +197,8 @@ describe("Function: transformDataForNotify", () => {
         local_council_standards: "Standards council name",
         local_council_email_standards: "standards@example.com",
         example_optional_field: "",
-        example_optional_field_exists: "no"
+        example_optional_field_exists: "no",
+        reg_submission_date: "01 Dec 2018"
       };
 
       expect(result).toEqual(expectedFormat);
