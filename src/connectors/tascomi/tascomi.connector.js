@@ -5,25 +5,27 @@ const { logEmitter } = require("../../services/logging.service");
 const { statusEmitter } = require("../../services/statusEmitter.service");
 
 const sendRequest = async (url, method, body, public_key, private_key) => {
-  const auth = await tascomiAuth.generateSyncHash(
-    public_key,
-    private_key,
-    process.env.NTP_SERVER
-  );
   const tascomiApiOptions = {
     url: url,
     method: method,
-    headers: {
-      "X-Public": auth.public_key,
-      "X-Hash": auth.hash
-    },
     form: body
   };
+
   if (process.env.DOUBLE_MODE === "true") {
     logEmitter.emit("doubleMode", "tascomi.connector", "sendRequest");
     return doubleRequest(tascomiApiOptions);
+  } else {
+    const auth = await tascomiAuth.generateSyncHash(
+      public_key,
+      private_key,
+      process.env.NTP_SERVER
+    );
+    tascomiApiOptions.headers = {
+      "X-Public": auth.public_key,
+      "X-Hash": auth.hash
+    };
+    return request(tascomiApiOptions);
   }
-  return request(tascomiApiOptions);
 };
 
 const createFoodBusinessRegistration = async (

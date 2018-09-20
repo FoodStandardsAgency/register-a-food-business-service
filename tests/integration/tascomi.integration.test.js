@@ -4,13 +4,17 @@ const {
   createReferenceNumber
 } = require("../../src/connectors/tascomi/tascomi.connector");
 
+const auth = {
+  url: "url"
+};
+
 describe("Tascomi integration: createReferenceNumber", () => {
   beforeEach(() => {
     process.env.DOUBLE_MODE = true;
   });
   describe("When given valid request", () => {
     it("Should return reference number and id", async () => {
-      const result = await createReferenceNumber("1111");
+      const result = await createReferenceNumber("1111", auth);
       const jsonResult = JSON.parse(result);
       expect(jsonResult.id).toBe("1111");
       expect(jsonResult.online_reference).toBe("0001111");
@@ -19,7 +23,7 @@ describe("Tascomi integration: createReferenceNumber", () => {
 
   describe("When given an invalid request", () => {
     it("Should return id of 0", async () => {
-      const result = await createReferenceNumber("not an id");
+      const result = await createReferenceNumber("not an id", auth);
       const jsonResult = JSON.parse(result);
       expect(jsonResult.id).toBe(0);
     });
@@ -69,10 +73,14 @@ describe("Tascomi integration: createFoodBusinessRegistration", () => {
           declaration3: "Declaration"
         }
       };
-      const result = await createFoodBusinessRegistration(registration, {
-        "fsa-rn": "23589-DHF375",
-        hygiene_council_code: 8015
-      });
+      const result = await createFoodBusinessRegistration(
+        registration,
+        {
+          "fsa-rn": "23589-DHF375",
+          hygiene_council_code: 8015
+        },
+        auth
+      );
       const jsonResult = JSON.parse(result);
       expect(jsonResult.fsa_rn).toBe("23589-DHF375");
       expect(jsonResult.owner_email).toBe("operator@email.com");
