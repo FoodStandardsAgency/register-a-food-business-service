@@ -26,4 +26,13 @@ steps:
 
 - task: PublishBuildArtifacts@1
 
+- task: AzureRmWebAppDeployment@4
+  inputs:
+    connectionType: 'AzureRM'
+    azureSubscription: '$(DevConnection)'
+    appType: 'webAppLinux',
+    webAppName: 'dev-register-a-food-business-service'
+    runtimeStack: 'node|8.9'
+    packageForLinux: '$(System.DefaultWorkingDirectory)/**/*/.zip'
+
 
