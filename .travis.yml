@@ -67,6 +67,8 @@ jobs:
           on: release
           site: staging-register-a-food-business-service
           skip_cleanup: true
+          on:
+            branch: release
     - stage: prod deploy
       script: echo "No tests to run"
       before_deploy: "rm -rf node_modules coverage package-lock.json"
