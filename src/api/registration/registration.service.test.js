@@ -95,7 +95,8 @@ const {
   sendTascomiRegistration,
   getRegistrationMetaData,
   sendEmailOfType,
-  getLcContactConfig
+  getLcContactConfig,
+  getLcAuth
 } = require("./registration.service");
 
 let result;
@@ -271,7 +272,17 @@ describe("Function: sendTascomiRegistration: ", () => {
       createReferenceNumber.mockImplementation(
         () => '{ "id": "123", "online_reference": "0000123"}'
       );
-      result = await sendTascomiRegistration();
+      getAllLocalCouncilConfig.mockImplementation(() => [
+        {
+          local_council_url: "cardiff",
+          auth: {
+            url: "url",
+            public_key: "key",
+            private_key: "key"
+          }
+        }
+      ]);
+      result = await sendTascomiRegistration({}, {}, "cardiff");
     });
 
     it("should call createFoodBusinessRegistration", () => {
@@ -279,7 +290,11 @@ describe("Function: sendTascomiRegistration: ", () => {
     });
 
     it("should call createReferenceNumber with result of previous call", () => {
-      expect(createReferenceNumber).toBeCalledWith("123");
+      expect(createReferenceNumber).toBeCalledWith("123", {
+        url: "url",
+        public_key: "key",
+        private_key: "key"
+      });
     });
 
     it("should return response of createReferenceNumber", () => {
@@ -292,8 +307,18 @@ describe("Function: sendTascomiRegistration: ", () => {
       jest.clearAllMocks();
       createFoodBusinessRegistration.mockImplementation(() => '{ "id": "123"}');
       createReferenceNumber.mockImplementation(() => '{ "id": 0 }');
+      getAllLocalCouncilConfig.mockImplementation(() => [
+        {
+          local_council_url: "cardiff",
+          auth: {
+            url: "url",
+            public_key: "key",
+            private_key: "key"
+          }
+        }
+      ]);
       try {
-        await sendTascomiRegistration();
+        await sendTascomiRegistration({}, {}, "cardiff");
       } catch (err) {
         result = err;
       }
@@ -613,6 +638,58 @@ describe("Function: getLcContactConfig: ", () => {
     beforeEach(async () => {
       try {
         await getLcContactConfig(undefined);
+      } catch (err) {
+        result = err;
+      }
+    });
+
+    it("should throw localCouncilNotFound error with an explanation", () => {
+      expect(result.name).toBe("localCouncilNotFound");
+      expect(result.message).toBe("Local council URL is undefined");
+    });
+  });
+});
+
+describe("Function: getLcAuth: ", () => {
+  beforeEach(() => {
+    getAllLocalCouncilConfig.mockImplementation(() => mockLocalCouncilConfig);
+  });
+
+  describe("given a valid localCouncilUrl", () => {
+    beforeEach(async () => {
+      result = await getLcAuth("dorset");
+    });
+
+    it("Should return auth", () => {
+      expect(result).toEqual({
+        url: "url",
+        public_key: "key",
+        private_key: "key"
+      });
+    });
+  });
+
+  describe("given an invalid localCouncilUrl", () => {
+    beforeEach(async () => {
+      try {
+        await getLcAuth("some-invalid-local-council");
+      } catch (err) {
+        result = err;
+      }
+    });
+
+    it("should throw localCouncilNotFound error with the URL", () => {
+      expect(result.name).toBe("localCouncilNotFound");
+      expect(result.message).toBe(
+        `Config for "some-invalid-local-council" not found`
+      );
+    });
+  });
+
+  describe("given a missing localCouncilUrl", () => {
+    beforeEach(async () => {
+      try {
+        await getLcAuth(undefined);
       } catch (err) {
         result = err;
       }

@@ -4,31 +4,34 @@ const { doubleRequest } = require("./tascomi.double");
 const { logEmitter } = require("../../services/logging.service");
 const { statusEmitter } = require("../../services/statusEmitter.service");
 
-const sendRequest = async (url, method, body) => {
-  const auth = await tascomiAuth.generateSyncHash(
-    process.env.TASCOMI_PUBLIC_KEY,
-    process.env.TASCOMI_PRIVATE_KEY,
-    process.env.NTP_SERVER
-  );
+const sendRequest = async (url, method, body, public_key, private_key) => {
   const tascomiApiOptions = {
     url: url,
     method: method,
-    headers: {
-      "X-Public": auth.public_key,
-      "X-Hash": auth.hash
-    },
     form: body
   };
+
   if (process.env.DOUBLE_MODE === "true") {
     logEmitter.emit("doubleMode", "tascomi.connector", "sendRequest");
     return doubleRequest(tascomiApiOptions);
+  } else {
+    const auth = await tascomiAuth.generateSyncHash(
+      public_key,
+      private_key,
+      process.env.NTP_SERVER
+    );
+    tascomiApiOptions.headers = {
+      "X-Public": auth.public_key,
+      "X-Hash": auth.hash
+    };
+    return request(tascomiApiOptions);
   }
-  return request(tascomiApiOptions);
 };
 
 const createFoodBusinessRegistration = async (
   registration,
-  postRegistrationMetadata
+  postRegistrationMetadata,
+  auth
 ) => {
   logEmitter.emit(
     "functionCall",
@@ -36,7 +39,7 @@ const createFoodBusinessRegistration = async (
     "createFoodBusinessRegistration"
   );
   try {
-    const url = `${process.env.TASCOMI_URL}/online_food_business_registrations`;
+    const url = `${auth.url}/online_food_business_registrations`;
     const premiseDetails = Object.assign(
       {},
       registration.establishment.premise
@@ -124,7 +127,13 @@ const createFoodBusinessRegistration = async (
       requestData.export_food = "t";
     }
 
-    const response = await sendRequest(url, "PUT", requestData);
+    const response = await sendRequest(
+      url,
+      "PUT",
+      requestData,
+      auth.public_key,
+      auth.private_key
+    );
 
     statusEmitter.emit(
       "incrementCount",
@@ -164,17 +173,21 @@ const createFoodBusinessRegistration = async (
   }
 };
 
-const createReferenceNumber = async id => {
+const createReferenceNumber = async (id, auth) => {
   logEmitter.emit("functionCall", "tascomi.connector", "createReferenceNumber");
   try {
-    const url = `${
-      process.env.TASCOMI_URL
-    }/online_food_business_registrations/${id}`;
+    const url = `${auth.url}/online_food_business_registrations/${id}`;
     const online_reference = id.padStart(7, "0");
     const requestData = {
       online_reference
     };
-    const response = await sendRequest(url, "POST", requestData);
+    const response = await sendRequest(
+      url,
+      "POST",
+      requestData,
+      auth.public_key,
+      auth.private_key
+    );
 
     statusEmitter.emit(
       "incrementCount",

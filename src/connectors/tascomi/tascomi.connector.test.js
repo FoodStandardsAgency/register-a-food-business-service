@@ -63,6 +63,12 @@ const postRegistrationMetadata = {
   hygiene_council_code: 1234
 };
 
+const auth = {
+  url: "url",
+  public_key: "key",
+  private_key: "key"
+};
+
 describe("Function: createFoodBusinessRegistration", () => {
   let result;
   describe("When request throws an error", () => {
@@ -75,7 +81,8 @@ describe("Function: createFoodBusinessRegistration", () => {
       try {
         await createFoodBusinessRegistration(
           registration,
-          postRegistrationMetadata
+          postRegistrationMetadata,
+          auth
         );
       } catch (err) {
         result = err;
@@ -99,7 +106,8 @@ describe("Function: createFoodBusinessRegistration", () => {
       try {
         await createFoodBusinessRegistration(
           registration,
-          postRegistrationMetadata
+          postRegistrationMetadata,
+          auth
         );
       } catch (err) {
         result = err;
@@ -119,7 +127,8 @@ describe("Function: createFoodBusinessRegistration", () => {
       });
       result = await createFoodBusinessRegistration(
         registration,
-        postRegistrationMetadata
+        postRegistrationMetadata,
+        auth
       );
     });
 
@@ -139,7 +148,8 @@ describe("Function: createFoodBusinessRegistration", () => {
         "Home or domestic premises";
       result = await createFoodBusinessRegistration(
         registration,
-        postRegistrationMetadata
+        postRegistrationMetadata,
+        auth
       );
     });
 
@@ -159,7 +169,8 @@ describe("Function: createFoodBusinessRegistration", () => {
         "Mobile or moveable premises";
       result = await createFoodBusinessRegistration(
         registration,
-        postRegistrationMetadata
+        postRegistrationMetadata,
+        auth
       );
     });
 
@@ -179,7 +190,8 @@ describe("Function: createFoodBusinessRegistration", () => {
         "Directly import";
       result = await createFoodBusinessRegistration(
         registration,
-        postRegistrationMetadata
+        postRegistrationMetadata,
+        auth
       );
     });
 
@@ -199,7 +211,8 @@ describe("Function: createFoodBusinessRegistration", () => {
         "Directly export";
       result = await createFoodBusinessRegistration(
         registration,
-        postRegistrationMetadata
+        postRegistrationMetadata,
+        auth
       );
     });
 
@@ -219,7 +232,8 @@ describe("Function: createFoodBusinessRegistration", () => {
         "Directly import and export";
       result = await createFoodBusinessRegistration(
         registration,
-        postRegistrationMetadata
+        postRegistrationMetadata,
+        auth
       );
     });
 
@@ -238,7 +252,8 @@ describe("Function: createFoodBusinessRegistration", () => {
       });
       result = await createFoodBusinessRegistration(
         registration,
-        postRegistrationMetadata
+        postRegistrationMetadata,
+        auth
       );
     });
     it("should call double request", () => {
@@ -257,7 +272,7 @@ describe("Function: createReferenceNumber", () => {
         throw new Error("Request error");
       });
       try {
-        await createReferenceNumber("35");
+        await createReferenceNumber("35", auth);
       } catch (err) {
         result = err;
       }
@@ -278,7 +293,7 @@ describe("Function: createReferenceNumber", () => {
         throw err;
       });
       try {
-        await createReferenceNumber("35");
+        await createReferenceNumber("35", auth);
       } catch (err) {
         result = err;
       }
@@ -296,7 +311,7 @@ describe("Function: createReferenceNumber", () => {
       request.mockImplementation(() => {
         return "request response";
       });
-      result = await createReferenceNumber("35");
+      result = await createReferenceNumber("35", auth);
     });
 
     it("Should return the response", () => {

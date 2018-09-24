@@ -1,3 +1,4 @@
+const moment = require("moment");
 const optionalNotifyFields = require("./optional-notify-fields.json");
 
 const transformDataForNotify = (
@@ -37,14 +38,29 @@ const transformDataForNotify = (
     }
   }
 
+  const registrationClone = JSON.parse(JSON.stringify(registration));
+
+  registrationClone.establishment.establishment_details.establishment_opening_date = moment(
+    registrationClone.establishment.establishment_details
+      .establishment_opening_date
+  ).format("DD MMM YYYY");
+
+  const postRegistrationMetadataClone = JSON.parse(
+    JSON.stringify(postRegistrationMetadata)
+  );
+
+  postRegistrationMetadataClone.reg_submission_date = moment(
+    postRegistrationMetadataClone.reg_submission_date
+  ).format("DD MMM YYYY");
+
   const flattenedData = Object.assign(
     {},
-    registration.establishment.premise,
-    registration.establishment.establishment_details,
-    registration.establishment.operator,
-    registration.establishment.activities,
-    registration.metadata,
-    postRegistrationMetadata,
+    registrationClone.establishment.premise,
+    registrationClone.establishment.establishment_details,
+    registrationClone.establishment.operator,
+    registrationClone.establishment.activities,
+    registrationClone.metadata,
+    postRegistrationMetadataClone,
     lcInfo
   );
 

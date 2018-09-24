@@ -41,10 +41,6 @@ setupRelationships({
   Registration
 });
 
-db.sync({
-  force: true
-});
-
 db
   .authenticate()
   .then(() => {

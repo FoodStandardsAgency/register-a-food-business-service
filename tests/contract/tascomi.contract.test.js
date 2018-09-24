@@ -4,14 +4,24 @@ const {
   createReferenceNumber
 } = require("../../src/connectors/tascomi/tascomi.connector");
 
+const realAuth = {
+  url: process.env.TASCOMI_URL,
+  public_key: process.env.TASCOMI_PUBLIC_KEY,
+  private_key: process.env.TASCOMI_PRIVATE_KEY
+};
+
+const auth = {
+  url: "url"
+};
+
 describe("Tascomi contract: createReferenceNumber", () => {
   describe("When given valid request", () => {
     it("Should return same resposne", async () => {
       process.env.DOUBLE_MODE = true;
-      const doubleResult = await createReferenceNumber("1111");
+      const doubleResult = await createReferenceNumber("1234", auth);
       const doubleJson = JSON.parse(doubleResult);
       process.env.DOUBLE_MODE = false;
-      const realResult = await createReferenceNumber("1111");
+      const realResult = await createReferenceNumber("1234", realAuth);
       const realJson = JSON.parse(realResult);
       expect(doubleJson).toEqual(realJson);
     });
@@ -20,10 +30,10 @@ describe("Tascomi contract: createReferenceNumber", () => {
   describe("When given invalid request", () => {
     it("Should return same response", async () => {
       process.env.DOUBLE_MODE = true;
-      const doubleResult = await createReferenceNumber("not an id");
+      const doubleResult = await createReferenceNumber("not an id", auth);
       const doubleJson = JSON.parse(doubleResult);
       process.env.DOUBLE_MODE = false;
-      const realResult = await createReferenceNumber("not an id");
+      const realResult = await createReferenceNumber("not an id", realAuth);
       const realJson = JSON.parse(realResult);
       expect(doubleJson).toEqual(realJson);
     });
@@ -71,16 +81,24 @@ describe("Tascomi contract: createFoodBusinessRegistration", () => {
         }
       };
       process.env.DOUBLE_MODE = true;
-      const doubleResult = await createFoodBusinessRegistration(registration, {
-        "fsa-rn": "23589-DHF375",
-        hygiene_council_code: 8015
-      });
+      const doubleResult = await createFoodBusinessRegistration(
+        registration,
+        {
+          "fsa-rn": "23589-DHF375",
+          hygiene_council_code: 8015
+        },
+        auth
+      );
       const doubleJson = JSON.parse(doubleResult);
       process.env.DOUBLE_MODE = false;
-      const realResult = await createFoodBusinessRegistration(registration, {
-        "fsa-rn": "23589-DHF375",
-        hygiene_council_code: 8015
-      });
+      const realResult = await createFoodBusinessRegistration(
+        registration,
+        {
+          "fsa-rn": "23589-DHF375",
+          hygiene_council_code: 8015
+        },
+        realAuth
+      );
       const realJson = JSON.parse(realResult);
       expect(doubleJson.owner_email).toEqual(realJson.owner_email);
       expect(doubleJson.fsa_rn).toEqual(realJson.fsa_rn);
