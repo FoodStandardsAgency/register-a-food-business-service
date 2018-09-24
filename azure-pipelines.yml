@@ -30,7 +30,7 @@ steps:
   inputs:
     connectionType: 'AzureRM'
     azureSubscription: '$(DevConnection)'
-    appType: 'webAppLinux',
+    appType: 'webAppLinux'
     webAppName: 'dev-register-a-food-business-service'
     runtimeStack: 'node|8.9'
     packageForLinux: '$(System.DefaultWorkingDirectory)/**/*/.zip'
