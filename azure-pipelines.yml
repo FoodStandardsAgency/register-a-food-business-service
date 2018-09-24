@@ -29,7 +29,7 @@ steps:
 - task: AzureRmWebAppDeployment@4
   inputs:
     connectionType: 'AzureRM'
-    azureSubscription: 'Microsoft Azure (foodgov): #1046245 (0007d84b-bea2-4794-b09a-4d77ceda72fe)'
+    azureSubscription: '$(DevConnection)'
     appType: 'webAppLinux'
     webAppName: 'dev-register-a-food-business-service'
     runtimeStack: 'node|8.9'
