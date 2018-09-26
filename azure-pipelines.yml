@@ -10,6 +10,12 @@ steps:
 - script: npm install
   displayName: 'Install'
 
+- script: npm format:verify
+  displayName: 'Format'
+
+- script: npm lint
+  displayName: 'Lint'
+
 - script: npm test
   displayName: 'Unit tests'
 
@@ -25,14 +31,5 @@ steps:
     includeRootFolder: false
 
 - task: PublishBuildArtifacts@1
-
-- task: AzureRmWebAppDeployment@4
-  inputs:
-    connectionType: 'AzureRM'
-    azureSubscription: 'Microsoft Azure (foodgov): #1046246 (972e8bf3-87ac-420a-81ee-17e4c5500602)'
-    appType: 'webAppLinux'
-    webAppName: 'dev-register-a-food-business-service'
-    runtimeStack: 'node|8.9'
-    packageForLinux: '$(System.DefaultWorkingDirectory)/**/*/.zip'
 
 
