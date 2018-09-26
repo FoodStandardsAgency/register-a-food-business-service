@@ -7,13 +7,17 @@ pool:
   vmImage: 'Ubuntu 16.04'
 
 steps:
+
+- script: echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > .npmrc
+  displayName: Create .npmrc
+
 - script: npm install
   displayName: 'Install'
 
-- script: npm format:verify
+- script: npm run format:verify
   displayName: 'Format'
 
-- script: npm lint
+- script: npm run lint
   displayName: 'Lint'
 
 - script: npm test
