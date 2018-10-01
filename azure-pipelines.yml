@@ -11,6 +11,12 @@ steps:
 - script: echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > .npmrc
   displayName: Create .npmrc
 
+- script: npm i -g npm
+  displayName: 'Update npm'
+
+- script: npm -v
+  displayName: 'Npm version'
+
 - script: npm install
   displayName: 'Install'
 
