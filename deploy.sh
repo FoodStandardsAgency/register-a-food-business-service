@@ -105,8 +105,9 @@ echo Handling node.js deployment.
 #   "$KUDU_SYNC_CMD" -v 999 -f "$DEPLOYMENT_SOURCE" -t "$DEPLOYMENT_TARGET" -n "$NEXT_MANIFEST_PATH" -p "$PREVIOUS_MANIFEST_PATH" -i ".git;.hg;.deployment;deploy.sh;coverage;docs;.vscode"
 #   exitWithMessageOnError "Kudu Sync failed"
 # fi
-
-cp -rf "$DEPLOYMENT_SOURCE" "$DEPLOYMENT_TARGET"
+echo "STARTING COPY FROM $DEPLOYMENT_SOURCE to $DEPLOYMENT_TARGET"
+cp -rf "/$DEPLOYMENT_SOURCE/" "/$DEPLOYMENT_TARGET/"
+echo "COPYING DONE"
 
 # 2. Select node version
 selectNodeVersion
