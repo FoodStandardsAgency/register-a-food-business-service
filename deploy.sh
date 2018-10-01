@@ -100,8 +100,6 @@ selectNodeVersion () {
 
 echo Handling node.js deployment.
 
-rm -rf "$DEPLOYMENT_TARGET"
-
 # 1. KuduSync
 if [[ "$IN_PLACE_DEPLOYMENT" -ne "1" ]]; then
   "$KUDU_SYNC_CMD" -v 999 -f "$DEPLOYMENT_SOURCE" -t "$DEPLOYMENT_TARGET" -n "$NEXT_MANIFEST_PATH" -p "$PREVIOUS_MANIFEST_PATH" -i ".git;.hg;.deployment;deploy.sh;coverage;docs;.vscode"
