@@ -3,6 +3,9 @@
   "version": "3.4.1",
   "description": "",
   "main": "src/app.js",
+  "engines": {
+    "node": "8.1"
+  },
   "scripts": {
     "test": "jest ./src --coverage",
     "test:watch": "jest --watch",
