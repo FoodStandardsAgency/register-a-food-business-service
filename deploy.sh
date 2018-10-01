@@ -106,7 +106,7 @@ echo Handling node.js deployment.
 #   exitWithMessageOnError "Kudu Sync failed"
 # fi
 echo "STARTING COPY FROM $DEPLOYMENT_SOURCE to $DEPLOYMENT_TARGET"
-cp -rf "/$DEPLOYMENT_SOURCE/" "/$DEPLOYMENT_TARGET/"
+cp -rf "$DEPLOYMENT_SOURCE/" "$DEPLOYMENT_TARGET/"
 echo "COPYING DONE"
 
 # 2. Select node version
