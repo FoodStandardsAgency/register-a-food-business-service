@@ -168,6 +168,7 @@ When("I submit my multiple fields to the backend", async function() {
 });
 
 Then("I get a success response", function() {
+  console.log(this.response);
   assert.ok(this.response.regId);
 });
 
