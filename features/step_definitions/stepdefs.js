@@ -15,7 +15,7 @@ const sendRequest = async body => {
     "client-name": FRONT_END_NAME
   };
   const res = await fetch(
-    "https://dev-register-a-food-business-service.azurewebsites.net/api/registration/createNewRegistration",
+    "https://dev-register-a-food-business-service-double.azurewebsites.net/api/registration/createNewRegistration",
     {
       method: "POST",
       headers,
@@ -33,7 +33,7 @@ const getRequest = async id => {
     "client-name": ADMIN_NAME
   };
   const res = await fetch(
-    `http://dev-register-a-food-business-service.azurewebsites.net/api/registration/${id}`,
+    `http://dev-register-a-food-business-service-double.azurewebsites.net/api/registration/${id}`,
     {
       headers
     }
@@ -83,7 +83,7 @@ Given("I have a new registration with all valid required fields", function() {
         declaration3: "Declaration"
       }
     },
-    local_council_url: "cardiff"
+    local_council_url: "west-dorset"
   };
 });
 
@@ -128,7 +128,7 @@ Given(
           declaration3: "Declaration"
         }
       },
-      local_council_url: "cardiff"
+      local_council_url: "west-dorset"
     };
   }
 );
