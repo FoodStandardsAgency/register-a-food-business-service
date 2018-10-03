@@ -23,7 +23,7 @@ steps:
 - script: npm run lint
   displayName: 'Lint'
 
-- script: npm test
+- script: npm run test:unit:ci
   displayName: 'Unit tests'
 
 - task: PublishTestResults@2
