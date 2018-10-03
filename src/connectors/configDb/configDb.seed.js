@@ -116,26 +116,291 @@ const arrayToInsert = [
 const pathConfigVersions = [
   {
     _id: "1.0.0",
+    notify_template_keys: {
+      fbo_submission_complete: process.env.NOTIFY_TEMPLATE_ID_FBO_100,
+      lc_new_registration: process.env.NOTIFY_TEMPLATE_ID_LC_100
+    },
     path: {
       "/index": {
         on: true,
-        switches: {
-          A1: { "/mock-page-1": false }
-        }
+        switches: {}
       },
-      "/mock-page-1": {
+      "/registration-role": {
         on: true,
         switches: {
-          A6: { "/mock-page-2": false },
-          A4: { "/mock-page-2": true }
+          "Sole trader": {
+            "/operator-name": true,
+            "/operator-contact-details": true
+          },
+          Partnership: {
+            "/operator-name": true,
+            "/operator-contact-details": true
+          },
+          Representative: { "/operator-type": true }
         }
       },
-      "/mock-page-2": {
+      "/operator-type": {
+        on: false,
+        switches: {
+          "A person": {
+            "/operator-name": true,
+            "/operator-contact-details": true
+          },
+          "A company": {
+            "/operator-company-details": true,
+            "/contact-representative": true
+          },
+          "A charity": {
+            "/operator-charity-details": true,
+            "/contact-representative": true
+          }
+        }
+      },
+      "/operator-company-details": {
+        on: false,
+        switches: {}
+      },
+      "/operator-charity-details": {
+        on: false,
+        switches: {}
+      },
+      "/operator-name": {
+        on: false,
+        switches: {}
+      },
+      "/operator-address": {
+        on: true,
+        switches: {}
+      },
+      "/operator-address-select": {
+        on: true,
+        switches: {}
+      },
+      "/operator-address-manual": {
+        on: false,
+        switches: {
+          operator_first_line: { "/operator-address-manual": true }
+        }
+      },
+      "/operator-contact-details": {
+        on: false,
+        switches: {}
+      },
+      "/contact-representative": {
+        on: false,
+        switches: {}
+      },
+      "/establishment-trading-name": {
+        on: true,
+        switches: {}
+      },
+      "/establishment-address-type": {
+        on: true,
+        switches: {}
+      },
+      "/establishment-address": {
+        on: true,
+        switches: {}
+      },
+      "/establishment-address-select": {
+        on: true,
+        switches: {}
+      },
+      "/establishment-address-manual": {
+        on: false,
+        switches: {
+          establishment_first_line: { "/establishment-address-manual": true }
+        }
+      },
+      "/establishment-contact-details": {
+        on: true,
+        switches: {}
+      },
+      "/establishment-opening-status": {
         on: true,
         switches: {
-          A7: { "/mock-page-3": false },
-          A8: { "/mock-page-2": false }
+          "Establishment is already trading": {
+            "/establishment-opening-date-retroactive": true
+          },
+          "Establishment is not trading yet": {
+            "/establishment-opening-date-proactive": true
+          }
         }
+      },
+      "/establishment-opening-date-proactive": {
+        on: false,
+        switches: {}
+      },
+      "/establishment-opening-date-retroactive": {
+        on: false,
+        switches: {}
+      },
+      "/customer-type": {
+        on: true,
+        switches: {}
+      },
+      "/business-type": {
+        on: true,
+        switches: {}
+      },
+      "/business-import-export": {
+        on: true,
+        switches: {}
+      },
+      "/registration-summary": {
+        on: true,
+        switches: {}
+      },
+      "/declaration": {
+        on: true,
+        switches: {}
+      }
+    }
+  },
+  {
+    _id: "1.1.0",
+    notify_template_keys: {
+      fbo_submission_complete: process.env.NOTIFY_TEMPLATE_ID_FBO_110,
+      lc_new_registration: process.env.NOTIFY_TEMPLATE_ID_LC_110
+    },
+    path: {
+      "/index": {
+        on: true,
+        switches: {}
+      },
+      "/registration-role": {
+        on: true,
+        switches: {
+          "Sole trader": {
+            "/operator-name": true,
+            "/operator-contact-details": true
+          },
+          Partnership: {
+            "/operator-name": true,
+            "/operator-contact-details": true
+          },
+          Representative: { "/operator-type": true }
+        }
+      },
+      "/operator-type": {
+        on: false,
+        switches: {
+          "A person": {
+            "/operator-name": true,
+            "/operator-contact-details": true
+          },
+          "A company": {
+            "/operator-company-details": true,
+            "/contact-representative": true
+          },
+          "A charity": {
+            "/operator-charity-details": true,
+            "/contact-representative": true
+          }
+        }
+      },
+      "/operator-company-details": {
+        on: false,
+        switches: {}
+      },
+      "/operator-charity-details": {
+        on: false,
+        switches: {}
+      },
+      "/operator-name": {
+        on: false,
+        switches: {}
+      },
+      "/operator-address": {
+        on: true,
+        switches: {}
+      },
+      "/operator-address-select": {
+        on: true,
+        switches: {}
+      },
+      "/operator-address-manual": {
+        on: false,
+        switches: {
+          operator_first_line: { "/operator-address-manual": true }
+        }
+      },
+      "/operator-contact-details": {
+        on: false,
+        switches: {}
+      },
+      "/contact-representative": {
+        on: false,
+        switches: {}
+      },
+      "/establishment-trading-name": {
+        on: true,
+        switches: {}
+      },
+      "/establishment-address-type": {
+        on: true,
+        switches: {}
+      },
+      "/establishment-address": {
+        on: true,
+        switches: {}
+      },
+      "/establishment-address-select": {
+        on: true,
+        switches: {}
+      },
+      "/establishment-address-manual": {
+        on: false,
+        switches: {
+          establishment_first_line: { "/establishment-address-manual": true }
+        }
+      },
+      "/establishment-contact-details": {
+        on: true,
+        switches: {}
+      },
+      "/establishment-opening-status": {
+        on: true,
+        switches: {
+          "Establishment is already trading": {
+            "/establishment-opening-date-retroactive": true
+          },
+          "Establishment is not trading yet": {
+            "/establishment-opening-date-proactive": true
+          }
+        }
+      },
+      "/establishment-opening-date-proactive": {
+        on: false,
+        switches: {}
+      },
+      "/establishment-opening-date-retroactive": {
+        on: false,
+        switches: {}
+      },
+      "/customer-type": {
+        on: true,
+        switches: {}
+      },
+      "/business-type": {
+        on: true,
+        switches: {}
+      },
+      "/business-import-export": {
+        on: true,
+        switches: {}
+      },
+      "/business-other-details": {
+        on: true,
+        switches: {}
+      },
+      "/registration-summary": {
+        on: true,
+        switches: {}
+      },
+      "/declaration": {
+        on: true,
+        switches: {}
       }
     }
   }
@@ -158,28 +423,37 @@ const establishConnectionToMongo = async () => {
 };
 
 const seedDb = async () => {
-  await establishConnectionToMongo();
+  if (
+    process.env.NOTIFY_TEMPLATE_ID_FBO_100 &&
+    process.env.NOTIFY_TEMPLATE_ID_FBO_110 &&
+    process.env.NOTIFY_TEMPLATE_ID_LC_100 &&
+    process.env.NOTIFY_TEMPLATE_ID_LC_110
+  ) {
+    await establishConnectionToMongo();
 
-  // empties the collection
-  await lcConfigCollection.deleteMany({});
+    // empties the collection
+    await lcConfigCollection.deleteMany({});
 
-  // adds the full list of entries
-  await lcConfigCollection.insertMany(arrayToInsert);
+    // adds the full list of entries
+    await lcConfigCollection.insertMany(arrayToInsert);
 
-  // finds and logs all entries
-  const lcConfigSearchResult = await lcConfigCollection.find({});
-  await lcConfigSearchResult.forEach(info);
+    // finds and logs all entries
+    const lcConfigSearchResult = await lcConfigCollection.find({});
+    await lcConfigSearchResult.forEach(info);
 
-  await pathConfigCollection.deleteMany({});
+    await pathConfigCollection.deleteMany({});
 
-  // adds the path config
-  await pathConfigCollection.insertMany(pathConfigVersions);
+    // adds the path config
+    await pathConfigCollection.insertMany(pathConfigVersions);
 
-  // finds and logs all entries
-  const pathConfigSearchResult = await pathConfigCollection.find({});
-  await pathConfigSearchResult.forEach(info);
+    // finds and logs all entries
+    const pathConfigSearchResult = await pathConfigCollection.find({});
+    await pathConfigSearchResult.forEach(info);
 
-  process.exit(0);
+    process.exit(0);
+  } else {
+    throw new Error("Missing notify template IDs from .env");
+  }
 };
 
 seedDb();
