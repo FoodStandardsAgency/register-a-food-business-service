@@ -30,5 +30,6 @@
   "local_council_phone_number_hygiene",
   "local_council_standards",
   "local_council_email_standards",
-  "local_council_phone_number_standards"
+  "local_council_phone_number_standards",
+  "opening_days_irregular"
 ]

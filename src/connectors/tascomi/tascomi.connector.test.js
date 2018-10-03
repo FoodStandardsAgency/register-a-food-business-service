@@ -243,6 +243,160 @@ describe("Function: createFoodBusinessRegistration", () => {
     });
   });
 
+  describe("When opening_day_monday is true", () => {
+    beforeEach(async () => {
+      jest.clearAllMocks();
+      process.env.DOUBLE_MODE = false;
+      request.mockImplementation(() => {
+        return "request response";
+      });
+      registration.establishment.activities.opening_day_monday = true;
+      result = await createFoodBusinessRegistration(
+        registration,
+        postRegistrationMetadata,
+        auth
+      );
+    });
+
+    it("should call api with correct form data", () => {
+      expect(
+        request.mock.calls[0][0].form.premise_typical_trading_days_monday
+      ).toBe("t");
+    });
+  });
+
+  describe("When opening_day_tuesday is true", () => {
+    beforeEach(async () => {
+      jest.clearAllMocks();
+      process.env.DOUBLE_MODE = false;
+      request.mockImplementation(() => {
+        return "request response";
+      });
+      registration.establishment.activities.opening_day_tuesday = true;
+      result = await createFoodBusinessRegistration(
+        registration,
+        postRegistrationMetadata,
+        auth
+      );
+    });
+
+    it("should call api with correct form data", () => {
+      expect(
+        request.mock.calls[0][0].form.premise_typical_trading_days_tuesday
+      ).toBe("t");
+    });
+  });
+
+  describe("When opening_day_wednesday is true", () => {
+    beforeEach(async () => {
+      jest.clearAllMocks();
+      process.env.DOUBLE_MODE = false;
+      request.mockImplementation(() => {
+        return "request response";
+      });
+      registration.establishment.activities.opening_day_wednesday = true;
+      result = await createFoodBusinessRegistration(
+        registration,
+        postRegistrationMetadata,
+        auth
+      );
+    });
+
+    it("should call api with correct form data", () => {
+      expect(
+        request.mock.calls[0][0].form.premise_typical_trading_days_wednesday
+      ).toBe("t");
+    });
+  });
+
+  describe("When opening_day_thursday is true", () => {
+    beforeEach(async () => {
+      jest.clearAllMocks();
+      process.env.DOUBLE_MODE = false;
+      request.mockImplementation(() => {
+        return "request response";
+      });
+      registration.establishment.activities.opening_day_thursday = true;
+      result = await createFoodBusinessRegistration(
+        registration,
+        postRegistrationMetadata,
+        auth
+      );
+    });
+
+    it("should call api with correct form data", () => {
+      expect(
+        request.mock.calls[0][0].form.premise_typical_trading_days_thursday
+      ).toBe("t");
+    });
+  });
+
+  describe("When opening_day_friday is true", () => {
+    beforeEach(async () => {
+      jest.clearAllMocks();
+      process.env.DOUBLE_MODE = false;
+      request.mockImplementation(() => {
+        return "request response";
+      });
+      registration.establishment.activities.opening_day_friday = true;
+      result = await createFoodBusinessRegistration(
+        registration,
+        postRegistrationMetadata,
+        auth
+      );
+    });
+
+    it("should call api with correct form data", () => {
+      expect(
+        request.mock.calls[0][0].form.premise_typical_trading_days_friday
+      ).toBe("t");
+    });
+  });
+
+  describe("When opening_day_saturday is true", () => {
+    beforeEach(async () => {
+      jest.clearAllMocks();
+      process.env.DOUBLE_MODE = false;
+      request.mockImplementation(() => {
+        return "request response";
+      });
+      registration.establishment.activities.opening_day_saturday = true;
+      result = await createFoodBusinessRegistration(
+        registration,
+        postRegistrationMetadata,
+        auth
+      );
+    });
+
+    it("should call api with correct form data", () => {
+      expect(
+        request.mock.calls[0][0].form.premise_typical_trading_days_saturday
+      ).toBe("t");
+    });
+  });
+
+  describe("When opening_day_sunday is true", () => {
+    beforeEach(async () => {
+      jest.clearAllMocks();
+      process.env.DOUBLE_MODE = false;
+      request.mockImplementation(() => {
+        return "request response";
+      });
+      registration.establishment.activities.opening_day_sunday = true;
+      result = await createFoodBusinessRegistration(
+        registration,
+        postRegistrationMetadata,
+        auth
+      );
+    });
+
+    it("should call api with correct form data", () => {
+      expect(
+        request.mock.calls[0][0].form.premise_typical_trading_days_sunday
+      ).toBe("t");
+    });
+  });
+
   describe("When running in double mode", () => {
     beforeEach(async () => {
       jest.clearAllMocks();

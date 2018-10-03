@@ -18,7 +18,9 @@ const {
   validateBusinessType,
   validateDate,
   validateImportExportActivities,
-  validateBusinessOtherDetails
+  validateBusinessOtherDetails,
+  validateOpeningDaysIrregular,
+  validateOpeningDay
 } = require("@slice-and-dice/register-a-food-business-validation");
 
 const schema = {
@@ -212,12 +214,51 @@ const schema = {
               business_other_details: {
                 type: "string",
                 validation: validateBusinessOtherDetails
+              },
+              opening_days_irregular: {
+                type: "string",
+                validation: validateOpeningDaysIrregular
+              },
+              opening_day_monday: {
+                type: "boolean",
+                validation: validateOpeningDay
+              },
+              opening_day_tuesday: {
+                type: "boolean",
+                validation: validateOpeningDay
+              },
+              opening_day_wednesday: {
+                type: "boolean",
+                validation: validateOpeningDay
+              },
+              opening_day_thursday: {
+                type: "boolean",
+                validation: validateOpeningDay
+              },
+              opening_day_friday: {
+                type: "boolean",
+                validation: validateOpeningDay
+              },
+              opening_day_saturday: {
+                type: "boolean",
+                validation: validateOpeningDay
+              },
+              opening_day_sunday: {
+                type: "boolean",
+                validation: validateOpeningDay
               }
             },
             required: [
               "customer_type",
               "business_type",
-              "import_export_activities"
+              "import_export_activities",
+              "opening_day_monday",
+              "opening_day_tuesday",
+              "opening_day_wednesday",
+              "opening_day_thursday",
+              "opening_day_friday",
+              "opening_day_saturday",
+              "opening_day_sunday"
             ]
           }
         },

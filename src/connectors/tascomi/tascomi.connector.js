@@ -69,13 +69,6 @@ const createFoodBusinessRegistration = async (
       premise_secondary_number:
         establishmentDetails.establishment_secondary_number,
       premise_email: establishmentDetails.establishment_email,
-      premise_typical_trading_days_monday: "f",
-      premise_typical_trading_days_tuesday: "f",
-      premise_typical_trading_days_wednesday: "f",
-      premise_typical_trading_days_thursday: "f",
-      premise_typical_trading_days_friday: "f",
-      premise_typical_trading_days_saturday: "f",
-      premise_typical_trading_days_sunday: "f",
       opening_date: establishmentDetails.establishment_opening_date,
       owner_firstname: operatorDetails.operator_first_name,
       owner_surname: operatorDetails.operator_last_name,
@@ -103,6 +96,53 @@ const createFoodBusinessRegistration = async (
       declined: "f"
     };
 
+    if (premiseDetails.establishment_type === "Home or domestic premises") {
+      requestData.premise_domestic_premises = "t";
+    } else {
+      requestData.premise_domestic_premises = "f";
+    }
+
+    if (activitiesDetails.opening_day_monday === true) {
+      requestData.premise_typical_trading_days_monday = "t";
+    } else {
+      requestData.premise_typical_trading_days_monday = "f";
+    }
+    if (activitiesDetails.opening_day_tuesday === true) {
+      requestData.premise_typical_trading_days_tuesday = "t";
+    } else {
+      requestData.premise_typical_trading_days_tuesday = "f";
+    }
+    if (activitiesDetails.opening_day_wednesday === true) {
+      requestData.premise_typical_trading_days_wednesday = "t";
+    } else {
+      requestData.premise_typical_trading_days_wednesday = "f";
+    }
+    if (activitiesDetails.opening_day_thursday === true) {
+      requestData.premise_typical_trading_days_thursday = "t";
+    } else {
+      requestData.premise_typical_trading_days_thursday = "f";
+    }
+    if (activitiesDetails.opening_day_friday === true) {
+      requestData.premise_typical_trading_days_friday = "t";
+    } else {
+      requestData.premise_typical_trading_days_friday = "f";
+    }
+    if (activitiesDetails.opening_day_saturday === true) {
+      requestData.premise_typical_trading_days_saturday = "t";
+    } else {
+      requestData.premise_typical_trading_days_saturday = "f";
+    }
+    if (activitiesDetails.opening_day_sunday === true) {
+      requestData.premise_typical_trading_days_sunday = "t";
+    } else {
+      requestData.premise_typical_trading_days_sunday = "f";
+    }
+
+    if (premiseDetails.establishment_type === "Home or domestic premises") {
+      requestData.premise_domestic_premises = "t";
+    } else {
+      requestData.premise_domestic_premises = "f";
+    }
     if (premiseDetails.establishment_type === "Home or domestic premises") {
       requestData.premise_domestic_premises = "t";
     } else {
