@@ -31,6 +31,7 @@ steps:
     testRunner: JUnit
     testResultsFile: ./reports/TEST-unit.xml
     testRunTitle: Unit tests
+    mergeTestResults: false
 
 - task: PublishCodeCoverageResults@1
   inputs: 
@@ -46,6 +47,7 @@ steps:
     testRunner: JUnit
     testResultsFile: ./reports/TEST-integration.xml
     testRunTitle: Integration tests
+    mergeTestResults: false
 
 - script: npm prune --production
   displayName: Prune dev dependencies
