@@ -1,14 +1,17 @@
-const registration = (db, Sequelize) => {
-  return db.define("registration", {
-    id: {
-      type: Sequelize.INTEGER,
-      primaryKey: true,
-      autoIncrement: true
+module.exports = (sequelize, DataTypes) => {
+  const Registration = sequelize.define(
+    "registration",
+    {
+      id: {
+        type: DataTypes.INTEGER,
+        primaryKey: true,
+        autoIncrement: true
+      },
+      fsa_rn: {
+        type: DataTypes.STRING
+      }
     },
-    fsa_rn: {
-      type: Sequelize.STRING
-    }
-  });
+    {}
+  );
+  return Registration;
 };
-
-module.exports = { registration };

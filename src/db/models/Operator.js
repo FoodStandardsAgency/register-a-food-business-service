@@ -1,14 +1,20 @@
-const operator = (db, Sequelize) => {
-  return db.define("operator", {
-    id: {
-      type: Sequelize.INTEGER,
-      primaryKey: true,
-      autoIncrement: true
+module.exports = (sequelize, DataTypes) => {
+  const Operator = sequelize.define(
+    "operator",
+    {
+      id: {
+        type: DataTypes.INTEGER,
+        primaryKey: true,
+        autoIncrement: true
+      },
+      operator_type: { type: DataTypes.STRING },
+      operator_company_house_number: { type: DataTypes.STRING },
+      operator_charity_number: { type: DataTypes.STRING }
     },
-    operator_type: { type: Sequelize.STRING },
-    operator_company_house_number: { type: Sequelize.STRING },
-    operator_charity_number: { type: Sequelize.STRING }
-  });
+    {}
+  );
+  Operator.associate = function(models) {
+    Operator.belongsTo(models.establishment);
+  };
+  return Operator;
 };
-
-module.exports = { operator };
