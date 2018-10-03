@@ -31,7 +31,11 @@ const establishConnectionToMongo = async () => {
 };
 
 const getAllLocalCouncilConfig = async () => {
-  logEmitter.emit("functionCall", "configDb.connector", "sendSingleEmail");
+  logEmitter.emit(
+    "functionCall",
+    "configDb.connector",
+    "getAllLocalCouncilConfig"
+  );
 
   if (allLcConfigData.length === 0) {
     try {
