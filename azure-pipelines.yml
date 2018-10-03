@@ -32,6 +32,27 @@ steps:
     testResultsFile: ./reports/TEST-unit.xml
     testRunTitle: Unit tests
 
+- script: npm run test:integration:ci
+  displayName: 'Integration tests'
+
+- task: PublishTestResults@2
+  inputs:
+    testRunner: JUnit
+    testResultsFile: ./reports/TEST-integration.xml
+    testRunTitle: Integration tests
+
+- task: PublishCodeCoverageResults@1
+  inputs: 
+    codeCoverageTool: Cobertura
+    summaryFileLocation: '$(System.DefaultWorkingDirectory)/**/*coverage.xml'
+    reportDirectory: '$(System.DefaultWorkingDirectory)/**/coverage'
+
+- script: npm prune --production
+  displayName: Prune dev dependencies
+
+- script: rm -rf coverage reports
+  displayName: Remove reporting folders
+  
 - task: ArchiveFiles@2
   inputs:
     rootFolderOrFile: '$(System.DefaultWorkingDirectory)'
