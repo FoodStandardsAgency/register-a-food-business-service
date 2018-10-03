@@ -10,7 +10,12 @@ const arrayToInsert = [
     local_council_email: "fsatestemail.valid@gmail.com",
     local_council_notify_emails: ["fsatestemail.valid@gmail.com"],
     local_council_phone_number: "0300 123 6696",
-    local_council_url: "bridgend"
+    local_council_url: "bridgend",
+    auth: {
+      url: process.env.TASCOMI_URL,
+      public_key: process.env.TASCOMI_PUBLIC_KEY,
+      private_key: process.env.TASCOMI_PRIVATE_KEY
+    }
   },
   {
     _id: 8015,
@@ -18,7 +23,12 @@ const arrayToInsert = [
     local_council_email: "fsatestemail.valid@gmail.com",
     local_council_notify_emails: ["fsatestemail.valid@gmail.com"],
     local_council_phone_number: "0300 123 6696",
-    local_council_url: "cardiff"
+    local_council_url: "cardiff",
+    auth: {
+      url: process.env.TASCOMI_URL,
+      public_key: process.env.TASCOMI_PUBLIC_KEY,
+      private_key: process.env.TASCOMI_PRIVATE_KEY
+    }
   },
   {
     _id: 8002,
@@ -26,7 +36,12 @@ const arrayToInsert = [
     local_council_email: "fsatestemail.valid@gmail.com",
     local_council_notify_emails: ["fsatestemail.valid@gmail.com"],
     local_council_phone_number: "0300 123 6696",
-    local_council_url: "the-vale-of-glamorgan"
+    local_council_url: "the-vale-of-glamorgan",
+    auth: {
+      url: process.env.TASCOMI_URL,
+      public_key: process.env.TASCOMI_PUBLIC_KEY,
+      private_key: process.env.TASCOMI_PRIVATE_KEY
+    }
   },
   {
     _id: 6008,
@@ -34,7 +49,12 @@ const arrayToInsert = [
     local_council_email: "fsatestemail.valid@gmail.com",
     local_council_notify_emails: ["fsatestemail.valid@gmail.com"],
     local_council_phone_number: "123456789",
-    local_council_url: "mid-and-east-antrim"
+    local_council_url: "mid-and-east-antrim",
+    auth: {
+      url: process.env.TASCOMI_URL,
+      public_key: process.env.TASCOMI_PUBLIC_KEY,
+      private_key: process.env.TASCOMI_PRIVATE_KEY
+    }
   },
   {
     _id: 4221,
@@ -43,7 +63,12 @@ const arrayToInsert = [
     local_council_notify_emails: ["fsatestemail.valid@gmail.com"],
     local_council_phone_number: "123456789",
     local_council_url: "west-dorset",
-    separate_standards_council: 4226
+    separate_standards_council: 4226,
+    auth: {
+      url: process.env.TASCOMI_URL,
+      public_key: process.env.TASCOMI_PUBLIC_KEY,
+      private_key: process.env.TASCOMI_PRIVATE_KEY
+    }
   },
   {
     _id: 4223,
@@ -52,7 +77,12 @@ const arrayToInsert = [
     local_council_notify_emails: ["fsatestemail.valid@gmail.com"],
     local_council_phone_number: "123456789",
     local_council_url: "north-dorset",
-    separate_standards_council: 4226
+    separate_standards_council: 4226,
+    auth: {
+      url: process.env.TASCOMI_URL,
+      public_key: process.env.TASCOMI_PUBLIC_KEY,
+      private_key: process.env.TASCOMI_PRIVATE_KEY
+    }
   },
   {
     _id: 4220,
@@ -61,7 +91,12 @@ const arrayToInsert = [
     local_council_notify_emails: ["fsatestemail.valid@gmail.com"],
     local_council_phone_number: "123456789",
     local_council_url: "weymouth-and-portland",
-    separate_standards_council: 4226
+    separate_standards_council: 4226,
+    auth: {
+      url: process.env.TASCOMI_URL,
+      public_key: process.env.TASCOMI_PUBLIC_KEY,
+      private_key: process.env.TASCOMI_PRIVATE_KEY
+    }
   },
   {
     _id: 4226,
@@ -69,7 +104,12 @@ const arrayToInsert = [
     local_council_email: "fsatestemail.valid@gmail.com",
     local_council_notify_emails: ["fsatestemail.valid@gmail.com"],
     local_council_phone_number: "123456789",
-    local_council_url: ""
+    local_council_url: "",
+    auth: {
+      url: process.env.TASCOMI_URL,
+      public_key: process.env.TASCOMI_PUBLIC_KEY,
+      private_key: process.env.TASCOMI_PRIVATE_KEY
+    }
   }
 ];
 
