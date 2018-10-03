@@ -1,15 +1,21 @@
-const activities = (db, Sequelize) => {
-  return db.define("activities", {
-    id: {
-      type: Sequelize.INTEGER,
-      primaryKey: true,
-      autoIncrement: true
+module.exports = (sequelize, DataTypes) => {
+  const Activities = sequelize.define(
+    "activities",
+    {
+      id: {
+        type: DataTypes.INTEGER,
+        primaryKey: true,
+        autoIncrement: true
+      },
+      customer_type: { type: DataTypes.STRING },
+      business_type: { type: DataTypes.STRING },
+      business_type_search_term: { type: DataTypes.STRING },
+      import_export_activities: { type: DataTypes.STRING }
     },
-    customer_type: { type: Sequelize.STRING },
-    business_type: { type: Sequelize.STRING },
-    business_type_search_term: { type: Sequelize.STRING },
-    import_export_activities: { type: Sequelize.STRING }
-  });
+    {}
+  );
+  Activities.associate = function(models) {
+    Activities.belongsTo(models.establishment);
+  };
+  return Activities;
 };
-
-module.exports = { activities };
