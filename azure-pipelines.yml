@@ -38,7 +38,7 @@ steps:
     summaryFileLocation: '$(System.DefaultWorkingDirectory)/**/*coverage.xml'
     reportDirectory: '$(System.DefaultWorkingDirectory)/**/coverage'
 
-- script: npm run test:integration:ci
+- script: npm run test:integration
   displayName: 'Integration tests'
 
 - task: PublishTestResults@2
