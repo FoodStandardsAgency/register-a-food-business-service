@@ -32,6 +32,12 @@ steps:
     testResultsFile: ./reports/TEST-unit.xml
     testRunTitle: Unit tests
 
+- task: PublishCodeCoverageResults@1
+  inputs: 
+    codeCoverageTool: Cobertura
+    summaryFileLocation: '$(System.DefaultWorkingDirectory)/**/*coverage.xml'
+    reportDirectory: '$(System.DefaultWorkingDirectory)/**/coverage'
+
 - script: npm run test:integration:ci
   displayName: 'Integration tests'
 
@@ -40,12 +46,6 @@ steps:
     testRunner: JUnit
     testResultsFile: ./reports/TEST-integration.xml
     testRunTitle: Integration tests
-
-- task: PublishCodeCoverageResults@1
-  inputs: 
-    codeCoverageTool: Cobertura
-    summaryFileLocation: '$(System.DefaultWorkingDirectory)/**/*coverage.xml'
-    reportDirectory: '$(System.DefaultWorkingDirectory)/**/coverage'
 
 - script: npm prune --production
   displayName: Prune dev dependencies
