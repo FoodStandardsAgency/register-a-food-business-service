@@ -73,9 +73,38 @@ const arrayToInsert = [
   }
 ];
 
+const pathConfigVersions = [
+  {
+    _id: "1.0.0",
+    path: {
+      "/index": {
+        on: true,
+        switches: {
+          A1: { "/mock-page-1": false }
+        }
+      },
+      "/mock-page-1": {
+        on: true,
+        switches: {
+          A6: { "/mock-page-2": false },
+          A4: { "/mock-page-2": true }
+        }
+      },
+      "/mock-page-2": {
+        on: true,
+        switches: {
+          A7: { "/mock-page-3": false },
+          A8: { "/mock-page-2": false }
+        }
+      }
+    }
+  }
+];
+
 let client;
 let configDB;
 let lcConfigCollection;
+let pathConfigCollection;
 
 const establishConnectionToMongo = async () => {
   client = await mongoClient.connect(CONFIGDB_URL, {
@@ -85,6 +114,7 @@ const establishConnectionToMongo = async () => {
   configDB = client.db("register_a_food_business_config");
 
   lcConfigCollection = configDB.collection("lcConfig");
+  pathConfigCollection = configDB.collection("pathConfig");
 };
 
 const seedDb = async () => {
@@ -97,8 +127,17 @@ const seedDb = async () => {
   await lcConfigCollection.insertMany(arrayToInsert);
 
   // finds and logs all entries
-  const searchResult = await lcConfigCollection.find({});
-  await searchResult.forEach(info);
+  const lcConfigSearchResult = await lcConfigCollection.find({});
+  await lcConfigSearchResult.forEach(info);
+
+  await pathConfigCollection.deleteMany({});
+
+  // adds the path config
+  await pathConfigCollection.insertMany(pathConfigVersions);
+
+  // finds and logs all entries
+  const pathConfigSearchResult = await pathConfigCollection.find({});
+  await pathConfigSearchResult.forEach(info);
 
   process.exit(0);
 };
