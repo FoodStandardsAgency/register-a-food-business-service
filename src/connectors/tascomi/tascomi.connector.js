@@ -96,12 +96,6 @@ const createFoodBusinessRegistration = async (
       declined: "f"
     };
 
-    if (premiseDetails.establishment_type === "Home or domestic premises") {
-      requestData.premise_domestic_premises = "t";
-    } else {
-      requestData.premise_domestic_premises = "f";
-    }
-
     if (activitiesDetails.opening_day_monday === true) {
       requestData.premise_typical_trading_days_monday = "t";
     } else {
