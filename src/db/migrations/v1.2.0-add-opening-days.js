@@ -4,56 +4,56 @@ module.exports = {
     return [
       queryInterface.addColumn(
         "activities",
-        "business_irregular_days",
+        "opening_days_irregular",
         Sequelize.STRING
       ),
       queryInterface.addColumn(
         "activities",
-        "opening_days_monday",
+        "opening_day_monday",
         Sequelize.BOOLEAN
       ),
       queryInterface.addColumn(
         "activities",
-        "opening_days_tuesday",
+        "opening_day_tuesday",
         Sequelize.BOOLEAN
       ),
       queryInterface.addColumn(
         "activities",
-        "opening_days_wednesday",
+        "opening_day_wednesday",
         Sequelize.BOOLEAN
       ),
       queryInterface.addColumn(
         "activities",
-        "opening_days_thursday",
+        "opening_day_thursday",
         Sequelize.BOOLEAN
       ),
       queryInterface.addColumn(
         "activities",
-        "opening_days_friday",
+        "opening_day_friday",
         Sequelize.BOOLEAN
       ),
       queryInterface.addColumn(
         "activities",
-        "opening_days_saturday",
+        "opening_day_saturday",
         Sequelize.BOOLEAN
       ),
       queryInterface.addColumn(
         "activities",
-        "opening_days_sunday",
+        "opening_day_sunday",
         Sequelize.BOOLEAN
       )
     ];
   },
   down: queryInterface => {
     return [
-      queryInterface.removeColumn("activities", "business_irregular_days"),
-      queryInterface.removeColumn("activities", "opening_days_monday"),
-      queryInterface.removeColumn("activities", "opening_days_tuesday"),
-      queryInterface.removeColumn("activities", "opening_days_wednesday"),
-      queryInterface.removeColumn("activities", "opening_days_thursday"),
-      queryInterface.removeColumn("activities", "opening_days_friday"),
-      queryInterface.removeColumn("activities", "opening_days_saturday"),
-      queryInterface.removeColumn("activities", "opening_days_sunday")
+      queryInterface.removeColumn("activities", "opening_days_irregular"),
+      queryInterface.removeColumn("activities", "opening_day_monday"),
+      queryInterface.removeColumn("activities", "opening_day_tuesday"),
+      queryInterface.removeColumn("activities", "opening_day_wednesday"),
+      queryInterface.removeColumn("activities", "opening_day_thursday"),
+      queryInterface.removeColumn("activities", "opening_day_friday"),
+      queryInterface.removeColumn("activities", "opening_day_saturday"),
+      queryInterface.removeColumn("activities", "opening_day_sunday")
     ];
   }
 };
