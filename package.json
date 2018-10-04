@@ -14,8 +14,8 @@
     "lint": "eslint ./src",
     "format:verify": "prettier --list-different '{src,tests}/**/*.js'",
     "format": "prettier --write '{src,tests}/**/*.js'",
-    "dev": "",
     "start": "node src/app.js",
+    "start:prod": "export NODE_ENV=production && node src/app.js",
     "seed-config-db": "node src/connectors/configDb/configDb.seed.js"
   },
   "repository": {
@@ -48,6 +48,7 @@
     "request": "2.87.0",
     "request-promise-native": "1.0.5",
     "sequelize": "4.38.0",
+    "sequelize-cli": "^4.1.1",
     "uuid": "3.3.2",
     "validator": "10.2.0",
     "winston": "2.4.3"
