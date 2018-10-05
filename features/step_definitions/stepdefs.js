@@ -34,9 +34,12 @@ const getRequest = async id => {
     "api-secret": ADMIN_SECRET,
     "client-name": ADMIN_NAME
   };
-  const res = await fetch(`http://localhost:4000/api/registration/${id}`, {
-    headers
-  });
+  const res = await fetch(
+    `http://dev-register-a-food-business-service.azurewebsites.net/api/registration/${id}`,
+    {
+      headers
+    }
+  );
   return res.json();
 };
 ////////
@@ -76,13 +79,13 @@ Given("I have a new registration with all valid required fields", function() {
           import_export_activities: "None",
           business_other_details: "Food business",
           opening_days_irregular: "Open christmas",
-          opening_day_monday: false,
-          opening_day_tuesday: false,
-          opening_day_wednesday: false,
-          opening_day_thursday: false,
-          opening_day_friday: false,
-          opening_day_saturday: false,
-          opening_day_sunday: false
+          opening_day_monday: true,
+          opening_day_tuesday: true,
+          opening_day_wednesday: true,
+          opening_day_thursday: true,
+          opening_day_friday: true,
+          opening_day_saturday: true,
+          opening_day_sunday: true
         }
       },
       metadata: {
@@ -91,7 +94,7 @@ Given("I have a new registration with all valid required fields", function() {
         declaration3: "Declaration"
       }
     },
-    local_council_url: "west-dorset"
+    local_council_url: "cardiff"
   };
 });
 
@@ -137,7 +140,7 @@ Given(
           declaration3: "Declaration"
         }
       },
-      local_council_url: "west-dorset"
+      local_council_url: "cardiff"
     };
   }
 );
@@ -177,7 +180,6 @@ When("I submit my multiple fields to the backend", async function() {
 });
 
 Then("I get a success response", function() {
-  console.log(this.response);
   assert.ok(this.response.regId);
 });
 
