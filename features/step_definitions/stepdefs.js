@@ -1,12 +1,14 @@
 const assert = require("assert");
 const fetch = require("node-fetch");
-const { Given, When, Then } = require("cucumber");
+const { Given, When, Then, setDefaultTimeout } = require("cucumber");
 const {
   FRONT_END_NAME,
   FRONT_END_SECRET,
   ADMIN_NAME,
   ADMIN_SECRET
 } = require("../../src/config");
+
+setDefaultTimeout(60 * 1000);
 
 const sendRequest = async body => {
   const headers = {
