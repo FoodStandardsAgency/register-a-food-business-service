@@ -23,6 +23,6 @@ module.exports = {
     "!**/src/config.js",
     "!**/tests/*",
     "!**/src/**/*.double.js",
-    "!**/src/**/*.seed.js"
+    "!**/src/connectors/configDb/configDb-seed/**"
   ]
 };
