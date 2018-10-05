@@ -64,7 +64,15 @@ describe("Tascomi integration: createFoodBusinessRegistration", () => {
             establishment_type: "somewhere"
           },
           activities: {
-            customer_type: "End consumer"
+            customer_type: "End consumer",
+            import_export_activities: "t",
+            opening_day_monday: "t",
+            opening_day_tuesday: "t",
+            opening_day_wednesday: "t",
+            opening_day_thursday: "t",
+            opening_day_friday: "t",
+            opening_day_saturday: "t",
+            opening_day_sunday: "t"
           }
         },
         metadata: {

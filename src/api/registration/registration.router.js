@@ -21,7 +21,6 @@ const registrationRouter = () => {
       );
       try {
         statusEmitter.emit("incrementCount", "submissionsReceived");
-
         const response = await registrationController.createNewRegistration(
           req.body.registration,
           req.body.local_council_url

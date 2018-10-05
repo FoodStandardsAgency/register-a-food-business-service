@@ -1,16 +1,20 @@
 ## Change Log
 
 All notable changes to this project will be documented in this file.
-This project adheres to [Semantic Versioning]
-(http://semver.org/).
+This project adheres to [Semantic Versioning](http://semver.org/).
 
+## v3.5.0 - 4th October 2018 (unreleased)
+
+### Added
+
+* Added SDB-52 Establishment opening days
 
 ## v3.4.1 - 20th September 2018 (unreleased)
 
 ### Added
 
 * Added abilitiy to send registrations to multiple locations
-  
+
 ## v3.4.0 - 18th September 2018 (unreleased)
 
 ### Added
