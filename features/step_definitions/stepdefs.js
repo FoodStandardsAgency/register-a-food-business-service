@@ -17,7 +17,7 @@ const sendRequest = async body => {
     "client-name": FRONT_END_NAME
   };
   const res = await fetch(
-    "http://dev-register-a-food-business-service.azurewebsites.net/api/registration/createNewRegistration",
+    "https://dev-register-a-food-business-service.azurewebsites.net/api/registration/createNewRegistration",
     {
       method: "POST",
       headers,
