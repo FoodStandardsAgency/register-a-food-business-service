@@ -1,5 +1,5 @@
 module.exports = {
-  _id: process.env.SEED_DATA_VERSION,
+  _id: process.env.SEED_DATA_VERSION_PATH,
   path: {
     "/index": {
       on: true,

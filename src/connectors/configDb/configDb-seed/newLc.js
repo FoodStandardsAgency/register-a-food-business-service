@@ -7,7 +7,7 @@ module.exports = env => ({
       : "fsatestemail.valid@gmail.com",
   local_council_notify_emails:
     env === "production"
-      ? process.env.SEED_LC_NOTIFY_EMAILS
+      ? [process.env.SEED_LC_NOTIFY_EMAIL]
       : ["fsatestemail.valid@gmail.com"],
   local_council_phone_number:
     env === "production" ? process.env.SEED_LC_PHONE_NUMBER : "01234 567890",
