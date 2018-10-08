@@ -16,7 +16,7 @@
     "format": "prettier --write '{src,tests}/**/*.js'",
     "start": "node src/app.js",
     "start:prod": "export NODE_ENV=production && node src/app.js",
-    "seed-config-db": "node src/connectors/configDb/configDb.seed.js"
+    "seed:configdb": "node src/connectors/configDb/configDb-seed/configDb.seed"
   },
   "repository": {
     "type": "git",
@@ -39,6 +39,7 @@
     "express": "4.16.3",
     "express-rate-limit": "3.2.0",
     "helmet": "3.13.0",
+    "inquirer": "^6.2.0",
     "jsonschema": "1.2.4",
     "moment": "2.22.2",
     "mongodb": "3.1.3",
