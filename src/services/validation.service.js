@@ -38,7 +38,15 @@ const errorMessages = {
   contact_representative_role: "Invalid representative role",
   contact_representative_email: "Invalid representative email",
   import_export_activities: "Invalid business activities",
-  business_other_details: "Invalid business other details"
+  business_other_details: "Invalid business other details",
+  opening_days_irregular: "Invalid opening days irregular",
+  opening_day_monday: "Invalid opening day monday",
+  opening_day_tuesday: "Invalid opening day tuesday",
+  opening_day_wednesday: "Invalid opening day wednesday",
+  opening_day_thurday: "Invalid opening day thursday",
+  opening_day_friday: "Invalid opening day friday",
+  opening_day_saturday: "Invalid opening day saturday",
+  opening_day_sunday: "Invalid opening day sunday"
 };
 
 const validator = new Validator();
