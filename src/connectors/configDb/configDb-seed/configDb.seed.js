@@ -57,7 +57,6 @@ const seedNewPath = async env => {
   );
 
   // add the new entry
-  console.log(newPath);
   await pathConfigCollection.insert(newPath());
 
   // find and log all updated path config
