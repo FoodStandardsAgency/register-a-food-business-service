@@ -7,13 +7,6 @@ const newLc = require("./newLc");
 const newPath = require("./newPath");
 const newNotify = require("./newNotify");
 
-const envUrls = {
-  dev: process.env.SEED_CONFIGDB_URL_DEV,
-  test: process.env.SEED_CONFIGDB_URL_TEST,
-  staging: process.env.SEED_CONFIGDB_URL_STAGING,
-  production: process.env.SEED_CONFIGDB_URL_PRODUCTION
-};
-
 let client;
 let configDB;
 let lcConfigCollection;
@@ -32,101 +25,62 @@ const saveDataLocally = (data, fileName) => {
   fs.writeFileSync(`./saved-data/${fileName}.json`, JSON.stringify(data));
 };
 
-const checkRequiredEnvVars = (env, dataType) => {
-  let listOfRequiredVars;
+const seedNewLc = async env => {
+  // find and save LC config into a file locally before replacement
+  lcConfigCollection = configDB.collection("lcConfig");
+  const existingLcConfigCursor = await lcConfigCollection.find({});
+  const existingLcConfigData = await existingLcConfigCursor.toArray();
+  saveDataLocally(
+    existingLcConfigData,
+    `${env}-lcConfigBeforeReplacement-${new Date()}`
+  );
 
-  if (env === "production") {
-    listOfRequiredVars = envVarsForProduction;
-  } else {
-    listOfRequiredVars = envVarsForOthers;
-  }
+  // generate the new entry based on the current env
+  const newLcEntry = newLc(env);
 
-  listOfRequiredVars[dataType].forEach(variable => {
-    if (!variable) {
-      throw new Error(`Missing env var for environment: "${env}".`);
-    }
-  });
+  // add the new entry
+  await lcConfigCollection.insert(newLcEntry);
+
+  // find and log all updated LC config
+  const lcConfigSearchResult = await lcConfigCollection.find({});
+  await lcConfigSearchResult.forEach(info);
 };
 
-const seedNewLc = async () => {
-  for (let env in envUrls) {
-    checkRequiredEnvVars(env, "newLc");
+const seedNewPath = async env => {
+  // find and save path config into a file locally before replacement
+  pathConfigCollection = configDB.collection("pathConfig");
+  const existingPathConfigCursor = await pathConfigCollection.find({});
+  const existingPathConfigData = await existingPathConfigCursor.toArray();
+  saveDataLocally(
+    existingPathConfigData,
+    `${env}-pathConfigBeforeReplacement-${new Date()}`
+  );
 
-    // connect to the config db for this environment
-    await establishConnectionToMongo(envUrls[env]);
+  // add the new entry
+  console.log(newPath);
+  await pathConfigCollection.insert(newPath());
 
-    // find and save LC config into a file locally before replacement
-    lcConfigCollection = configDB.collection("lcConfig");
-    const existingLcConfigCursor = await lcConfigCollection.find({});
-    const existingLcConfigData = await existingLcConfigCursor.toArray();
-    saveDataLocally(
-      existingLcConfigData,
-      `${env}-lcConfigBeforeReplacement-${new Date()}`
-    );
-
-    // generate the new entry based on the current env
-    const newLcEntry = newLc(env);
-
-    // add the new entry
-    await lcConfigCollection.insert(newLcEntry);
-
-    // find and log all updated LC config
-    const lcConfigSearchResult = await lcConfigCollection.find({});
-    await lcConfigSearchResult.forEach(info);
-  }
-  process.exit(0);
+  // find and log all updated path config
+  const pathConfigSearchResult = await pathConfigCollection.find({});
+  await pathConfigSearchResult.forEach(info);
 };
 
-const seedNewPath = async () => {
-  for (let env in envUrls) {
-    checkRequiredEnvVars(env, "newPath");
+const seedNewNotify = async env => {
+  // find and save Notify config into a file locally before replacement
+  notifyConfigCollection = configDB.collection("notifyConfig");
+  const existingNotifyConfigCursor = await notifyConfigCollection.find({});
+  const existingNotifyConfigData = await existingNotifyConfigCursor.toArray();
+  saveDataLocally(
+    existingNotifyConfigData,
+    `${env}-notifyConfigBeforeReplacement-${new Date()}`
+  );
 
-    // connect to the config db for this environment
-    await establishConnectionToMongo(envUrls[env]);
+  // add the new entry
+  await notifyConfigCollection.insert(newNotify());
 
-    // find and save path config into a file locally before replacement
-    pathConfigCollection = configDB.collection("pathConfig");
-    const existingPathConfigCursor = await pathConfigCollection.find({});
-    const existingPathConfigData = await existingPathConfigCursor.toArray();
-    saveDataLocally(
-      existingPathConfigData,
-      `${env}-pathConfigBeforeReplacement-${new Date()}`
-    );
-
-    // add the new entry
-    await pathConfigCollection.insert(newPath);
-
-    // find and log all updated path config
-    const pathConfigSearchResult = await pathConfigCollection.find({});
-    await pathConfigSearchResult.forEach(info);
-  }
-  process.exit(0);
-};
-
-const seedNewNotify = async () => {
-  for (let env in envUrls) {
-    checkRequiredEnvVars(env, "newNotify");
-
-    // connect to the config db for this environment
-    await establishConnectionToMongo(envUrls[env]);
-
-    // find and save Notify config into a file locally before replacement
-    notifyConfigCollection = configDB.collection("notifyConfig");
-    const existingNotifyConfigCursor = await notifyConfigCollection.find({});
-    const existingNotifyConfigData = await existingNotifyConfigCursor.toArray();
-    saveDataLocally(
-      existingNotifyConfigData,
-      `${env}-notifyConfigBeforeReplacement-${new Date()}`
-    );
-
-    // add the new entry
-    await notifyConfigCollection.insert(newNotify);
-
-    // find and log all updated Notify config
-    const notifyConfigSearchResult = await notifyConfigCollection.find({});
-    await notifyConfigSearchResult.forEach(info);
-  }
-  process.exit(0);
+  // find and log all updated Notify config
+  const notifyConfigSearchResult = await notifyConfigCollection.find({});
+  await notifyConfigSearchResult.forEach(info);
 };
 
 const envAndActionQuestions = [
@@ -174,6 +128,29 @@ const envAndActionQuestions = [
   }
 ];
 
+const envUrlQuestions = {
+  dev: {
+    type: "input",
+    name: "config_db_url_dev",
+    message: "Enter the DEV environment config db URL"
+  },
+  test: {
+    type: "input",
+    name: "config_db_url_test",
+    message: "Enter the TEST environment config db URL"
+  },
+  staging: {
+    type: "input",
+    name: "config_db_url_staging",
+    message: "Enter the STAGING environment config db URL"
+  },
+  production: {
+    type: "input",
+    name: "config_db_url_production",
+    message: "Enter the PRODUCTION environment config db URL"
+  }
+};
+
 const lcQuestions = {
   allEnvs: [
     {
@@ -183,21 +160,14 @@ const lcQuestions = {
     },
     {
       type: "input",
-      name: "SEED_LC_EMAIL",
+      name: "SEED_LC_ID",
       message:
-        "Enter the email address that the council wants displayed to users"
+        "Enter the four-digit numeric ID/code for the new local council, e.g. 1234"
     },
     {
       type: "input",
-      name: "SEED_LC_NOTIFY_EMAIL",
-      message:
-        "Enter the email address that the council wants to be notified on"
-    },
-    {
-      type: "input",
-      name: "SEED_LC_PHONE_NUMBER",
-      message:
-        "(OPTIONAL) Enter the phone number that the council wants displayed to users"
+      name: "SEED_LC_URL",
+      message: "Enter the url string of the new local council, e.g. west-dorset"
     }
   ],
   nonProduction: [
@@ -219,6 +189,24 @@ const lcQuestions = {
     }
   ],
   production: [
+    {
+      type: "input",
+      name: "SEED_LC_EMAIL",
+      message:
+        "Enter the email address that the council wants displayed to users"
+    },
+    {
+      type: "input",
+      name: "SEED_LC_NOTIFY_EMAIL",
+      message:
+        "Enter the email address that the council wants to be notified on"
+    },
+    {
+      type: "input",
+      name: "SEED_LC_PHONE_NUMBER",
+      message:
+        "(OPTIONAL) Enter the phone number that the council wants displayed to users"
+    },
     {
       type: "input",
       name: "SEED_TASCOMI_URL_LC",
@@ -278,6 +266,10 @@ const runSeed = async () => {
 
   const dataQuestions = [];
 
+  envAndActionAnswers.environments.forEach(env => {
+    dataQuestions.push(envUrlQuestions[env]);
+  });
+
   const productionSelected = envAndActionAnswers.environments.includes(
     "production"
   );
@@ -328,15 +320,26 @@ const runSeed = async () => {
     seedNewNotify
   };
 
-  // const processArgSeedScriptName = process.argv[2];
-  // try {
-  //   await seedScripts[processArgSeedScriptName]();
-  // } catch (err) {
-  //   error(
-  //     "SEED FAILED. Check that the new record has a new _id property, as overwriting existing records is not possible."
-  //   );
-  //   error(err);
-  // }
+  for (let env in envAndActionAnswers.environments) {
+    const envName = envAndActionAnswers.environments[env];
+    const configDbUrl = dataAnswers[`config_db_url_${envName}`];
+    await establishConnectionToMongo(configDbUrl);
+
+    for (let action in envAndActionAnswers.actions) {
+      const scriptName = envAndActionAnswers.actions[action];
+
+      try {
+        await seedScripts[scriptName](envName);
+      } catch (err) {
+        error(
+          "SEED FAILED. Check that the new record has a unique _id property, as overwriting existing records is not possible."
+        );
+        error(err);
+      }
+    }
+  }
+
+  process.exit(0);
 };
 
 runSeed();

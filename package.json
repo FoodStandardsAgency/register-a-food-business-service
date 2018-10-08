@@ -16,20 +16,21 @@
     "format": "prettier --write '{src,tests}/**/*.js'",
     "start": "node src/app.js",
     "start:prod": "export NODE_ENV=production && node src/app.js",
-    "seed:configdb:newlc": "node src/connectors/configDb/configDb-seed/configDb.seed seedNewLc",
-    "seed:configdb:newpath": "node src/connectors/configDb/configDb-seed/configDb.seed seedNewPath",
-    "seed:configdb:newnotify": "node src/connectors/configDb/configDb-seed/configDb.seed seedNewNotify"
+    "seed:configdb": "node src/connectors/configDb/configDb-seed/configDb.seed"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/FoodStandardsAgency/register-a-food-business-service.git"
+    "url":
+      "git+https://github.com/FoodStandardsAgency/register-a-food-business-service.git"
   },
   "author": "",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/FoodStandardsAgency/register-a-food-business-service#issues"
+    "url":
+      "https://github.com/FoodStandardsAgency/register-a-food-business-service#issues"
   },
-  "homepage": "https://github.com/FoodStandardsAgency/register-a-food-business-service#readme",
+  "homepage":
+    "https://github.com/FoodStandardsAgency/register-a-food-business-service#readme",
   "dependencies": {
     "@slice-and-dice/fsa-rof": "1.0.3",
     "@slice-and-dice/register-a-food-business-validation": "1.13.1",

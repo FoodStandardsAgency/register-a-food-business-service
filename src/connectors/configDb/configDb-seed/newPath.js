@@ -1,4 +1,4 @@
-module.exports = {
+module.exports = () => ({
   _id: process.env.SEED_DATA_VERSION_PATH,
   path: {
     "/index": {
@@ -165,4 +165,4 @@ module.exports = {
       switches: {}
     }
   }
-};
+});

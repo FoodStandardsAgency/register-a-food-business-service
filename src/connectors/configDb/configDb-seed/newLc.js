@@ -1,6 +1,6 @@
 module.exports = env => ({
-  _id: 9999,
-  local_council: "Test Council",
+  _id: Number(process.env.SEED_LC_ID),
+  local_council: process.env.SEED_LC_NAME,
   local_council_email:
     env === "production"
       ? process.env.SEED_LC_EMAIL
@@ -11,7 +11,7 @@ module.exports = env => ({
       : ["fsatestemail.valid@gmail.com"],
   local_council_phone_number:
     env === "production" ? process.env.SEED_LC_PHONE_NUMBER : "01234 567890",
-  local_council_url: "test",
+  local_council_url: process.env.SEED_LC_URL,
   auth: {
     url:
       env === "production"
