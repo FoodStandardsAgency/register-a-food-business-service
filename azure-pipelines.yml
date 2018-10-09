@@ -4,59 +4,62 @@
 # https://aka.ms/yaml
 
 pool:
-  vmImage: "Ubuntu 16.04"
+  vmImage: 'Ubuntu 16.04'
 
 steps:
-  - script: echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > .npmrc
-    displayName: Create .npmrc
 
-  - script: npm -v
-    displayName: "Npm version"
+- script: echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > .npmrc
+  displayName: Create .npmrc
 
-  - script: npm install -g yarn@1.6.0
-    displayName: "Install yarn"
+- script: npm -v
+  displayName: 'Npm version'
 
-  - script: yarn format:verify
-    displayName: "Format"
+- script: npm install
+  displayName: 'Install'
 
-  - script: yarn lint
-    displayName: "Lint"
+- script: npm run format:verify
+  displayName: 'Format'
 
-  - script: yarn test:unit:ci
-    displayName: "Unit tests"
+- script: npm run lint
+  displayName: 'Lint'
 
-  - task: PublishTestResults@2
-    inputs:
-      testRunner: JUnit
-      testResultsFile: ./reports/TEST-unit.xml
-      testRunTitle: Unit tests
-      mergeTestResults: false
+- script: npm run test:unit:ci
+  displayName: 'Unit tests'
 
-  - task: PublishCodeCoverageResults@1
-    inputs:
-      codeCoverageTool: Cobertura
-      summaryFileLocation: "$(System.DefaultWorkingDirectory)/coverage/cobertura-coverage.xml"
-      reportDirectory: "$(System.DefaultWorkingDirectory)/coverage/lcov-report"
+- task: PublishTestResults@2
+  inputs:
+    testRunner: JUnit
+    testResultsFile: ./reports/TEST-unit.xml
+    testRunTitle: Unit tests
+    mergeTestResults: false
 
-  - script: yarn test:integration
-    displayName: "Integration tests"
+- task: PublishCodeCoverageResults@1
+  inputs: 
+    codeCoverageTool: Cobertura
+    summaryFileLocation: '$(System.DefaultWorkingDirectory)/coverage/cobertura-coverage.xml'
+    reportDirectory: '$(System.DefaultWorkingDirectory)/coverage/lcov-report'
 
-  - task: PublishTestResults@2
-    inputs:
-      testRunner: JUnit
-      testResultsFile: ./reports/TEST-integration.xml
-      testRunTitle: Integration tests
-      mergeTestResults: false
+- script: npm run test:integration
+  displayName: 'Integration tests'
 
-  - script: yarn --production
-    displayName: Prune dev dependencies
+- task: PublishTestResults@2
+  inputs:
+    testRunner: JUnit
+    testResultsFile: ./reports/TEST-integration.xml
+    testRunTitle: Integration tests
+    mergeTestResults: false
 
-  - script: rm -rf coverage reports
-    displayName: Remove reporting folders
+- script: npm prune --production
+  displayName: Prune dev dependencies
 
-  - task: ArchiveFiles@2
-    inputs:
-      rootFolderOrFile: "$(System.DefaultWorkingDirectory)"
-      includeRootFolder: false
+- script: rm -rf coverage reports
+  displayName: Remove reporting folders
+  
+- task: ArchiveFiles@2
+  inputs:
+    rootFolderOrFile: '$(System.DefaultWorkingDirectory)'
+    includeRootFolder: false
 
-  - task: PublishBuildArtifacts@1
+- task: PublishBuildArtifacts@1
+
+
