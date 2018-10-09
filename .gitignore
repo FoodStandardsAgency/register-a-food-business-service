@@ -60,5 +60,7 @@ typings/
 # next.js build output
 .next
 
+reports
+
 # Saved DB data before seeding
 saved-data
