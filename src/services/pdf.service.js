@@ -147,8 +147,31 @@ const fontDescriptors = {
     )
   }
 };
-const printer = new PdfPrinter(fontDescriptors);
 
-const pdfDoc = printer.createPdfKitDocument(docDefinition);
-pdfDoc.pipe(fs.createWriteStream("basics.pdf"));
-pdfDoc.end();
+const pdfGenerator = () => {
+  const printer = new PdfPrinter(fontDescriptors);
+  // const pdfDoc = printer.createPdfKitDocument(docDefinition);
+  // // pdfDoc.pipe(fs.createWriteStream("basics.pdf"));
+  // pdfDoc.end();
+
+  // const stream = pdfDoc.pipe(btoa());
+  // console.log(stream);
+  var doc = printer.createPdfKitDocument(docDefinition);
+
+  var chunks = [];
+  var result;
+  let base64Pdf;
+
+  doc.on("data", function(chunk) {
+    chunks.push(chunk);
+  });
+  doc.on("end", function() {
+    result = Buffer.concat(chunks);
+    base64Pdf = result.toString("base64");
+
+    // callback("data:application/pdf;base64," + result.toString("base64"));
+  });
+  doc.end();
+};
+console.log(pdfGenerator());
+module.exports = { pdfGenerator };
