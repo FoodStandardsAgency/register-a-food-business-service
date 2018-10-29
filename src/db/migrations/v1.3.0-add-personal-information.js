@@ -27,7 +27,16 @@ module.exports = {
         "operator_charity_name",
         Sequelize.STRING
       ),
-      queryInterface.addColumn("operators", "operator_name", Sequelize.STRING),
+      queryInterface.addColumn(
+        "operators",
+        "operator_first_name",
+        Sequelize.STRING
+      ),
+      queryInterface.addColumn(
+        "operators",
+        "operator_last_name",
+        Sequelize.STRING
+      ),
       queryInterface.addColumn(
         "operators",
         "operator_postcode",
@@ -90,7 +99,8 @@ module.exports = {
       queryInterface.removeColumn("establishments", "establishment_email"),
       queryInterface.removeColumn("operators", "operator_company_name"),
       queryInterface.removeColumn("operators", "operator_charity_name"),
-      queryInterface.removeColumn("operators", "operator_name"),
+      queryInterface.removeColumn("operators", "operator_first_name"),
+      queryInterface.removeColumn("operators", "operator_last_name"),
       queryInterface.removeColumn("operators", "operator_postcode"),
       queryInterface.removeColumn("operators", "operator_first_line"),
       queryInterface.removeColumn("operators", "operator_street"),
