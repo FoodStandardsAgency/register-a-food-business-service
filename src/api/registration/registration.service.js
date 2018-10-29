@@ -277,7 +277,10 @@ const sendEmailOfType = async (
       lcContactConfig
     );
 
-    const pdfFile = await pdfGenerator();
+    let pdfFile = "";
+    if (typeOfEmail === "LC") {
+      pdfFile = await pdfGenerator();
+    }
 
     await sendSingleEmail(templateId, recipientEmailAddress, data, pdfFile);
     emailSent.success = true;

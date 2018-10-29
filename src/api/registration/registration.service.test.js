@@ -43,6 +43,10 @@ jest.mock("../../config", () => ({
 
 jest.mock("node-fetch");
 
+jest.mock("../../services/pdf.service");
+
+const { pdfGenerator } = require("../../services/pdf.service");
+
 const { sendSingleEmail } = require("../../connectors/notify/notify.connector");
 
 const {
@@ -432,7 +436,10 @@ describe("Function: sendEmailOfType: ", () => {
   };
 
   describe("When the connector responds successfully", () => {
+    const testPdfFile = "example base64 string";
+
     beforeEach(async () => {
+      pdfGenerator.mockImplementation(() => testPdfFile);
       sendSingleEmail.mockImplementation(() => ({
         id: "123-456"
       }));
@@ -449,7 +456,8 @@ describe("Function: sendEmailOfType: ", () => {
       expect(sendSingleEmail).toHaveBeenLastCalledWith(
         NOTIFY_TEMPLATE_ID_LC,
         testRecipient,
-        testTransformedData
+        testTransformedData,
+        testPdfFile
       );
     });
 
@@ -480,10 +488,13 @@ describe("Function: sendEmailOfType: ", () => {
   });
 
   describe("When called with typeOfEmail FBO", () => {
+    const testPdfFile = "";
     beforeEach(async () => {
+      pdfGenerator.mockImplementation(() => testPdfFile);
       sendSingleEmail.mockImplementation(() => ({
         id: "123-456"
       }));
+
       result = await sendEmailOfType(
         "FBO",
         testRegistration,
@@ -497,7 +508,8 @@ describe("Function: sendEmailOfType: ", () => {
       expect(sendSingleEmail).toHaveBeenLastCalledWith(
         NOTIFY_TEMPLATE_ID_FBO,
         testRecipient,
-        testTransformedData
+        testTransformedData,
+        testPdfFile
       );
     });
 

@@ -169,5 +169,5 @@ const pdfGenerator = () => {
     pdfMake.end();
   });
 };
-
+console.log(pdfGenerator);
 module.exports = { pdfGenerator };
