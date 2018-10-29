@@ -8,8 +8,23 @@ module.exports = (sequelize, DataTypes) => {
         autoIncrement: true
       },
       operator_type: { type: DataTypes.STRING },
+      operator_comapny_name: { type: DataTypes.STRING },
       operator_company_house_number: { type: DataTypes.STRING },
-      operator_charity_number: { type: DataTypes.STRING }
+      operator_charity_name: { type: DataTypes.STRING },
+      operator_charity_number: { type: DataTypes.STRING },
+      operator_first_name: { type: DataTypes.STRING },
+      operator_last_name: { type: DataTypes.STRING },
+      operator_postcode: { type: DataTypes.STRING },
+      operator_first_line: { type: DataTypes.STRING },
+      operator_street: { type: DataTypes.STRING },
+      operator_town: { type: DataTypes.STRING },
+      operator_primary_number: { type: DataTypes.STRING },
+      operator_secondary_number: { type: DataTypes.STRING },
+      operator_email: { type: DataTypes.STRING },
+      contact_representative_name: { type: DataTypes.STRING },
+      contact_representative_role: { type: DataTypes.STRING },
+      contact_representative_number: { type: DataTypes.STRING },
+      contact_representative_email: { type: DataTypes.STRING }
     },
     {}
   );
