@@ -140,9 +140,9 @@ describe("Function: getLocalCouncilDetails", () => {
 
     it("should have called the connect function only once", async () => {
       clearLcConfigCache();
-      response = await getAllLocalCouncilConfig();
+      await getAllLocalCouncilConfig();
       clearLcConfigCache();
-      response = await getAllLocalCouncilConfig();
+      await getAllLocalCouncilConfig();
 
       expect(mongodb.MongoClient.connect).toHaveBeenCalledTimes(1);
     });
