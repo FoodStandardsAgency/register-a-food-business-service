@@ -1,6 +1,6 @@
 {
   "name": "register-a-food-business-service",
-  "version": "3.5.0",
+  "version": "3.6.0",
   "description": "",
   "main": "src/app.js",
   "engines": {
@@ -22,7 +22,9 @@
     "format:verify": "prettier --list-different '{src,tests}/**/*.js'",
     "format": "prettier --write '{src,tests}/**/*.js'",
     "start": "node src/app.js",
-    "seed:configdb": "node src/connectors/configDb/configDb-seed/configDb.seed"
+    "start:prod": "export NODE_ENV=production && node src/app.js",
+    "seed:configdb": "node src/connectors/configDb/configDb-seed/configDb.seed",
+    "migrate": "export NODE_ENV=production && sequelize db:migrate"
   },
   "repository": {
     "type": "git",

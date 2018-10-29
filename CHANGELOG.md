@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## v3.6.0 - 29th October 2018 (unreleased)
+
+### Added
+
+* Added SDB-930 DB Enhancements
+
 ## v3.5.0 - 4th October 2018 (unreleased)
 
 ### Added
