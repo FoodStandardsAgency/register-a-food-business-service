@@ -149,29 +149,27 @@ const fontDescriptors = {
 };
 
 const pdfGenerator = () => {
-  const printer = new PdfPrinter(fontDescriptors);
-  // const pdfDoc = printer.createPdfKitDocument(docDefinition);
-  // // pdfDoc.pipe(fs.createWriteStream("basics.pdf"));
-  // pdfDoc.end();
+  return new Promise((resolve, reject) => {
+    const printer = new PdfPrinter(fontDescriptors);
+    const pdfMake = printer.createPdfKitDocument(docDefinition);
+    const segmentsOfPdf = [];
 
-  // const stream = pdfDoc.pipe(btoa());
-  // console.log(stream);
-  var doc = printer.createPdfKitDocument(docDefinition);
+    pdfMake.on("data", segment => {
+      segmentsOfPdf.push(segment);
+    });
 
-  var chunks = [];
-  var result;
-  let base64Pdf;
+    const convertToBase64 = () => {
+      const result = Buffer.concat(segmentsOfPdf);
+      const base64Pdf = result.toString("base64");
+      console.log(base64Pdf);
+      resolve(base64Pdf);
+    };
 
-  doc.on("data", function(chunk) {
-    chunks.push(chunk);
+    pdfMake.on("end", convertToBase64);
+    pdfMake.end();
   });
-  doc.on("end", function() {
-    result = Buffer.concat(chunks);
-    base64Pdf = result.toString("base64");
-
-    // callback("data:application/pdf;base64," + result.toString("base64"));
-  });
-  doc.end();
 };
-console.log(pdfGenerator());
+
+pdfGenerator();
+
 module.exports = { pdfGenerator };
