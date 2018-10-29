@@ -137,11 +137,6 @@ const createFoodBusinessRegistration = async (
     } else {
       requestData.premise_domestic_premises = "f";
     }
-    if (premiseDetails.establishment_type === "Home or domestic premises") {
-      requestData.premise_domestic_premises = "t";
-    } else {
-      requestData.premise_domestic_premises = "f";
-    }
     if (premiseDetails.establishment_type === "Mobile or moveable premises") {
       requestData.premise_mobile_premises = "t";
     } else {
