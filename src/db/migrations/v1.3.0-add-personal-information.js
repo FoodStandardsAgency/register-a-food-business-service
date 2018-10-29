@@ -38,7 +38,11 @@ module.exports = {
         "operator_first_line",
         Sequelize.STRING
       ),
-      queryInterface.addColumn("operators", "operator_street", Sequelize.STRING),
+      queryInterface.addColumn(
+        "operators",
+        "operator_street",
+        Sequelize.STRING
+      ),
       queryInterface.addColumn("operators", "operator_town", Sequelize.STRING),
       queryInterface.addColumn(
         "operators",
