@@ -1,5 +1,6 @@
 const moment = require("moment");
 const fetch = require("node-fetch");
+const { pdfGenerator } = require("../../services/pdf.service");
 
 const {
   NOTIFY_TEMPLATE_ID_FBO,
@@ -275,7 +276,10 @@ const sendEmailOfType = async (
       postRegistrationMetadata,
       lcContactConfig
     );
-    await sendSingleEmail(templateId, recipientEmailAddress, data);
+
+    const pdfFile = await pdfGenerator();
+
+    await sendSingleEmail(templateId, recipientEmailAddress, data, pdfFile);
     emailSent.success = true;
 
     statusEmitter.emit("incrementCount", "emailNotificationsSucceeded");

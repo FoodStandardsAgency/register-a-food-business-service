@@ -1,5 +1,4 @@
 const PdfPrinter = require("pdfmake/src/printer");
-const fs = require("fs");
 const path = require("path");
 
 const docDefinition = {
@@ -34,7 +33,7 @@ const docDefinition = {
       bold: true,
       alignment: "center"
     },
-    // "\n\n\n\n",
+    "\n\n\n\n",
     {
       style: "bigger",
       text: "Operator details",
@@ -52,7 +51,7 @@ const docDefinition = {
         }
       ]
     },
-    // "\n",
+    "\n",
     {
       style: "bigger",
       columns: [
@@ -67,7 +66,7 @@ const docDefinition = {
         }
       ]
     },
-    // "\n",
+    "\n",
     {
       canvas: [
         {
@@ -80,7 +79,7 @@ const docDefinition = {
         }
       ]
     },
-    // "\n",
+    "\n",
     {
       style: "bigger",
       columns: [
@@ -95,7 +94,7 @@ const docDefinition = {
         }
       ]
     },
-    // "\n",
+    "\n",
     {
       canvas: [
         {
@@ -150,24 +149,21 @@ const fontDescriptors = {
 
 const pdfGenerator = () => {
   return new Promise((resolve, reject) => {
-    let printer = null;
-    let pdfMake = null;
-    printer = new PdfPrinter(fontDescriptors);
-    pdfMake = printer.createPdfKitDocument(docDefinition);
+    const printer = new PdfPrinter(fontDescriptors);
+    const clonedDocDef = JSON.parse(JSON.stringify(docDefinition));
+    const pdfMake = printer.createPdfKitDocument(clonedDocDef);
+
     const segmentsOfPdf = [];
+
+    const convertToBase64 = () => {
+      const result = Buffer.concat(segmentsOfPdf);
+      const base64Pdf = result.toString("base64");
+      resolve(base64Pdf);
+    };
 
     pdfMake.on("data", segment => {
       segmentsOfPdf.push(segment);
     });
-
-    const convertToBase64 = () => {
-      let base64Pdf = null;
-      let result = null;
-
-      result = Buffer.concat(segmentsOfPdf);
-      base64Pdf = result.toString("base64");
-      resolve(base64Pdf);
-    };
 
     pdfMake.on("end", convertToBase64);
     pdfMake.end();

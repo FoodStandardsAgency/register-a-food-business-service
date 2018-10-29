@@ -1,7 +1,5 @@
 const moment = require("moment");
 const optionalNotifyFields = require("./optional-notify-fields.json");
-const { pdfGenerator } = require("./pdf.service");
-const fs = require("fs");
 const { NotifyClient } = require("notifications-node-client");
 
 const transformDataForNotify = (
@@ -55,8 +53,6 @@ const transformDataForNotify = (
   postRegistrationMetadataClone.reg_submission_date = moment(
     postRegistrationMetadataClone.reg_submission_date
   ).format("DD MMM YYYY");
-
-  pdfGenerator();
 
   const flattenedData = Object.assign(
     {},

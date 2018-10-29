@@ -4,7 +4,12 @@ const { NOTIFY_KEY } = require("../../config");
 const { logEmitter } = require("../../services/logging.service");
 const { pdfGenerator } = require("../../services/pdf.service");
 
-const sendSingleEmail = async (templateId, recipientEmail, flattenedData) => {
+const sendSingleEmail = async (
+  templateId,
+  recipientEmail,
+  flattenedData,
+  pdfFile
+) => {
   logEmitter.emit("functionCall", "notify.connector", "sendSingleEmail");
 
   let notifyClient;
@@ -23,10 +28,7 @@ const sendSingleEmail = async (templateId, recipientEmail, flattenedData) => {
       { personalisation: flattenedData }
     ];
 
-    let pdf_file = null;
-    pdf_file = await pdfGenerator();
-    flattenedData.link_to_document = "";
-    flattenedData.link_to_document = notifyClient.prepareUpload(pdf_file);
+    flattenedData.link_to_document = notifyClient.prepareUpload(pdfFile);
 
     const notifyResponse = await notifyClient.sendEmail(...notifyArguments);
     const responseBody = notifyResponse.body;

@@ -50,15 +50,15 @@ const createNewRegistration = async (registration, localCouncilUrl) => {
     hygieneCouncilCode
   );
 
-  // const tascomiResponse = await sendTascomiRegistration(
-  //   registration,
-  //   Object.assign({}, postRegistrationMetadata, {
-  //     hygiene_council_code: hygieneCouncilCode
-  //   }),
-  //   localCouncilUrl
-  // );
+  const tascomiResponse = await sendTascomiRegistration(
+    registration,
+    Object.assign({}, postRegistrationMetadata, {
+      hygiene_council_code: hygieneCouncilCode
+    }),
+    localCouncilUrl
+  );
 
-  // const tascomiObject = JSON.parse(tascomiResponse);
+  const tascomiObject = JSON.parse(tascomiResponse);
   const response = await saveRegistration(
     registration,
     postRegistrationMetadata["fsa-rn"]
@@ -97,7 +97,7 @@ const createNewRegistration = async (registration, localCouncilUrl) => {
     response,
     postRegistrationMetadata,
     {
-      // tascomiResponse: tascomiObject
+      tascomiResponse: tascomiObject
     },
     { email_fbo: notifySuccessOrFailureFbo },
     { email_lc: notifySuccessOrFailureLc },
