@@ -4,13 +4,12 @@ const { CONFIGDB_URL } = require("../../config");
 const { logEmitter } = require("../../services/logging.service");
 const { statusEmitter } = require("../../services/statusEmitter.service");
 
-let client;
-let configDB;
-let lcConfigCollection, deletedIdsCollection;
+let client = undefined;
+let configDB = undefined;
 
 let allLcConfigData = [];
 
-const establishConnectionToMongo = async () => {
+const establishConnectionToMongo = async collectionName => {
   if (process.env.DOUBLE_MODE === "true") {
     logEmitter.emit(
       "doubleMode",
@@ -19,14 +18,14 @@ const establishConnectionToMongo = async () => {
     );
     lcConfigCollection = lcConfigCollectionDouble;
   } else {
-    client = await mongodb.MongoClient.connect(CONFIGDB_URL, {
-      useNewUrlParser: true
-    });
+    if (configDB === undefined) {
+      client = await mongodb.MongoClient.connect(CONFIGDB_URL, {
+        useNewUrlParser: true
+      });
+      configDB = client.db("register_a_food_business_config");
+    }
 
-    configDB = client.db("register_a_food_business_config");
-
-    lcConfigCollection = configDB.collection("lcConfig");
-    deletedIdsCollection = configDB.collection("deletedIds");
+    return configDB.collection(collectionName);
   }
 };
 
@@ -39,7 +38,7 @@ const getAllLocalCouncilConfig = async () => {
 
   if (allLcConfigData.length === 0) {
     try {
-      await establishConnectionToMongo();
+      const lcConfigCollection = await establishConnectionToMongo("lcConfig");
 
       const allLcConfigDataCursor = await lcConfigCollection.find({});
       allLcConfigData = allLcConfigDataCursor.toArray();
@@ -87,7 +86,7 @@ const clearLcConfigCache = () => {
 };
 
 const addDeletedId = async id => {
-  await establishConnectionToMongo();
+  const deletedIdsCollection = await establishConnectionToMongo("deletedIds");
 
   return deletedIdsCollection.insertOne({ id: id });
 };

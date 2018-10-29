@@ -4,9 +4,8 @@ const { cachedRegistrationsDouble } = require("./cacheDb.double");
 const { logEmitter } = require("../../services/logging.service");
 const { statusEmitter } = require("../../services/statusEmitter.service");
 
-let client;
-let cacheDB;
-let cachedRegistrations;
+let client = undefined;
+let cacheDB = undefined;
 
 const establishConnectionToMongo = async () => {
   if (process.env.DOUBLE_MODE === "true") {
@@ -15,22 +14,21 @@ const establishConnectionToMongo = async () => {
       "cacheDb.connector",
       "getAllLocalCouncilConfig"
     );
-    cachedRegistrations = cachedRegistrationsDouble;
+    return cachedRegistrationsDouble;
   } else {
-    client = await mongodb.MongoClient.connect(CACHEDB_URL, {
-      useNewUrlParser: true
-    });
+    if (cacheDB === undefined) {
+      client = await mongodb.MongoClient.connect(CACHEDB_URL, {});
+      cacheDB = client.db("register_a_food_business_cache");
+    }
 
-    cacheDB = client.db("register_a_food_business_cache");
-
-    cachedRegistrations = cacheDB.collection("cachedRegistrations");
+    return cacheDB.collection("cachedRegistrations");
   }
 };
 
 const cacheRegistration = async registration => {
   logEmitter.emit("functionCall", "cacheDb.connector", "cacheRegistration");
   try {
-    await establishConnectionToMongo();
+    const cachedRegistrations = await establishConnectionToMongo();
     const response = await cachedRegistrations.insertOne(registration);
 
     statusEmitter.emit("incrementCount", "storeRegistrationsInCacheSucceeded");
