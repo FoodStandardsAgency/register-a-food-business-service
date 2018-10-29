@@ -19,7 +19,9 @@ const establishConnectionToMongo = async collectionName => {
     return lcConfigCollectionDouble;
   } else {
     if (configDB === undefined) {
-      client = await mongodb.MongoClient.connect(CONFIGDB_URL, {});
+      client = await mongodb.MongoClient.connect(CONFIGDB_URL, {
+        useNewUrlParser: true
+      });
       configDB = client.db("register_a_food_business_config");
     }
     return configDB.collection(collectionName);

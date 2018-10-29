@@ -17,7 +17,9 @@ const establishConnectionToMongo = async () => {
     return cachedRegistrationsDouble;
   } else {
     if (cacheDB === undefined) {
-      client = await mongodb.MongoClient.connect(CACHEDB_URL, {});
+      client = await mongodb.MongoClient.connect(CACHEDB_URL, {
+        useNewUrlParser: true
+      });
       cacheDB = client.db("register_a_food_business_cache");
     }
 
