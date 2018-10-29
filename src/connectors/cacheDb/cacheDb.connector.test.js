@@ -1,14 +1,23 @@
 const mongodb = require("mongodb");
-const { cacheRegistration } = require("./cacheDb.connector");
+const {
+  cacheRegistration,
+  clearMongoConnection
+} = require("./cacheDb.connector");
 
 jest.mock("mongodb");
 
 describe("Connector: cacheDb", () => {
   let response;
+
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+
   describe("given the request is successful", () => {
     beforeEach(async () => {
       process.env.DOUBLE_MODE = false;
-      mongodb.MongoClient.connect.mockImplementation(() => ({
+      clearMongoConnection();
+      mongodb.MongoClient.connect.mockImplementation(async () => ({
         db: () => ({
           collection: () => ({
             insertOne: () => ({ insertedId: "764" })
@@ -18,7 +27,7 @@ describe("Connector: cacheDb", () => {
       response = await cacheRegistration({ reg: "data" });
     });
 
-    it("should return the response from the insertOne()", async () => {
+    it("should return the response from the insertOne()", () => {
       expect(response.insertedId).toBe("764");
     });
   });
@@ -26,6 +35,7 @@ describe("Connector: cacheDb", () => {
   describe("given the request throws an error", () => {
     beforeEach(async () => {
       process.env.DOUBLE_MODE = false;
+      clearMongoConnection();
       mongodb.MongoClient.connect.mockImplementation(() => ({
         db: () => ({
           collection: () => ({
@@ -36,14 +46,44 @@ describe("Connector: cacheDb", () => {
         })
       }));
       try {
-        await cacheRegistration({ reg: "data" });
+        response = await cacheRegistration({ reg: "data" });
       } catch (err) {
         response = err;
       }
     });
 
-    it("should catch the error", async () => {
+    it("should catch the error", () => {
       expect(response.message).toBe("Example mongo error");
+    });
+  });
+
+  describe("given two requests without clearing the mongo connection", () => {
+    beforeEach(async () => {
+      process.env.DOUBLE_MODE = false;
+      clearMongoConnection();
+      mongodb.MongoClient.connect.mockImplementation(async () => ({
+        db: () => ({
+          collection: () => ({
+            insertOne: () => ({ insertedId: "1000" })
+          })
+        })
+      }));
+
+      response = await cacheRegistration({ reg: "data" });
+
+      mongodb.MongoClient.connect.mockImplementation(async () => ({
+        db: () => ({
+          collection: () => ({
+            insertOne: () => ({ insertedId: "2000" })
+          })
+        })
+      }));
+
+      response = await cacheRegistration({ reg: "data" });
+    });
+
+    it("should have used the first mongo connnection both times", () => {
+      expect(response.insertedId).toBe("1000");
     });
   });
 

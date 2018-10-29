@@ -16,15 +16,12 @@ const establishConnectionToMongo = async collectionName => {
       "configDb.connector",
       "getAllLocalCouncilConfig"
     );
-    lcConfigCollection = lcConfigCollectionDouble;
+    return lcConfigCollectionDouble;
   } else {
     if (configDB === undefined) {
-      client = await mongodb.MongoClient.connect(CONFIGDB_URL, {
-        useNewUrlParser: true
-      });
+      client = await mongodb.MongoClient.connect(CONFIGDB_URL, {});
       configDB = client.db("register_a_food_business_config");
     }
-
     return configDB.collection(collectionName);
   }
 };
@@ -39,7 +36,6 @@ const getAllLocalCouncilConfig = async () => {
   if (allLcConfigData.length === 0) {
     try {
       const lcConfigCollection = await establishConnectionToMongo("lcConfig");
-
       const allLcConfigDataCursor = await lcConfigCollection.find({});
       allLcConfigData = allLcConfigDataCursor.toArray();
 
@@ -85,10 +81,20 @@ const clearLcConfigCache = () => {
   return allLcConfigData;
 };
 
+const clearMongoConnection = () => {
+  client = undefined;
+  configDB = undefined;
+};
+
 const addDeletedId = async id => {
   const deletedIdsCollection = await establishConnectionToMongo("deletedIds");
 
   return deletedIdsCollection.insertOne({ id: id });
 };
 
-module.exports = { getAllLocalCouncilConfig, clearLcConfigCache, addDeletedId };
+module.exports = {
+  getAllLocalCouncilConfig,
+  clearLcConfigCache,
+  clearMongoConnection,
+  addDeletedId
+};

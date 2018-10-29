@@ -66,4 +66,9 @@ const cacheRegistration = async registration => {
   }
 };
 
-module.exports = { cacheRegistration };
+const clearMongoConnection = () => {
+  client = undefined;
+  cacheDB = undefined;
+};
+
+module.exports = { cacheRegistration, clearMongoConnection };

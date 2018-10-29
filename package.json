@@ -9,7 +9,7 @@
   "scripts": {
     "test": "jest ./src --coverage",
     "test:unit:ci": "export TEST_TYPE=unit && jest ./src --coverage",
-    "test:watch": "jest --watch",
+    "test:watch": "export TEST_TYPE=unit && jest ./src --watch",
     "test:integration":
       "export TEST_TYPE=integration && jest tests/integration/*.js",
     "test:contract": "jest tests/contract/*.js",
