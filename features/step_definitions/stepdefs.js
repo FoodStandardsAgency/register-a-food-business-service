@@ -94,7 +94,7 @@ Given("I have a new registration with all valid required fields", function() {
         declaration3: "Declaration"
       }
     },
-    local_council_url: "cardiff"
+    local_council_url: "west-dorset"
   };
 });
 
@@ -140,7 +140,7 @@ Given(
           declaration3: "Declaration"
         }
       },
-      local_council_url: "cardiff"
+      local_council_url: "west-dorset"
     };
   }
 );
