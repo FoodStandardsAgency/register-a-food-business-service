@@ -36,7 +36,8 @@ const notifyClientDouble = {
         );
       }
     });
-  }
+  },
+  prepareUpload: () => "www.link-to-document.com"
 };
 
 module.exports = { notifyClientDouble };

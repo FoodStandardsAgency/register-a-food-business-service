@@ -2,7 +2,6 @@ const { NotifyClient } = require("notifications-node-client");
 const { notifyClientDouble } = require("./notify.double");
 const { NOTIFY_KEY } = require("../../config");
 const { logEmitter } = require("../../services/logging.service");
-const { pdfGenerator } = require("../../services/pdf.service");
 
 const sendSingleEmail = async (
   templateId,

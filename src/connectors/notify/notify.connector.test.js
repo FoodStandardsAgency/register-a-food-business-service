@@ -9,8 +9,10 @@ describe("Function: sendSingleEmail", () => {
   let mockNotifyClient;
   const testTemplateId = "123456";
   const testRecipient = "email@email.com";
-  const testFlattenedData = {
-    example: "value"
+  const testPdfFile = "";
+  let testFlattenedData = {
+    example: "value",
+    link_to_document: "pdfFile"
   };
 
   const args = [testTemplateId, testRecipient, testFlattenedData];
@@ -39,7 +41,8 @@ describe("Function: sendSingleEmail", () => {
         mockNotifyClient = {
           sendEmail: jest.fn(async () => {
             throw new Error("secretOrPrivateKey must have a value");
-          })
+          }),
+          prepareUpload: jest.fn()
         };
         NotifyClient.mockImplementation(() => mockNotifyClient);
       });
@@ -66,7 +69,8 @@ describe("Function: sendSingleEmail", () => {
             };
             error.message = "notify error";
             throw error;
-          })
+          }),
+          prepareUpload: jest.fn()
         };
         NotifyClient.mockImplementation(() => mockNotifyClient);
         try {
@@ -97,7 +101,8 @@ describe("Function: sendSingleEmail", () => {
             };
             error.message = "notify error";
             throw error;
-          })
+          }),
+          prepareUpload: jest.fn()
         };
         NotifyClient.mockImplementation(() => mockNotifyClient);
         try {
@@ -120,7 +125,8 @@ describe("Function: sendSingleEmail", () => {
       mockNotifyClient = {
         sendEmail: jest.fn(async () => {
           return { body: "This is a success message from the notify client" };
-        })
+        }),
+        prepareUpload: jest.fn()
       };
       NotifyClient.mockImplementation(() => mockNotifyClient);
     });
@@ -150,6 +156,7 @@ describe("Function: sendSingleEmail", () => {
       notifyClientDouble.sendEmail.mockImplementation(async () => ({
         body: "Double response"
       }));
+      notifyClientDouble.prepareUpload.mockImplementation(() => {});
     });
 
     it("Should resolve with the double message", async () => {
