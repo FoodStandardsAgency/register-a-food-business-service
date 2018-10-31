@@ -286,16 +286,17 @@ describe("RegistrationDb connector", () => {
         Registration.create.mockImplementation(() => {
           return "success";
         });
-        result = await createRegistration("fsa-rn");
+        result = await createRegistration("fsa-rn", "cardiff");
       });
 
       it("Should return the response", () => {
         expect(result).toBe("success");
       });
 
-      it("Should call the create model with fsa rn", () => {
+      it("Should call the create model with fsa rn and council", () => {
         expect(Registration.create).toBeCalledWith({
-          fsa_rn: "fsa-rn"
+          fsa_rn: "fsa-rn",
+          council: "cardiff"
         });
       });
     });
