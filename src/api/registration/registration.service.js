@@ -277,11 +277,11 @@ const sendEmailOfType = async (
       lcContactConfig
     );
 
-    let pdfFile = "";
+    let pdfFile = undefined;
     if (typeOfEmail === "LC") {
-      pdfFile = await pdfGenerator();
+      pdfFile = await pdfGenerator(data);
     }
-
+    console.log(data);
     await sendSingleEmail(templateId, recipientEmailAddress, data, pdfFile);
     emailSent.success = true;
 

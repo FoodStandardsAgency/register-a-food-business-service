@@ -509,7 +509,7 @@ describe("Function: sendEmailOfType: ", () => {
         NOTIFY_TEMPLATE_ID_FBO,
         testRecipient,
         testTransformedData,
-        testPdfFile
+        undefined
       );
     });
 

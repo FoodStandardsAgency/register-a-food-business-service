@@ -9,13 +9,12 @@ describe("Function: sendSingleEmail", () => {
   let mockNotifyClient;
   const testTemplateId = "123456";
   const testRecipient = "email@email.com";
-  const testPdfFile = "";
+  const testPdfFile = "example pdf file";
   let testFlattenedData = {
-    example: "value",
-    link_to_document: "pdfFile"
+    example: "value"
   };
 
-  const args = [testTemplateId, testRecipient, testFlattenedData];
+  const args = [testTemplateId, testRecipient, testFlattenedData, testPdfFile];
 
   describe("given the NotifyClient constructor throws an error when used", () => {
     beforeEach(async () => {
@@ -143,6 +142,28 @@ describe("Function: sendSingleEmail", () => {
           testTemplateId,
           testRecipient,
           { personalisation: testFlattenedData }
+        );
+      });
+    });
+    describe("given pdfFile is undefined", () => {
+      let result;
+      beforeEach(async () => {
+        result = await sendSingleEmail(
+          testTemplateId,
+          testRecipient,
+          testFlattenedData,
+          undefined
+        );
+      });
+      it("sendEmail function is called with link_to_document as an empty string", () => {
+        const flattenedDataWithPdfEmptyString = {
+          ...testFlattenedData,
+          link_to_document: ""
+        };
+        expect(mockNotifyClient.sendEmail).toHaveBeenLastCalledWith(
+          testTemplateId,
+          testRecipient,
+          { personalisation: flattenedDataWithPdfEmptyString }
         );
       });
     });

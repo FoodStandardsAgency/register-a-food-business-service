@@ -1,11 +1,11 @@
-const { docDefinition, fontDescriptors } = require("./pdf-config");
+const { docDefinitionGenerator, fontDescriptors } = require("./pdf-config");
 const PdfPrinter = require("pdfmake/src/printer");
 
-const pdfGenerator = () => {
+const pdfGenerator = data => {
   return new Promise((resolve, reject) => {
     const clonedFontDes = JSON.parse(JSON.stringify(fontDescriptors));
     const printer = new PdfPrinter(clonedFontDes);
-    const clonedDocDef = JSON.parse(JSON.stringify(docDefinition));
+    const clonedDocDef = docDefinitionGenerator(data);
     const pdfMake = printer.createPdfKitDocument(clonedDocDef);
 
     const segmentsOfPdf = [];

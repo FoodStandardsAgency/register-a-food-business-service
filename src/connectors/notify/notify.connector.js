@@ -21,13 +21,15 @@ const sendSingleEmail = async (
   }
 
   try {
+    flattenedData.link_to_document = pdfFile
+      ? notifyClient.prepareUpload(pdfFile)
+      : "";
+
     const notifyArguments = [
       templateId,
       recipientEmail,
       { personalisation: flattenedData }
     ];
-
-    flattenedData.link_to_document = notifyClient.prepareUpload(pdfFile);
 
     const notifyResponse = await notifyClient.sendEmail(...notifyArguments);
     const responseBody = notifyResponse.body;
