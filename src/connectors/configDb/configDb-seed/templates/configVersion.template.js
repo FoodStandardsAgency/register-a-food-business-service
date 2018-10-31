@@ -1,8 +1,8 @@
-module.exports = () => ({
-  _id: process.env.SEED_CONFIG_VERSION_NUMBER,
+const configVersionTemplate = (seedData, env) => ({
+  _id: seedData.SEED_CONFIG_VERSION_NUMBER,
   notify_template_keys: {
-    fbo_submission_complete: process.env.SEED_NOTIFY_TEMPLATE_FBO,
-    lc_new_registration: process.env.SEED_NOTIFY_TEMPLATE_LC
+    fbo_submission_complete: seedData.SEED_NOTIFY_TEMPLATE_FBO,
+    lc_new_registration: seedData.SEED_NOTIFY_TEMPLATE_LC
   },
   path: {
     "/index": {
@@ -170,3 +170,5 @@ module.exports = () => ({
     }
   }
 });
+
+module.exports = configVersionTemplate;
