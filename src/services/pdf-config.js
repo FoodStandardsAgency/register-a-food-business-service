@@ -3,15 +3,35 @@ const path = require("path");
 const createTitle = title => {
   const titleArray = [];
   titleArray.push({
-  style: "h2",
-  columns: [
-    {
-      width: "*",
-      text: title
-    }
-  ]
-});
-return titleArray;
+    style: "h2",
+    columns: [
+      {
+        width: "*",
+        text: title
+      }
+    ]
+  });
+  return titleArray;
+};
+
+const createSingleLine = (key, value) => {
+  let singleLine = [];
+  singleLine.push({
+    style: "h4",
+    columns: [
+      {
+        width: "*",
+        text: key
+      },
+      {
+        width: "*",
+        style: "header",
+        text: value
+      }
+    ]
+  });
+  singleLine = singleLine.concat(createGreyLine());
+  return singleLine;
 };
 
 const docDefinitionGenerator = content => {
@@ -96,4 +116,9 @@ const fontDescriptors = {
 // const doc = docDefinitionGenerator({ operator_type: "hi" });
 // console.log(typeof doc);
 
-module.exports = { docDefinitionGenerator, fontDescriptors, createTitle };
+module.exports = {
+  docDefinitionGenerator,
+  fontDescriptors,
+  createTitle,
+  createSingleLine
+};

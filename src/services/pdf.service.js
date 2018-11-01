@@ -103,40 +103,40 @@ const createSingleLine = (key, value) => {
 const createTitle = title => {
   const titleArray = [];
   titleArray.push({
-  style: "h2",
-  columns: [
-    {
-      width: "*",
-      text: title
-    }
-  ]
-});
-return titleArray;
+    style: "h2",
+    columns: [
+      {
+        width: "*",
+        text: title
+      }
+    ]
+  });
+  return titleArray;
 };
 
 const createGreyLine = () => {
   const greyLineArray = [];
-  greyLineArray.push(createNewSpace(1))
-  greyLineArray.push({canvas: [
-    {
-      type: "rect",
-      x: 1,
-      y: 1,
-      w: 505,
-      h: 1,
-      color: "#808080"
-    }
-  ]
-});
-greyLineArray.push(createNewSpace(1));
-return greyLineArray
-  }
-
+  greyLineArray.push(createNewSpace(1));
+  greyLineArray.push({
+    canvas: [
+      {
+        type: "rect",
+        x: 1,
+        y: 1,
+        w: 505,
+        h: 1,
+        color: "#808080"
+      }
+    ]
+  });
+  greyLineArray.push(createNewSpace(1));
+  return greyLineArray;
+};
 
 const createFsaRnBox = (fsarnNumber, lcInfo) => {
   const fsaRnBox = [];
-  const yPositionText = lcInfo.hygieneAndStandards ? 360 : 340;
-  const yPositionNumber = lcInfo.hygieneAndStandards ? 395 : 375;
+  const yPositionText = lcInfo.hygieneAndStandards ? 360 : 290;
+  const yPositionNumber = lcInfo.hygieneAndStandards ? 395 : 325;
   fsaRnBox.push({
     canvas: [
       {
@@ -163,10 +163,10 @@ const createFsaRnBox = (fsarnNumber, lcInfo) => {
     alignment: "center"
   });
   fsaRnBox.push({
-      text: fsarnNumber,
-      absolutePosition: { x: 30, y: yPositionNumber },
-      style: "code"
-    });
+    text: fsarnNumber,
+    absolutePosition: { x: 30, y: yPositionNumber },
+    style: "code"
+  });
   fsaRnBox.push(createNewSpace(2));
   return fsaRnBox;
 };
@@ -224,7 +224,9 @@ const createContent = pdfData => {
     ]
   });
   content.push(createNewSpace(2));
-  content = content.concat(createFsaRnBox(pdfData.metaData["fsa-rn"], pdfData.metaData.lcInfo));
+  content = content.concat(
+    createFsaRnBox(pdfData.metaData["fsa-rn"], pdfData.metaData.lcInfo)
+  );
   content.push(createNewSpace(2));
   content.push({
     style: "bigger",
