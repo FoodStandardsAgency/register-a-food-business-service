@@ -34,27 +34,27 @@ const modelCreate = async (data, model, modelName) => {
 };
 
 const createActivities = async (activities, establishmentId) => {
-  const data = Object.assign(activities, { establishmentId });
+  const data = Object.assign({}, activities, { establishmentId });
   return modelCreate(data, Activities, "Activities");
 };
 
 const createEstablishment = async (establishment, registrationId) => {
-  const data = Object.assign(establishment, { registrationId });
+  const data = Object.assign({}, establishment, { registrationId });
   return modelCreate(data, Establishment, "Establishment");
 };
 
 const createMetadata = async (metadata, registrationId) => {
-  const data = Object.assign(metadata, { registrationId });
+  const data = Object.assign({}, metadata, { registrationId });
   return modelCreate(data, Metadata, "Metadata");
 };
 
 const createOperator = async (operator, establishmentId) => {
-  const data = Object.assign(operator, { establishmentId });
+  const data = Object.assign({}, operator, { establishmentId });
   return modelCreate(data, Operator, "Operator");
 };
 
 const createPremise = async (premise, establishmentId) => {
-  const data = Object.assign(premise, { establishmentId });
+  const data = Object.assign({}, premise, { establishmentId });
   return modelCreate(data, Premise, "Premise");
 };
 

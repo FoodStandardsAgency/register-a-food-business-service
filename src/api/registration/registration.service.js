@@ -1,5 +1,6 @@
 const moment = require("moment");
 const fetch = require("node-fetch");
+const fs = require("fs");
 const {
   pdfGenerator,
   transformDataForPdf
@@ -280,19 +281,20 @@ const sendEmailOfType = async (
       lcContactConfig
     );
 
-    console.log(data);
-    // const dataForPDF = transformDataForPdf(
-    //   registration,
-    //   postRegistrationMetadata,
-    //   lcContactConfig
-    // );
+    const dataForPDF = transformDataForPdf(
+      registration,
+      postRegistrationMetadata,
+      lcContactConfig
+    );
 
     let pdfFile = undefined;
-    // if (typeOfEmail === "LC") {
-    //   pdfFile = await pdfGenerator(dataForPDF);
-    // }
+    if (typeOfEmail === "LC") {
+      pdfFile = await pdfGenerator(dataForPDF);
+    }
 
-    await sendSingleEmail(templateId, recipientEmailAddress, data, pdfFile);
+    fs.writeFile("out.pdf", pdfFile, 'base64');
+
+    // await sendSingleEmail(templateId, recipientEmailAddress, data, pdfFile);
     emailSent.success = true;
 
     statusEmitter.emit("incrementCount", "emailNotificationsSucceeded");

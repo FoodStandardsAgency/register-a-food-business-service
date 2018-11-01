@@ -1,16 +1,16 @@
-const { docDefinitionGenerator } = require("./pdf-config");
+const { docDefinitionGenerator, createTitle } = require("./pdf-config");
 
-describe("doc definition function", () => {
-  let result;
-  const testData = {
-    operator_type: "Sole Trader",
-    operator_first_name: "John"
-  };
+describe("Function: createTitle", () => {
+  let titleArray;
   beforeEach(() => {
-    result = docDefinitionGenerator(testData);
+    titleArray = createTitle("hello");
   });
 
-  it("should return an object", () => {
-    expect(typeof result).toBe("object");
+  it("Should return an array", () => {
+    expect(Array.isArray(titleArray)).toBe(true);
+  });
+
+  it("Should return an array", () => {
+    expect(titleArray[0].columns[0].text).toBe("hello");
   });
 });
