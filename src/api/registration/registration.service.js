@@ -281,7 +281,7 @@ const sendEmailOfType = async (
     if (typeOfEmail === "LC") {
       pdfFile = await pdfGenerator(data);
     }
-    console.log(data);
+
     await sendSingleEmail(templateId, recipientEmailAddress, data, pdfFile);
     emailSent.success = true;
 

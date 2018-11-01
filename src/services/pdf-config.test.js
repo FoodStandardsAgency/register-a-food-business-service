@@ -13,8 +13,4 @@ describe("doc definition function", () => {
   it("should return an object", () => {
     expect(typeof result).toBe("object");
   });
-  it("should set the correct value of the variable", () => {
-    const resultString = JSON.stringify(result);
-    expect(resultString).toContain("Sole Trader");
-  });
 });
