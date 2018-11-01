@@ -1,6 +1,9 @@
 const moment = require("moment");
 const fetch = require("node-fetch");
-const { pdfGenerator } = require("../../services/pdf.service");
+const {
+  pdfGenerator,
+  transformDataForPdf
+} = require("../../services/pdf.service");
 
 const {
   NOTIFY_TEMPLATE_ID_FBO,
@@ -277,10 +280,17 @@ const sendEmailOfType = async (
       lcContactConfig
     );
 
+    console.log(data);
+    // const dataForPDF = transformDataForPdf(
+    //   registration,
+    //   postRegistrationMetadata,
+    //   lcContactConfig
+    // );
+
     let pdfFile = undefined;
-    if (typeOfEmail === "LC") {
-      pdfFile = await pdfGenerator(data);
-    }
+    // if (typeOfEmail === "LC") {
+    //   pdfFile = await pdfGenerator(dataForPDF);
+    // }
 
     await sendSingleEmail(templateId, recipientEmailAddress, data, pdfFile);
     emailSent.success = true;

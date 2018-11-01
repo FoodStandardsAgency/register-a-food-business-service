@@ -3,9 +3,11 @@ const path = require("path");
 const findExistingKey = data => {
   const existingKeyList = [];
   for (let item in data) {
-    if (data[item] === "yes") {
-      const existingKey = item.slice(0, -7);
-      existingKeyList.push(existingKey);
+    if (item.indexOf("local") === -1) {
+      if (data[item] === "yes") {
+        const existingKey = item.slice(0, -7);
+        existingKeyList.push(existingKey);
+      }
     }
   }
   return existingKeyList;
@@ -144,7 +146,129 @@ const docDefinitionGenerator = data => {
         style: "bigger",
         text: "Registration details"
       },
-      newLineCreator(existingKeyList, data)
+      newLineCreator(existingKeyList, data),
+      {
+        canvas: [
+          {
+            type: "rect",
+            x: 1,
+            y: 1,
+            w: 505,
+            h: 1,
+            color: "#808080"
+          }
+        ]
+      },
+      "\n",
+      {
+        style: "h2",
+        columns: [
+          {
+            width: "*",
+            text: "Declaration"
+          }
+        ]
+      },
+      "\n",
+      {
+        canvas: [
+          {
+            type: "rect",
+            x: 1,
+            y: 1,
+            w: 505,
+            h: 1,
+            color: "#808080"
+          }
+        ]
+      },
+      "\n",
+      {
+        style: "h4",
+        columns: [
+          {
+            width: "*",
+            text:
+              "I declare that the information I \n have  given on this form is \n correct and complete to the \n best of my knowledge and \n belief."
+          },
+          {
+            width: "*",
+            style: "header",
+            text: "Accepted"
+          }
+        ]
+      },
+      "\n",
+      {
+        canvas: [
+          {
+            type: "rect",
+            x: 1,
+            y: 1,
+            w: 505,
+            h: 1,
+            color: "#808080"
+          }
+        ]
+      },
+      "\n",
+      {
+        style: "h4",
+        columns: [
+          {
+            width: "*",
+            text:
+              "I, or the operator, will notify \n food authorities of any \n significant changes to business \n activites, including closure, \n withing 28 days if the change \n happening."
+          },
+          {
+            width: "*",
+            style: "header",
+            text: "Accepted"
+          }
+        ]
+      },
+      "\n",
+      {
+        canvas: [
+          {
+            type: "rect",
+            x: 1,
+            y: 1,
+            w: 505,
+            h: 1,
+            color: "#808080"
+          }
+        ]
+      },
+      "\n",
+      {
+        style: "h4",
+        columns: [
+          {
+            width: "*",
+            text:
+              "I, or the operator, understands \n the operator is legally \n responsible for the safety and \n authenticity of the food being \n produced or served at this \n establishment."
+          },
+          {
+            width: "*",
+            style: "header",
+            text: "Accepted"
+          }
+        ]
+      },
+      "\n",
+      {
+        canvas: [
+          {
+            type: "rect",
+            x: 1,
+            y: 1,
+            w: 505,
+            h: 1,
+            color: "#808080"
+          }
+        ]
+      }
     ],
     styles: {
       marginStyle: {
