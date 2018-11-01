@@ -1,17 +1,72 @@
+jest.mock("mongodb");
+jest.mock("./configDb.double");
+
 const mongodb = require("mongodb");
 const {
   getAllLocalCouncilConfig,
+  getConfigVersion,
   clearLcConfigCache,
   clearMongoConnection,
   addDeletedId
 } = require("./configDb.connector");
 const mockLocalCouncilConfig = require("./mockLocalCouncilConfig.json");
 const { lcConfigCollectionDouble } = require("./configDb.double");
-
-jest.mock("mongodb");
-jest.mock("./configDb.double");
+const mockConfigVersion = {
+  _id: "1.2.0",
+  notify_template_keys: {
+    fbo_submission_complete: "123",
+    lc_new_registration: "456"
+  },
+  path: {
+    "/index": {
+      on: true,
+      switches: {}
+    }
+  }
+};
 
 let result;
+
+describe("Function: getConfigVersion", () => {
+  describe("given the request is successful", () => {
+    beforeEach(async () => {
+      process.env.DOUBLE_MODE = false;
+      clearMongoConnection();
+      mongodb.MongoClient.connect.mockImplementation(() => ({
+        db: () => ({
+          collection: () => ({
+            findOne: jest.fn(() => mockConfigVersion)
+          })
+        })
+      }));
+      result = await getConfigVersion("1.2.0");
+    });
+
+    it("should return the configVersion data for this version", () => {
+      expect(result).toEqual(mockConfigVersion);
+    });
+  });
+  describe("given the request throws an error", () => {
+    beforeEach(async () => {
+      process.env.DOUBLE_MODE = false;
+      clearMongoConnection();
+      mongodb.MongoClient.connect.mockImplementation(() => {
+        throw new Error("example mongo error");
+      });
+
+      try {
+        result = await getConfigVersion("1.2.0");
+      } catch (err) {
+        result = err;
+      }
+    });
+
+    it("should throw mongoConnectionError error", () => {
+      expect(result.name).toBe("mongoConnectionError");
+      expect(result.message).toBe("example mongo error");
+    });
+  });
+});
 
 describe("Function: getLocalCouncilDetails", () => {
   describe("given the request has not yet been run during this process (empty cache)", () => {
