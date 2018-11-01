@@ -12,6 +12,14 @@ describe("Function: sendSingleEmail", () => {
   const testFlattenedData = {
     example: "value"
   };
+  const testFetchedTemplate = {
+    body: {
+      personalisation: {
+        some_field: {},
+        example: {}
+      }
+    }
+  };
 
   const args = [testTemplateId, testRecipient, testFlattenedData];
 
@@ -39,7 +47,8 @@ describe("Function: sendSingleEmail", () => {
         mockNotifyClient = {
           sendEmail: jest.fn(async () => {
             throw new Error("secretOrPrivateKey must have a value");
-          })
+          }),
+          getTemplateById: jest.fn(() => testFetchedTemplate)
         };
         NotifyClient.mockImplementation(() => mockNotifyClient);
       });
@@ -66,7 +75,8 @@ describe("Function: sendSingleEmail", () => {
             };
             error.message = "notify error";
             throw error;
-          })
+          }),
+          getTemplateById: jest.fn(() => testFetchedTemplate)
         };
         NotifyClient.mockImplementation(() => mockNotifyClient);
         try {
@@ -97,7 +107,8 @@ describe("Function: sendSingleEmail", () => {
             };
             error.message = "notify error";
             throw error;
-          })
+          }),
+          getTemplateById: jest.fn(() => testFetchedTemplate)
         };
         NotifyClient.mockImplementation(() => mockNotifyClient);
         try {
@@ -120,7 +131,8 @@ describe("Function: sendSingleEmail", () => {
       mockNotifyClient = {
         sendEmail: jest.fn(async () => {
           return { body: "This is a success message from the notify client" };
-        })
+        }),
+        getTemplateById: jest.fn(() => testFetchedTemplate)
       };
       NotifyClient.mockImplementation(() => mockNotifyClient);
     });
@@ -133,10 +145,16 @@ describe("Function: sendSingleEmail", () => {
 
     it("Should have called the Notify sendEmail function with the template ID, recipient, and flattenedData (within an object)", () => {
       return sendSingleEmail(...args).then(() => {
+        const expectedFlattenedDataWithExists = {
+          example: "value",
+          example_exists: "yes",
+          some_field: "",
+          some_field_exists: "no"
+        };
         expect(mockNotifyClient.sendEmail).toHaveBeenLastCalledWith(
           testTemplateId,
           testRecipient,
-          { personalisation: testFlattenedData }
+          { personalisation: expectedFlattenedDataWithExists }
         );
       });
     });
@@ -150,6 +168,9 @@ describe("Function: sendSingleEmail", () => {
       notifyClientDouble.sendEmail.mockImplementation(async () => ({
         body: "Double response"
       }));
+      notifyClientDouble.getTemplateById.mockImplementation(
+        async () => testFetchedTemplate
+      );
     });
 
     it("Should resolve with the double message", async () => {

@@ -63,15 +63,6 @@ const transformDataForNotify = (
     lcInfo
   );
 
-  Object.keys(flattenedData).forEach(key => {
-    if (flattenedData[key]) {
-      flattenedData[`${key}_exists`] = "yes";
-    } else {
-      flattenedData[key] = "";
-      flattenedData[`${key}_exists`] = "no";
-    }
-  });
-
   return flattenedData;
 };
 

@@ -80,33 +80,19 @@ describe("Function: transformDataForNotify", () => {
     it("should return the flattened data with two sets of council details", () => {
       const expectedFormat = {
         establishment_trading_name: "Itsu",
-        establishment_trading_name_exists: "yes",
         operator_first_name: "Fred",
-        operator_first_name_exists: "yes",
         establishment_postcode: "SW12 9RQ",
-        establishment_postcode_exists: "yes",
         establishment_opening_date: "30 Dec 2017",
-        establishment_opening_date_exists: "yes",
         customer_type: "End consumer",
-        customer_type_exists: "yes",
         declaration1: "Declaration",
-        declaration1_exists: "yes",
         example: "value",
-        example_exists: "yes",
         local_council_hygiene: "Hygiene council name",
-        local_council_hygiene_exists: "yes",
         local_council_email_hygiene: "hygiene@example.com",
-        local_council_email_hygiene_exists: "yes",
         local_council_phone_number_hygiene: "123456789",
-        local_council_phone_number_hygiene_exists: "yes",
         local_council_standards: "Standards council name",
-        local_council_standards_exists: "yes",
         local_council_email_standards: "standards@example.com",
-        local_council_email_standards_exists: "yes",
         local_council_phone_number_standards: "123456789",
-        local_council_phone_number_standards_exists: "yes",
-        reg_submission_date: "01 Dec 2018",
-        reg_submission_date_exists: "yes"
+        reg_submission_date: "01 Dec 2018"
       };
 
       expect(result).toEqual(expectedFormat);
@@ -125,27 +111,16 @@ describe("Function: transformDataForNotify", () => {
     it("should return the flattened data with one set of council details", () => {
       const expectedFormat = {
         establishment_trading_name: "Itsu",
-        establishment_trading_name_exists: "yes",
         operator_first_name: "Fred",
-        operator_first_name_exists: "yes",
         establishment_postcode: "SW12 9RQ",
-        establishment_postcode_exists: "yes",
         establishment_opening_date: "30 Dec 2017",
-        establishment_opening_date_exists: "yes",
         customer_type: "End consumer",
-        customer_type_exists: "yes",
         declaration1: "Declaration",
-        declaration1_exists: "yes",
         example: "value",
-        example_exists: "yes",
         local_council: "Hygiene and standards council name",
-        local_council_exists: "yes",
         local_council_email: "both@example.com",
-        local_council_email_exists: "yes",
         local_council_phone_number: "123456789",
-        local_council_phone_number_exists: "yes",
-        reg_submission_date: "01 Dec 2018",
-        reg_submission_date_exists: "yes"
+        reg_submission_date: "01 Dec 2018"
       };
 
       expect(result).toEqual(expectedFormat);
@@ -164,25 +139,15 @@ describe("Function: transformDataForNotify", () => {
     it("should return the flattened data with one set of council details", () => {
       const expectedFormat = {
         establishment_trading_name: "Itsu",
-        establishment_trading_name_exists: "yes",
         operator_first_name: "Fred",
-        operator_first_name_exists: "yes",
         establishment_postcode: "SW12 9RQ",
-        establishment_postcode_exists: "yes",
         establishment_opening_date: "30 Dec 2017",
-        establishment_opening_date_exists: "yes",
         customer_type: "End consumer",
-        customer_type_exists: "yes",
         declaration1: "Declaration",
-        declaration1_exists: "yes",
         example: "value",
-        example_exists: "yes",
         local_council: "Hygiene and standards council name",
-        local_council_exists: "yes",
         local_council_email: "both@example.com",
-        local_council_email_exists: "yes",
-        reg_submission_date: "01 Dec 2018",
-        reg_submission_date_exists: "yes"
+        reg_submission_date: "01 Dec 2018"
       };
 
       expect(result).toEqual(expectedFormat);
@@ -201,33 +166,17 @@ describe("Function: transformDataForNotify", () => {
     it("should return the flattened data with two sets of council details", () => {
       const expectedFormat = {
         establishment_trading_name: "Itsu",
-        establishment_trading_name_exists: "yes",
         operator_first_name: "Fred",
-        operator_first_name_exists: "yes",
         establishment_postcode: "SW12 9RQ",
-        establishment_postcode_exists: "yes",
         establishment_opening_date: "30 Dec 2017",
-        establishment_opening_date_exists: "yes",
         customer_type: "End consumer",
-        customer_type_exists: "yes",
         declaration1: "Declaration",
-        declaration1_exists: "yes",
         example: "value",
-        example_exists: "yes",
         local_council_hygiene: "Hygiene council name",
-        local_council_hygiene_exists: "yes",
         local_council_email_hygiene: "hygiene@example.com",
-        local_council_email_hygiene_exists: "yes",
-        local_council_phone_number_hygiene: "",
-        local_council_phone_number_hygiene_exists: "no",
         local_council_standards: "Standards council name",
-        local_council_standards_exists: "yes",
         local_council_email_standards: "standards@example.com",
-        local_council_email_standards_exists: "yes",
-        local_council_phone_number_standards: "",
-        local_council_phone_number_standards_exists: "no",
-        reg_submission_date: "01 Dec 2018",
-        reg_submission_date_exists: "yes"
+        reg_submission_date: "01 Dec 2018"
       };
 
       expect(result).toEqual(expectedFormat);

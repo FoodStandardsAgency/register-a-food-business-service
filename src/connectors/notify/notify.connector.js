@@ -16,6 +16,20 @@ const sendSingleEmail = async (templateId, recipientEmail, flattenedData) => {
   }
 
   try {
+    const notifyTemplate = await notifyClient.getTemplateById(templateId);
+    const allTemplateFields = Object.keys(
+      notifyTemplate.body.personalisation
+    ).filter(field => field.trim().endsWith("_exists") === false);
+
+    allTemplateFields.forEach(key => {
+      if (flattenedData[key]) {
+        flattenedData[`${key}_exists`] = "yes";
+      } else {
+        flattenedData[key] = "";
+        flattenedData[`${key}_exists`] = "no";
+      }
+    });
+
     const notifyArguments = [
       templateId,
       recipientEmail,
