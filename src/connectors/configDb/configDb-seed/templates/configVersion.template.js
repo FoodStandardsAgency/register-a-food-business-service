@@ -1,4 +1,4 @@
-const configVersionTemplate = (seedData, env) => ({
+const configVersionTemplate = seedData => ({
   _id: seedData.SEED_CONFIG_VERSION_NUMBER,
   notify_template_keys: {
     fbo_submission_complete: seedData.SEED_NOTIFY_TEMPLATE_FBO,

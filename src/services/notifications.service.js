@@ -1,5 +1,4 @@
 const moment = require("moment");
-const optionalNotifyFields = require("./optional-notify-fields.json");
 
 const transformDataForNotify = (
   registration,
@@ -53,29 +52,25 @@ const transformDataForNotify = (
     postRegistrationMetadataClone.reg_submission_date
   ).format("DD MMM YYYY");
 
-  // const flattenedData = Object.assign(
-  //   {},
-  //   registrationClone.establishment.premise,
-  //   registrationClone.establishment.establishment_details,
-  //   registrationClone.establishment.operator,
-  //   registrationClone.establishment.activities,
-  //   registrationClone.metadata,
-  //   postRegistrationMetadataClone,
-  //   lcInfo
-  // );
+  const flattenedData = Object.assign(
+    {},
+    registrationClone.establishment.premise,
+    registrationClone.establishment.establishment_details,
+    registrationClone.establishment.operator,
+    registrationClone.establishment.activities,
+    registrationClone.metadata,
+    postRegistrationMetadataClone,
+    lcInfo
+  );
 
-  /////////////////////////////////
-  // TODO JMB: CHANGE THIS TO BE FLATTENED DATA FOR EACH (EVERY FIELD)
-  /////////////////////////////////
-
-  // optionalNotifyFields.forEach(key => {
-  //   if (flattenedData[key]) {
-  //     flattenedData[`${key}_exists`] = "yes";
-  //   } else {
-  //     flattenedData[key] = "";
-  //     flattenedData[`${key}_exists`] = "no";
-  //   }
-  // });
+  Object.keys(flattenedData).forEach(key => {
+    if (flattenedData[key]) {
+      flattenedData[`${key}_exists`] = "yes";
+    } else {
+      flattenedData[key] = "";
+      flattenedData[`${key}_exists`] = "no";
+    }
+  });
 
   return flattenedData;
 };

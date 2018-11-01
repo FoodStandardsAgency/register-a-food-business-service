@@ -1,4 +1,5 @@
 require("dotenv").config();
+const { info } = require("winston");
 const mongoClient = require("mongodb").MongoClient;
 const fs = require("fs");
 const inquirer = require("inquirer");
@@ -20,11 +21,11 @@ const templates = {
 };
 
 const establishConnectionToMongo = async configDbUrl => {
-  client = await mongoClient.connect(configDbUrl, {
+  const client = await mongoClient.connect(configDbUrl, {
     useNewUrlParser: true
   });
 
-  configDB = client.db("register_a_food_business_config");
+  const configDB = client.db("register_a_food_business_config");
   return configDB;
 };
 
@@ -102,7 +103,7 @@ const runSeed = async () => {
 
       // push the populated template to the database
       await specifiedCollection.insertOne(populatedTemplate);
-      console.log("SUCCESS. Seed complete.");
+      info(`SUCCESS. Seed complete for ${envName} environment.`);
     } catch (err) {
       throw new Error(err);
     }
