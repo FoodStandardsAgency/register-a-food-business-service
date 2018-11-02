@@ -13,9 +13,17 @@ const {
   cacheRegistration
 } = require("../../connectors/cacheDb/cacheDb.connector");
 
+const {
+  getConfigVersion
+} = require("../../connectors/configDb/configDb.connector");
+
 const { logEmitter } = require("../../services/logging.service");
 
-const createNewRegistration = async (registration, localCouncilUrl) => {
+const createNewRegistration = async (
+  registration,
+  localCouncilUrl,
+  regDataVersion
+) => {
   logEmitter.emit(
     "functionCall",
     "registration.controller",
@@ -27,6 +35,8 @@ const createNewRegistration = async (registration, localCouncilUrl) => {
   }
 
   cacheRegistration(registration);
+
+  const configVersion = await getConfigVersion(regDataVersion);
 
   const errors = validate(registration);
   if (errors.length) {
@@ -76,7 +86,8 @@ const createNewRegistration = async (registration, localCouncilUrl) => {
         registration,
         postRegistrationMetadata,
         lcContactConfig,
-        lcNotificationEmailAddresses[recipientEmailAddress]
+        lcNotificationEmailAddresses[recipientEmailAddress],
+        configVersion.notify_template_keys
       );
     }
   }
@@ -90,7 +101,8 @@ const createNewRegistration = async (registration, localCouncilUrl) => {
     registration,
     postRegistrationMetadata,
     lcContactConfig,
-    fboEmailAddress
+    fboEmailAddress,
+    configVersion.notify_template_keys
   );
 
   const combinedResponse = Object.assign(

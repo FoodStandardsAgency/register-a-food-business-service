@@ -21,9 +21,13 @@ const registrationRouter = () => {
       );
       try {
         statusEmitter.emit("incrementCount", "submissionsReceived");
+
+        const regDataVersion = req.headers["registration-data-version"];
+
         const response = await registrationController.createNewRegistration(
           req.body.registration,
-          req.body.local_council_url
+          req.body.local_council_url,
+          regDataVersion
         );
 
         statusEmitter.emit("incrementCount", "endToEndRegistrationsSucceeded");

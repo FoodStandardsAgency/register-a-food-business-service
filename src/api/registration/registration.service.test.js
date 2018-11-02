@@ -36,11 +36,6 @@ jest.mock("../../connectors/configDb/configDb.connector", () => ({
 
 jest.mock("../../services/notifications.service");
 
-jest.mock("../../config", () => ({
-  NOTIFY_TEMPLATE_ID_FBO: "1234",
-  NOTIFY_TEMPLATE_ID_LC: "5678"
-}));
-
 jest.mock("node-fetch");
 
 const { sendSingleEmail } = require("../../connectors/notify/notify.connector");
@@ -431,6 +426,11 @@ describe("Function: sendEmailOfType: ", () => {
     example: "value"
   };
 
+  const testNotifyTemplateKeys = {
+    lc_new_registration: "lc-123",
+    fbo_submission_complete: "fbo-456"
+  };
+
   describe("When the connector responds successfully", () => {
     beforeEach(async () => {
       sendSingleEmail.mockImplementation(() => ({
@@ -441,13 +441,14 @@ describe("Function: sendEmailOfType: ", () => {
         testRegistration,
         testPostRegistrationMetadata,
         testlcContactConfig,
-        testRecipient
+        testRecipient,
+        testNotifyTemplateKeys
       );
     });
 
     it("should have called the connector with the correct arguments", () => {
       expect(sendSingleEmail).toHaveBeenLastCalledWith(
-        NOTIFY_TEMPLATE_ID_LC,
+        "lc-123",
         testRecipient,
         testTransformedData
       );
@@ -469,7 +470,8 @@ describe("Function: sendEmailOfType: ", () => {
         testRegistration,
         testPostRegistrationMetadata,
         testlcContactConfig,
-        testRecipient
+        testRecipient,
+        testNotifyTemplateKeys
       );
     });
 
@@ -489,13 +491,14 @@ describe("Function: sendEmailOfType: ", () => {
         testRegistration,
         testPostRegistrationMetadata,
         testlcContactConfig,
-        testRecipient
+        testRecipient,
+        testNotifyTemplateKeys
       );
     });
 
     it("should have called the connector with the correct arguments", () => {
       expect(sendSingleEmail).toHaveBeenLastCalledWith(
-        NOTIFY_TEMPLATE_ID_FBO,
+        "fbo-456",
         testRecipient,
         testTransformedData
       );
