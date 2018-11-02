@@ -37,7 +37,7 @@ const notifyClientDouble = {
       }
     });
   },
-  getTemplateById: templateId => ({
+  getTemplateById: () => ({
     body: {
       personalisation: {
         establishment_trading_name: {}

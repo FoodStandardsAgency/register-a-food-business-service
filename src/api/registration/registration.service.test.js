@@ -55,11 +55,6 @@ const {
   transformDataForNotify
 } = require("../../services/notifications.service");
 
-const {
-  NOTIFY_TEMPLATE_ID_FBO,
-  NOTIFY_TEMPLATE_ID_LC
-} = require("../../config");
-
 const fetch = require("node-fetch");
 
 const {
