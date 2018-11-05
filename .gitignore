@@ -65,3 +65,5 @@ reports
 
 # Saved DB data before seeding
 saved-data
+
+*.pdf

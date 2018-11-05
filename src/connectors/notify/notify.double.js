@@ -37,6 +37,7 @@ const notifyClientDouble = {
       }
     });
   },
+  prepareUpload: () => "www.link-to-document.com",
   getTemplateById: () => ({
     body: {
       personalisation: {

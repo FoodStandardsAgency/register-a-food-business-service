@@ -74,7 +74,6 @@ const createNewRegistration = async (
     postRegistrationMetadata["fsa-rn"],
     localCouncilUrl
   );
-
   const notifySuccessOrFailureLc = {};
 
   for (let typeOfCouncil in lcContactConfig) {

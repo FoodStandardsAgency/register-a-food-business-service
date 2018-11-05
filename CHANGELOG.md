@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## v3.7.0 - 5th November 2018 (unreleased)
+
+### Modified
+
+* SDB-237 Add a PDF to the LC notifications email
+
 ## v3.6.4 - 5th November 2018 (unreleased)
 
 ### Modified

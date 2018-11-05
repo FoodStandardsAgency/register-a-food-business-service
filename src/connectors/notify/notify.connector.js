@@ -3,7 +3,12 @@ const { notifyClientDouble } = require("./notify.double");
 const { NOTIFY_KEY } = require("../../config");
 const { logEmitter } = require("../../services/logging.service");
 
-const sendSingleEmail = async (templateId, recipientEmail, flattenedData) => {
+const sendSingleEmail = async (
+  templateId,
+  recipientEmail,
+  flattenedData,
+  pdfFile
+) => {
   logEmitter.emit("functionCall", "notify.connector", "sendSingleEmail");
 
   let notifyClient;
@@ -16,6 +21,10 @@ const sendSingleEmail = async (templateId, recipientEmail, flattenedData) => {
   }
 
   try {
+    flattenedData.link_to_document = pdfFile
+      ? await notifyClient.prepareUpload(pdfFile)
+      : "";
+
     const notifyTemplate = await notifyClient.getTemplateById(templateId);
 
     const requiredTemplateFields = Object.keys(

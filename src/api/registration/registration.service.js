@@ -2,6 +2,11 @@ const moment = require("moment");
 const fetch = require("node-fetch");
 
 const {
+  pdfGenerator,
+  transformDataForPdf
+} = require("../../services/pdf.service");
+
+const {
   createRegistration,
   createEstablishment,
   createOperator,
@@ -271,7 +276,19 @@ const sendEmailOfType = async (
       postRegistrationMetadata,
       lcContactConfig
     );
-    await sendSingleEmail(templateId, recipientEmailAddress, data);
+
+    const dataForPDF = transformDataForPdf(
+      registration,
+      postRegistrationMetadata,
+      lcContactConfig
+    );
+
+    let pdfFile = undefined;
+    if (typeOfEmail === "LC") {
+      pdfFile = await pdfGenerator(dataForPDF);
+    }
+
+    await sendSingleEmail(templateId, recipientEmailAddress, data, pdfFile);
     emailSent.success = true;
 
     statusEmitter.emit("incrementCount", "emailNotificationsSucceeded");
