@@ -1,6 +1,4 @@
 const moment = require("moment");
-const optionalNotifyFields = require("./optional-notify-fields.json");
-const { NotifyClient } = require("notifications-node-client");
 
 const transformDataForNotify = (
   registration,
