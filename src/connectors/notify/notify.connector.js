@@ -35,19 +35,21 @@ const sendSingleEmail = async (templateId, recipientEmail, flattenedData) => {
       templateFieldsWithoutSuffix
     );
 
+    const allNotifyPersonalisationData = { ...flattenedData };
+
     templateFieldsWithoutDuplicates.forEach(fieldName => {
-      if (flattenedData[fieldName]) {
-        flattenedData[`${fieldName}_exists`] = "yes";
+      if (allNotifyPersonalisationData[fieldName]) {
+        allNotifyPersonalisationData[`${fieldName}_exists`] = "yes";
       } else {
-        flattenedData[fieldName] = "";
-        flattenedData[`${fieldName}_exists`] = "no";
+        allNotifyPersonalisationData[fieldName] = "";
+        allNotifyPersonalisationData[`${fieldName}_exists`] = "no";
       }
     });
 
     const notifyArguments = [
       templateId,
       recipientEmail,
-      { personalisation: flattenedData }
+      { personalisation: allNotifyPersonalisationData }
     ];
 
     const notifyResponse = await notifyClient.sendEmail(...notifyArguments);
