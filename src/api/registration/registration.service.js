@@ -1,6 +1,6 @@
 const moment = require("moment");
 const fetch = require("node-fetch");
-const fs = require("fs");
+
 const {
   pdfGenerator,
   transformDataForPdf
@@ -286,10 +286,9 @@ const sendEmailOfType = async (
     let pdfFile = undefined;
     if (typeOfEmail === "LC") {
       pdfFile = await pdfGenerator(dataForPDF);
-      fs.writeFile("out.pdf", pdfFile, "base64");
     }
 
-    // await sendSingleEmail(templateId, recipientEmailAddress, data, pdfFile);
+    await sendSingleEmail(templateId, recipientEmailAddress, data, pdfFile);
     emailSent.success = true;
 
     statusEmitter.emit("incrementCount", "emailNotificationsSucceeded");
