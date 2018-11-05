@@ -1,6 +1,6 @@
 {
   "name": "register-a-food-business-service",
-  "version": "3.5.0",
+  "version": "3.6.4",
   "description": "",
   "main": "src/app.js",
   "engines": {
@@ -21,7 +21,8 @@
     "format": "prettier --write '{src,tests}/**/*.js'",
     "start": "node src/app.js",
     "start:prod": "export NODE_ENV=production && node src/app.js",
-    "seed:configdb": "node src/connectors/configDb/configDb-seed/configDb.seed"
+    "seed:configdb": "node src/connectors/configDb/configDb-seed/runSeedScripts",
+    "migrate": "export NODE_ENV=production && sequelize db:migrate"
   },
   "repository": {
     "type": "git",
@@ -41,7 +42,7 @@
     "express": "4.16.3",
     "express-rate-limit": "3.2.0",
     "helmet": "3.13.0",
-    "inquirer": "^6.2.0",
+    "inquirer": "6.2.0",
     "jsonschema": "1.2.4",
     "moment": "2.22.2",
     "mongodb": "3.1.3",
@@ -59,13 +60,13 @@
   },
   "devDependencies": {
     "cucumber": "4.2.1",
-    "cucumber-junit": "^1.7.1",
+    "cucumber-junit": "1.7.1",
     "eslint": "4.19.1",
     "eslint-config-prettier": "2.9.0",
     "eslint-plugin-prettier": "2.6.1",
-    "jest": "22.4.1",
+    "jest": "23.6.0",
     "jest-junit": "5.1.0",
     "prettier": "1.12.1",
-    "snyk": "^1.93.0"
+    "snyk": "1.93.0"
   }
 }

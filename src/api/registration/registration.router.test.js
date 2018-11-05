@@ -34,6 +34,9 @@ describe("registration router", () => {
             body: {
               registration: "reg",
               local_council_url: "example-council-url"
+            },
+            headers: {
+              "registration-data-version": "1.2.0"
             }
           },
           { send, status }
@@ -60,6 +63,9 @@ describe("registration router", () => {
             body: {
               registration: "reg",
               local_council_url: "example-council-url"
+            },
+            headers: {
+              "registration-data-version": "1.2.0"
             }
           },
           { send, status },

@@ -7,11 +7,6 @@ const {
 } = require("../../services/pdf.service");
 
 const {
-  NOTIFY_TEMPLATE_ID_FBO,
-  NOTIFY_TEMPLATE_ID_LC
-} = require("../../config");
-
-const {
   createRegistration,
   createEstablishment,
   createOperator,
@@ -51,11 +46,11 @@ const {
 const { logEmitter } = require("../../services/logging.service");
 const { statusEmitter } = require("../../services/statusEmitter.service");
 
-const saveRegistration = async (registration, fsa_rn) => {
+const saveRegistration = async (registration, fsa_rn, council) => {
   logEmitter.emit("functionCall", "registration.service", "saveRegistration");
 
   try {
-    const reg = await createRegistration(fsa_rn);
+    const reg = await createRegistration(fsa_rn, council);
     const establishment = await createEstablishment(
       registration.establishment.establishment_details,
       reg.id
@@ -259,7 +254,8 @@ const sendEmailOfType = async (
   registration,
   postRegistrationMetadata,
   lcContactConfig,
-  recipientEmailAddress
+  recipientEmailAddress,
+  notifyTemplateKeys
 ) => {
   logEmitter.emit("functionCall", "registration.service", "sendEmailOfType");
 
@@ -268,10 +264,10 @@ const sendEmailOfType = async (
   let templateId;
 
   if (typeOfEmail === "LC") {
-    templateId = NOTIFY_TEMPLATE_ID_LC;
+    templateId = notifyTemplateKeys.lc_new_registration;
   }
   if (typeOfEmail === "FBO") {
-    templateId = NOTIFY_TEMPLATE_ID_FBO;
+    templateId = notifyTemplateKeys.fbo_submission_complete;
   }
 
   try {

@@ -9,6 +9,9 @@ module.exports = (sequelize, DataTypes) => {
       },
       fsa_rn: {
         type: DataTypes.STRING
+      },
+      council: {
+        type: DataTypes.STRING
       }
     },
     {}

@@ -1,16 +1,72 @@
+jest.mock("mongodb");
+jest.mock("./configDb.double");
+
 const mongodb = require("mongodb");
 const {
   getAllLocalCouncilConfig,
+  getConfigVersion,
   clearLcConfigCache,
+  clearMongoConnection,
   addDeletedId
 } = require("./configDb.connector");
 const mockLocalCouncilConfig = require("./mockLocalCouncilConfig.json");
 const { lcConfigCollectionDouble } = require("./configDb.double");
-
-jest.mock("mongodb");
-jest.mock("./configDb.double");
+const mockConfigVersion = {
+  _id: "1.2.0",
+  notify_template_keys: {
+    fbo_submission_complete: "123",
+    lc_new_registration: "456"
+  },
+  path: {
+    "/index": {
+      on: true,
+      switches: {}
+    }
+  }
+};
 
 let result;
+
+describe("Function: getConfigVersion", () => {
+  describe("given the request is successful", () => {
+    beforeEach(async () => {
+      process.env.DOUBLE_MODE = false;
+      clearMongoConnection();
+      mongodb.MongoClient.connect.mockImplementation(() => ({
+        db: () => ({
+          collection: () => ({
+            findOne: jest.fn(() => mockConfigVersion)
+          })
+        })
+      }));
+      result = await getConfigVersion("1.2.0");
+    });
+
+    it("should return the configVersion data for this version", () => {
+      expect(result).toEqual(mockConfigVersion);
+    });
+  });
+  describe("given the request throws an error", () => {
+    beforeEach(async () => {
+      process.env.DOUBLE_MODE = false;
+      clearMongoConnection();
+      mongodb.MongoClient.connect.mockImplementation(() => {
+        throw new Error("example mongo error");
+      });
+
+      try {
+        result = await getConfigVersion("1.2.0");
+      } catch (err) {
+        result = err;
+      }
+    });
+
+    it("should throw mongoConnectionError error", () => {
+      expect(result.name).toBe("mongoConnectionError");
+      expect(result.message).toBe("example mongo error");
+    });
+  });
+});
 
 describe("Function: getLocalCouncilDetails", () => {
   describe("given the request has not yet been run during this process (empty cache)", () => {
@@ -18,6 +74,7 @@ describe("Function: getLocalCouncilDetails", () => {
       beforeEach(async () => {
         process.env.DOUBLE_MODE = false;
         clearLcConfigCache();
+        clearMongoConnection();
         mongodb.MongoClient.connect.mockImplementation(() => {
           throw new Error("example mongo error");
         });
@@ -41,6 +98,7 @@ describe("Function: getLocalCouncilDetails", () => {
       beforeEach(() => {
         process.env.DOUBLE_MODE = false;
         clearLcConfigCache();
+        clearMongoConnection();
         mongodb.MongoClient.connect.mockImplementation(() => ({
           db: () => ({
             collection: () => ({
@@ -61,13 +119,14 @@ describe("Function: getLocalCouncilDetails", () => {
       beforeEach(() => {
         process.env.DOUBLE_MODE = true;
         clearLcConfigCache();
+        clearMongoConnection();
         lcConfigCollectionDouble.find.mockImplementation(() => ({
           toArray: () => mockLocalCouncilConfig
         }));
       });
 
       it("should resolve with the data from the double's find() response", async () => {
-        await expect(getAllLocalCouncilConfig()).resolves.toEqual(
+        await expect(getAllLocalCouncilConfig("hi")).resolves.toEqual(
           mockLocalCouncilConfig
         );
       });
@@ -77,6 +136,8 @@ describe("Function: getLocalCouncilDetails", () => {
   describe("given the request is run more than once during this process (populated cache)", () => {
     beforeEach(() => {
       process.env.DOUBLE_MODE = false;
+      clearLcConfigCache();
+      clearMongoConnection();
       mongodb.MongoClient.connect.mockClear();
       mongodb.MongoClient.connect.mockImplementation(() => ({
         db: () => ({
@@ -90,6 +151,7 @@ describe("Function: getLocalCouncilDetails", () => {
     it("returns the correct value", async () => {
       // clear the cache
       clearLcConfigCache();
+      clearMongoConnection();
 
       // run one request
       await expect(getAllLocalCouncilConfig()).resolves.toEqual(
@@ -105,6 +167,7 @@ describe("Function: getLocalCouncilDetails", () => {
     it("does not call the mongo connection function on the second function call", async () => {
       // clear the cache
       clearLcConfigCache();
+      clearMongoConnection();
 
       // run one request
       await getAllLocalCouncilConfig();
@@ -115,12 +178,38 @@ describe("Function: getLocalCouncilDetails", () => {
       expect(mongodb.MongoClient.connect).toHaveBeenCalledTimes(1);
     });
   });
+
+  describe("given two requests without clearing the mongo connection", () => {
+    beforeEach(async () => {
+      process.env.DOUBLE_MODE = false;
+      jest.clearAllMocks();
+      clearMongoConnection();
+      mongodb.MongoClient.connect.mockImplementation(() => ({
+        db: () => ({
+          collection: () => ({
+            find: () => ({ toArray: () => mockLocalCouncilConfig })
+          })
+        })
+      }));
+    });
+
+    it("should have called the connect function only once", async () => {
+      clearLcConfigCache();
+      await getAllLocalCouncilConfig();
+      clearLcConfigCache();
+      await getAllLocalCouncilConfig();
+
+      expect(mongodb.MongoClient.connect).toHaveBeenCalledTimes(1);
+    });
+  });
 });
 
 describe("Function: addDeletedId", () => {
   let response;
+
   beforeEach(async () => {
     process.env.DOUBLE_MODE = false;
+    clearMongoConnection();
     mongodb.MongoClient.connect.mockImplementation(() => ({
       db: () => ({
         collection: () => ({

@@ -105,5 +105,13 @@
       "Fetch to the FSA-RN generator service failed, check status of service and authentication. Raw error:",
     "userMessages": "",
     "statusCode": 500
+  },
+  {
+    "name": "missingRequiredHeader",
+    "code": "15",
+    "developerMessage":
+      "Required header missing in request. Please add and re-try request. Raw error:",
+    "userMessages": "",
+    "statusCode": 400
   }
 ]

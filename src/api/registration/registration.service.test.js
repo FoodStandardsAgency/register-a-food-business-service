@@ -36,11 +36,6 @@ jest.mock("../../connectors/configDb/configDb.connector", () => ({
 
 jest.mock("../../services/notifications.service");
 
-jest.mock("../../config", () => ({
-  NOTIFY_TEMPLATE_ID_FBO: "1234",
-  NOTIFY_TEMPLATE_ID_LC: "5678"
-}));
-
 jest.mock("node-fetch");
 
 jest.mock("../../services/pdf.service");
@@ -63,11 +58,6 @@ const mockLocalCouncilConfig = require("../../connectors/configDb/mockLocalCounc
 const {
   transformDataForNotify
 } = require("../../services/notifications.service");
-
-const {
-  NOTIFY_TEMPLATE_ID_FBO,
-  NOTIFY_TEMPLATE_ID_LC
-} = require("../../config");
 
 const fetch = require("node-fetch");
 
@@ -435,6 +425,11 @@ describe("Function: sendEmailOfType: ", () => {
     example: "value"
   };
 
+  const testNotifyTemplateKeys = {
+    lc_new_registration: "lc-123",
+    fbo_submission_complete: "fbo-456"
+  };
+
   describe("When the connector responds successfully", () => {
     const testPdfFile = "example base64 string";
 
@@ -448,13 +443,14 @@ describe("Function: sendEmailOfType: ", () => {
         testRegistration,
         testPostRegistrationMetadata,
         testlcContactConfig,
-        testRecipient
+        testRecipient,
+        testNotifyTemplateKeys
       );
     });
 
     it("should have called the connector with the correct arguments", () => {
       expect(sendSingleEmail).toHaveBeenLastCalledWith(
-        NOTIFY_TEMPLATE_ID_LC,
+        "lc-123",
         testRecipient,
         testTransformedData,
         testPdfFile
@@ -477,7 +473,8 @@ describe("Function: sendEmailOfType: ", () => {
         testRegistration,
         testPostRegistrationMetadata,
         testlcContactConfig,
-        testRecipient
+        testRecipient,
+        testNotifyTemplateKeys
       );
     });
 
@@ -500,13 +497,14 @@ describe("Function: sendEmailOfType: ", () => {
         testRegistration,
         testPostRegistrationMetadata,
         testlcContactConfig,
-        testRecipient
+        testRecipient,
+        testNotifyTemplateKeys
       );
     });
 
     it("should have called the connector with the correct arguments", () => {
       expect(sendSingleEmail).toHaveBeenLastCalledWith(
-        NOTIFY_TEMPLATE_ID_FBO,
+        "fbo-456",
         testRecipient,
         testTransformedData,
         undefined

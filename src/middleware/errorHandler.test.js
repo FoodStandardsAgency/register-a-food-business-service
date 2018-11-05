@@ -107,6 +107,20 @@ describe("Middleware: errorHandler", () => {
     });
   });
 
+  describe("When given a missingRequiredHeader error", () => {
+    it("should append developer mesage with raw error", () => {
+      const error = {
+        name: "missingRequiredHeader",
+        message: "missing registration-data-version header"
+      };
+      errorHandler(error, "request", res);
+      expect(res.status).toBeCalledWith(400);
+      expect(res.send.mock.calls[0][0].developerMessage).toEqual(
+        "Required header missing in request. Please add and re-try request. Raw error: missing registration-data-version header"
+      );
+    });
+  });
+
   describe("When given an unknown error", () => {
     it("should return 500 error", () => {
       const error = {

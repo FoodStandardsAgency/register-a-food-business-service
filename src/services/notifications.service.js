@@ -65,15 +65,6 @@ const transformDataForNotify = (
     lcInfo
   );
 
-  optionalNotifyFields.forEach(key => {
-    if (flattenedData[key]) {
-      flattenedData[`${key}_exists`] = "yes";
-    } else {
-      flattenedData[key] = "";
-      flattenedData[`${key}_exists`] = "no";
-    }
-  });
-
   return flattenedData;
 };
 

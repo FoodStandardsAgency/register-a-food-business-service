@@ -10,11 +10,64 @@ describe("Function: sendSingleEmail", () => {
   const testTemplateId = "123456";
   const testRecipient = "email@email.com";
   const testPdfFile = "example pdf file";
-  let testFlattenedData = {
-    example: "value"
+  const testFlattenedData = {
+    example: "value",
+    opening_day_monday: true,
+    opening_day_tuesday: false
+  };
+  const testFetchedTemplate = {
+    body: {
+      personalisation: {
+        some_field: {},
+        example: {},
+        example_exists: {},
+        opening_day_monday_exists: {},
+        opening_day_tuesday_exists: {}
+      }
+    }
   };
 
   const args = [testTemplateId, testRecipient, testFlattenedData, testPdfFile];
+
+  describe("given the request is successful", () => {
+    beforeEach(async () => {
+      process.env.DOUBLE_MODE = false;
+      jest.clearAllMocks();
+      mockNotifyClient = {
+        sendEmail: jest.fn(async () => {
+          return { body: "This is a success message from the notify client" };
+        }),
+        getTemplateById: jest.fn(() => testFetchedTemplate)
+      };
+      NotifyClient.mockImplementation(() => mockNotifyClient);
+    });
+
+    it("Should resolve with the success message", async () => {
+      await expect(sendSingleEmail(...args)).resolves.toBe(
+        "This is a success message from the notify client"
+      );
+    });
+
+    it("Should have called the Notify sendEmail function with the template ID, recipient, and flattenedData (within an object)", () => {
+      return sendSingleEmail(...args).then(() => {
+        const expectedFlattenedDataWithExists = {
+          example: "value",
+          example_exists: "yes",
+          some_field: "",
+          some_field_exists: "no",
+          opening_day_monday: true,
+          opening_day_monday_exists: "yes",
+          opening_day_tuesday: "",
+          opening_day_tuesday_exists: "no"
+        };
+        expect(mockNotifyClient.sendEmail).toHaveBeenLastCalledWith(
+          testTemplateId,
+          testRecipient,
+          { personalisation: expectedFlattenedDataWithExists }
+        );
+      });
+    });
+  });
 
   describe("given the NotifyClient constructor throws an error when used", () => {
     beforeEach(async () => {
@@ -41,7 +94,8 @@ describe("Function: sendSingleEmail", () => {
           sendEmail: jest.fn(async () => {
             throw new Error("secretOrPrivateKey must have a value");
           }),
-          prepareUpload: jest.fn()
+          prepareUpload: jest.fn(),
+          getTemplateById: jest.fn(() => testFetchedTemplate)
         };
         NotifyClient.mockImplementation(() => mockNotifyClient);
       });
@@ -69,7 +123,8 @@ describe("Function: sendSingleEmail", () => {
             error.message = "notify error";
             throw error;
           }),
-          prepareUpload: jest.fn()
+          prepareUpload: jest.fn(),
+          getTemplateById: jest.fn(() => testFetchedTemplate)
         };
         NotifyClient.mockImplementation(() => mockNotifyClient);
         try {
@@ -101,7 +156,8 @@ describe("Function: sendSingleEmail", () => {
             error.message = "notify error";
             throw error;
           }),
-          prepareUpload: jest.fn()
+          prepareUpload: jest.fn(),
+          getTemplateById: jest.fn(() => testFetchedTemplate)
         };
         NotifyClient.mockImplementation(() => mockNotifyClient);
         try {
@@ -178,6 +234,9 @@ describe("Function: sendSingleEmail", () => {
         body: "Double response"
       }));
       notifyClientDouble.prepareUpload.mockImplementation(() => {});
+      notifyClientDouble.getTemplateById.mockImplementation(
+        async () => testFetchedTemplate
+      );
     });
 
     it("Should resolve with the double message", async () => {
