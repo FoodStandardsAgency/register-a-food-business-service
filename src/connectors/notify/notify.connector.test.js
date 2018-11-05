@@ -37,7 +37,8 @@ describe("Function: sendSingleEmail", () => {
         sendEmail: jest.fn(async () => {
           return { body: "This is a success message from the notify client" };
         }),
-        getTemplateById: jest.fn(() => testFetchedTemplate)
+        getTemplateById: jest.fn(() => testFetchedTemplate),
+        prepareUpload: jest.fn()
       };
       NotifyClient.mockImplementation(() => mockNotifyClient);
     });
@@ -173,58 +174,6 @@ describe("Function: sendSingleEmail", () => {
     });
   });
 
-  describe("given the request is successful", () => {
-    beforeEach(async () => {
-      process.env.DOUBLE_MODE = false;
-      jest.clearAllMocks();
-      mockNotifyClient = {
-        sendEmail: jest.fn(async () => {
-          return { body: "This is a success message from the notify client" };
-        }),
-        prepareUpload: jest.fn()
-      };
-      NotifyClient.mockImplementation(() => mockNotifyClient);
-    });
-
-    it("Should resolve with the success message", async () => {
-      await expect(sendSingleEmail(...args)).resolves.toBe(
-        "This is a success message from the notify client"
-      );
-    });
-
-    it("Should have called the Notify sendEmail function with the template ID, recipient, and flattenedData (within an object)", () => {
-      return sendSingleEmail(...args).then(() => {
-        expect(mockNotifyClient.sendEmail).toHaveBeenLastCalledWith(
-          testTemplateId,
-          testRecipient,
-          { personalisation: testFlattenedData }
-        );
-      });
-    });
-    describe("given pdfFile is undefined", () => {
-      let result;
-      beforeEach(async () => {
-        result = await sendSingleEmail(
-          testTemplateId,
-          testRecipient,
-          testFlattenedData,
-          undefined
-        );
-      });
-      it("sendEmail function is called with link_to_document as an empty string", () => {
-        const flattenedDataWithPdfEmptyString = {
-          ...testFlattenedData,
-          link_to_document: ""
-        };
-        expect(mockNotifyClient.sendEmail).toHaveBeenLastCalledWith(
-          testTemplateId,
-          testRecipient,
-          { personalisation: flattenedDataWithPdfEmptyString }
-        );
-      });
-    });
-  });
-
   describe("When running in double mode", () => {
     beforeEach(async () => {
       process.env.DOUBLE_MODE = true;
@@ -241,6 +190,28 @@ describe("Function: sendSingleEmail", () => {
 
     it("Should resolve with the double message", async () => {
       await expect(sendSingleEmail(...args)).resolves.toBe("Double response");
+    });
+  });
+
+  describe("When not given a pdfFile", () => {
+    beforeEach(async () => {
+      process.env.DOUBLE_MODE = false;
+      jest.clearAllMocks();
+      mockNotifyClient = {
+        sendEmail: jest.fn(async () => {
+          return { body: "This is a success message from the notify client" };
+        }),
+        getTemplateById: jest.fn(() => testFetchedTemplate),
+        prepareUpload: jest.fn()
+      };
+      NotifyClient.mockImplementation(() => mockNotifyClient);
+      args[3] = false;
+    });
+
+    it("Should resolve with the success message", async () => {
+      await expect(sendSingleEmail(...args)).resolves.toBe(
+        "This is a success message from the notify client"
+      );
     });
   });
 });
