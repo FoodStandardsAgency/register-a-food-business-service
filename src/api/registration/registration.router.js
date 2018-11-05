@@ -24,6 +24,14 @@ const registrationRouter = () => {
 
         const regDataVersion = req.headers["registration-data-version"];
 
+        if (regDataVersion === undefined) {
+          const missingHeaderError = new Error(
+            "Missing 'registration-data-version' header"
+          );
+          missingHeaderError.name = "missingRequiredHeader";
+          throw missingHeaderError;
+        }
+
         const response = await registrationController.createNewRegistration(
           req.body.registration,
           req.body.local_council_url,
