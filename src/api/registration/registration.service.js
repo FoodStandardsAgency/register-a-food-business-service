@@ -290,9 +290,8 @@ const sendEmailOfType = async (
     let pdfFile = undefined;
     if (typeOfEmail === "LC") {
       pdfFile = await pdfGenerator(dataForPDF);
+      fs.writeFile("out.pdf", pdfFile, "base64");
     }
-
-    fs.writeFile("out.pdf", pdfFile, 'base64');
 
     // await sendSingleEmail(templateId, recipientEmailAddress, data, pdfFile);
     emailSent.success = true;

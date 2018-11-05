@@ -211,7 +211,6 @@ const createContent = pdfData => {
     ]
   });
   content.push(createNewSpace(2));
-  console.log(createLcContactSection(pdfData.metaData.lcInfo));
   content = content.concat(createLcContactSection(pdfData.metaData.lcInfo));
   content.push(createNewSpace(2));
   content.push({
@@ -232,6 +231,7 @@ const createContent = pdfData => {
     style: "bigger",
     text: "Registration details"
   });
+  content.push(createNewSpace(2));
   content.push(
     createSingleLine("Submitted on", pdfData.metaData.reg_submission_date)
   );
@@ -245,7 +245,7 @@ const createContent = pdfData => {
 };
 
 const pdfGenerator = pdfData => {
-  return new Promise((resolve, reject) => {
+  return new Promise(resolve => {
     const clonedFontDes = JSON.parse(JSON.stringify(fontDescriptors));
     const printer = new PdfPrinter(clonedFontDes);
     const content = createContent(pdfData);
