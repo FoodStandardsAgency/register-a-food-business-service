@@ -8,7 +8,7 @@ module.exports = (sequelize, DataTypes) => {
         autoIncrement: true
       },
       operator_type: { type: DataTypes.STRING },
-      operator_comapny_name: { type: DataTypes.STRING },
+      operator_company_name: { type: DataTypes.STRING },
       operator_company_house_number: { type: DataTypes.STRING },
       operator_charity_name: { type: DataTypes.STRING },
       operator_charity_number: { type: DataTypes.STRING },

@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## v3.6.3 - 30th October 2018 (unreleased)
+
+### Modified
+
+* Fix typo in Operator model for operator_company_name
+
 ## v3.6.2 - 30th October 2018 (unreleased)
 
 ### Modified
