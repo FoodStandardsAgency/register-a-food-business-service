@@ -58,8 +58,9 @@ const createPremise = async (premise, establishmentId) => {
   return modelCreate(data, Premise, "Premise");
 };
 
-const createRegistration = async fsa_rn => {
-  return modelCreate({ fsa_rn }, Registration, "Registration");
+const createRegistration = async (fsa_rn, council) => {
+  const data = { fsa_rn, council };
+  return modelCreate(data, Registration, "Registration");
 };
 
 const modelFindOne = async (query, model, functionName) => {

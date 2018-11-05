@@ -41,11 +41,11 @@ const {
 const { logEmitter } = require("../../services/logging.service");
 const { statusEmitter } = require("../../services/statusEmitter.service");
 
-const saveRegistration = async (registration, fsa_rn) => {
+const saveRegistration = async (registration, fsa_rn, council) => {
   logEmitter.emit("functionCall", "registration.service", "saveRegistration");
 
   try {
-    const reg = await createRegistration(fsa_rn);
+    const reg = await createRegistration(fsa_rn, council);
     const establishment = await createEstablishment(
       registration.establishment.establishment_details,
       reg.id

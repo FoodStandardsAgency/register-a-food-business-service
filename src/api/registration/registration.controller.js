@@ -71,7 +71,8 @@ const createNewRegistration = async (
   const tascomiObject = JSON.parse(tascomiResponse);
   const response = await saveRegistration(
     registration,
-    postRegistrationMetadata["fsa-rn"]
+    postRegistrationMetadata["fsa-rn"],
+    localCouncilUrl
   );
 
   const notifySuccessOrFailureLc = {};
