@@ -16,10 +16,40 @@ const sendSingleEmail = async (templateId, recipientEmail, flattenedData) => {
   }
 
   try {
+    const notifyTemplate = await notifyClient.getTemplateById(templateId);
+
+    const requiredTemplateFields = Object.keys(
+      notifyTemplate.body.personalisation
+    );
+
+    const templateFieldsWithoutSuffix = requiredTemplateFields.map(
+      fieldName => {
+        const trimmedFieldName = fieldName.trim();
+        return trimmedFieldName.endsWith("_exists")
+          ? trimmedFieldName.slice(0, -7)
+          : trimmedFieldName;
+      }
+    );
+
+    const templateFieldsWithoutDuplicates = new Set(
+      templateFieldsWithoutSuffix
+    );
+
+    const allNotifyPersonalisationData = { ...flattenedData };
+
+    templateFieldsWithoutDuplicates.forEach(fieldName => {
+      if (allNotifyPersonalisationData[fieldName]) {
+        allNotifyPersonalisationData[`${fieldName}_exists`] = "yes";
+      } else {
+        allNotifyPersonalisationData[fieldName] = "";
+        allNotifyPersonalisationData[`${fieldName}_exists`] = "no";
+      }
+    });
+
     const notifyArguments = [
       templateId,
       recipientEmail,
-      { personalisation: flattenedData }
+      { personalisation: allNotifyPersonalisationData }
     ];
 
     const notifyResponse = await notifyClient.sendEmail(...notifyArguments);

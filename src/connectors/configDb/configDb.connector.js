@@ -28,6 +28,47 @@ const establishConnectionToMongo = async collectionName => {
   }
 };
 
+const getConfigVersion = async regDataVersion => {
+  logEmitter.emit("functionCall", "configDb.connector", "getConfigVersion");
+
+  try {
+    const configVersionCollection = await establishConnectionToMongo(
+      "configVersion"
+    );
+    const configVersionData = await configVersionCollection.findOne({
+      _id: regDataVersion
+    });
+    statusEmitter.emit("incrementCount", "getConfigFromDbSucceeded");
+    statusEmitter.emit("setStatus", "mostRecentGetConfigFromDbSucceeded", true);
+    logEmitter.emit(
+      "functionSuccess",
+      "configDB.connector",
+      "getConfigVersion"
+    );
+    return configVersionData;
+  } catch (err) {
+    statusEmitter.emit("incrementCount", "getConfigFromDbFailed");
+    statusEmitter.emit(
+      "setStatus",
+      "mostRecentGetConfigFromDbSucceeded",
+      false
+    );
+
+    const newError = new Error();
+    newError.name = "mongoConnectionError";
+    newError.message = err.message;
+
+    logEmitter.emit(
+      "functionFail",
+      "configDb.connector",
+      "getConfigVersion",
+      newError
+    );
+
+    throw newError;
+  }
+};
+
 const getAllLocalCouncilConfig = async () => {
   logEmitter.emit(
     "functionCall",
@@ -98,5 +139,6 @@ module.exports = {
   getAllLocalCouncilConfig,
   clearLcConfigCache,
   clearMongoConnection,
-  addDeletedId
+  addDeletedId,
+  getConfigVersion
 };

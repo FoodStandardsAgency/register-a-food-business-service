@@ -28,6 +28,7 @@ module.exports = {
     "!**/src/config.js",
     "!**/tests/*",
     "!**/src/**/*.double.js",
-    "!**/src/connectors/configDb/configDb-seed/**"
+    "!**/src/connectors/configDb/configDb-seed/**",
+    "!**/src/**/*.router.js"
   ]
 };

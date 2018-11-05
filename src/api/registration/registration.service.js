@@ -2,11 +2,6 @@ const moment = require("moment");
 const fetch = require("node-fetch");
 
 const {
-  NOTIFY_TEMPLATE_ID_FBO,
-  NOTIFY_TEMPLATE_ID_LC
-} = require("../../config");
-
-const {
   createRegistration,
   createEstablishment,
   createOperator,
@@ -254,7 +249,8 @@ const sendEmailOfType = async (
   registration,
   postRegistrationMetadata,
   lcContactConfig,
-  recipientEmailAddress
+  recipientEmailAddress,
+  notifyTemplateKeys
 ) => {
   logEmitter.emit("functionCall", "registration.service", "sendEmailOfType");
 
@@ -263,10 +259,10 @@ const sendEmailOfType = async (
   let templateId;
 
   if (typeOfEmail === "LC") {
-    templateId = NOTIFY_TEMPLATE_ID_LC;
+    templateId = notifyTemplateKeys.lc_new_registration;
   }
   if (typeOfEmail === "FBO") {
-    templateId = NOTIFY_TEMPLATE_ID_FBO;
+    templateId = notifyTemplateKeys.fbo_submission_complete;
   }
 
   try {

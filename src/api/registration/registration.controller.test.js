@@ -16,6 +16,10 @@ jest.mock("../../connectors/cacheDb/cacheDb.connector", () => ({
   cacheRegistration: jest.fn()
 }));
 
+jest.mock("../../connectors/configDb/configDb.connector", () => ({
+  getConfigVersion: jest.fn()
+}));
+
 const {
   saveRegistration,
   getFullRegistrationByFsaRn,
@@ -31,6 +35,9 @@ const {
   getRegistration,
   deleteRegistration
 } = require("./registration.controller");
+const {
+  getConfigVersion
+} = require("../../connectors/configDb/configDb.connector");
 
 describe("registration controller", () => {
   let result;
@@ -70,6 +77,10 @@ describe("registration controller", () => {
     }
   };
   const testLocalCouncilUrl = "example-council-url";
+  const testRegDataVersion = "1.2.0";
+  const testConfigVersion = {
+    notify_template_keys: { key1: "abc", key2: "xyz" }
+  };
 
   describe("Function: createNewRegistration", () => {
     describe("when given valid data", () => {
@@ -88,12 +99,14 @@ describe("registration controller", () => {
           return { regId: 1 };
         });
         getLcContactConfig.mockImplementation(() => exampleLcConfig);
+        getConfigVersion.mockImplementation(() => testConfigVersion);
         sendEmailOfType.mockImplementation(() => {
           return { success: true, recipient: "recipient@example.com" };
         });
         result = await createNewRegistration(
           testRegistration,
-          testLocalCouncilUrl
+          testLocalCouncilUrl,
+          testRegDataVersion
         );
       });
 
@@ -116,22 +129,14 @@ describe("registration controller", () => {
           success: true
         });
       });
-      it("should have last called sendEmailOfType with the operator_email", () => {
-        expect(sendEmailOfType).toHaveBeenLastCalledWith(
-          "FBO",
-          expect.anything(),
-          expect.anything(),
-          expect.anything(),
-          "operator@example.com"
-        );
-      });
 
       describe("given the Local Council is responsible for both hygiene and standards", () => {
         beforeEach(async () => {
           getLcContactConfig.mockImplementation(() => exampleLcConfig);
           result = await createNewRegistration(
             testRegistration,
-            testLocalCouncilUrl
+            testLocalCouncilUrl,
+            testRegDataVersion
           );
         });
 
@@ -159,7 +164,8 @@ describe("registration controller", () => {
           getLcContactConfig.mockImplementation(() => exampleMultiLcConfig);
           result = await createNewRegistration(
             testRegistration,
-            testLocalCouncilUrl
+            testLocalCouncilUrl,
+            testRegDataVersion
           );
         });
 
@@ -190,9 +196,11 @@ describe("registration controller", () => {
     describe("given the operator_email field does not exist, but contact_representative_email does", () => {
       beforeEach(async () => {
         getLcContactConfig.mockImplementation(() => exampleLcConfig);
+
         result = await createNewRegistration(
           testRegistrationWithRepresentative,
-          testLocalCouncilUrl
+          testLocalCouncilUrl,
+          testRegDataVersion
         );
       });
 
@@ -202,7 +210,8 @@ describe("registration controller", () => {
           expect.anything(),
           expect.anything(),
           expect.anything(),
-          "representative@example.com"
+          "representative@example.com",
+          testConfigVersion.notify_template_keys
         );
       });
     });

@@ -1,5 +1,4 @@
 const moment = require("moment");
-const optionalNotifyFields = require("./optional-notify-fields.json");
 
 const transformDataForNotify = (
   registration,
@@ -63,15 +62,6 @@ const transformDataForNotify = (
     postRegistrationMetadataClone,
     lcInfo
   );
-
-  optionalNotifyFields.forEach(key => {
-    if (flattenedData[key]) {
-      flattenedData[`${key}_exists`] = "yes";
-    } else {
-      flattenedData[key] = "";
-      flattenedData[`${key}_exists`] = "no";
-    }
-  });
 
   return flattenedData;
 };

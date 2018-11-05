@@ -36,7 +36,14 @@ const notifyClientDouble = {
         );
       }
     });
-  }
+  },
+  getTemplateById: () => ({
+    body: {
+      personalisation: {
+        establishment_trading_name: {}
+      }
+    }
+  })
 };
 
 module.exports = { notifyClientDouble };

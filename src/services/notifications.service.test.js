@@ -1,11 +1,5 @@
 const { transformDataForNotify } = require("./notifications.service");
 
-jest.mock("./optional-notify-fields.json", () => [
-  "establishment_trading_name",
-  "operator_first_name",
-  "example_optional_field"
-]);
-
 const testRegistrationData = {
   establishment: {
     establishment_details: {
@@ -86,9 +80,7 @@ describe("Function: transformDataForNotify", () => {
     it("should return the flattened data with two sets of council details", () => {
       const expectedFormat = {
         establishment_trading_name: "Itsu",
-        establishment_trading_name_exists: "yes",
         operator_first_name: "Fred",
-        operator_first_name_exists: "yes",
         establishment_postcode: "SW12 9RQ",
         establishment_opening_date: "30 Dec 2017",
         customer_type: "End consumer",
@@ -100,8 +92,6 @@ describe("Function: transformDataForNotify", () => {
         local_council_standards: "Standards council name",
         local_council_email_standards: "standards@example.com",
         local_council_phone_number_standards: "123456789",
-        example_optional_field: "",
-        example_optional_field_exists: "no",
         reg_submission_date: "01 Dec 2018"
       };
 
@@ -121,9 +111,7 @@ describe("Function: transformDataForNotify", () => {
     it("should return the flattened data with one set of council details", () => {
       const expectedFormat = {
         establishment_trading_name: "Itsu",
-        establishment_trading_name_exists: "yes",
         operator_first_name: "Fred",
-        operator_first_name_exists: "yes",
         establishment_postcode: "SW12 9RQ",
         establishment_opening_date: "30 Dec 2017",
         customer_type: "End consumer",
@@ -132,8 +120,6 @@ describe("Function: transformDataForNotify", () => {
         local_council: "Hygiene and standards council name",
         local_council_email: "both@example.com",
         local_council_phone_number: "123456789",
-        example_optional_field: "",
-        example_optional_field_exists: "no",
         reg_submission_date: "01 Dec 2018"
       };
 
@@ -153,9 +139,7 @@ describe("Function: transformDataForNotify", () => {
     it("should return the flattened data with one set of council details", () => {
       const expectedFormat = {
         establishment_trading_name: "Itsu",
-        establishment_trading_name_exists: "yes",
         operator_first_name: "Fred",
-        operator_first_name_exists: "yes",
         establishment_postcode: "SW12 9RQ",
         establishment_opening_date: "30 Dec 2017",
         customer_type: "End consumer",
@@ -163,8 +147,6 @@ describe("Function: transformDataForNotify", () => {
         example: "value",
         local_council: "Hygiene and standards council name",
         local_council_email: "both@example.com",
-        example_optional_field: "",
-        example_optional_field_exists: "no",
         reg_submission_date: "01 Dec 2018"
       };
 
@@ -184,9 +166,7 @@ describe("Function: transformDataForNotify", () => {
     it("should return the flattened data with two sets of council details", () => {
       const expectedFormat = {
         establishment_trading_name: "Itsu",
-        establishment_trading_name_exists: "yes",
         operator_first_name: "Fred",
-        operator_first_name_exists: "yes",
         establishment_postcode: "SW12 9RQ",
         establishment_opening_date: "30 Dec 2017",
         customer_type: "End consumer",
@@ -196,8 +176,6 @@ describe("Function: transformDataForNotify", () => {
         local_council_email_hygiene: "hygiene@example.com",
         local_council_standards: "Standards council name",
         local_council_email_standards: "standards@example.com",
-        example_optional_field: "",
-        example_optional_field_exists: "no",
         reg_submission_date: "01 Dec 2018"
       };
 

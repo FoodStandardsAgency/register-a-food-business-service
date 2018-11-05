@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## v3.6.4 - 5th November 2018 (unreleased)
+
+### Modified
+
+* SDB-924 Generic Notify connector (moved config into database)
+
 ## v3.6.3 - 30th October 2018 (unreleased)
 
 ### Modified
