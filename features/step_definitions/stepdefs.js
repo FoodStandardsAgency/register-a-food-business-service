@@ -14,10 +14,11 @@ const sendRequest = async body => {
   const headers = {
     "Content-Type": "application/json",
     "api-secret": FRONT_END_SECRET,
-    "client-name": FRONT_END_NAME
+    "client-name": FRONT_END_NAME,
+    "registration-data-version": "1.2.1"
   };
   const res = await fetch(
-    "https://dev-register-a-food-business-service.azurewebsites.net/api/registration/createNewRegistration",
+    "https://test-register-a-food-business-service.azurewebsites.net/api/registration/createNewRegistration",
     {
       method: "POST",
       headers,
@@ -35,7 +36,7 @@ const getRequest = async id => {
     "client-name": ADMIN_NAME
   };
   const res = await fetch(
-    `http://dev-register-a-food-business-service.azurewebsites.net/api/registration/${id}`,
+    `http://test-register-a-food-business-service.azurewebsites.net/api/registration/${id}`,
     {
       headers
     }

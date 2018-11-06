@@ -40,10 +40,6 @@ jest.mock("node-fetch");
 
 jest.mock("../../services/pdf.service");
 
-const { pdfGenerator } = require("../../services/pdf.service");
-
-const { sendSingleEmail } = require("../../connectors/notify/notify.connector");
-
 const {
   createFoodBusinessRegistration,
   createReferenceNumber
@@ -54,10 +50,6 @@ const {
 } = require("../../connectors/configDb/configDb.connector");
 
 const mockLocalCouncilConfig = require("../../connectors/configDb/mockLocalCouncilConfig.json");
-
-const {
-  transformDataForNotify
-} = require("../../services/notifications.service");
 
 const fetch = require("node-fetch");
 
@@ -88,7 +80,6 @@ const {
   deleteRegistrationByFsaRn,
   sendTascomiRegistration,
   getRegistrationMetaData,
-  sendEmailOfType,
   getLcContactConfig,
   getLcAuth
 } = require("./registration.service");
@@ -396,124 +387,6 @@ describe("Function: getRegistrationMetaData: ", () => {
     });
     it("should throw the error from the fetch attempt", () => {
       expect(result.message).toBe("test error");
-    });
-  });
-});
-
-describe("Function: sendEmailOfType: ", () => {
-  beforeEach(() => {
-    transformDataForNotify.mockImplementation(() => testTransformedData);
-  });
-
-  let result;
-
-  const testRecipient = "recipient@example.com";
-
-  const testRegistration = {
-    local_council: "example@example.com"
-  };
-
-  const testPostRegistrationMetadata = {
-    example: "metadata"
-  };
-
-  const testlcContactConfig = {
-    local_council_email: "example@example.com"
-  };
-
-  const testTransformedData = {
-    example: "value"
-  };
-
-  const testNotifyTemplateKeys = {
-    lc_new_registration: "lc-123",
-    fbo_submission_complete: "fbo-456"
-  };
-
-  describe("When the connector responds successfully", () => {
-    const testPdfFile = "example base64 string";
-
-    beforeEach(async () => {
-      pdfGenerator.mockImplementation(() => testPdfFile);
-      sendSingleEmail.mockImplementation(() => ({
-        id: "123-456"
-      }));
-      result = await sendEmailOfType(
-        "LC",
-        testRegistration,
-        testPostRegistrationMetadata,
-        testlcContactConfig,
-        testRecipient,
-        testNotifyTemplateKeys
-      );
-    });
-
-    it("should have called the connector with the correct arguments", () => {
-      expect(sendSingleEmail).toHaveBeenLastCalledWith(
-        "lc-123",
-        testRecipient,
-        testTransformedData,
-        testPdfFile
-      );
-    });
-
-    it("should return an object with success value true and the correct recipient email", () => {
-      expect(result.success).toBe(true);
-      expect(result.recipient).toBe(testRecipient);
-    });
-  });
-
-  describe("When the connector throws an error", () => {
-    beforeEach(async () => {
-      sendSingleEmail.mockImplementation(() => {
-        throw new Error();
-      });
-      result = await sendEmailOfType(
-        "LC",
-        testRegistration,
-        testPostRegistrationMetadata,
-        testlcContactConfig,
-        testRecipient,
-        testNotifyTemplateKeys
-      );
-    });
-
-    it("should return an object with success value false and still return a recipient", () => {
-      expect(result.success).toBe(false);
-      expect(result.recipient).toBe(testRecipient);
-    });
-  });
-
-  describe("When called with typeOfEmail FBO", () => {
-    const testPdfFile = "";
-    beforeEach(async () => {
-      pdfGenerator.mockImplementation(() => testPdfFile);
-      sendSingleEmail.mockImplementation(() => ({
-        id: "123-456"
-      }));
-
-      result = await sendEmailOfType(
-        "FBO",
-        testRegistration,
-        testPostRegistrationMetadata,
-        testlcContactConfig,
-        testRecipient,
-        testNotifyTemplateKeys
-      );
-    });
-
-    it("should have called the connector with the correct arguments", () => {
-      expect(sendSingleEmail).toHaveBeenLastCalledWith(
-        "fbo-456",
-        testRecipient,
-        testTransformedData,
-        undefined
-      );
-    });
-
-    it("should return an object with success value true and the correct recipient email", () => {
-      expect(result.success).toBe(true);
-      expect(result.recipient).toBe(testRecipient);
     });
   });
 });

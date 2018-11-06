@@ -25,7 +25,9 @@ const storedStatus = {
   mostRecentEmailNotificationSucceeded: true,
   endToEndRegistrationsSucceeded: 0,
   endToEndRegistrationsFailed: 0,
-  mostRecentEndToEndRegistrationSucceeded: true
+  mostRecentEndToEndRegistrationSucceeded: true,
+  userRegistrationsSucceeded: 0,
+  mostRecentUserRegistrationSucceeded: true
 };
 
 const getStoredStatus = async () => storedStatus;

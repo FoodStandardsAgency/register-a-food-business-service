@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## v3.7.1 - 6th November 2018 (unreleased)
+
+### Modified
+
+* Optimisations to the various async calls to make the user get their response quicker
+
 ## v3.7.0 - 5th November 2018 (unreleased)
 
 ### Modified
