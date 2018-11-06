@@ -1,16 +1,62 @@
 ## Change Log
 
 All notable changes to this project will be documented in this file.
-This project adheres to [Semantic Versioning]
-(http://semver.org/).
+This project adheres to [Semantic Versioning](http://semver.org/).
 
+## v3.7.1 - 6th November 2018 (unreleased)
+
+### Modified
+
+* Optimisations to the various async calls to make the user get their response quicker
+
+## v3.7.0 - 5th November 2018 (unreleased)
+
+### Modified
+
+* SDB-237 Add a PDF to the LC notifications email
+
+## v3.6.4 - 5th November 2018 (unreleased)
+
+### Modified
+
+* SDB-924 Generic Notify connector (moved config into database)
+
+## v3.6.3 - 30th October 2018 (unreleased)
+
+### Modified
+
+* Fix typo in Operator model for operator_company_name
+
+## v3.6.2 - 30th October 2018 (unreleased)
+
+### Modified
+
+* Add council row into registrations table
+
+## v3.6.1 - 29th October 2018 (released)
+
+### Modified
+
+* Memory leak bugfix
+
+## v3.6.0 - 29th October 2018 (released)
+
+### Added
+
+* Added SDB-930 DB Enhancements
+
+## v3.5.0 - 4th October 2018 (unreleased)
+
+### Added
+
+* Added SDB-52 Establishment opening days
 
 ## v3.4.1 - 20th September 2018 (unreleased)
 
 ### Added
 
 * Added abilitiy to send registrations to multiple locations
-  
+
 ## v3.4.0 - 18th September 2018 (unreleased)
 
 ### Added

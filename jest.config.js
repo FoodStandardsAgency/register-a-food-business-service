@@ -1,7 +1,11 @@
 module.exports = {
   verbose: true,
   testEnvironment: "node",
-  reporters: ["default", ["jest-junit", { output: "./reports/TEST-unit.xml" }]],
+  reporters: [
+    "default",
+    ["jest-junit", { output: `./reports/TEST-${process.env.TEST_TYPE}.xml` }]
+  ],
+  coverageReporters: ["cobertura", "lcov", "json", "text"],
   moduleNameMapper: {
     "logging.service": "<rootDir>/src/__mocks__/logging.service.js",
     "statusEmitter.service": "<rootDir>/src/__mocks__/statusEmitter.service.js"
@@ -24,6 +28,7 @@ module.exports = {
     "!**/src/config.js",
     "!**/tests/*",
     "!**/src/**/*.double.js",
-    "!**/src/**/*.seed.js"
+    "!**/src/connectors/configDb/configDb-seed/**",
+    "!**/src/**/*.router.js"
   ]
 };

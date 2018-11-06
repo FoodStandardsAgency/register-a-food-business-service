@@ -36,14 +36,9 @@ jest.mock("../../connectors/configDb/configDb.connector", () => ({
 
 jest.mock("../../services/notifications.service");
 
-jest.mock("../../config", () => ({
-  NOTIFY_TEMPLATE_ID_FBO: "1234",
-  NOTIFY_TEMPLATE_ID_LC: "5678"
-}));
-
 jest.mock("node-fetch");
 
-const { sendSingleEmail } = require("../../connectors/notify/notify.connector");
+jest.mock("../../services/pdf.service");
 
 const {
   createFoodBusinessRegistration,
@@ -55,15 +50,6 @@ const {
 } = require("../../connectors/configDb/configDb.connector");
 
 const mockLocalCouncilConfig = require("../../connectors/configDb/mockLocalCouncilConfig.json");
-
-const {
-  transformDataForNotify
-} = require("../../services/notifications.service");
-
-const {
-  NOTIFY_TEMPLATE_ID_FBO,
-  NOTIFY_TEMPLATE_ID_LC
-} = require("../../config");
 
 const fetch = require("node-fetch");
 
@@ -94,7 +80,6 @@ const {
   deleteRegistrationByFsaRn,
   sendTascomiRegistration,
   getRegistrationMetaData,
-  sendEmailOfType,
   getLcContactConfig,
   getLcAuth
 } = require("./registration.service");
@@ -402,108 +387,6 @@ describe("Function: getRegistrationMetaData: ", () => {
     });
     it("should throw the error from the fetch attempt", () => {
       expect(result.message).toBe("test error");
-    });
-  });
-});
-
-describe("Function: sendEmailOfType: ", () => {
-  beforeEach(() => {
-    transformDataForNotify.mockImplementation(() => testTransformedData);
-  });
-
-  let result;
-
-  const testRecipient = "recipient@example.com";
-
-  const testRegistration = {
-    local_council: "example@example.com"
-  };
-
-  const testPostRegistrationMetadata = {
-    example: "metadata"
-  };
-
-  const testlcContactConfig = {
-    local_council_email: "example@example.com"
-  };
-
-  const testTransformedData = {
-    example: "value"
-  };
-
-  describe("When the connector responds successfully", () => {
-    beforeEach(async () => {
-      sendSingleEmail.mockImplementation(() => ({
-        id: "123-456"
-      }));
-      result = await sendEmailOfType(
-        "LC",
-        testRegistration,
-        testPostRegistrationMetadata,
-        testlcContactConfig,
-        testRecipient
-      );
-    });
-
-    it("should have called the connector with the correct arguments", () => {
-      expect(sendSingleEmail).toHaveBeenLastCalledWith(
-        NOTIFY_TEMPLATE_ID_LC,
-        testRecipient,
-        testTransformedData
-      );
-    });
-
-    it("should return an object with success value true and the correct recipient email", () => {
-      expect(result.success).toBe(true);
-      expect(result.recipient).toBe(testRecipient);
-    });
-  });
-
-  describe("When the connector throws an error", () => {
-    beforeEach(async () => {
-      sendSingleEmail.mockImplementation(() => {
-        throw new Error();
-      });
-      result = await sendEmailOfType(
-        "LC",
-        testRegistration,
-        testPostRegistrationMetadata,
-        testlcContactConfig,
-        testRecipient
-      );
-    });
-
-    it("should return an object with success value false and still return a recipient", () => {
-      expect(result.success).toBe(false);
-      expect(result.recipient).toBe(testRecipient);
-    });
-  });
-
-  describe("When called with typeOfEmail FBO", () => {
-    beforeEach(async () => {
-      sendSingleEmail.mockImplementation(() => ({
-        id: "123-456"
-      }));
-      result = await sendEmailOfType(
-        "FBO",
-        testRegistration,
-        testPostRegistrationMetadata,
-        testlcContactConfig,
-        testRecipient
-      );
-    });
-
-    it("should have called the connector with the correct arguments", () => {
-      expect(sendSingleEmail).toHaveBeenLastCalledWith(
-        NOTIFY_TEMPLATE_ID_FBO,
-        testRecipient,
-        testTransformedData
-      );
-    });
-
-    it("should return an object with success value true and the correct recipient email", () => {
-      expect(result.success).toBe(true);
-      expect(result.recipient).toBe(testRecipient);
     });
   });
 });

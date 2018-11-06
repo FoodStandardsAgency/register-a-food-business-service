@@ -19,14 +19,34 @@ const registrationRouter = () => {
         "registration.router",
         "createNewRegistration"
       );
+      const sendResponse = response => {
+        statusEmitter.emit("incrementCount", "userRegistrationsSucceeded");
+        statusEmitter.emit(
+          "setStatus",
+          "mostRecentUserRegistrationSucceeded",
+          true
+        );
+        res.send(response);
+      };
       try {
         statusEmitter.emit("incrementCount", "submissionsReceived");
 
-        const response = await registrationController.createNewRegistration(
-          req.body.registration,
-          req.body.local_council_url
-        );
+        const regDataVersion = req.headers["registration-data-version"];
 
+        if (regDataVersion === undefined) {
+          const missingHeaderError = new Error(
+            "Missing 'registration-data-version' header"
+          );
+          missingHeaderError.name = "missingRequiredHeader";
+          throw missingHeaderError;
+        }
+
+        await registrationController.createNewRegistration(
+          req.body.registration,
+          req.body.local_council_url,
+          regDataVersion,
+          sendResponse
+        );
         statusEmitter.emit("incrementCount", "endToEndRegistrationsSucceeded");
         statusEmitter.emit(
           "setStatus",
@@ -38,7 +58,6 @@ const registrationRouter = () => {
           "registration.router",
           "createNewRegistration"
         );
-        res.send(response);
       } catch (err) {
         statusEmitter.emit("incrementCount", "endToEndRegistrationsFailed");
         statusEmitter.emit(

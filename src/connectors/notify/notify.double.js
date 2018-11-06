@@ -36,7 +36,15 @@ const notifyClientDouble = {
         );
       }
     });
-  }
+  },
+  prepareUpload: () => "www.link-to-document.com",
+  getTemplateById: () => ({
+    body: {
+      personalisation: {
+        establishment_trading_name: {}
+      }
+    }
+  })
 };
 
 module.exports = { notifyClientDouble };

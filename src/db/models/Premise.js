@@ -1,16 +1,22 @@
-const premise = (db, Sequelize) => {
-  return db.define("premise", {
-    id: {
-      type: Sequelize.INTEGER,
-      primaryKey: true,
-      autoIncrement: true
+module.exports = (sequelize, DataTypes) => {
+  const Premise = sequelize.define(
+    "premise",
+    {
+      id: {
+        type: DataTypes.INTEGER,
+        primaryKey: true,
+        autoIncrement: true
+      },
+      establishment_first_line: { type: DataTypes.STRING },
+      establishment_street: { type: DataTypes.STRING },
+      establishment_town: { type: DataTypes.STRING },
+      establishment_postcode: { type: DataTypes.STRING },
+      establishment_type: { type: DataTypes.STRING }
     },
-    establishment_first_line: { type: Sequelize.STRING },
-    establishment_street: { type: Sequelize.STRING },
-    establishment_town: { type: Sequelize.STRING },
-    establishment_postcode: { type: Sequelize.STRING },
-    establishment_type: { type: Sequelize.STRING }
-  });
+    {}
+  );
+  Premise.associate = function(models) {
+    Premise.belongsTo(models.establishment);
+  };
+  return Premise;
 };
-
-module.exports = { premise };

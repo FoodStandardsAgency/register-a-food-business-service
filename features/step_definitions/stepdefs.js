@@ -1,6 +1,6 @@
 const assert = require("assert");
 const fetch = require("node-fetch");
-const { Given, When, Then } = require("cucumber");
+const { Given, When, Then, setDefaultTimeout } = require("cucumber");
 const {
   FRONT_END_NAME,
   FRONT_END_SECRET,
@@ -8,14 +8,17 @@ const {
   ADMIN_SECRET
 } = require("../../src/config");
 
+setDefaultTimeout(60 * 1000);
+
 const sendRequest = async body => {
   const headers = {
     "Content-Type": "application/json",
     "api-secret": FRONT_END_SECRET,
-    "client-name": FRONT_END_NAME
+    "client-name": FRONT_END_NAME,
+    "registration-data-version": "1.2.1"
   };
   const res = await fetch(
-    "https://dev-register-a-food-business-service.azurewebsites.net/api/registration/createNewRegistration",
+    "https://test-register-a-food-business-service.azurewebsites.net/api/registration/createNewRegistration",
     {
       method: "POST",
       headers,
@@ -33,7 +36,7 @@ const getRequest = async id => {
     "client-name": ADMIN_NAME
   };
   const res = await fetch(
-    `http://dev-register-a-food-business-service.azurewebsites.net/api/registration/${id}`,
+    `http://test-register-a-food-business-service.azurewebsites.net/api/registration/${id}`,
     {
       headers
     }
@@ -74,7 +77,16 @@ Given("I have a new registration with all valid required fields", function() {
         activities: {
           customer_type: "End consumer",
           business_type: "Livestock farm",
-          import_export_activities: "None"
+          import_export_activities: "None",
+          business_other_details: "Food business",
+          opening_days_irregular: "Open christmas",
+          opening_day_monday: true,
+          opening_day_tuesday: true,
+          opening_day_wednesday: true,
+          opening_day_thursday: true,
+          opening_day_friday: true,
+          opening_day_saturday: true,
+          opening_day_sunday: true
         }
       },
       metadata: {
@@ -83,7 +95,7 @@ Given("I have a new registration with all valid required fields", function() {
         declaration3: "Declaration"
       }
     },
-    local_council_url: "cardiff"
+    local_council_url: "west-dorset"
   };
 });
 
@@ -119,7 +131,8 @@ Given(
             establishment_type: "domestic"
           },
           activities: {
-            customer_type: "End consumer"
+            customer_type: "End consumer",
+            opening_day_monday: "true"
           }
         },
         metadata: {
@@ -128,7 +141,7 @@ Given(
           declaration3: "Declaration"
         }
       },
-      local_council_url: "cardiff"
+      local_council_url: "west-dorset"
     };
   }
 );

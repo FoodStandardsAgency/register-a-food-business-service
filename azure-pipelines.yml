@@ -7,16 +7,23 @@ pool:
   vmImage: 'Ubuntu 16.04'
 
 steps:
+
+- script: echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > .npmrc
+  displayName: Create .npmrc
+
+- script: npm -v
+  displayName: 'Npm version'
+
 - script: npm install
   displayName: 'Install'
 
-- script: npm format:verify
+- script: npm run format:verify
   displayName: 'Format'
 
-- script: npm lint
+- script: npm run lint
   displayName: 'Lint'
 
-- script: npm test
+- script: npm run test:unit:ci
   displayName: 'Unit tests'
 
 - task: PublishTestResults@2
@@ -24,7 +31,30 @@ steps:
     testRunner: JUnit
     testResultsFile: ./reports/TEST-unit.xml
     testRunTitle: Unit tests
+    mergeTestResults: false
 
+- task: PublishCodeCoverageResults@1
+  inputs: 
+    codeCoverageTool: Cobertura
+    summaryFileLocation: '$(System.DefaultWorkingDirectory)/coverage/cobertura-coverage.xml'
+    reportDirectory: '$(System.DefaultWorkingDirectory)/coverage/lcov-report'
+
+- script: npm run test:integration
+  displayName: 'Integration tests'
+
+- task: PublishTestResults@2
+  inputs:
+    testRunner: JUnit
+    testResultsFile: ./reports/TEST-integration.xml
+    testRunTitle: Integration tests
+    mergeTestResults: false
+
+- script: npm prune --production
+  displayName: Prune dev dependencies
+
+- script: rm -rf coverage reports
+  displayName: Remove reporting folders
+  
 - task: ArchiveFiles@2
   inputs:
     rootFolderOrFile: '$(System.DefaultWorkingDirectory)'
