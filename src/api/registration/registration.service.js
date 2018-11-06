@@ -2,11 +2,6 @@ const moment = require("moment");
 const fetch = require("node-fetch");
 
 const {
-  pdfGenerator,
-  transformDataForPdf
-} = require("../../services/pdf.service");
-
-const {
   createRegistration,
   createEstablishment,
   createOperator,
@@ -32,16 +27,10 @@ const {
   createReferenceNumber
 } = require("../../connectors/tascomi/tascomi.connector");
 
-const { sendSingleEmail } = require("../../connectors/notify/notify.connector");
-
 const {
   getAllLocalCouncilConfig,
   addDeletedId
 } = require("../../connectors/configDb/configDb.connector");
-
-const {
-  transformDataForNotify
-} = require("../../services/notifications.service");
 
 const { logEmitter } = require("../../services/logging.service");
 const { statusEmitter } = require("../../services/statusEmitter.service");
@@ -249,77 +238,6 @@ const getRegistrationMetaData = async councilCode => {
   }
 };
 
-const sendEmailOfType = async (
-  typeOfEmail,
-  registration,
-  postRegistrationMetadata,
-  lcContactConfig,
-  recipientEmailAddress,
-  notifyTemplateKeys
-) => {
-  logEmitter.emit("functionCall", "registration.service", "sendEmailOfType");
-
-  const emailSent = { success: undefined, recipient: recipientEmailAddress };
-
-  let templateId;
-
-  if (typeOfEmail === "LC") {
-    templateId = notifyTemplateKeys.lc_new_registration;
-  }
-  if (typeOfEmail === "FBO") {
-    templateId = notifyTemplateKeys.fbo_submission_complete;
-  }
-
-  try {
-    const data = transformDataForNotify(
-      registration,
-      postRegistrationMetadata,
-      lcContactConfig
-    );
-
-    const dataForPDF = transformDataForPdf(
-      registration,
-      postRegistrationMetadata,
-      lcContactConfig
-    );
-
-    let pdfFile = undefined;
-    if (typeOfEmail === "LC") {
-      pdfFile = await pdfGenerator(dataForPDF);
-    }
-
-    await sendSingleEmail(templateId, recipientEmailAddress, data, pdfFile);
-    emailSent.success = true;
-
-    statusEmitter.emit("incrementCount", "emailNotificationsSucceeded");
-    statusEmitter.emit(
-      "setStatus",
-      "mostRecentEmailNotificationSucceeded",
-      true
-    );
-    logEmitter.emit(
-      "functionSuccess",
-      "registration.service",
-      "sendEmailOfType"
-    );
-  } catch (err) {
-    emailSent.success = false;
-    statusEmitter.emit("incrementCount", "emailNotificationsFailed");
-    statusEmitter.emit(
-      "setStatus",
-      "mostRecentEmailNotificationSucceeded",
-      false
-    );
-    logEmitter.emit(
-      "functionFail",
-      "registration.service",
-      "sendEmailOfType",
-      err
-    );
-  }
-  return emailSent;
-};
-
 const getLcContactConfig = async localCouncilUrl => {
   logEmitter.emit("functionCall", "registration.service", "getLcContactConfig");
 
@@ -480,7 +398,6 @@ module.exports = {
   deleteRegistrationByFsaRn,
   sendTascomiRegistration,
   getRegistrationMetaData,
-  sendEmailOfType,
   getLcContactConfig,
   getLcAuth
 };

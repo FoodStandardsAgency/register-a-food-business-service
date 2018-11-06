@@ -19,6 +19,15 @@ const registrationRouter = () => {
         "registration.router",
         "createNewRegistration"
       );
+      const sendResponse = response => {
+        statusEmitter.emit("incrementCount", "userRegistrationsSucceeded");
+        statusEmitter.emit(
+          "setStatus",
+          "mostRecentUserRegistrationSucceeded",
+          true
+        );
+        res.send(response);
+      };
       try {
         statusEmitter.emit("incrementCount", "submissionsReceived");
 
@@ -32,12 +41,12 @@ const registrationRouter = () => {
           throw missingHeaderError;
         }
 
-        const response = await registrationController.createNewRegistration(
+        await registrationController.createNewRegistration(
           req.body.registration,
           req.body.local_council_url,
-          regDataVersion
+          regDataVersion,
+          sendResponse
         );
-
         statusEmitter.emit("incrementCount", "endToEndRegistrationsSucceeded");
         statusEmitter.emit(
           "setStatus",
@@ -49,7 +58,6 @@ const registrationRouter = () => {
           "registration.router",
           "createNewRegistration"
         );
-        res.send(response);
       } catch (err) {
         statusEmitter.emit("incrementCount", "endToEndRegistrationsFailed");
         statusEmitter.emit(

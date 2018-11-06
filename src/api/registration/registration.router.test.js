@@ -6,7 +6,9 @@ jest.mock("express", () => ({
   }))
 }));
 jest.mock("./registration.controller", () => ({
-  createNewRegistration: jest.fn(),
+  createNewRegistration: jest.fn((a, b, c, sendResponse) => {
+    sendResponse();
+  }),
   getRegistration: jest.fn(),
   deleteRegistration: jest.fn()
 }));
