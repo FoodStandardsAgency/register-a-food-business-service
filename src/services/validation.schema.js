@@ -269,7 +269,11 @@ const schema = {
         properties: {
           declaration1: { type: "string", validation: validateDeclaration },
           declaration2: { type: "string", validation: validateDeclaration },
-          declaration3: { type: "string", validation: validateDeclaration }
+          declaration3: { type: "string", validation: validateDeclaration },
+          collected: {
+            type: "boolean",
+            validation: validateOpeningDay
+          }
         },
         required: ["declaration1", "declaration2", "declaration3"]
       }
