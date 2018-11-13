@@ -12,6 +12,9 @@ module.exports = (sequelize, DataTypes) => {
       },
       council: {
         type: DataTypes.STRING
+      },
+      collected: {
+        type: DataTypes.BOOLEAN
       }
     },
     {}
