@@ -3,7 +3,7 @@ const collectionQuestion = [
     type: "list",
     name: "collectionName",
     message: "Which configDb collection would you like to seed a new entry to?",
-    choices: ["configVersion", "localCouncil"]
+    choices: ["configVersion", "lcConfig"]
   }
 ];
 
