@@ -1,6 +1,6 @@
 {
   "name": "register-a-food-business-service",
-  "version": "3.7.1",
+  "version": "3.7.2",
   "description": "",
   "main": "src/app.js",
   "engines": {
@@ -35,7 +35,7 @@
   },
   "homepage": "https://github.com/FoodStandardsAgency/register-a-food-business-service#readme",
   "dependencies": {
-    "@slice-and-dice/fsa-rof": "1.0.3",
+    "@slice-and-dice/fsa-rof": "1.0.7",
     "@slice-and-dice/register-a-food-business-validation": "1.13.1",
     "body-parser": "1.18.3",
     "dotenv": "6.0.0",
