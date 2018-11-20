@@ -4,19 +4,19 @@ const mongoClient = require("mongodb").MongoClient;
 const fs = require("fs");
 const inquirer = require("inquirer");
 const generalQs = require("./questions/general.questions");
-const localCouncilQs = require("./questions/localCouncil.questions");
+const localCouncilQs = require("./questions/lcConfigquestions");
 const configVersionQs = require("./questions/configVersion.questions");
-const localCouncilTemplate = require("./templates/localCouncil.template");
+const localCouncilTemplate = require("./templates/lcConfig.template");
 const configVersionTemplate = require("./templates/configVersion.template");
 
 const questions = {
   general: generalQs,
-  localCouncil: localCouncilQs,
+  lcConfig: localCouncilQs,
   configVersion: configVersionQs
 };
 
 const templates = {
-  localCouncil: localCouncilTemplate,
+  lcConfig: localCouncilTemplate,
   configVersion: configVersionTemplate
 };
 
