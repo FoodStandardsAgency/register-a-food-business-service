@@ -7,7 +7,8 @@ module.exports = {
     dialect: "postgres",
     dialectOptions: {
       ssl: true
-    }
+    },
+    keepAlive: true
   },
   development: {
     username: process.env.POSTGRES_USER,
