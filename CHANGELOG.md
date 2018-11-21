@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## v3.7.3 - 21st November 2018 (unreleased)
+
+### Modified
+
+* Add keepAlive: true to database config
+
 ## v3.7.2 - 20th November 2018 (unreleased)
 
 ### Modified
