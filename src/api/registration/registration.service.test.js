@@ -253,9 +253,14 @@ describe("Function: sendTascomiRegistration: ", () => {
   describe("When calls are successful", () => {
     beforeEach(async () => {
       jest.clearAllMocks();
-      createFoodBusinessRegistration.mockImplementation(() => '{ "id": "123"}');
+      createFoodBusinessRegistration.mockImplementation(
+        () => new Promise(resolve => resolve('{ "id": "123"}'))
+      );
       createReferenceNumber.mockImplementation(
-        () => '{ "id": "123", "online_reference": "0000123"}'
+        () =>
+          new Promise(resolve =>
+            resolve('{ "id": "123", "online_reference": "0000123"}')
+          )
       );
       getAllLocalCouncilConfig.mockImplementation(() => [
         {
@@ -290,8 +295,12 @@ describe("Function: sendTascomiRegistration: ", () => {
   describe("When createReferenceNumber fails", () => {
     beforeEach(async () => {
       jest.clearAllMocks();
-      createFoodBusinessRegistration.mockImplementation(() => '{ "id": "123"}');
-      createReferenceNumber.mockImplementation(() => '{ "id": 0 }');
+      createFoodBusinessRegistration.mockImplementation(
+        () => new Promise(resolve => resolve('{ "id": "123"}'))
+      );
+      createReferenceNumber.mockImplementation(
+        () => new Promise(reject => reject('{ "id": 0 }'))
+      );
       getAllLocalCouncilConfig.mockImplementation(() => [
         {
           local_council_url: "cardiff",
