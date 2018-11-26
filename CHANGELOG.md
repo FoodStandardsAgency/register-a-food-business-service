@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## v3.7.4 - 26th November 2018 (unreleased)
+
+### Modified
+
+* Add more fault tolerance to sendTascomiRegistration and saveRegistration functions
+* Removed status logging
+
 ## v3.7.3 - 21st November 2018 (unreleased)
 
 ### Modified

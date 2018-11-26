@@ -1,6 +1,6 @@
 {
   "name": "register-a-food-business-service",
-  "version": "3.7.3",
+  "version": "3.7.4",
   "description": "",
   "main": "src/app.js",
   "engines": {
@@ -50,6 +50,7 @@
     "notifications-node-client": "4.5.1",
     "pdfmake": "^0.1.38",
     "pg": "7.4.3",
+    "promise-retry": "1.1.1",
     "request": "2.87.0",
     "request-promise-native": "1.0.5",
     "sequelize": "4.38.0",
