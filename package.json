@@ -20,9 +20,10 @@
     "format:verify": "prettier --list-different '{src,tests}/**/*.js'",
     "format": "prettier --write '{src,tests}/**/*.js'",
     "start": "node src/app.js",
-    "start:prod": "export NODE_ENV=production && node src/app.js",
+    "start:docker": "node src/db/check-connection.js && npm run migrate:local && node src/app.js",
     "seed:configdb": "node src/connectors/configDb/configDb-seed/runSeedScripts",
-    "migrate": "export NODE_ENV=production && sequelize db:migrate"
+    "migrate": "export NODE_ENV=production && sequelize db:migrate",
+    "migrate:local": "export NODE_ENV=local && sequelize db:migrate"  
   },
   "repository": {
     "type": "git",
