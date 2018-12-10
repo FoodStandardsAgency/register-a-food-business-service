@@ -14,7 +14,8 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.STRING
       },
       collected: {
-        type: DataTypes.BOOLEAN
+        type: DataTypes.BOOLEAN,
+        default: false
       },
       collected_at: {
         type: DataTypes.STRING
