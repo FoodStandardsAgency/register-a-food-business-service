@@ -8,7 +8,8 @@ module.exports = {
     dialectOptions: {
       ssl: true
     },
-    keepAlive: true
+    keepAlive: true,
+    logging: false
   },
   development: {
     username: process.env.POSTGRES_USER,
