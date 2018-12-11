@@ -67,3 +67,6 @@ reports
 saved-data
 
 *.pdf
+
+# JsDocs styling 
+docs/jsdocs
