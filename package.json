@@ -1,6 +1,6 @@
 {
   "name": "register-a-food-business-service",
-  "version": "3.7.4",
+  "version": "3.7.5",
   "description": "",
   "main": "src/app.js",
   "engines": {
@@ -10,31 +10,38 @@
     "test": "jest ./src --coverage",
     "test:unit:ci": "export TEST_TYPE=unit && jest ./src --coverage",
     "test:watch": "export TEST_TYPE=unit && jest ./src --watch",
-    "test:integration": "export TEST_TYPE=integration && jest tests/integration/*.js",
+    "test:integration":
+      "export TEST_TYPE=integration && jest tests/integration/*.js",
     "test:contract": "jest tests/contract/*.js",
     "test:component": "cucumber-js",
-    "test:component:ci": "mkdir -p reports && cucumber-js --format=json | cucumber-junit > reports/TEST-component.xml",
+    "test:component:ci":
+      "mkdir -p reports && cucumber-js --format=json | cucumber-junit > reports/TEST-component.xml",
     "test:securityall": "snyk wizard",
     "test:security": "snyk wizard --severity-threshold=medium",
     "lint": "eslint ./src",
     "format:verify": "prettier --list-different '{src,tests}/**/*.js'",
     "format": "prettier --write '{src,tests}/**/*.js'",
     "start": "node src/app.js",
-    "start:docker": "node src/db/check-connection.js && npm run migrate:local && node src/app.js",
-    "seed:configdb": "node src/connectors/configDb/configDb-seed/runSeedScripts",
+    "start:docker":
+      "node src/db/check-connection.js && npm run migrate:local && node src/app.js",
+    "seed:configdb":
+      "node src/connectors/configDb/configDb-seed/runSeedScripts",
     "migrate": "export NODE_ENV=production && sequelize db:migrate",
     "migrate:local": "export NODE_ENV=local && sequelize db:migrate"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/FoodStandardsAgency/register-a-food-business-service.git"
+    "url":
+      "git+https://github.com/FoodStandardsAgency/register-a-food-business-service.git"
   },
   "author": "",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/FoodStandardsAgency/register-a-food-business-service#issues"
+    "url":
+      "https://github.com/FoodStandardsAgency/register-a-food-business-service#issues"
   },
-  "homepage": "https://github.com/FoodStandardsAgency/register-a-food-business-service#readme",
+  "homepage":
+    "https://github.com/FoodStandardsAgency/register-a-food-business-service#readme",
   "dependencies": {
     "@slice-and-dice/fsa-rof": "1.0.7",
     "@slice-and-dice/register-a-food-business-validation": "1.13.2",
