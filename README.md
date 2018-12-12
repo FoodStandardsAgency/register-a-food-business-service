@@ -1,27 +1,24 @@
-# Contributing to this repository
+# Register a food business service
 
 ## Setting up your development environment
 
-To contribute to this repository, you must use the [register-a-food-business Docker image]() to set up the development environment. For more information, see the [Setting up your development environment]() contribution guide.
+To run this application, you must use the [register-a-food-business-environment](https://github.com/FoodStandardsAgency/register-a-food-business-environment) repository to set up your development environment.
 
-It is recommended that you install the Prettier code-formatting extension for your IDE. For more information about using the Prettier extension, see the [Best practices and code standards]() contribution guide.
+It is recommended that you install the Prettier code-formatting extension for your IDE.
 
-## Detailed contribution guides
+## Contributing to this repository
 
 The following contribution guides are available:
 
 ### High-level tasks
 
-* [Building, starting, and testing the application](./docs/contribution-guidelines/building-starting-testing-the-app.md)
+* [Starting and testing the application](./docs/contribution-guidelines/starting-testing-the-app.md)
 * [Adding a new data field](./docs/contribution-guidelines/adding-a-new-data-field.md)
-* [Finding and fixing bugs](./docs/contribution-guidelines/finding-and-fixing-bugs.md)
 
-### Further information and detailed tasks
+### Further information
 
-* [The repository structure](./docs/contribution-guidelines/the-repository-structure.md)
 * [The tech stack](./docs/contribution-guidelines/the-tech-stack.md)
-* [The dynamic form path](./docs/contribution-guidelines/the-dynamic-form-path.md)
-* [Best practices and code standards](./docs/contribution-guidelines/best-practices-code-standards.md)
-* [Writing integration and contract tests](./docs/contribution-guidelines/writing-integration-contract-tests.md)
-* [Writing unit tests](./docs/contribution-guidelines/writing-integration-contract-tests.md)
-* [Writing component tests](./docs/contribution-guidelines/writing-integration-contract-tests.md)
+* [The email notifications service](./docs/contribution-guidelines/email-notifications.md)
+* [The FSA reference number generator](./docs/contribution-guidelines/reference-number-generator.md)
+* [The temporary registration cache database](./docs/contribution-guidelines/registration-cache-database.md)
+* [The config database](./docs/contribution-guidelines/config-database.md)
