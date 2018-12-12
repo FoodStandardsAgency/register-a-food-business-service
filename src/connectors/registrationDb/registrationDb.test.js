@@ -89,7 +89,7 @@ describe("RegistrationDb connector", () => {
     describe("When Activities.create succeeds", () => {
       beforeEach(async () => {
         Activities.create.mockImplementation(() => {
-          return "success";
+          return new Promise(resolve => resolve("success"));
         });
         result = await createActivities({ some: "data" }, "45");
       });
@@ -128,7 +128,7 @@ describe("RegistrationDb connector", () => {
     describe("When Establishment.create succeeds", () => {
       beforeEach(async () => {
         Establishment.create.mockImplementation(() => {
-          return "success";
+          return new Promise(resolve => resolve("success"));
         });
         result = await createEstablishment({ some: "data" }, "45");
       });
@@ -167,7 +167,7 @@ describe("RegistrationDb connector", () => {
     describe("When Metadata.create succeeds", () => {
       beforeEach(async () => {
         Metadata.create.mockImplementation(() => {
-          return "success";
+          return new Promise(resolve => resolve("success"));
         });
         result = await createMetadata({ some: "data" }, "45");
       });
@@ -206,7 +206,7 @@ describe("RegistrationDb connector", () => {
     describe("When Operator.create succeeds", () => {
       beforeEach(async () => {
         Operator.create.mockImplementation(() => {
-          return "success";
+          return new Promise(resolve => resolve("success"));
         });
         result = await createOperator({ some: "data" }, "45");
       });
@@ -245,7 +245,7 @@ describe("RegistrationDb connector", () => {
     describe("When Premise.create succeeds", () => {
       beforeEach(async () => {
         Premise.create.mockImplementation(() => {
-          return "success";
+          return new Promise(resolve => resolve("success"));
         });
         result = await createPremise({ some: "data" }, "45");
       });
@@ -284,7 +284,7 @@ describe("RegistrationDb connector", () => {
     describe("When Registration.create succeeds", () => {
       beforeEach(async () => {
         Registration.create.mockImplementation(() => {
-          return "success";
+          return new Promise(resolve => resolve("success"));
         });
         result = await createRegistration("fsa-rn", "cardiff");
       });
