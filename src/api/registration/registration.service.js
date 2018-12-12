@@ -1,5 +1,6 @@
 const moment = require("moment");
 const fetch = require("node-fetch");
+const promiseRetry = require("promise-retry");
 
 const {
   createRegistration,
@@ -162,12 +163,28 @@ const sendTascomiRegistration = async (
   );
   try {
     const auth = await getLcAuth(localCouncil);
-    const reg = await createFoodBusinessRegistration(
-      registration,
-      postRegistrationMetadata,
-      auth
-    );
-    const response = await createReferenceNumber(JSON.parse(reg).id, auth);
+    const reg = await promiseRetry({ retries: 3 }, (retry, number) => {
+      logEmitter.emit(
+        "functionCall",
+        "registration.service",
+        `createdFoodBusinessRegistration attempt ${number}`
+      );
+      return createFoodBusinessRegistration(
+        registration,
+        postRegistrationMetadata,
+        auth
+      ).catch(retry);
+    });
+
+    const response = await promiseRetry({ retries: 3 }, (retry, number) => {
+      logEmitter.emit(
+        "functionCall",
+        "registration.service",
+        `createdReferenceNumber attempt ${number}`
+      );
+      return createReferenceNumber(JSON.parse(reg).id, auth).catch(retry);
+    });
+
     if (JSON.parse(response).id === 0) {
       const err = new Error("createReferenceNumber failed");
       err.name = "tascomiRefNumber";
