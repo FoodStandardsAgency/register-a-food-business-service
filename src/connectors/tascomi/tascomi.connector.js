@@ -93,7 +93,8 @@ const createFoodBusinessRegistration = async (
       sales_activities_string: activitiesDetails.customer_type,
       business_type: activitiesDetails.business_type,
       accepted: "f",
-      declined: "f"
+      declined: "f",
+      collected: false
     };
 
     if (activitiesDetails.opening_day_monday === true) {
