@@ -1,3 +1,4 @@
+const promiseRetry = require("promise-retry");
 const {
   Activities,
   Establishment,
@@ -9,13 +10,15 @@ const {
 const { logEmitter } = require("../../services/logging.service");
 
 const modelCreate = async (data, model, modelName) => {
-  logEmitter.emit(
-    "functionCall",
-    "registration.connector.js",
-    `create${modelName}`
-  );
   try {
-    const response = await model.create(data);
+    const response = await promiseRetry({ retries: 3 }, (retry, number) => {
+      logEmitter.emit(
+        "functionCall",
+        "registration.connector.js",
+        `create${modelName} attempt ${number}`
+      );
+      return model.create(data).catch(retry);
+    });
     logEmitter.emit(
       "functionSuccess",
       "registration.connector.js",
