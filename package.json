@@ -23,7 +23,7 @@
     "start:docker": "node src/db/check-connection.js && npm run migrate:local && node src/app.js",
     "seed:configdb": "node src/connectors/configDb/configDb-seed/runSeedScripts",
     "migrate": "export NODE_ENV=production && sequelize db:migrate",
-    "migrate:local": "export NODE_ENV=local && sequelize db:migrate"  
+    "migrate:local": "export NODE_ENV=local && sequelize db:migrate"
   },
   "repository": {
     "type": "git",
@@ -37,7 +37,7 @@
   "homepage": "https://github.com/FoodStandardsAgency/register-a-food-business-service#readme",
   "dependencies": {
     "@slice-and-dice/fsa-rof": "1.0.7",
-    "@slice-and-dice/register-a-food-business-validation": "1.13.1",
+    "@slice-and-dice/register-a-food-business-validation": "1.13.2",
     "body-parser": "1.18.3",
     "dotenv": "6.0.0",
     "express": "4.16.3",
