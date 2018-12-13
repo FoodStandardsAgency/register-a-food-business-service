@@ -1,4 +1,4 @@
-# Building, starting, and testing the application
+# Starting and testing the application
 
 ## Preparing the application for the first time
 
@@ -20,14 +20,14 @@
 
 ### Steps:
 
-1.  Run `npm run start`
+1.  Run `npm start`
 2.  Send requests to `http://localhost:4000` from Postman to test the application
 
 ## Testing the application
 
 The `/package.json` file contains a number of scripts that are used in the Azure devOps pipelines to test the code in this repository. These scripts can also be run locally to prevent unnecessary pipeline builds, using the following commands:
 
-* `npm run test`
+* `npm test`
 
   Runs all of the unit tests and provides a coverage report.
 
