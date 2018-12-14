@@ -27,7 +27,8 @@
     "seed:configdb":
       "node src/connectors/configDb/configDb-seed/runSeedScripts",
     "migrate": "export NODE_ENV=production && sequelize db:migrate",
-    "migrate:local": "export NODE_ENV=local && sequelize db:migrate"
+    "migrate:local": "export NODE_ENV=local && sequelize db:migrate",
+    "jsdoc": "rm -rf ./docs/jsdoc && jsdoc -r ./src -d ./docs/jsdoc"
   },
   "repository": {
     "type": "git",
@@ -75,6 +76,7 @@
     "eslint-plugin-prettier": "2.6.1",
     "jest": "23.6.0",
     "jest-junit": "5.1.0",
+    "jsdoc": "3.5.5",
     "prettier": "1.12.1",
     "snyk": "1.93.0"
   }
