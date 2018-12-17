@@ -1,5 +1,5 @@
 # base build
-FROM node:8.9.4 as base
+FROM node:8.9.4 AS base
 
 RUN mkdir -p /usr/src/app
 WORKDIR /usr/src/app
@@ -12,6 +12,7 @@ RUN echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" > .npmrc && \
 
 # second build
 FROM node:8.9.4
-COPY --from=base . .
+WORKDIR /usr/src/app
+COPY --from=base /usr/src/app /usr/src/app
 EXPOSE 4000
 USER node
