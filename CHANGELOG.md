@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## v3.7.6 - 17th December 2018
+
+### Modified
+
+* Added default type to collected field
+
 ## v3.7.5 - 12th December 2018 (unreleased)
 
 ### Modified
