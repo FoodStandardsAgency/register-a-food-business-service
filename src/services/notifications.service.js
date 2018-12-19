@@ -167,7 +167,6 @@ const sendEmailOfType = async (
     throw err;
   }
   return emailSent;
-  console.log(emailSent);
 };
 
 /**
