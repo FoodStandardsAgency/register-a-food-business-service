@@ -1,3 +1,8 @@
+/**
+ * Functions for transforming user submitted data into the notify e-mail pdf attachment
+ * @module services/pdf
+ */
+
 const PdfPrinter = require("pdfmake/src/printer");
 
 const {
@@ -10,6 +15,16 @@ const {
   createFsaRnBox,
   createLcContactSection
 } = require("./pdf-styles");
+
+/**
+ * Function that does data manipulation to return an object with data in the needed format
+ *
+ * @param {object} registrationData The object containing all the answers the user has submitted during the sesion
+ * @param {object} postRegistrationData The object containing all the metadata from the submission e.g. fsa-rn number, submission time
+ * @param {object} lcContactConfig The object containing the local council information
+ *
+ * @returns {object} An object containing the set of data in the correct format for the pdf service
+ */
 
 const transformDataForPdf = (
   registrationData,
@@ -91,6 +106,14 @@ const createContent = pdfData => {
   content.push(createSingleSection("Declaration", pdfData.declaration));
   return content;
 };
+
+/**
+ * Function that uses http://pdfmake.org to convert the data into a base64 string which is what notify uses to create the pdf template
+ *
+ * @param {object} pdfData An object containing the set of data in the correct format for the pdf service
+
+ * @returns {base64Pdf} Encoded strng that Notify service can use to create the PDF
+ */
 
 const pdfGenerator = pdfData => {
   return new Promise(resolve => {

@@ -1,8 +1,23 @@
+/**
+ * Functions for transforming the data and sending notifications using Notify
+ * @module services/notifications
+ */
+
 const moment = require("moment");
 const { logEmitter } = require("./logging.service");
 const { statusEmitter } = require("./statusEmitter.service");
 const { sendSingleEmail } = require("../connectors/notify/notify.connector");
 const { pdfGenerator, transformDataForPdf } = require("./pdf.service");
+
+/**
+ * Function that converts the data into format for Notify and creates a new object
+ *
+ * @param {object} registration The object containing all the answers the user has submitted during the sesion
+ * @param {object} postRegistrationMetaData The object containing all the metadata from the submission e.g. fsa-rn number, submission time
+ * @param {object} lcContactConfig The object containing the local council information
+ *
+ * @returns {object} Object containing key-value pairs of the data needed to populate corresponding keys in notify template
+ */
 
 const transformDataForNotify = (
   registration,
@@ -69,6 +84,19 @@ const transformDataForNotify = (
 
   return flattenedData;
 };
+
+/**
+ * Function that uses Notify to send an email to either the LC or FBO with the relevant data. It also uses the pdfmake generator to pipe the base64pdf to Notify.
+ *
+ * @param {object} registration The object containing all the answers the user has submitted during the sesion
+ * @param {object} postRegistrationMetaData The object containing the metadata from the submission i.e. fsa-rn number and submission date
+ * @param {object} lcContactConfig The object containing the local council information
+ * @param {string} typeOfEmail String containing information on whether email gets sent to FBO or LC
+ * @param {string} recipientEmailAddress String that is email address of recipient
+ * @param {object} notifyTemplateKeys Notify keys to determine template to be used (can be found on Notify)
+ *
+ * @returns {object} Object that returns email sent status and recipients email address
+ */
 
 const sendEmailOfType = async (
   typeOfEmail,
@@ -141,6 +169,14 @@ const sendEmailOfType = async (
   return emailSent;
 };
 
+/**
+ * Function that calls the sendSingleEmail function with the relevant parameters in the right order
+ *
+ * @param {object} registration The object containing all the answers the user has submitted during the sesion
+ * @param {object} postRegistrationMetaData The object containing the metadata from the submission i.e. fsa-rn number and submission date
+ * @param {object} lcContactConfig The object containing the local council information
+ * @param {object} notifyTemplateKeys Notify keys to determine template to be used (can be found on Notify)
+ */
 const sendNotifications = async (
   lcContactConfig,
   registration,
