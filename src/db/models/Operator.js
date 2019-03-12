@@ -25,7 +25,7 @@ module.exports = (sequelize, DataTypes) => {
       contact_representative_role: { type: DataTypes.STRING },
       contact_representative_number: { type: DataTypes.STRING },
       contact_representative_email: { type: DataTypes.STRING },
-      operator_uprn: { type: DataTypes.STRING }
+      operator_uprn: { type: DataTypes.INTEGER }
     },
     {}
   );

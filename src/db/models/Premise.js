@@ -12,7 +12,7 @@ module.exports = (sequelize, DataTypes) => {
       establishment_town: { type: DataTypes.STRING },
       establishment_postcode: { type: DataTypes.STRING },
       establishment_type: { type: DataTypes.STRING },
-      establishment_uprn: { type: DataTypes.STRING }
+      establishment_uprn: { type: DataTypes.INTEGER }
     },
     {}
   );
