@@ -5,9 +5,9 @@ module.exports = {
       queryInterface.addColumn(
         "premises",
         "establishment_uprn",
-        Sequelize.INTEGER
+        Sequelize.STRING
       ),
-      queryInterface.addColumn("operators", "operator_uprn", Sequelize.INTEGER)
+      queryInterface.addColumn("operators", "operator_uprn", Sequelize.STRING)
     ]);
   },
   down: queryInterface => {
