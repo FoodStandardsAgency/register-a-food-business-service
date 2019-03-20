@@ -113,11 +113,6 @@ const getAllLocalCouncilConfig = async () => {
   return allLcConfigData;
 };
 
-const clearLcConfigCache = () => {
-  allLcConfigData = [];
-  return allLcConfigData;
-};
-
 const clearMongoConnection = () => {
   client = undefined;
   configDB = undefined;
@@ -131,7 +126,6 @@ const addDeletedId = async id => {
 
 module.exports = {
   getAllLocalCouncilConfig,
-  clearLcConfigCache,
   clearMongoConnection,
   addDeletedId,
   getConfigVersion
