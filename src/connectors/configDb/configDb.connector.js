@@ -7,7 +7,7 @@ const { statusEmitter } = require("../../services/statusEmitter.service");
 let client = undefined;
 let configDB = undefined;
 
-let allLcConfigData = [];
+let allLcConfigData;
 
 const establishConnectionToMongo = async collectionName => {
   if (process.env.DOUBLE_MODE === "true") {
@@ -76,38 +76,32 @@ const getAllLocalCouncilConfig = async () => {
     "getAllLocalCouncilConfig"
   );
 
-  if (allLcConfigData.length === 0) {
-    try {
-      const lcConfigCollection = await establishConnectionToMongo("lcConfig");
-      const allLcConfigDataCursor = await lcConfigCollection.find({});
-      allLcConfigData = allLcConfigDataCursor.toArray();
+  try {
+    const lcConfigCollection = await establishConnectionToMongo("lcConfig");
+    const allLcConfigDataCursor = await lcConfigCollection.find({});
+    allLcConfigData = allLcConfigDataCursor.toArray();
 
-      statusEmitter.emit("incrementCount", "getConfigFromDbSucceeded");
-      statusEmitter.emit(
-        "setStatus",
-        "mostRecentGetConfigFromDbSucceeded",
-        true
-      );
-    } catch (err) {
-      statusEmitter.emit("incrementCount", "getConfigFromDbFailed");
-      statusEmitter.emit(
-        "setStatus",
-        "mostRecentGetConfigFromDbSucceeded",
-        false
-      );
-      logEmitter.emit(
-        "functionFail",
-        "configDb.connector",
-        "getAllLocalCouncilConfig",
-        err
-      );
+    statusEmitter.emit("incrementCount", "getConfigFromDbSucceeded");
+    statusEmitter.emit("setStatus", "mostRecentGetConfigFromDbSucceeded", true);
+  } catch (err) {
+    statusEmitter.emit("incrementCount", "getConfigFromDbFailed");
+    statusEmitter.emit(
+      "setStatus",
+      "mostRecentGetConfigFromDbSucceeded",
+      false
+    );
+    logEmitter.emit(
+      "functionFail",
+      "configDb.connector",
+      "getAllLocalCouncilConfig",
+      err
+    );
 
-      const newError = new Error();
-      newError.name = "mongoConnectionError";
-      newError.message = err.message;
+    const newError = new Error();
+    newError.name = "mongoConnectionError";
+    newError.message = err.message;
 
-      throw newError;
-    }
+    throw newError;
   }
 
   logEmitter.emit(
@@ -116,11 +110,6 @@ const getAllLocalCouncilConfig = async () => {
     "getAllLocalCouncilConfig"
   );
 
-  return allLcConfigData;
-};
-
-const clearLcConfigCache = () => {
-  allLcConfigData = [];
   return allLcConfigData;
 };
 
@@ -137,7 +126,6 @@ const addDeletedId = async id => {
 
 module.exports = {
   getAllLocalCouncilConfig,
-  clearLcConfigCache,
   clearMongoConnection,
   addDeletedId,
   getConfigVersion
