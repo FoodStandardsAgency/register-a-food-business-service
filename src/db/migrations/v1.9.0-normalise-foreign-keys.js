@@ -15,7 +15,7 @@ const recreateEstablishmentsForeignKey = (queryInterface, t, setting) =>
       table: "registrations",
       field: "id"
     },
-    onUpdate: setting,
+    onUpdate: "cascade",
     onDelete: setting,
     transaction: t
   });
@@ -35,7 +35,7 @@ const recreateMetadataForeignKey = (queryInterface, t, setting) =>
       table: "registrations",
       field: "id"
     },
-    onUpdate: setting,
+    onUpdate: "cascade",
     onDelete: setting,
     transaction: t
   });
@@ -55,7 +55,7 @@ const recreateOperatorsForeignKey = (queryInterface, t, setting) =>
       table: "establishments",
       field: "id"
     },
-    onUpdate: setting,
+    onUpdate: "cascade",
     onDelete: setting,
     transaction: t
   });
@@ -75,7 +75,7 @@ const recreatePremisesForeignKey = (queryInterface, t, setting) =>
       table: "establishments",
       field: "id"
     },
-    onUpdate: setting,
+    onUpdate: "cascade",
     onDelete: setting,
     transaction: t
   });
@@ -95,7 +95,7 @@ const recreateActivitiesForeignKey = (queryInterface, t, setting) =>
       table: "establishments",
       field: "id"
     },
-    onUpdate: setting,
+    onUpdate: "cascade",
     onDelete: setting,
     transaction: t
   });
