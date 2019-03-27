@@ -5,7 +5,8 @@ const {
   deleteRegistrationByFsaRn,
   sendTascomiRegistration,
   getRegistrationMetaData,
-  getLcContactConfig
+  getLcContactConfig,
+  getLcAuth
 } = require("./registration.service");
 
 const { sendNotifications } = require("../../services/notifications.service");
@@ -65,14 +66,16 @@ const createNewRegistration = async (
   });
 
   sendResponse(combinedResponse);
-
-  sendTascomiRegistration(
-    registration,
-    Object.assign({}, postRegistrationMetadata, {
-      hygiene_council_code: hygieneCouncilCode
-    }),
-    localCouncilUrl
-  );
+  const auth = await getLcAuth(localCouncilUrl);
+  if (auth) {
+    sendTascomiRegistration(
+      registration,
+      Object.assign({}, postRegistrationMetadata, {
+        hygiene_council_code: hygieneCouncilCode
+      }),
+      localCouncilUrl
+    );
+  }
 
   saveRegistration(
     registration,

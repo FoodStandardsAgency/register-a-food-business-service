@@ -15,6 +15,7 @@ module.exports = (sequelize, DataTypes) => {
       operator_first_name: { type: DataTypes.STRING },
       operator_last_name: { type: DataTypes.STRING },
       operator_postcode: { type: DataTypes.STRING },
+      operator_uprn: { type: DataTypes.STRING },
       operator_first_line: { type: DataTypes.STRING },
       operator_street: { type: DataTypes.STRING },
       operator_town: { type: DataTypes.STRING },

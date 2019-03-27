@@ -8,7 +8,8 @@ jest.mock("./registration.service", () => ({
   deleteRegistrationByFsaRn: jest.fn(),
   sendTascomiRegistration: jest.fn(),
   getRegistrationMetaData: jest.fn(),
-  getLcContactConfig: jest.fn()
+  getLcContactConfig: jest.fn(),
+  getLcAuth: jest.fn()
 }));
 
 jest.mock("../../services/notifications.service", () => ({
@@ -29,7 +30,8 @@ const {
   deleteRegistrationByFsaRn,
   getRegistrationMetaData,
   sendTascomiRegistration,
-  getLcContactConfig
+  getLcContactConfig,
+  getLcAuth
 } = require("./registration.service");
 const { sendNotifications } = require("../../services/notifications.service");
 
@@ -86,39 +88,81 @@ describe("registration controller", () => {
       jest.clearAllMocks();
     });
     describe("when given valid data", () => {
-      beforeEach(async () => {
-        validate.mockImplementation(() => {
-          return [];
+      describe("when auth object exists", () => {
+        beforeEach(async () => {
+          getLcAuth.mockImplementation(() => {
+            return {
+              url: "https://notactualtascomiurl/01/test/123",
+              public_key: "5353535535351",
+              private_key: "123435353453"
+            };
+          });
+          validate.mockImplementation(() => {
+            return [];
+          });
+          getRegistrationMetaData.mockImplementation(() => {
+            return { reg_submission_date: 1, "fsa-rn": "AA1AAA-AA11AA-A1AAA1" };
+          });
+          getLcContactConfig.mockImplementation(() => exampleLcConfig);
+          getConfigVersion.mockImplementation(() => testConfigVersion);
+          result = await createNewRegistration(
+            testRegistration,
+            testLocalCouncilUrl,
+            testRegDataVersion,
+            mockSendResponse
+          );
         });
-        getRegistrationMetaData.mockImplementation(() => {
-          return { reg_submission_date: 1, "fsa-rn": "AA1AAA-AA11AA-A1AAA1" };
+        it("should call sendResponse with the result of getRegistrationMetaData", () => {
+          expect(mockSendResponse.mock.calls[0][0].reg_submission_date).toBe(1);
         });
-        getLcContactConfig.mockImplementation(() => exampleLcConfig);
-        getConfigVersion.mockImplementation(() => testConfigVersion);
-        result = await createNewRegistration(
-          testRegistration,
-          testLocalCouncilUrl,
-          testRegDataVersion,
-          mockSendResponse
-        );
-      });
-      it("should call sendResonse with the result of getRegistrationMetaData", () => {
-        expect(mockSendResponse.mock.calls[0][0].reg_submission_date).toBe(1);
-      });
-      it("should call sendTascomiRegistration with the registration and full postRegistrationMetadata", () => {
-        expect(sendTascomiRegistration.mock.calls[0][1]).toEqual({
-          reg_submission_date: 1,
-          "fsa-rn": "AA1AAA-AA11AA-A1AAA1",
-          hygiene_council_code: 1234
+        it("should call sendTascomiRegistration with the registration and full postRegistrationMetadata", () => {
+          expect(sendTascomiRegistration.mock.calls[0][1]).toEqual({
+            reg_submission_date: 1,
+            "fsa-rn": "AA1AAA-AA11AA-A1AAA1",
+            hygiene_council_code: 1234
+          });
         });
-      });
 
-      it("should call sendNotifications", () => {
-        expect(sendNotifications).toHaveBeenCalled();
-      });
+        it("should call sendNotifications", () => {
+          expect(sendNotifications).toHaveBeenCalled();
+        });
 
-      it("should call saveRegistration", () => {
-        expect(saveRegistration).toHaveBeenCalled();
+        it("should call saveRegistration", () => {
+          expect(saveRegistration).toHaveBeenCalled();
+        });
+      });
+      describe("when auth object does not exist", () => {
+        beforeEach(async () => {
+          getLcAuth.mockImplementation(() => {
+            return undefined;
+          });
+          validate.mockImplementation(() => {
+            return [];
+          });
+          getRegistrationMetaData.mockImplementation(() => {
+            return { reg_submission_date: 1, "fsa-rn": "AA1AAA-AA11AA-A1AAA1" };
+          });
+          getLcContactConfig.mockImplementation(() => exampleLcConfig);
+          getConfigVersion.mockImplementation(() => testConfigVersion);
+          result = await createNewRegistration(
+            testRegistration,
+            testLocalCouncilUrl,
+            testRegDataVersion,
+            mockSendResponse
+          );
+        });
+        it("should call sendResponse with the result of getRegistrationMetaData", () => {
+          expect(mockSendResponse.mock.calls[0][0].reg_submission_date).toBe(1);
+        });
+        it("should not call sendTascomiRegistration", () => {
+          expect(sendTascomiRegistration.mock.calls.length).toBe(0);
+        });
+        it("should call sendNotifications", () => {
+          expect(sendNotifications).toHaveBeenCalled();
+        });
+        it("should call saveRegistration", () => {
+          expect(saveRegistration).toHaveBeenCalled();
+        });
       });
     });
 
