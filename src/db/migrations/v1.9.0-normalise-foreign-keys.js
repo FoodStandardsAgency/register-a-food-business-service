@@ -21,11 +21,9 @@ const recreateEstablishmentsForeignKey = (queryInterface, t, setting) =>
   });
 
 const dropMetadataForeignKey = (queryInterface, t) =>
-  queryInterface.removeConstraint(
-    "metadata",
-    "metadata_registrationId_fkey",
-    { transaction: t }
-  );
+  queryInterface.removeConstraint("metadata", "metadata_registrationId_fkey", {
+    transaction: t
+  });
 
 const recreateMetadataForeignKey = (queryInterface, t, setting) =>
   queryInterface.addConstraint("metadata", ["registrationId"], {
@@ -61,11 +59,9 @@ const recreateOperatorsForeignKey = (queryInterface, t, setting) =>
   });
 
 const dropPremisesForeignKey = (queryInterface, t) =>
-  queryInterface.removeConstraint(
-    "premises",
-    "premises_establishmentId_fkey",
-    { transaction: t }
-  );
+  queryInterface.removeConstraint("premises", "premises_establishmentId_fkey", {
+    transaction: t
+  });
 
 const recreatePremisesForeignKey = (queryInterface, t, setting) =>
   queryInterface.addConstraint("premises", ["establishmentId"], {
