@@ -56,6 +56,9 @@ const createFoodBusinessRegistration = async (
       {},
       registration.establishment.activities
     );
+    const partnerDetails = registration.establishment.operator.partners.map(
+      partner => ({ ...partner })
+    );
 
     const requestData = {
       fsa_rn: postRegistrationMetadata["fsa-rn"],
@@ -94,9 +97,16 @@ const createFoodBusinessRegistration = async (
       business_type: activitiesDetails.business_type,
       accepted: "f",
       declined: "f",
-      collected: false
+      collected: false,
+      partners: []
     };
-
+    partnerDetails.forEach(partner => {
+      requestData.partners.push({
+        partner_name: partner.partner_name,
+        partner_is_primary_contact:
+          partner.partner_is_primary_contact === true ? "t" : "f"
+      });
+    });
     if (activitiesDetails.opening_day_monday === true) {
       requestData.premise_typical_trading_days_monday = "t";
     } else {
