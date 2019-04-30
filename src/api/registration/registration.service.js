@@ -8,6 +8,7 @@ const {
   createOperator,
   createActivities,
   createPremise,
+  createPartner,
   createMetadata,
   getRegistrationByFsaRn,
   getEstablishmentByRegId,
@@ -57,6 +58,15 @@ const saveRegistration = async (registration, fsa_rn, council) => {
       registration.establishment.premise,
       establishment.id
     );
+    const partnerIds = [];
+    for (const partnerIndex in registration.establishment.operator.partners) {
+      const partner = await createPartner(
+        registration.establishment.operator.partners[partnerIndex],
+        operator.id
+      );
+      partnerIds.push(partner.id);
+    }
+
     const metadata = await createMetadata(registration.metadata, reg.id);
 
     statusEmitter.emit("incrementCount", "storeRegistrationsInDbSucceeded");
@@ -76,6 +86,7 @@ const saveRegistration = async (registration, fsa_rn, council) => {
       operatorId: operator.id,
       activitiesId: activities.id,
       premiseId: premise.id,
+      partnerIds,
       metadataId: metadata.id
     };
   } catch (err) {

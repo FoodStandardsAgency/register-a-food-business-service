@@ -5,7 +5,8 @@ const {
   Metadata,
   Operator,
   Premise,
-  Registration
+  Registration,
+  Partner
 } = require("../../db/db");
 const { logEmitter } = require("../../services/logging.service");
 
@@ -54,6 +55,11 @@ const createMetadata = async (metadata, registrationId) => {
 const createOperator = async (operator, establishmentId) => {
   const data = Object.assign({}, operator, { establishmentId });
   return modelCreate(data, Operator, "Operator");
+};
+
+const createPartner = async (partners, operatorId) => {
+  const data = Object.assign({}, partners, { operatorId });
+  return modelCreate(data, Partner, "Partner");
 };
 
 const createPremise = async (premise, establishmentId) => {
@@ -218,6 +224,7 @@ module.exports = {
   createMetadata,
   createOperator,
   createPremise,
+  createPartner,
   createRegistration,
   getRegistrationById,
   getRegistrationByFsaRn,
