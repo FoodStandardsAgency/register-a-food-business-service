@@ -3,6 +3,7 @@ jest.mock("../../connectors/registrationDb/registrationDb", () => ({
   createEstablishment: jest.fn(),
   createMetadata: jest.fn(),
   createOperator: jest.fn(),
+  createPartner: jest.fn(),
   createPremise: jest.fn(),
   createRegistration: jest.fn(),
   getRegistrationById: jest.fn(),
@@ -57,6 +58,7 @@ const {
   createRegistration,
   createEstablishment,
   createOperator,
+  createPartner,
   createActivities,
   createPremise,
   createMetadata,
@@ -97,6 +99,9 @@ describe("Function: saveRegistration: ", () => {
     createOperator.mockImplementation(() => {
       return { id: "123" };
     });
+    createPartner.mockImplementation(() => {
+      return { id: "145" };
+    });
     createActivities.mockImplementation(() => {
       return { id: "562" };
     });
@@ -108,7 +113,8 @@ describe("Function: saveRegistration: ", () => {
     });
     result = await saveRegistration({
       establishment: {
-        establishment_details: {}
+        establishment_details: {},
+        operator: { partners: ["John", "Doe"] }
       }
     });
   });
@@ -119,6 +125,7 @@ describe("Function: saveRegistration: ", () => {
       establishmentId: "225",
       operatorId: "123",
       activitiesId: "562",
+      partnerIds: ["145", "145"],
       premiseId: "495",
       metadataId: "901"
     });
