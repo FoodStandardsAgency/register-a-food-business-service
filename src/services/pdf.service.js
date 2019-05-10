@@ -48,12 +48,12 @@ const transformDataForPdf = (
     metaData: { ...postRegistrationData, lcInfo }
   };
 
-  if (partners.length > 0) {
-    const partners = {
+  if (Array.isArray(partners)) {
+    const partnershipDetails = {
       names: transformPartnersForPdf(partners),
       main_contact: getMainPartnershipContactName(partners)
     };
-    Object.assign(pdfData, partners);
+    pdfData.partnershipDetails = { ...partnershipDetails };
   }
 
   return pdfData;
@@ -128,7 +128,9 @@ const createContent = pdfData => {
     createSingleLine("Submitted on", pdfData.metaData.reg_submission_date)
   );
   if (pdfData.partners !== undefined) {
-    content.push(createSingleSection("Partnership details", pdfData.partners));
+    content.push(
+      createSingleSection("Partnership details", pdfData.partnershipDetails)
+    );
     content.push(
       createSingleSection("Main partnership contact details", pdfData.operator)
     );
