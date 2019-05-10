@@ -57,8 +57,8 @@ const createOperator = async (operator, establishmentId) => {
   return modelCreate(data, Operator, "Operator");
 };
 
-const createPartner = async (partners, operatorId) => {
-  const data = Object.assign({}, partners, { operatorId });
+const createPartner = async (partner, operatorId) => {
+  const data = Object.assign({}, partner, { operatorId });
   return modelCreate(data, Partner, "Partner");
 };
 

@@ -54,7 +54,8 @@ describe("Tascomi integration: createFoodBusinessRegistration", () => {
             operator_town: "London",
             operator_primary_number: "9827235",
             operator_email: "operator@email.com",
-            operator_type: "Sole trader"
+            operator_type: "Sole trader",
+            partners: []
           },
           premise: {
             establishment_postcode: "SW12 9RQ",
