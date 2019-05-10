@@ -32,8 +32,12 @@ const transformDataForPdf = (
   lcContactConfig
 ) => {
   const lcInfo = getLcNames(lcContactConfig);
+  const partners = { ...registrationData.establishment.operator.partners };
+  const operator = { ...registrationData.establishment.operator };
+  delete operator.partners;
   const pdfData = {
-    operator: { ...registrationData.establishment.operator },
+    operator,
+    partners,
     establishment: {
       ...registrationData.establishment.establishment_details,
       ...registrationData.establishment.premise
