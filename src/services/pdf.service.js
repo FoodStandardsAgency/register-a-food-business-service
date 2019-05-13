@@ -127,7 +127,7 @@ const createContent = pdfData => {
   content.push(
     createSingleLine("Submitted on", pdfData.metaData.reg_submission_date)
   );
-  if (pdfData.partners !== undefined) {
+  if (pdfData.partnershipDetails !== undefined) {
     content.push(
       createSingleSection("Partnership details", pdfData.partnershipDetails)
     );
