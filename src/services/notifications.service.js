@@ -55,8 +55,10 @@ const transformDataForNotify = (
         lcContactConfig.standards.local_council_phone_number;
     }
   }
-
   const registrationClone = JSON.parse(JSON.stringify(registration));
+
+  const partners = registrationClone.establishment.operator.partners;
+  delete registrationClone.establishment.operator.partners;
 
   registrationClone.establishment.establishment_details.establishment_opening_date = moment(
     registrationClone.establishment.establishment_details
@@ -81,6 +83,14 @@ const transformDataForNotify = (
     postRegistrationMetadataClone,
     lcInfo
   );
+
+  if (Array.isArray(partners)) {
+    const partnershipDetails = {
+      partner_names: transformPartnersForNotify(partners),
+      main_contact: getMainPartnershipContactName(partners)
+    };
+    Object.assign(flattenedData, { ...partnershipDetails });
+  }
 
   return flattenedData;
 };
@@ -211,6 +221,35 @@ const sendNotifications = async (
     fboEmailAddress,
     notifyTemplateKeys
   );
+};
+
+/**
+ * Converts partners array to string
+ *
+ * @param {array} partners partner objects
+ *
+ * @returns Comma-separated partner names
+ */
+const transformPartnersForNotify = partners => {
+  const partnerNames = [];
+  for (let partner in partners) {
+    partnerNames.push(partners[partner].partner_name);
+  }
+  return partnerNames.join(", ");
+};
+
+/**
+ * Extracts main partnership contact from partners list
+ *
+ * @param {Array} partners partner objects
+ *
+ * @returns Name of main partnership contact
+ */
+const getMainPartnershipContactName = partners => {
+  const mainPartnershipContact = partners.find(partner => {
+    return partner.partner_is_primary_contact === true;
+  });
+  return mainPartnershipContact.partner_name;
 };
 
 module.exports = { transformDataForNotify, sendNotifications };
