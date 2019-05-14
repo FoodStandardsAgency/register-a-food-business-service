@@ -56,9 +56,11 @@ const createFoodBusinessRegistration = async (
       {},
       registration.establishment.activities
     );
-    const partnerDetails = registration.establishment.operator.partners.map(
-      partner => ({ ...partner })
-    );
+    const partnerDetails = registration.establishment.operator.partners
+      ? registration.establishment.operator.partners.map(partner => ({
+          ...partner
+        }))
+      : [];
 
     const requestData = {
       fsa_rn: postRegistrationMetadata["fsa-rn"],
