@@ -167,7 +167,7 @@ describe("Function: createFoodBusinessRegistration", () => {
     });
   });
 
-  describe("When request is successful fore a sole trader", () => {
+  describe("When request is successful for a sole trader", () => {
     beforeEach(async () => {
       process.env.DOUBLE_MODE = false;
       request.mockImplementation(() => {
