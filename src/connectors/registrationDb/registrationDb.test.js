@@ -19,6 +19,11 @@ jest.mock("../../db/db", () => ({
     findOne: jest.fn(),
     destroy: jest.fn()
   },
+  Partner: {
+    create: jest.fn(),
+    findOne: jest.fn(),
+    destroy: jest.fn()
+  },
   Premise: {
     create: jest.fn(),
     findOne: jest.fn(),
@@ -36,6 +41,7 @@ const {
   Establishment,
   Metadata,
   Operator,
+  Partner,
   Premise,
   Registration
 } = require("../../db/db");
@@ -45,6 +51,7 @@ const {
   createEstablishment,
   createMetadata,
   createOperator,
+  createPartner,
   createPremise,
   createRegistration,
   getRegistrationById,
@@ -218,6 +225,45 @@ describe("RegistrationDb connector", () => {
       it("Should call the create model with combined data", () => {
         expect(Operator.create).toBeCalledWith({
           establishmentId: "45",
+          some: "data"
+        });
+      });
+    });
+  });
+
+  describe("Function: createPartner", () => {
+    describe("When Partner.create fails", () => {
+      beforeEach(async () => {
+        Partner.create.mockImplementation(() => {
+          throw new Error("Failed");
+        });
+        try {
+          await createPartner({}, "45");
+        } catch (err) {
+          result = err;
+        }
+      });
+
+      it("Should return the error", () => {
+        expect(result.message).toBe("Failed");
+      });
+    });
+
+    describe("When Partner.create succeeds", () => {
+      beforeEach(async () => {
+        Partner.create.mockImplementation(() => {
+          return new Promise(resolve => resolve("success"));
+        });
+        result = await createPartner({ some: "data" }, "45");
+      });
+
+      it("Should return the response", () => {
+        expect(result).toBe("success");
+      });
+
+      it("Should call the create model with combined data", () => {
+        expect(Partner.create).toBeCalledWith({
+          operatorId: "45",
           some: "data"
         });
       });
