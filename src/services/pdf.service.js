@@ -32,8 +32,13 @@ const transformDataForPdf = (
   lcContactConfig
 ) => {
   const lcInfo = getLcNames(lcContactConfig);
+
+  const operator = { ...registrationData.establishment.operator };
+  const partners = registrationData.establishment.operator.partners;
+  delete operator.partners;
+
   const pdfData = {
-    operator: { ...registrationData.establishment.operator },
+    operator,
     establishment: {
       ...registrationData.establishment.establishment_details,
       ...registrationData.establishment.premise
@@ -42,7 +47,31 @@ const transformDataForPdf = (
     declaration: { ...registrationData.metadata },
     metaData: { ...postRegistrationData, lcInfo }
   };
+
+  if (Array.isArray(partners)) {
+    const partnershipDetails = {
+      names: transformPartnersForPdf(partners),
+      main_contact: getMainPartnershipContactName(partners)
+    };
+    pdfData.partnershipDetails = { ...partnershipDetails };
+  }
+
   return pdfData;
+};
+
+const transformPartnersForPdf = partners => {
+  const partnerNames = [];
+  for (let partner in partners) {
+    partnerNames.push(partners[partner].partner_name);
+  }
+  return partnerNames.join(", ");
+};
+
+const getMainPartnershipContactName = partners => {
+  const mainPartnershipContact = partners.find(partner => {
+    return partner.partner_is_primary_contact === true;
+  });
+  return mainPartnershipContact.partner_name;
 };
 
 const convertKeyToDisplayName = key =>
@@ -98,7 +127,16 @@ const createContent = pdfData => {
   content.push(
     createSingleLine("Submitted on", pdfData.metaData.reg_submission_date)
   );
-  content.push(createSingleSection("Operator details", pdfData.operator));
+  if (pdfData.partnershipDetails !== undefined) {
+    content.push(
+      createSingleSection("Partnership details", pdfData.partnershipDetails)
+    );
+    content.push(
+      createSingleSection("Main partnership contact details", pdfData.operator)
+    );
+  } else {
+    content.push(createSingleSection("Operator details", pdfData.operator));
+  }
   content.push(
     createSingleSection("Establishment details", pdfData.establishment)
   );

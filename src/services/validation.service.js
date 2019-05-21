@@ -46,7 +46,10 @@ const errorMessages = {
   opening_day_thurday: "Invalid opening day thursday",
   opening_day_friday: "Invalid opening day friday",
   opening_day_saturday: "Invalid opening day saturday",
-  opening_day_sunday: "Invalid opening day sunday"
+  opening_day_sunday: "Invalid opening day sunday",
+  partners: "Invalid partners",
+  partner_is_primary_contact: "Invalid partner is primary contact",
+  partner_name: "Invalid partner name"
 };
 
 const validator = new Validator();

@@ -16,5 +16,6 @@ module.exports = {
   Metadata: db.metadata,
   Operator: db.operator,
   Premise: db.premise,
-  Registration: db.registration
+  Registration: db.registration,
+  Partner: db.partner
 };

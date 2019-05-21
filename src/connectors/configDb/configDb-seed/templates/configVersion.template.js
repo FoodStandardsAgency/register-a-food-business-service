@@ -17,7 +17,8 @@ const configVersionTemplate = seedData => ({
           "/operator-contact-details": true
         },
         Partnership: {
-          "/operator-name": true,
+          "/partner-name": true,
+          "/main-partnership-contact": true,
           "/operator-contact-details": true
         },
         Representative: {
@@ -51,6 +52,14 @@ const configVersionTemplate = seedData => ({
       switches: {}
     },
     "/operator-name": {
+      on: false,
+      switches: {}
+    },
+    "/partner-name": {
+      on: false,
+      switches: {}
+    },
+    "/main-partnership-contact": {
       on: false,
       switches: {}
     },
