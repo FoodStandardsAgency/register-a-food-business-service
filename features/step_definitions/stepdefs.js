@@ -1,5 +1,6 @@
 const assert = require("assert");
 const fetch = require("node-fetch");
+const { logEmitter } = require("./logging.service");
 const { Given, When, Then, setDefaultTimeout } = require("cucumber");
 const {
   FRONT_END_NAME,
@@ -41,6 +42,7 @@ const getRequest = async id => {
       headers
     }
   );
+  logEmitter.emit("functionSuccess", "stepdefs", res.json());
   return res.json();
 };
 ////////
