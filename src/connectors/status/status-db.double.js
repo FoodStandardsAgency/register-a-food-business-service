@@ -14,6 +14,13 @@ const statusCollectionDouble = {
     } else {
       return null;
     }
+  },
+  distinct: query => {
+    if (query._id === "email") {
+      return ['test@test.com']
+    } else {
+      return null;
+    }
   }
 };
 

@@ -10,10 +10,11 @@ const { logEmitter } = require("../../services/logging.service");
 let client;
 let statusDB;
 let statusCollection;
+let emailCollection;
 
 /**
  * Sets up a connection to the status collection in the config database.
- * The client, configDB and statusCollection variables are accessible to other functions in this connector.
+ * The client, configDBemailCollection,  and statusCollection variables are accessible to other functions in this connector.
  */
 const establishConnectionToMongo = async () => {
   if (process.env.DOUBLE_MODE === "true") {
@@ -31,8 +32,42 @@ const establishConnectionToMongo = async () => {
     statusDB = client.db("register_a_food_business_status");
 
     statusCollection = statusDB.collection("status");
+    emailCollection = statusDB.collection("emailDistribution");
   }
 };
+
+/**
+ * Fetches all available email values
+ * *
+ * @returns {object} All email values
+ */
+const getEmailDistribution = async () => {
+  logEmitter.emit("functionCall", "status-db.connector", "getEmailDistribution");
+  try {
+    await establishConnectionToMongo();
+    let emailList = emailCollection.distinct("email");
+
+    logEmitter.emit(
+      "functionsuccess",
+      "status-db.connector",
+      "getEmailDistribution"
+    );
+
+    return emailList;
+  } catch (err) {
+    logEmitter.emit(
+      "functionFail",
+      "status-db.connector",
+      "getEmailDistribution",
+      err
+    );
+    const newError = new Error();
+    newError.name = "mongoConnectionError";
+    newError.message = err.message;
+
+    throw newError;
+  }
+}
 
 /**
  * Fetches all available status values
@@ -105,4 +140,4 @@ const updateStoredStatus = async (statusName, newStatus) => {
   }
 };
 
-module.exports = { getStoredStatus, updateStoredStatus };
+module.exports = { getStoredStatus, updateStoredStatus, getEmailDistribution };
