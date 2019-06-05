@@ -63,13 +63,13 @@
   "devDependencies": {
     "cucumber": "4.2.1",
     "cucumber-junit": "1.7.1",
-    "eslint": "4.19.1",
+    "eslint": "5.16.0",
     "eslint-config-prettier": "2.9.0",
     "eslint-plugin-prettier": "2.6.1",
     "jest": "23.6.0",
     "jest-junit": "5.1.0",
     "jsdoc": "3.5.5",
     "prettier": "1.12.1",
-    "snyk": "1.93.0"
+    "snyk": "1.171.1"
   }
 }
