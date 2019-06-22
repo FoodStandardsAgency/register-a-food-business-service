@@ -62,7 +62,7 @@
     "promise-retry": "1.1.1",
     "request": "2.87.0",
     "request-promise-native": "1.0.5",
-    "sequelize": "4.38.0",
+    "sequelize": "5.8.11",
     "sequelize-cli": "^4.1.1",
     "uuid": "3.3.2",
     "validator": "10.2.0",
