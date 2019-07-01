@@ -1,7 +1,7 @@
 const {
   getStoredStatus,
   updateStoredStatus
-} = require("../connectors/status/status.connector");
+} = require("../connectors/status/status-db.connector");
 
 const getStatus = async statusName => {
   const status = await getStoredStatus();

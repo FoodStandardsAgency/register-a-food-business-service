@@ -12,6 +12,7 @@ jest.mock("./registration.controller", () => ({
   getRegistration: jest.fn(),
   deleteRegistration: jest.fn()
 }));
+jest.mock("../../services/statusEmitter.service");
 const registrationController = require("./registration.controller");
 const { registrationRouter } = require("./registration.router");
 describe("registration router", () => {

@@ -5,6 +5,7 @@ const {
 } = require("./cacheDb.connector");
 
 jest.mock("mongodb");
+jest.mock("../../services/statusEmitter.service");
 
 describe("Connector: cacheDb", () => {
   let response;

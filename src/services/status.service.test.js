@@ -1,4 +1,4 @@
-jest.mock("../connectors/status/status.connector");
+jest.mock("../connectors/status/status-db.connector");
 
 const {
   getStatus,
@@ -9,7 +9,7 @@ const {
 const {
   getStoredStatus,
   updateStoredStatus
-} = require("../connectors/status/status.connector");
+} = require("../connectors/status/status-db.connector");
 
 describe("status.service getStatus()", () => {
   let result;

@@ -35,6 +35,8 @@ jest.mock("../../connectors/configDb/configDb.connector", () => ({
   addDeletedId: jest.fn()
 }));
 
+jest.mock("../../services/statusEmitter.service");
+
 jest.mock("../../services/notifications.service");
 
 jest.mock("node-fetch");
