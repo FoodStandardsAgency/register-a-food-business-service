@@ -12,6 +12,5 @@ module.exports = {
   ADMIN_NAME: process.env.ADMIN_NAME,
   ADMIN_SECRET: process.env.ADMIN_SECRET,
   CONFIGDB_URL: process.env.CONFIGDB_URL,
-  CACHEDB_URL: process.env.CACHEDB_URL,
-  STATUSDB_URL: process.env.STATUSDB_URL
+  CACHEDB_URL: process.env.CACHEDB_URL
 };

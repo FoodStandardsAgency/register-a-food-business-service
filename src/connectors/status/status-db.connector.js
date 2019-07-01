@@ -4,7 +4,7 @@
  */
 const mongodb = require("mongodb");
 const { statusCollectionDouble } = require("./status-db.double");
-const { STATUSDB_URL } = require("../../config");
+const { CONFIGDB_URL } = require("../../config");
 const { logEmitter } = require("../../services/logging.service");
 
 let client;
@@ -24,7 +24,7 @@ const establishConnectionToMongo = async () => {
     );
     statusCollection = statusCollectionDouble;
   } else {
-    client = await mongodb.MongoClient.connect(STATUSDB_URL, {
+    client = await mongodb.MongoClient.connect(CONFIGDB_URL, {
       useNewUrlParser: true
     });
 
