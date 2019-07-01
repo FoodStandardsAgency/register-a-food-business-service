@@ -30,7 +30,7 @@ const establishConnectionToMongo = async () => {
 
     statusDB = client.db("register_a_food_business_status");
 
-    statusCollection = statusDB.collection("status");
+    statusCollection = statusDB.collection("backEndStatus");
   }
 };
 
