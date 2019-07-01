@@ -1,5 +1,6 @@
 jest.mock("request-promise-native");
 jest.mock("./tascomi.double");
+jest.mock("../../services/statusEmitter.service");
 jest.mock("@slice-and-dice/fsa-rof", () => ({
   tascomiAuth: {
     generateSyncHash: jest.fn()

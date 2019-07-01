@@ -1,5 +1,6 @@
 jest.mock("mongodb");
 jest.mock("./configDb.double");
+jest.mock("../../services/statusEmitter.service");
 
 const mongodb = require("mongodb");
 const {

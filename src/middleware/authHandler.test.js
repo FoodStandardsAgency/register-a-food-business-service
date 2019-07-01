@@ -4,6 +4,7 @@ jest.mock("../config", () => ({
   ADMIN_NAME: "admin",
   ADMIN_SECRET: "admin secret"
 }));
+jest.mock("../../src/services/statusEmitter.service");
 const {
   createRegistrationAuth,
   viewDeleteRegistrationAuth
