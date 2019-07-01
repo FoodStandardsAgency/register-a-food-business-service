@@ -2,8 +2,6 @@ jest.mock("./status.service");
 const { statusEmitter } = require("./statusEmitter.service");
 const { setStatus, incrementStatusCount } = require("./status.service");
 
-jest.unmock("./statusEmitter.service");
-
 describe("statusEmitter", () => {
   describe("on incrementCount event", () => {
     it("should call incrementStatusCount", () => {

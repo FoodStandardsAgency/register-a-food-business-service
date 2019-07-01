@@ -5,8 +5,6 @@ jest.mock("winston", () => ({
 const { info, error } = require("winston");
 const { logEmitter } = require("./logging.service");
 
-jest.unmock("./logging.service");
-
 describe("logEmitter", () => {
   describe("on functionCall event", () => {
     it("should call winston info", () => {

@@ -25,7 +25,6 @@ const sendRequest = async body => {
       body: JSON.stringify(body)
     }
   );
-
   return res.json();
 };
 
@@ -180,25 +179,26 @@ When("I submit my multiple fields to the backend", async function() {
   this.response = await sendRequest(requestBody);
 });
 
-Then("I get a success response", function() {
-  assert.ok(this.response.regId);
+Then("I get a success response", async function() {
+  assert.ok(this.response["fsa-rn"]);
 });
 
-Then("I get an error response", function() {
+Then("I get an error response", async function() {
   assert.ok(this.response.errorCode);
 });
 
 Then("The non personal information is saved to the database", async function() {
   const id = this.response["fsa-rn"];
-  this.response = await getRequest(id);
-
-  assert.equal(this.response.establishment.establishment_trading_name, "Itsu");
+  getRequest(id).then(response => () => {
+    assert.equal(response.establishment.establishment_trading_name, "Itsu");
+  });
 });
 
 Then("The personal information is not saved to the database", async function() {
   const id = this.response["fsa-rn"];
-  this.response = await getRequest(id);
-  assert.equal(this.response.establishment.operator_first_name, null);
+  getRequest(id).then(response => () => {
+    assert.equal(response.establishment.operator_first_name, null);
+  });
 });
 
 Then("I receive a confirmation number", async function() {
