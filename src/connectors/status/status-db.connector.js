@@ -80,7 +80,7 @@ const updateStoredStatus = async (statusName, newStatus) => {
   logEmitter.emit("functionCall", "status-db.connector", "updateStoredStatus");
   try {
     await establishConnectionToMongo();
-    const response = await statusCollection.updateOne(
+    await statusCollection.updateOne(
       { _id: "backEndStatus" },
       { $set: { [statusName]: newStatus } }
     );
