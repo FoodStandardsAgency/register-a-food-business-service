@@ -59,19 +59,22 @@ const localCouncil = [
     env: ["production"],
     type: "input",
     name: "SEED_TASCOMI_URL_LC",
-    message: "Enter the real Tascomi API URL for the new local council"
+    message:
+      "Enter the real Tascomi API URL for the new local council (leave blank if not integrated)"
   },
   {
     env: ["production"],
     type: "input",
     name: "SEED_TASCOMI_PUBLIC_KEY_LC",
-    message: "Enter the real Tascomi PUBLIC key for the new local council"
+    message:
+      "Enter the real Tascomi PUBLIC key for the new local council (leave blank if not integrated)"
   },
   {
     env: ["production"],
     type: "input",
     name: "SEED_TASCOMI_PRIVATE_KEY_LC",
-    message: "Enter the real Tascomi PRIVATE key for the new local council"
+    message:
+      "Enter the real Tascomi PRIVATE key for the new local council (leave blank if not integrated)"
   }
 ];
 

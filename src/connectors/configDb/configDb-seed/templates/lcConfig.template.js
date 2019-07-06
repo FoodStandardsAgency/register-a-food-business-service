@@ -12,20 +12,23 @@ const localCouncilTemplate = (seedData, env) => ({
   local_council_phone_number:
     env === "production" ? seedData.SEED_LC_PHONE_NUMBER : "01234 567890",
   local_council_url: seedData.SEED_LC_URL,
-  auth: {
-    url:
-      env === "production"
-        ? seedData.SEED_TASCOMI_URL_LC
-        : seedData.SEED_TASCOMI_URL_DEV,
-    public_key:
-      env === "production"
-        ? seedData.SEED_TASCOMI_PUBLIC_KEY_LC
-        : seedData.SEED_TASCOMI_PUBLIC_KEY_DEV,
-    private_key:
-      env === "production"
-        ? seedData.SEED_TASCOMI_PRIVATE_KEY_LC
-        : seedData.SEED_TASCOMI_PRIVATE_KEY_DEV
-  }
+  auth:
+    seedData.SEED_TASCOMI_PUBLIC_KEY_LC && seedData.SEED_TASCOMI_PRIVATE_KEY_LC
+      ? {
+          url:
+            env === "production"
+              ? seedData.SEED_TASCOMI_URL_LC
+              : seedData.SEED_TASCOMI_URL_DEV,
+          public_key:
+            env === "production"
+              ? seedData.SEED_TASCOMI_PUBLIC_KEY_LC
+              : seedData.SEED_TASCOMI_PUBLIC_KEY_DEV,
+          private_key:
+            env === "production"
+              ? seedData.SEED_TASCOMI_PRIVATE_KEY_LC
+              : seedData.SEED_TASCOMI_PRIVATE_KEY_DEV
+        }
+      : null
 });
 
 module.exports = localCouncilTemplate;
