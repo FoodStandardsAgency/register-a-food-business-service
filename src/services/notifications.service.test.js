@@ -3,6 +3,7 @@ jest.mock("../connectors/notify/notify.connector", () => ({
 }));
 
 jest.mock("./pdf.service");
+jest.mock("./statusEmitter.service");
 
 const { pdfGenerator } = require("./pdf.service");
 
