@@ -49,7 +49,8 @@ const errorMessages = {
   opening_day_sunday: "Invalid opening day sunday",
   partners: "Invalid partners",
   partner_is_primary_contact: "Invalid partner is primary contact",
-  partner_name: "Invalid partner name"
+  partner_name: "Invalid partner name",
+  water_supply: "Invalid water supply"
 };
 
 const validator = new Validator();
