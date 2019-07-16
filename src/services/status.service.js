@@ -64,10 +64,18 @@ const setStatus = async (statusName, newStatus) => {
     } else if(newStatus === false) {
       statusText = "Failed";
     }
-    statusName = statusName.replace('Succeeded','').replace('mostRecent','').replace(/([A-Z])/g, ' $1').toLowerCase().trim();
+
+    /**
+     * Format status name to be more readable for use in email
+     * Replace function steps:
+     * 1. Replace first instance of 'Succeeded' with empty string
+     * 2. Replace first instance of 'mostRecent' with empty string
+     * 3. Replace all instances of capital letters with itself prefixed with a space (e.g. 'newStatusName' => 'new Status Name')
+     */
+    let formattedStatusName = statusName.replace('Succeeded','').replace('mostRecent','').replace(/([A-Z])/g, ' $1').toLowerCase().trim();
     const data = {
         environment_description: ENVIRONMENT_DESCRIPTION,
-        status_name: statusName.charAt(0).toUpperCase() + statusName.slice(1),
+        status_name: formattedStatusName.charAt(0).toUpperCase() + formattedStatusName.slice(1),
         status_value: statusText,
         time: new Date().toLocaleString('en-GB', { hour12: false, timeZone: 'Europe/London'})
     };
