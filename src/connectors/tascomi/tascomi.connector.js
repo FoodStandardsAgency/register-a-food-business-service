@@ -100,7 +100,14 @@ const createFoodBusinessRegistration = async (
       accepted: "f",
       declined: "f",
       collected: false,
-      partners: []
+      partners: [],
+      opening_hours_monday: activitiesDetails.opening_hours_monday,
+      opening_hours_tuesday: activitiesDetails.opening_hours_tuesday,
+      opening_hours_wednesday: activitiesDetails.opening_hours_wednesday,
+      opening_hours_thursday: activitiesDetails.opening_hours_thursday,
+      opening_hours_friday: activitiesDetails.opening_hours_friday,
+      opening_hours_saturday: activitiesDetails.opening_hours_saturday,
+      opening_hours_sunday: activitiesDetails.opening_hours_sunday
     };
     partnerDetails.forEach(partner => {
       requestData.partners.push({

@@ -48,7 +48,14 @@ const registration = {
       establishment_type: "somewhere"
     },
     activities: {
-      customer_type: "End consumer"
+      customer_type: "End consumer",
+      opening_hours_monday: "9:30 - 19:00",
+      opening_hours_tuesday: "09:30 - 19:00",
+      opening_hours_wednesday: "9:30am - 7pm",
+      opening_hours_thurday: "0930 - 1900",
+      opening_hours_friday: "9:30 to 19:00",
+      opening_hours_saturday: "09:30 to 19:00",
+      opening_hours_sunday: "From 9:30 to 19:00"
     }
   },
   metadata: {
@@ -96,7 +103,14 @@ const partnership_registration = {
       establishment_type: "somewhere"
     },
     activities: {
-      customer_type: "End consumer"
+      customer_type: "End consumer",
+      opening_hours_monday: "9:30 - 19:00",
+      opening_hours_tuesday: "09:30 - 19:00",
+      opening_hours_wednesday: "9:30am - 7pm",
+      opening_hours_thurday: "0930 - 1900",
+      opening_hours_friday: "9:30 to 19:00",
+      opening_hours_saturday: "09:30 to 19:00",
+      opening_hours_sunday: "From 9:30 to 19:00"
     }
   },
   metadata: {
