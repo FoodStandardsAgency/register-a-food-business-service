@@ -6,7 +6,7 @@ const {
 const storedStatusMock = require("../../__mocks__/storedStatusMock.json");
 const mongodb = require("mongodb");
 const { statusCollectionDouble } = require("./status-db.double");
-const testArray = ['test@test.com'];
+const testArray = [{ email: 'test@test.com' }];
 jest.mock("./status-db.double");
 
 jest.mock("mongodb");
@@ -109,7 +109,11 @@ describe("Function: getEmailDistribution", () => {
       mongodb.MongoClient.connect.mockImplementation(() => ({
         db: () => ({
           collection: () => ({
-            distinct: () => testArray
+            find: () => ({
+              project: () => ({ 
+                toArray: () => testArray 
+              })
+            }) 
           })
         })
       }));
@@ -144,10 +148,10 @@ describe("Function: getEmailDistribution", () => {
   describe("when running in double mode", () => {
     beforeEach(() => {
       process.env.DOUBLE_MODE = true;
-      statusCollectionDouble.distinct.mockImplementation(() => testArray);
+      statusCollectionDouble.find.mockImplementation(() => testArray);
     });
 
-    it("should resolve with the data from the double's distinct() response", async () => {
+    it("should resolve with the data from the double's find() response", async () => {
       await expect(getEmailDistribution()).resolves.toEqual(testArray);
     });
   });

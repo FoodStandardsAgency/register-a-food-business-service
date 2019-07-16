@@ -45,7 +45,14 @@ const getEmailDistribution = async () => {
   logEmitter.emit("functionCall", "status-db.connector", "getEmailDistribution");
   try {
     await establishConnectionToMongo();
-    let emailList = emailCollection.distinct("email");
+    let emailList = await emailCollection.find({
+      $and: [
+        { email: { $ne: "" } },
+        { email: { $ne: null } }
+      ]
+    })
+    .project({ email: 1, _id: 0 })
+    .toArray();
 
     logEmitter.emit(
       "functionsuccess",

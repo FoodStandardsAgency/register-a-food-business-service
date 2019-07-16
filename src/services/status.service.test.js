@@ -1,5 +1,8 @@
 jest.mock("../connectors/status/status-db.connector");
 jest.mock("../connectors/notify/notify.connector");
+jest.mock("../config", () => ({
+  NOTIFY_STATUS_TEMPLATE:"e6692529-52a3-45cb-96b7-0c8cfe282167"
+}));
 
 const {
   getStatus,
@@ -70,7 +73,7 @@ describe("Function: status.service setStatus()", () => {
       jest.clearAllMocks();
       getStoredStatus.mockImplementation(() => ({}));
       updateStoredStatus.mockImplementation(() => "new value");
-      getEmailDistribution.mockImplementation(() => ['test@test.com']);
+      getEmailDistribution.mockImplementation(() => [ { email: 'test@test.com' } ]);
       result = await setStatus("newStatusItem", "new value");
     });
 
@@ -96,7 +99,7 @@ describe("Function: status.service setStatus()", () => {
         mostRecentSubmitSucceeded: true
       }));
       updateStoredStatus.mockImplementation(() => false);
-      getEmailDistribution.mockImplementation(() => ['test@test.com']);
+      getEmailDistribution.mockImplementation(() => [ { email: 'test@test.com' } ]);
       sendSingleEmail.mockImplementation(() => false);
       result = await setStatus("mostRecentSubmitSucceeded", false);
     });    
@@ -167,7 +170,7 @@ describe("Function: status.service setStatus()", () => {
         mostRecentSubmitSucceeded: false
       }));
       updateStoredStatus.mockImplementation(() => true);
-      getEmailDistribution.mockImplementation(() => ['test@test.com','test2@test.com']);
+      getEmailDistribution.mockImplementation(() => [{ email: 'test@test.com' }, { email: 'test2@test.com' }]);
       sendSingleEmail.mockImplementation(() => false);
       result = await setStatus("mostRecentSubmitSucceeded", true);
     });    
