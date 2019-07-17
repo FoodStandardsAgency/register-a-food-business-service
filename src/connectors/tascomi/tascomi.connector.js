@@ -100,7 +100,8 @@ const createFoodBusinessRegistration = async (
       accepted: "f",
       declined: "f",
       collected: false,
-      partners: []
+      partners: [],
+      water_supply: activitiesDetails.water_supply
     };
     partnerDetails.forEach(partner => {
       requestData.partners.push({

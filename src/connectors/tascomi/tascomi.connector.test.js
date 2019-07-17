@@ -48,7 +48,8 @@ const registration = {
       establishment_type: "somewhere"
     },
     activities: {
-      customer_type: "End consumer"
+      customer_type: "End consumer",
+      water_supply: "Public"
     }
   },
   metadata: {
@@ -96,7 +97,8 @@ const partnership_registration = {
       establishment_type: "somewhere"
     },
     activities: {
-      customer_type: "End consumer"
+      customer_type: "End consumer",
+      water_supply: "Public"
     }
   },
   metadata: {
