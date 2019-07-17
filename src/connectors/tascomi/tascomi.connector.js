@@ -101,6 +101,7 @@ const createFoodBusinessRegistration = async (
       declined: "f",
       collected: false,
       partners: [],
+      water_supply: activitiesDetails.water_supply,
       opening_hours_monday: activitiesDetails.opening_hours_monday,
       opening_hours_tuesday: activitiesDetails.opening_hours_tuesday,
       opening_hours_wednesday: activitiesDetails.opening_hours_wednesday,

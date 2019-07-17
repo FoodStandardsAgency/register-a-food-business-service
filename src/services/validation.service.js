@@ -56,7 +56,8 @@ const errorMessages = {
   opening_hours_thurday: "Invalid opening hours thursday",
   opening_hours_friday: "Invalid opening hours friday",
   opening_hours_saturday: "Invalid opening hours saturday",
-  opening_hours_sunday: "Invalid opening hours sunday"
+  opening_hours_sunday: "Invalid opening hours sunday",
+  water_supply: "Invalid water supply"
 };
 
 const validator = new Validator();

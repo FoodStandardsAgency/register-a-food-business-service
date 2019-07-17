@@ -49,6 +49,7 @@ const registration = {
     },
     activities: {
       customer_type: "End consumer",
+      water_supply: "Public",
       opening_hours_monday: "9:30 - 19:00",
       opening_hours_tuesday: "09:30 - 19:00",
       opening_hours_wednesday: "9:30am - 7pm",
@@ -104,6 +105,7 @@ const partnership_registration = {
     },
     activities: {
       customer_type: "End consumer",
+      water_supply: "Public",
       opening_hours_monday: "9:30 - 19:00",
       opening_hours_tuesday: "09:30 - 19:00",
       opening_hours_wednesday: "9:30am - 7pm",

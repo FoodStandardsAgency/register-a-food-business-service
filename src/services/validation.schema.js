@@ -24,7 +24,8 @@ const {
   validatePartnersHasPrimaryContact,
   validatePartnerIsPrimaryContact,
   validatePartnerName,
-  validateOpeningHours
+  validateOpeningHours,
+  validateWaterSupply
 } = require("@slice-and-dice/register-a-food-business-validation");
 
 const schema = {
@@ -233,6 +234,10 @@ const schema = {
                 type: "string",
                 validation: validateImportExportActivities
               },
+              water_supply: {
+                type: "string",
+                validation: validateWaterSupply
+              },
               business_other_details: {
                 type: "string",
                 validation: validateBusinessOtherDetails
@@ -302,6 +307,7 @@ const schema = {
               "customer_type",
               "business_type",
               "import_export_activities",
+              "water_supply",
               "opening_day_monday",
               "opening_day_tuesday",
               "opening_day_wednesday",
