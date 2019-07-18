@@ -50,6 +50,13 @@ const errorMessages = {
   partners: "Invalid partners",
   partner_is_primary_contact: "Invalid partner is primary contact",
   partner_name: "Invalid partner name",
+  opening_hours_monday: "Invalid opening hours monday",
+  opening_hours_tuesday: "Invalid opening hours tuesday",
+  opening_hours_wednesday: "Invalid opening hours wednesday",
+  opening_hours_thurday: "Invalid opening hours thursday",
+  opening_hours_friday: "Invalid opening hours friday",
+  opening_hours_saturday: "Invalid opening hours saturday",
+  opening_hours_sunday: "Invalid opening hours sunday",
   water_supply: "Invalid water supply"
 };
 
