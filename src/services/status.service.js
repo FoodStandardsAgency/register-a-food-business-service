@@ -56,19 +56,7 @@ const setStatus = async (statusName, newStatus) => {
       statusText = "Failed";
     }
 
-    /**
-     * Format status name to be more readable for use in email
-     * Replace function steps:
-     * 1. Replace first instance of 'Succeeded' with empty string
-     * 2. Replace first instance of 'mostRecent' with empty string
-     * 3. Replace all instances of capital letters with itself prefixed with a space (e.g. 'newStatusName' => 'new Status Name')
-     */
-    let formattedStatusName = statusName
-      .replace("Succeeded", "")
-      .replace("mostRecent", "")
-      .replace(/([A-Z])/g, " $1")
-      .toLowerCase()
-      .trim();
+    let formattedStatusName = getUserFriendlyStatusName(statusName);
     const data = {
       environment_description: ENVIRONMENT_DESCRIPTION,
       status_name:
@@ -137,5 +125,21 @@ const incrementStatusCount = async statusName => {
     throw new Error(message);
   }
 };
+
+/**
+ * Function formats status name to be human readable to send in email
+ *
+ * @param {string} statusName The status  name
+ *
+ * @returns {string} The formatted status name
+ */
+const getUserFriendlyStatusName = statusName => {
+  return statusName
+    .replace("Succeeded", "") // Replace first instance of 'Succeeded' with empty string
+    .replace("mostRecent", "") // Replace first instance of 'mostRecent' with empty string
+    .replace(/([A-Z])/g, " $1") // Replace all instances of capital letters with itself prefixed with a space (e.g. 'newStatusName' => 'new Status Name')
+    .toLowerCase()
+    .trim();
+}
 
 module.exports = { getStatus, setStatus, incrementStatusCount };
