@@ -1,7 +1,7 @@
 jest.mock("../connectors/status/status-db.connector");
 jest.mock("../connectors/notify/notify.connector");
 jest.mock("../config", () => ({
-  NOTIFY_STATUS_TEMPLATE:"e6692529-52a3-45cb-96b7-0c8cfe282167"
+  NOTIFY_STATUS_TEMPLATE: "e6692529-52a3-45cb-96b7-0c8cfe282167"
 }));
 
 const {
@@ -73,7 +73,9 @@ describe("Function: status.service setStatus()", () => {
       jest.clearAllMocks();
       getStoredStatus.mockImplementation(() => ({}));
       updateStoredStatus.mockImplementation(() => "new value");
-      getEmailDistribution.mockImplementation(() => [ { email: 'test@test.com' } ]);
+      getEmailDistribution.mockImplementation(() => [
+        { email: "test@test.com" }
+      ]);
       result = await setStatus("newStatusItem", "new value");
     });
 
@@ -87,7 +89,7 @@ describe("Function: status.service setStatus()", () => {
       expect(sendSingleEmail).toHaveBeenLastCalledWith(
         "e6692529-52a3-45cb-96b7-0c8cfe282167",
         "test@test.com",
-         expect.any(Object)
+        expect.any(Object)
       );
     });
   });
@@ -99,10 +101,12 @@ describe("Function: status.service setStatus()", () => {
         mostRecentSubmitSucceeded: true
       }));
       updateStoredStatus.mockImplementation(() => false);
-      getEmailDistribution.mockImplementation(() => [ { email: 'test@test.com' } ]);
+      getEmailDistribution.mockImplementation(() => [
+        { email: "test@test.com" }
+      ]);
       sendSingleEmail.mockImplementation(() => false);
       result = await setStatus("mostRecentSubmitSucceeded", false);
-    });    
+    });
 
     it("should return the new value of the status name", () => {
       expect(result).toBe(false);
@@ -114,9 +118,9 @@ describe("Function: status.service setStatus()", () => {
       expect(sendSingleEmail).toHaveBeenLastCalledWith(
         "e6692529-52a3-45cb-96b7-0c8cfe282167",
         "test@test.com",
-         expect.any(Object)
+        expect.any(Object)
       );
-    });  
+    });
   });
 
   describe("given a the supplied statusName already exists with the same value", () => {
@@ -126,10 +130,10 @@ describe("Function: status.service setStatus()", () => {
         mostRecentSubmitSucceeded: false
       }));
       updateStoredStatus.mockImplementation(() => false);
-      getEmailDistribution.mockImplementation(() => ['test@test.com']);
+      getEmailDistribution.mockImplementation(() => ["test@test.com"]);
       sendSingleEmail.mockImplementation(() => false);
       result = await setStatus("mostRecentSubmitSucceeded", false);
-    });    
+    });
 
     it("should return the new value of the status name", () => {
       expect(result).toBe(false);
@@ -138,7 +142,7 @@ describe("Function: status.service setStatus()", () => {
     it("should not call mocks showing no email was sent", () => {
       expect(getEmailDistribution).toHaveBeenCalledTimes(0);
       expect(sendSingleEmail).toHaveBeenCalledTimes(0);
-    });  
+    });
   });
 
   describe("given a the supplied statusName already exists with a diffrent value but empty e-mail list", () => {
@@ -151,7 +155,7 @@ describe("Function: status.service setStatus()", () => {
       getEmailDistribution.mockImplementation(() => []);
       sendSingleEmail.mockImplementation(() => false);
       result = await setStatus("mostRecentSubmitSucceeded", false);
-    });    
+    });
 
     it("should return the new value of the status name", () => {
       expect(result).toBe(false);
@@ -160,7 +164,7 @@ describe("Function: status.service setStatus()", () => {
     it("should not call mocks showing email list was got but no email was sent", () => {
       expect(getEmailDistribution).toHaveBeenCalledTimes(1);
       expect(sendSingleEmail).toHaveBeenCalledTimes(0);
-    });  
+    });
   });
 
   describe("given a the supplied statusName already exists with a diffrent value and multiple email addresses", () => {
@@ -170,10 +174,13 @@ describe("Function: status.service setStatus()", () => {
         mostRecentSubmitSucceeded: false
       }));
       updateStoredStatus.mockImplementation(() => true);
-      getEmailDistribution.mockImplementation(() => [{ email: 'test@test.com' }, { email: 'test2@test.com' }]);
+      getEmailDistribution.mockImplementation(() => [
+        { email: "test@test.com" },
+        { email: "test2@test.com" }
+      ]);
       sendSingleEmail.mockImplementation(() => false);
       result = await setStatus("mostRecentSubmitSucceeded", true);
-    });    
+    });
 
     it("should return the new value of the status name", () => {
       expect(result).toBe(true);
@@ -185,9 +192,9 @@ describe("Function: status.service setStatus()", () => {
       expect(sendSingleEmail).toHaveBeenLastCalledWith(
         "e6692529-52a3-45cb-96b7-0c8cfe282167",
         "test2@test.com",
-         expect.any(Object)
+        expect.any(Object)
       );
-    });  
+    });
   });
 });
 

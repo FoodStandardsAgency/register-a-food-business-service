@@ -10,7 +10,10 @@ const {
 } = require("../connectors/status/status-db.connector");
 
 const { logEmitter } = require("./logging.service");
-const { NOTIFY_STATUS_TEMPLATE, ENVIRONMENT_DESCRIPTION } = require("../config");
+const {
+  NOTIFY_STATUS_TEMPLATE,
+  ENVIRONMENT_DESCRIPTION
+} = require("../config");
 const { sendSingleEmail } = require("../connectors/notify/notify.connector");
 
 /**
@@ -21,19 +24,11 @@ const { sendSingleEmail } = require("../connectors/notify/notify.connector");
  * @returns {object} All status values for the specified field name
  */
 const getStatus = async statusName => {
-  logEmitter.emit(
-    "functionCall",
-    "status.service",
-    "getStatus"
-  );
+  logEmitter.emit("functionCall", "status.service", "getStatus");
 
   const status = await getStoredStatus();
-  
-  logEmitter.emit(
-    "functionSuccess",
-    "status.service",
-    "getStatus"
-  );
+
+  logEmitter.emit("functionSuccess", "status.service", "getStatus");
 
   return statusName ? status[statusName] : status;
 };
@@ -47,21 +42,17 @@ const getStatus = async statusName => {
  * @returns {any} The new status value
  */
 const setStatus = async (statusName, newStatus) => {
-  logEmitter.emit(
-    "functionCall",
-    "status.service",
-    "setStatus"
-  );
+  logEmitter.emit("functionCall", "status.service", "setStatus");
 
   const status = await getStoredStatus();
   const currentValue = status[statusName];
   const updatedStatusValue = await updateStoredStatus(statusName, newStatus);
 
-  if(newStatus !== currentValue) {
+  if (newStatus !== currentValue) {
     let statusText = "Invalid";
-    if(newStatus === true) {
+    if (newStatus === true) {
       statusText = "Succeeded";
-    } else if(newStatus === false) {
+    } else if (newStatus === false) {
       statusText = "Failed";
     }
 
@@ -72,38 +63,38 @@ const setStatus = async (statusName, newStatus) => {
      * 2. Replace first instance of 'mostRecent' with empty string
      * 3. Replace all instances of capital letters with itself prefixed with a space (e.g. 'newStatusName' => 'new Status Name')
      */
-    let formattedStatusName = statusName.replace('Succeeded','').replace('mostRecent','').replace(/([A-Z])/g, ' $1').toLowerCase().trim();
+    let formattedStatusName = statusName
+      .replace("Succeeded", "")
+      .replace("mostRecent", "")
+      .replace(/([A-Z])/g, " $1")
+      .toLowerCase()
+      .trim();
     const data = {
-        environment_description: ENVIRONMENT_DESCRIPTION,
-        status_name: formattedStatusName.charAt(0).toUpperCase() + formattedStatusName.slice(1),
-        status_value: statusText,
-        time: new Date().toLocaleString('en-GB', { hour12: false, timeZone: 'Europe/London'})
+      environment_description: ENVIRONMENT_DESCRIPTION,
+      status_name:
+        formattedStatusName.charAt(0).toUpperCase() +
+        formattedStatusName.slice(1),
+      status_value: statusText,
+      time: new Date().toLocaleString("en-GB", {
+        hour12: false,
+        timeZone: "Europe/London"
+      })
     };
-    
+
     const emailList = await getEmailDistribution();
 
-    emailList.forEach(function (item) {
+    emailList.forEach(function(item) {
       try {
         sendSingleEmail(NOTIFY_STATUS_TEMPLATE, item.email, data);
       } catch (err) {
-        logEmitter.emit(
-          "functionFail",
-          "status.service",
-          "setStatus",
-          err
-        );
+        logEmitter.emit("functionFail", "status.service", "setStatus", err);
 
         throw err;
-      };
+      }
     });
-    
   }
 
-  logEmitter.emit(
-    "functionSuccess",
-    "status.service",
-    "setStatus"
-  );
+  logEmitter.emit("functionSuccess", "status.service", "setStatus");
 
   return updatedStatusValue;
 };
@@ -117,11 +108,7 @@ const setStatus = async (statusName, newStatus) => {
  */
 
 const incrementStatusCount = async statusName => {
-  logEmitter.emit(
-    "functionCall",
-    "status.service",
-    "incrementStatusCount"
-  );
+  logEmitter.emit("functionCall", "status.service", "incrementStatusCount");
 
   const status = await getStoredStatus();
   const currentValue = status[statusName];

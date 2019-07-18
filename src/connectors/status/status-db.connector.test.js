@@ -6,7 +6,7 @@ const {
 const storedStatusMock = require("../../__mocks__/storedStatusMock.json");
 const mongodb = require("mongodb");
 const { statusCollectionDouble } = require("./status-db.double");
-const testArray = [{ email: 'test@test.com' }];
+const testArray = [{ email: "test@test.com" }];
 jest.mock("./status-db.double");
 
 jest.mock("mongodb");
@@ -110,10 +110,10 @@ describe("Function: getEmailDistribution", () => {
         db: () => ({
           collection: () => ({
             find: () => ({
-              project: () => ({ 
-                toArray: () => testArray 
+              project: () => ({
+                toArray: () => testArray
               })
-            }) 
+            })
           })
         })
       }));

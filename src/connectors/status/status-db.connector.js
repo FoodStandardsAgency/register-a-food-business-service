@@ -42,17 +42,19 @@ const establishConnectionToMongo = async () => {
  * @returns {object} All email values
  */
 const getEmailDistribution = async () => {
-  logEmitter.emit("functionCall", "status-db.connector", "getEmailDistribution");
+  logEmitter.emit(
+    "functionCall",
+    "status-db.connector",
+    "getEmailDistribution"
+  );
   try {
     await establishConnectionToMongo();
-    let emailList = await emailCollection.find({
-      $and: [
-        { email: { $ne: "" } },
-        { email: { $ne: null } }
-      ]
-    })
-    .project({ email: 1, _id: 0 })
-    .toArray();
+    let emailList = await emailCollection
+      .find({
+        $and: [{ email: { $ne: "" } }, { email: { $ne: null } }]
+      })
+      .project({ email: 1, _id: 0 })
+      .toArray();
 
     logEmitter.emit(
       "functionsuccess",
@@ -74,7 +76,7 @@ const getEmailDistribution = async () => {
 
     throw newError;
   }
-}
+};
 
 /**
  * Fetches all available status values
