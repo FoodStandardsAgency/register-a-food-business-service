@@ -140,6 +140,6 @@ const getUserFriendlyStatusName = statusName => {
     .replace(/([A-Z])/g, " $1") // Replace all instances of capital letters with itself prefixed with a space (e.g. 'newStatusName' => 'new Status Name')
     .toLowerCase()
     .trim();
-}
+};
 
 module.exports = { getStatus, setStatus, incrementStatusCount };
