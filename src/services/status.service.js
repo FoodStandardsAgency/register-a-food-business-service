@@ -71,15 +71,15 @@ const setStatus = async (statusName, newStatus) => {
 
     const emailList = await getEmailDistribution();
 
-    emailList.forEach(function(item) {
+    for (var emailObject of emailList) {
       try {
-        sendSingleEmail(NOTIFY_STATUS_TEMPLATE, item.email, data);
+        sendSingleEmail(NOTIFY_STATUS_TEMPLATE, emailObject.email, data);
       } catch (err) {
         logEmitter.emit("functionFail", "status.service", "setStatus", err);
 
         throw err;
       }
-    });
+    }
   }
 
   logEmitter.emit("functionSuccess", "status.service", "setStatus");
@@ -92,7 +92,7 @@ const setStatus = async (statusName, newStatus) => {
  *
  * @param {string} statusName The status field name
  *
- * @returns {any} The new status value
+ * @returns {integer} The new status value
  */
 
 const incrementStatusCount = async statusName => {
