@@ -14,7 +14,7 @@ let emailCollection;
 
 /**
  * Sets up a connection to the status collection in the config database.
- * The client, configDBemailCollection and statusCollection variables are accessible to other functions in this connector.
+ * The client, configDB, emailCollection and statusCollection variables are accessible to other functions in this connector.
  */
 const establishConnectionToMongo = async () => {
   if (process.env.DOUBLE_MODE === "true") {
