@@ -8,6 +8,10 @@ const auth = {
   url: "url"
 };
 
+// This needs to be mocked as jest fails if something else imports request-promise
+// Issue: https://github.com/request/request-promise/issues/247
+jest.mock("../../src/services/statusEmitter.service");
+
 describe("Tascomi integration: createReferenceNumber", () => {
   beforeEach(() => {
     process.env.DOUBLE_MODE = true;
