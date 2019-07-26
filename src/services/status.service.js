@@ -71,15 +71,14 @@ const setStatus = async (statusName, newStatus) => {
 
     const emailList = await getEmailDistribution();
 
-    for (var emailObject of emailList) {
+    emailList.forEach(emailObject => {
       try {
         sendSingleEmail(NOTIFY_STATUS_TEMPLATE, emailObject.email, data);
       } catch (err) {
         logEmitter.emit("functionFail", "status.service", "setStatus", err);
-
         throw err;
       }
-    }
+    });
   }
 
   logEmitter.emit("functionSuccess", "status.service", "setStatus");
