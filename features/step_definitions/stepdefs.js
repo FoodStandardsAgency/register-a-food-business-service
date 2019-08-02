@@ -85,7 +85,8 @@ Given("I have a new registration with all valid required fields", function() {
           opening_day_thursday: true,
           opening_day_friday: true,
           opening_day_saturday: true,
-          opening_day_sunday: true
+          opening_day_sunday: true,
+          water_supply: "Public"
         }
       },
       metadata: {
@@ -131,7 +132,9 @@ Given(
           },
           activities: {
             customer_type: "End consumer",
-            opening_day_monday: "true"
+            opening_day_monday: "true",
+            opening_hours_monday: "09:00 to 17:00",
+            water_supply: "Public"
           }
         },
         metadata: {
@@ -167,6 +170,7 @@ When("I submit my multiple fields to the backend", async function() {
     establishment_primary_number: "${this.establishment_primary_number}", 
     establishment_email: "${this.establishment_email}", 
     establishment_type: "${this.establishment_type}", 
+    water_supply: "${this.water_supply}",
     declaration1: "${this.declaration1}",  
     declaration2: "${this.declaration2}", 
     declaration3: "${this.declaration3}", 
