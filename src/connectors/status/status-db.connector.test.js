@@ -6,7 +6,11 @@ const {
 const storedStatusMock = require("../../__mocks__/storedStatusMock.json");
 const mongodb = require("mongodb");
 const { statusCollectionDouble } = require("./status-db.double");
-const testArray = [{ email: "test@test.com" }];
+const testArray = ["test@test.com"];
+const testEmailDistributionObject = {
+  _id: "emailDistribution",
+  emailAddresses: testArray
+};
 jest.mock("./status-db.double");
 
 jest.mock("mongodb");
@@ -109,19 +113,15 @@ describe("Function: getEmailDistribution", () => {
       mongodb.MongoClient.connect.mockImplementation(() => ({
         db: () => ({
           collection: () => ({
-            find: () => ({
-              project: () => ({
-                toArray: () => testArray
-              })
-            })
+            findOne: () => testEmailDistributionObject
           })
         })
       }));
       result = await getEmailDistribution();
     });
 
-    it("Should return an object", () => {
-      expect(typeof result).toBe("object");
+    it("Should return an array", () => {
+      expect(Array.isArray(result)).toBe(true);
     });
   });
 
@@ -148,7 +148,9 @@ describe("Function: getEmailDistribution", () => {
   describe("when running in double mode", () => {
     beforeEach(() => {
       process.env.DOUBLE_MODE = true;
-      statusCollectionDouble.find.mockImplementation(() => testArray);
+      statusCollectionDouble.findOne.mockImplementation(
+        () => testEmailDistributionObject
+      );
     });
 
     it("should resolve with the data from the double's find() response", async () => {
