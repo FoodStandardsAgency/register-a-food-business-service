@@ -13,7 +13,10 @@ const localCouncilTemplate = (seedData, env) => ({
     env === "production" ? seedData.SEED_LC_PHONE_NUMBER : "01234 567890",
   local_council_url: seedData.SEED_LC_URL,
   auth:
-    seedData.SEED_TASCOMI_PUBLIC_KEY_LC && seedData.SEED_TASCOMI_PRIVATE_KEY_LC
+    (seedData.SEED_TASCOMI_PUBLIC_KEY_LC &&
+      seedData.SEED_TASCOMI_PRIVATE_KEY_LC) ||
+    (seedData.SEED_TASCOMI_PUBLIC_KEY_DEV &&
+      seedData.SEED_TASCOMI_PRIVATE_KEY_DEV)
       ? {
           url:
             env === "production"
