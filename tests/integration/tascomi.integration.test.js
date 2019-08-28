@@ -8,6 +8,10 @@ const auth = {
   url: "url"
 };
 
+// This needs to be mocked as jest fails if something else imports request-promise
+// Issue: https://github.com/request/request-promise/issues/247
+jest.mock("../../src/services/statusEmitter.service");
+
 describe("Tascomi integration: createReferenceNumber", () => {
   beforeEach(() => {
     process.env.DOUBLE_MODE = true;
@@ -67,13 +71,21 @@ describe("Tascomi integration: createFoodBusinessRegistration", () => {
           activities: {
             customer_type: "End consumer",
             import_export_activities: "t",
+            water_supply: "Public",
             opening_day_monday: "t",
             opening_day_tuesday: "t",
             opening_day_wednesday: "t",
             opening_day_thursday: "t",
             opening_day_friday: "t",
             opening_day_saturday: "t",
-            opening_day_sunday: "t"
+            opening_day_sunday: "t",
+            opening_hours_monday: "9:30 - 19:00",
+            opening_hours_tuesday: "09:30 - 19:00",
+            opening_hours_wednesday: "9:30am - 7pm",
+            opening_hours_thurday: "0930 - 1900",
+            opening_hours_friday: "9:30 to 19:00",
+            opening_hours_saturday: "09:30 to 19:00",
+            opening_hours_sunday: "From 9:30 to 19:00"
           }
         },
         metadata: {

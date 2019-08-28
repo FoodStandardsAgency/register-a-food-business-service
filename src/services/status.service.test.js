@@ -1,4 +1,8 @@
-jest.mock("../connectors/status/status.connector");
+jest.mock("../connectors/status/status-db.connector");
+jest.mock("../connectors/notify/notify.connector");
+jest.mock("../config", () => ({
+  NOTIFY_STATUS_TEMPLATE: "e6692529-52a3-45cb-96b7-0c8cfe282167"
+}));
 
 const {
   getStatus,
@@ -8,10 +12,13 @@ const {
 
 const {
   getStoredStatus,
-  updateStoredStatus
-} = require("../connectors/status/status.connector");
+  updateStoredStatus,
+  getEmailDistribution
+} = require("../connectors/status/status-db.connector");
 
-describe("status.service getStatus()", () => {
+const { sendSingleEmail } = require("../connectors/notify/notify.connector");
+
+describe("Function: status.service getStatus()", () => {
   let result;
 
   describe("given a statusName is provided", () => {
@@ -58,28 +65,131 @@ describe("status.service getStatus()", () => {
   });
 });
 
-describe("status.service setStatus()", () => {
+describe("Function: status.service setStatus()", () => {
   let result;
 
   describe("given a the supplied statusName does not exist", () => {
     beforeEach(async () => {
+      jest.clearAllMocks();
+      getStoredStatus.mockImplementation(() => ({}));
       updateStoredStatus.mockImplementation(() => "new value");
+      getEmailDistribution.mockImplementation(() => ["test@test.com"]);
       result = await setStatus("newStatusItem", "new value");
     });
 
     it("should return the new value of the status name", () => {
       expect(result).toBe("new value");
     });
+
+    it("should call mocks with the correct values to send an email", () => {
+      expect(getEmailDistribution).toHaveBeenCalledTimes(1);
+      expect(sendSingleEmail).toHaveBeenCalledTimes(1);
+      expect(sendSingleEmail).toHaveBeenLastCalledWith(
+        "e6692529-52a3-45cb-96b7-0c8cfe282167",
+        "test@test.com",
+        expect.any(Object)
+      );
+    });
   });
 
-  describe("given a the supplied statusName already exists", () => {
+  describe("given a the supplied statusName already exists with a diffrent value", () => {
     beforeEach(async () => {
+      jest.clearAllMocks();
+      getStoredStatus.mockImplementation(() => ({
+        mostRecentSubmitSucceeded: true
+      }));
       updateStoredStatus.mockImplementation(() => false);
+      getEmailDistribution.mockImplementation(() => ["test@test.com"]);
+      sendSingleEmail.mockImplementation(() => false);
       result = await setStatus("mostRecentSubmitSucceeded", false);
     });
 
     it("should return the new value of the status name", () => {
       expect(result).toBe(false);
+    });
+
+    it("should call mocks with the correct values to send an email", () => {
+      expect(getEmailDistribution).toHaveBeenCalledTimes(1);
+      expect(sendSingleEmail).toHaveBeenCalledTimes(1);
+      expect(sendSingleEmail).toHaveBeenLastCalledWith(
+        "e6692529-52a3-45cb-96b7-0c8cfe282167",
+        "test@test.com",
+        expect.any(Object)
+      );
+    });
+  });
+
+  describe("given a the supplied statusName already exists with the same value", () => {
+    beforeEach(async () => {
+      jest.clearAllMocks();
+      getStoredStatus.mockImplementation(() => ({
+        mostRecentSubmitSucceeded: false
+      }));
+      updateStoredStatus.mockImplementation(() => false);
+      getEmailDistribution.mockImplementation(() => ["test@test.com"]);
+      sendSingleEmail.mockImplementation(() => false);
+      result = await setStatus("mostRecentSubmitSucceeded", false);
+    });
+
+    it("should return the new value of the status name", () => {
+      expect(result).toBe(false);
+    });
+
+    it("should not call mocks showing no email was sent", () => {
+      expect(getEmailDistribution).toHaveBeenCalledTimes(0);
+      expect(sendSingleEmail).toHaveBeenCalledTimes(0);
+    });
+  });
+
+  describe("given a the supplied statusName already exists with a diffrent value but empty e-mail list", () => {
+    beforeEach(async () => {
+      jest.clearAllMocks();
+      getStoredStatus.mockImplementation(() => ({
+        mostRecentSubmitSucceeded: true
+      }));
+      updateStoredStatus.mockImplementation(() => false);
+      getEmailDistribution.mockImplementation(() => []);
+      sendSingleEmail.mockImplementation(() => false);
+      result = await setStatus("mostRecentSubmitSucceeded", false);
+    });
+
+    it("should return the new value of the status name", () => {
+      expect(result).toBe(false);
+    });
+
+    it("should not call mocks showing email list was got but no email was sent", () => {
+      expect(getEmailDistribution).toHaveBeenCalledTimes(1);
+      expect(sendSingleEmail).toHaveBeenCalledTimes(0);
+    });
+  });
+
+  describe("given a the supplied statusName already exists with a diffrent value and multiple email addresses", () => {
+    beforeEach(async () => {
+      jest.clearAllMocks();
+      getStoredStatus.mockImplementation(() => ({
+        mostRecentSubmitSucceeded: false
+      }));
+      updateStoredStatus.mockImplementation(() => true);
+      getEmailDistribution.mockImplementation(() => [
+        "test@test.com",
+        "test2@test.com"
+      ]);
+      sendSingleEmail.mockImplementation(() => false);
+      result = await setStatus("mostRecentSubmitSucceeded", true);
+    });
+
+    it("should return the new value of the status name", () => {
+      expect(result).toBe(true);
+    });
+
+    it("should call mocks with the correct values to send two email", () => {
+      expect(getEmailDistribution).toHaveBeenCalledTimes(1);
+      expect(sendSingleEmail).toHaveBeenCalledTimes(2);
+      expect(sendSingleEmail).toHaveBeenLastCalledWith(
+        "e6692529-52a3-45cb-96b7-0c8cfe282167",
+        "test2@test.com",
+        expect.any(Object)
+      );
     });
   });
 });

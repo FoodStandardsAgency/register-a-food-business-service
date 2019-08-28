@@ -25,7 +25,6 @@ const sendRequest = async body => {
       body: JSON.stringify(body)
     }
   );
-
   return res.json();
 };
 
@@ -86,7 +85,8 @@ Given("I have a new registration with all valid required fields", function() {
           opening_day_thursday: true,
           opening_day_friday: true,
           opening_day_saturday: true,
-          opening_day_sunday: true
+          opening_day_sunday: true,
+          water_supply: "Public"
         }
       },
       metadata: {
@@ -132,7 +132,9 @@ Given(
           },
           activities: {
             customer_type: "End consumer",
-            opening_day_monday: "true"
+            opening_day_monday: "true",
+            opening_hours_monday: "09:00 to 17:00",
+            water_supply: "Public"
           }
         },
         metadata: {
@@ -168,6 +170,7 @@ When("I submit my multiple fields to the backend", async function() {
     establishment_primary_number: "${this.establishment_primary_number}", 
     establishment_email: "${this.establishment_email}", 
     establishment_type: "${this.establishment_type}", 
+    water_supply: "${this.water_supply}",
     declaration1: "${this.declaration1}",  
     declaration2: "${this.declaration2}", 
     declaration3: "${this.declaration3}", 
@@ -180,25 +183,26 @@ When("I submit my multiple fields to the backend", async function() {
   this.response = await sendRequest(requestBody);
 });
 
-Then("I get a success response", function() {
-  assert.ok(this.response.regId);
+Then("I get a success response", async function() {
+  assert.ok(this.response["fsa-rn"]);
 });
 
-Then("I get an error response", function() {
+Then("I get an error response", async function() {
   assert.ok(this.response.errorCode);
 });
 
 Then("The non personal information is saved to the database", async function() {
   const id = this.response["fsa-rn"];
-  this.response = await getRequest(id);
-
-  assert.equal(this.response.establishment.establishment_trading_name, "Itsu");
+  getRequest(id).then(response => () => {
+    assert.equal(response.establishment.establishment_trading_name, "Itsu");
+  });
 });
 
 Then("The personal information is not saved to the database", async function() {
   const id = this.response["fsa-rn"];
-  this.response = await getRequest(id);
-  assert.equal(this.response.establishment.operator_first_name, null);
+  getRequest(id).then(response => () => {
+    assert.equal(response.establishment.operator_first_name, null);
+  });
 });
 
 Then("I receive a confirmation number", async function() {

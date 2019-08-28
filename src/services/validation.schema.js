@@ -23,7 +23,9 @@ const {
   validateOpeningDay,
   validatePartnersHasPrimaryContact,
   validatePartnerIsPrimaryContact,
-  validatePartnerName
+  validatePartnerName,
+  validateOpeningHours,
+  validateWaterSupply
 } = require("@slice-and-dice/register-a-food-business-validation");
 
 const schema = {
@@ -232,6 +234,10 @@ const schema = {
                 type: "string",
                 validation: validateImportExportActivities
               },
+              water_supply: {
+                type: "string",
+                validation: validateWaterSupply
+              },
               business_other_details: {
                 type: "string",
                 validation: validateBusinessOtherDetails
@@ -267,12 +273,41 @@ const schema = {
               opening_day_sunday: {
                 type: "boolean",
                 validation: validateOpeningDay
+              },
+              opening_hours_monday: {
+                type: "string",
+                validation: validateOpeningHours
+              },
+              opening_hours_tuesday: {
+                type: "string",
+                validation: validateOpeningHours
+              },
+              opening_hours_wednesday: {
+                type: "string",
+                validation: validateOpeningHours
+              },
+              opening_hours_thursday: {
+                type: "string",
+                validation: validateOpeningHours
+              },
+              opening_hours_friday: {
+                type: "string",
+                validation: validateOpeningHours
+              },
+              opening_hours_saturday: {
+                type: "string",
+                validation: validateOpeningHours
+              },
+              opening_hours_sunday: {
+                type: "string",
+                validation: validateOpeningHours
               }
             },
             required: [
               "customer_type",
               "business_type",
               "import_export_activities",
+              "water_supply",
               "opening_day_monday",
               "opening_day_tuesday",
               "opening_day_wednesday",
