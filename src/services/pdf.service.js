@@ -113,7 +113,7 @@ const createContent = pdfData => {
   content.push(createNewSpace(2));
   content.push(
     createTitle(
-      "You have recieved a new food business registration. The registration details are included in this email. The new registration should also be available on your management information system.",
+      "You have received a new food business registration. The registration details are included in this email. The new registration should also be available on your management information system.",
       "h4"
     )
   );
