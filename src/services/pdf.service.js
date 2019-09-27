@@ -99,10 +99,21 @@ const createSingleSection = (title, sectionData) => {
 
   for (let key in sectionData) {
     const displayKey = convertKeyToDisplayName(key);
-    const newLine = createSingleLine(displayKey, sectionData[key]);
+    const isValueBoolean = typeof sectionData[key] === "boolean";
+    const answer = isValueBoolean
+      ? convertBoolToString(sectionData[key])
+      : sectionData[key];
+    const newLine = createSingleLine(displayKey, answer);
     section = section.concat(newLine);
   }
   return section;
+};
+
+const convertBoolToString = answer => {
+  if (answer === true) {
+    return "Yes";
+  }
+  return "No";
 };
 
 const createContent = pdfData => {
@@ -178,4 +189,9 @@ const pdfGenerator = pdfData => {
   });
 };
 
-module.exports = { pdfGenerator, transformDataForPdf, convertKeyToDisplayName };
+module.exports = {
+  pdfGenerator,
+  transformDataForPdf,
+  convertKeyToDisplayName,
+  convertBoolToString
+};

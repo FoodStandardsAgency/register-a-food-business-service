@@ -1,7 +1,8 @@
 const {
   pdfGenerator,
   transformDataForPdf,
-  convertKeyToDisplayName
+  convertKeyToDisplayName,
+  convertBoolToString
 } = require("./pdf.service");
 describe("Pdf Service: ", () => {
   let result;
@@ -418,5 +419,14 @@ describe("Pdf Service: ", () => {
     it("should uppercase first letter", () => {
       expect(result[0]).toBe("T");
     });
+  });
+});
+
+describe("Function: convertBoolToString", () => {
+  it("should convert false to 'No'", () => {
+    expect(convertBoolToString(false)).toBe("No");
+  });
+  it("should convert true to 'Yes'", () => {
+    expect(convertBoolToString(true)).toBe("Yes");
   });
 });
