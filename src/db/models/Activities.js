@@ -13,7 +13,7 @@ module.exports = (sequelize, DataTypes) => {
       import_export_activities: { type: DataTypes.STRING },
       water_supply: { type: DataTypes.STRING },
       business_other_details: { type: DataTypes.STRING(1500) },
-      opening_days_irregular: { type: DataTypes.STRING },
+      opening_days_irregular: { type: DataTypes.STRING(1500) },
       opening_day_monday: { type: DataTypes.BOOLEAN },
       opening_day_tuesday: { type: DataTypes.BOOLEAN },
       opening_day_wednesday: { type: DataTypes.BOOLEAN },
