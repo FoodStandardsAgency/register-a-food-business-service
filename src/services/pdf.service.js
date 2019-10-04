@@ -99,10 +99,21 @@ const createSingleSection = (title, sectionData) => {
 
   for (let key in sectionData) {
     const displayKey = convertKeyToDisplayName(key);
-    const newLine = createSingleLine(displayKey, sectionData[key]);
+    const isValueBoolean = typeof sectionData[key] === "boolean";
+    const answer = isValueBoolean
+      ? convertBoolToString(sectionData[key])
+      : sectionData[key];
+    const newLine = createSingleLine(displayKey, answer);
     section = section.concat(newLine);
   }
   return section;
+};
+
+const convertBoolToString = answer => {
+  if (answer === true) {
+    return "Yes";
+  }
+  return "No";
 };
 
 const createContent = pdfData => {
@@ -113,7 +124,7 @@ const createContent = pdfData => {
   content.push(createNewSpace(2));
   content.push(
     createTitle(
-      "You have recieved a new food business registration. The registration details are included in this email. The new registration should also be available on your management information system.",
+      "You have received a new food business registration. The registration details are included in this email. The new registration should also be available on your management information system.",
       "h4"
     )
   );
@@ -178,4 +189,9 @@ const pdfGenerator = pdfData => {
   });
 };
 
-module.exports = { pdfGenerator, transformDataForPdf, convertKeyToDisplayName };
+module.exports = {
+  pdfGenerator,
+  transformDataForPdf,
+  convertKeyToDisplayName,
+  convertBoolToString
+};
