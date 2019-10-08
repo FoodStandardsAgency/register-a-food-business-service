@@ -154,7 +154,7 @@ const createLcContactSection = lcInfo => {
     lcContactSection.push(createNewSpace(1));
     lcContactSection.push(createTitle(lcInfo.local_council_standards, "h2"));
     lcContactSection.push(
-      createTitle("Responsible local council for food hygiene", "h3")
+      createTitle("Responsible local council for food standards", "h3")
     );
   }
   return lcContactSection;
