@@ -37,8 +37,6 @@ const createNewRegistration = async (
     throw new Error("registration is undefined");
   }
 
-  cacheRegistration(registration);
-
   const errors = validate(registration);
   if (errors.length) {
     const err = new Error();
@@ -60,6 +58,18 @@ const createNewRegistration = async (
   const postRegistrationMetadata = await getRegistrationMetaData(
     hygieneCouncilCode
   );
+
+  const completeRegistration = Object.assign(
+    {},
+    {
+      "fsa-rn": postRegistrationMetadata["fsa-rn"],
+      reg_submission_date: postRegistrationMetadata.reg_submission_date
+    },
+    registration,
+    lcContactConfig
+  );
+
+  cacheRegistration(completeRegistration);
 
   const combinedResponse = Object.assign({}, postRegistrationMetadata, {
     lc_config: lcContactConfig
