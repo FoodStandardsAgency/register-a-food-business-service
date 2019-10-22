@@ -12,7 +12,8 @@ const {
 const { sendNotifications } = require("../../services/notifications.service");
 
 const {
-  cacheRegistration
+  cacheRegistration,
+  updateCompletedInCache
 } = require("../../connectors/cacheDb/cacheDb.connector");
 
 const {
@@ -59,17 +60,24 @@ const createNewRegistration = async (
     hygieneCouncilCode
   );
 
-  const completeRegistration = Object.assign(
+  const completeCacheRecord = Object.assign(
     {},
     {
       "fsa-rn": postRegistrationMetadata["fsa-rn"],
       reg_submission_date: postRegistrationMetadata.reg_submission_date
     },
     registration,
-    lcContactConfig
+    lcContactConfig,
+    {
+      completed: {
+        tascomi: undefined,
+        registration: undefined,
+        notifications: undefined
+      }
+    }
   );
 
-  cacheRegistration(completeRegistration);
+  cacheRegistration(completeCacheRecord);
 
   const combinedResponse = Object.assign({}, postRegistrationMetadata, {
     lc_config: lcContactConfig
@@ -84,6 +92,12 @@ const createNewRegistration = async (
         hygiene_council_code: hygieneCouncilCode
       }),
       localCouncilUrl
+    );
+  } else {
+    await updateCompletedInCache(
+      postRegistrationMetadata["fsa-rn"],
+      "tascomi",
+      "n/a"
     );
   }
 

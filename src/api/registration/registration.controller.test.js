@@ -17,7 +17,8 @@ jest.mock("../../services/notifications.service", () => ({
 }));
 
 jest.mock("../../connectors/cacheDb/cacheDb.connector", () => ({
-  cacheRegistration: jest.fn()
+  cacheRegistration: jest.fn(),
+  updateCompletedInCache: jest.fn()
 }));
 
 jest.mock("../../connectors/configDb/configDb.connector", () => ({
@@ -173,7 +174,14 @@ describe("registration controller", () => {
               reg_submission_date: postRegistrationMetadata.reg_submission_date
             },
             testRegistration,
-            exampleLcConfig
+            exampleLcConfig,
+            {
+              completed: {
+                tascomi: undefined,
+                registration: undefined,
+                notifications: undefined
+              }
+            }
           );
           expect(cacheRegistration).toHaveBeenLastCalledWith(expectedToCache);
         });
