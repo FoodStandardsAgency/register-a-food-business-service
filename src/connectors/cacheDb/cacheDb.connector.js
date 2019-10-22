@@ -68,9 +68,60 @@ const cacheRegistration = async registration => {
   }
 };
 
+const updateCompletedInCache = async (fsa_rn, property, value) => {
+  logEmitter.emit("functionCall", "cacheDb.connector", "updateCache");
+  try {
+    const cachedRegistrations = await establishConnectionToMongo();
+    let cachedRegistration = await cachedRegistrations.findOne({
+      "fsa-rn": fsa_rn
+    });
+
+    let newCompleted = cachedRegistration.completed;
+    newCompleted[property] = {
+      time: new Date().toLocaleString("en-GB", {
+        hour12: false,
+        timeZone: "Europe/London"
+      }),
+      result: value
+    };
+
+    await cachedRegistrations.updateOne(
+      { "fsa-rn": fsa_rn },
+      {
+        $set: { completed: newCompleted }
+      }
+    );
+    statusEmitter.emit("incrementCount", "updateRegistrationsInCacheSucceeded");
+    statusEmitter.emit(
+      "setStatus",
+      "mostRecentUpdateRegistrationInCacheSucceeded",
+      true
+    );
+    logEmitter.emit("functionSuccess", "cacheDb.connector", "updateCache");
+  } catch (err) {
+    statusEmitter.emit("incrementCount", "updateRegistrationsInCacheFailed");
+    statusEmitter.emit(
+      "setStatus",
+      "mostRecentUpdateRegistrationInCacheSucceeded",
+      false
+    );
+    logEmitter.emit("functionFail", "cacheDb.connector", "updateCache", err);
+
+    const newError = new Error();
+    newError.name = "mongoConnectionError";
+    newError.message = err.message;
+
+    throw newError;
+  }
+};
+
 const clearMongoConnection = () => {
   client = undefined;
   cacheDB = undefined;
 };
 
-module.exports = { cacheRegistration, clearMongoConnection };
+module.exports = {
+  cacheRegistration,
+  clearMongoConnection,
+  updateCompletedInCache
+};
