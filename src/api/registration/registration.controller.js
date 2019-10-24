@@ -89,7 +89,7 @@ const createNewRegistration = async (
     lcContactConfig,
     registration,
     postRegistrationMetadata,
-    configVersion.notify_template_keys
+    configVersion
   );
   logEmitter.emit(
     "functionSuccess",

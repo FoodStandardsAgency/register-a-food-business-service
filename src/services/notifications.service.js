@@ -108,26 +108,13 @@ const transformDataForNotify = (
  * @returns {object} Object that returns email sent status and recipients email address
  */
 
-const sendEmailOfType = async (
-  typeOfEmail,
+const sendEmails = async (
+  emailsToSend,
   registration,
   postRegistrationMetadata,
-  lcContactConfig,
-  recipientEmailAddress,
-  notifyTemplateKeys
+  lcContactConfig
 ) => {
   logEmitter.emit("functionCall", "registration.service", "sendEmailOfType");
-
-  const emailSent = { success: undefined, recipient: recipientEmailAddress };
-
-  let templateId;
-
-  if (typeOfEmail === "LC") {
-    templateId = notifyTemplateKeys.lc_new_registration;
-  }
-  if (typeOfEmail === "FBO") {
-    templateId = notifyTemplateKeys.fbo_submission_complete;
-  }
 
   try {
     const data = transformDataForNotify(
@@ -136,31 +123,25 @@ const sendEmailOfType = async (
       lcContactConfig
     );
 
-    const dataForPDF = transformDataForPdf(
-      registration,
-      postRegistrationMetadata,
-      lcContactConfig
-    );
+    for (let email in emailsToSend) {
+      let pdfFile = undefined;
 
-    let pdfFile = undefined;
-    if (typeOfEmail === "LC") {
-      pdfFile = await pdfGenerator(dataForPDF);
+      if (emailsToSend[email].type === "LC") {
+        const dataForPDF = transformDataForPdf(
+          registration,
+          postRegistrationMetadata,
+          lcContactConfig
+        );
+        pdfFile = await pdfGenerator(dataForPDF);
+      }
+
+      await sendSingleEmail(
+        emailsToSend[email].templateId,
+        emailsToSend[email].address,
+        data,
+        pdfFile
+      );
     }
-
-    await sendSingleEmail(templateId, recipientEmailAddress, data, pdfFile);
-    emailSent.success = true;
-
-    statusEmitter.emit("incrementCount", "emailNotificationsSucceeded");
-    statusEmitter.emit(
-      "setStatus",
-      "mostRecentEmailNotificationSucceeded",
-      true
-    );
-    logEmitter.emit(
-      "functionSuccess",
-      "registration.service",
-      "sendEmailOfType"
-    );
   } catch (err) {
     statusEmitter.emit("incrementCount", "emailNotificationsFailed");
     statusEmitter.emit(
@@ -176,7 +157,9 @@ const sendEmailOfType = async (
     );
     throw err;
   }
-  return emailSent;
+  statusEmitter.emit("incrementCount", "emailNotificationsSucceeded");
+  statusEmitter.emit("setStatus", "mostRecentEmailNotificationSucceeded", true);
+  logEmitter.emit("functionSuccess", "registration.service", "sendEmailOfType");
 };
 
 /**
@@ -191,21 +174,20 @@ const sendNotifications = async (
   lcContactConfig,
   registration,
   postRegistrationMetadata,
-  notifyTemplateKeys
+  configData
 ) => {
+  let emailsToSend = [];
+
   for (let typeOfCouncil in lcContactConfig) {
     const lcNotificationEmailAddresses =
       lcContactConfig[typeOfCouncil].local_council_notify_emails;
 
     for (let recipientEmailAddress in lcNotificationEmailAddresses) {
-      await sendEmailOfType(
-        "LC",
-        registration,
-        postRegistrationMetadata,
-        lcContactConfig,
-        lcNotificationEmailAddresses[recipientEmailAddress],
-        notifyTemplateKeys
-      );
+      emailsToSend.push({
+        type: "LC",
+        address: lcNotificationEmailAddresses[recipientEmailAddress],
+        templateId: configData.notify_template_keys.lc_new_registration
+      });
     }
   }
 
@@ -213,13 +195,31 @@ const sendNotifications = async (
     registration.establishment.operator.operator_email ||
     registration.establishment.operator.contact_representative_email;
 
-  await sendEmailOfType(
-    "FBO",
+  emailsToSend.push({
+    type: "FBO",
+    address: fboEmailAddress,
+    templateId: configData.notify_template_keys.fbo_submission_complete
+  });
+
+  if (registration.metadata.feedback1) {
+    emailsToSend.push({
+      type: "FBO_FB",
+      address: fboEmailAddress,
+      templateId: configData.notify_template_keys.fbo_feedback
+    });
+
+    emailsToSend.push({
+      type: "FD_FB",
+      address: configData.future_delivery_email,
+      templateId: configData.notify_template_keys.fd_feedback
+    });
+  }
+
+  await sendEmails(
+    emailsToSend,
     registration,
     postRegistrationMetadata,
-    lcContactConfig,
-    fboEmailAddress,
-    notifyTemplateKeys
+    lcContactConfig
   );
 };
 
