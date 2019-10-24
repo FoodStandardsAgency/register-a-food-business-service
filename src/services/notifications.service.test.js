@@ -35,6 +35,27 @@ const testRegistrationData = {
   }
 };
 
+const testRegistrationDataWithFeedback = {
+  establishment: {
+    establishment_details: {
+      establishment_trading_name: "Itsu",
+      establishment_opening_date: "2017-12-30"
+    },
+    operator: {
+      operator_first_name: "Fred"
+    },
+    premise: {
+      establishment_postcode: "SW12 9RQ"
+    },
+    activities: {
+      customer_type: "End consumer"
+    }
+  },
+  metadata: {
+    declaration1: "Declaration"
+  }
+};
+
 const testRegistrationDataForPartnership = {
   establishment: {
     establishment_details: {
@@ -440,7 +461,7 @@ describe("Function: sendEmailOfType: ", () => {
   const configData = {
     notify_template_keys: testNotifyTemplateKeys,
     future_delivery_email: "testEmail@test.com"
-  }
+  };
 
   describe("When the connector responds successfully", () => {
     const testPdfFile = "example base64 string";
@@ -450,7 +471,6 @@ describe("Function: sendEmailOfType: ", () => {
       sendSingleEmail.mockImplementation(() => ({
         id: "123-456"
       }));
-      console.log(JSON.stringify(configData));
       await sendNotifications(
         mockLcContactConfig,
         mockRegistrationData,
@@ -475,6 +495,43 @@ describe("Function: sendEmailOfType: ", () => {
       expect(sendSingleEmail.mock.calls[1][0]).toBe("fbo-456");
       expect(sendSingleEmail.mock.calls[1][1]).toBe("operator@email.com");
       expect(sendSingleEmail.mock.calls[1][3]).toBe(undefined);
+    });
+  });
+
+  describe("When the connector responds successfully with feedback", () => {
+    beforeEach(async () => {
+      const testPdfFile = "example base64 string";
+
+      beforeEach(async () => {
+        pdfGenerator.mockImplementation(() => testPdfFile);
+        sendSingleEmail.mockImplementation(() => ({
+          id: "123-456"
+        }));
+        await sendNotifications(
+          mockLcContactConfig,
+          testRegistrationDataWithFeedback,
+          mockPostRegistrationData,
+          configData
+        );
+      });
+
+      it("should have called the connector with the correct arguments for the FBO-FB", () => {
+        expect(sendSingleEmail.mock.calls[2][0]).toBe(
+          testNotifyTemplateKeys.fbo_feedback
+        );
+        expect(sendSingleEmail.mock.calls[2][1]).toBe("operator@email.com");
+        expect(sendSingleEmail.mock.calls[2][3]).toBe(undefined);
+      });
+
+      it("should have called the connector with the correct arguments for the FD-FB", () => {
+        expect(sendSingleEmail.mock.calls[2][0]).toBe(
+          testNotifyTemplateKeys.fd_feedback
+        );
+        expect(sendSingleEmail.mock.calls[2][1]).toBe(
+          configData.future_delivery_email
+        );
+        expect(sendSingleEmail.mock.calls[2][3]).toBe(undefined);
+      });
     });
   });
 
