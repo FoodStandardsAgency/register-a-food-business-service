@@ -432,8 +432,15 @@ describe("Function: sendEmailOfType: ", () => {
 
   const testNotifyTemplateKeys = {
     lc_new_registration: "lc-123",
-    fbo_submission_complete: "fbo-456"
+    fbo_submission_complete: "fbo-456",
+    fbo_feedback: "fbo-feed123",
+    fd_feedback: "fd-feed567"
   };
+
+  const configData = {
+    notify_template_keys: testNotifyTemplateKeys,
+    future_delivery_email: "testEmail@test.com"
+  }
 
   describe("When the connector responds successfully", () => {
     const testPdfFile = "example base64 string";
@@ -443,11 +450,12 @@ describe("Function: sendEmailOfType: ", () => {
       sendSingleEmail.mockImplementation(() => ({
         id: "123-456"
       }));
+      console.log(JSON.stringify(configData));
       await sendNotifications(
         mockLcContactConfig,
         mockRegistrationData,
         mockPostRegistrationData,
-        testNotifyTemplateKeys
+        configData
       );
     });
 
@@ -481,7 +489,7 @@ describe("Function: sendEmailOfType: ", () => {
           mockLcContactConfig,
           mockRegistrationData,
           mockPostRegistrationData,
-          testNotifyTemplateKeys
+          configData
         );
       } catch (err) {
         result = err;
@@ -510,7 +518,7 @@ describe("Function: sendEmailOfType: ", () => {
         mockLcContactConfig,
         newMockRegistrationData,
         mockPostRegistrationData,
-        testNotifyTemplateKeys
+        configData
       );
     });
 
