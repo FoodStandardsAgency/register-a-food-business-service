@@ -48,7 +48,6 @@ const establishConnectionToMongo = async () => {
         );
         throw err;
       }
-    } else {
     }
 
     statusDB = client.db("register_a_food_business_status");
