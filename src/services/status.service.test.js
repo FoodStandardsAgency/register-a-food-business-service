@@ -92,6 +92,27 @@ describe("Function: status.service setStatus()", () => {
     });
   });
 
+  describe("given sendSingleEmail throws error", () => {
+    beforeEach(async () => {
+      jest.clearAllMocks();
+      getStoredStatus.mockImplementation(() => ({}));
+      updateStoredStatus.mockImplementation(() => "new value");
+      getEmailDistribution.mockImplementation(() => ["test@test.com"]);
+      sendSingleEmail.mockImplementation(() => {
+        throw new Error("cannot send email");
+      });
+      try {
+        await setStatus("newStatusItem", "new value");
+      } catch (err) {
+        result = err;
+      }
+    });
+
+    it("should throw an error", () => {
+      expect(result.message).toBe("cannot send email");
+    });
+  });
+
   describe("given a the supplied statusName already exists with a diffrent value", () => {
     beforeEach(async () => {
       jest.clearAllMocks();

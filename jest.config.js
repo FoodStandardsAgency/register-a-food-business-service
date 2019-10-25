@@ -11,7 +11,7 @@ module.exports = {
     events: "<rootDir>/src/__mocks__/events.js"
   },
   collectCoverageFrom: [
-    "**/*.{js}",
+    "**/*.js",
     "!**/node_modules/**",
     "!**/vendor/**",
     "!**/coverage/**",
