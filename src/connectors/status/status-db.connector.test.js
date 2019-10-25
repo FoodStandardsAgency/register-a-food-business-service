@@ -1,7 +1,8 @@
 const {
   getStoredStatus,
   updateStoredStatus,
-  getEmailDistribution
+  getEmailDistribution,
+  clearMongoConnection
 } = require("./status-db.connector");
 const storedStatusMock = require("../../__mocks__/storedStatusMock.json");
 const mongodb = require("mongodb");
@@ -54,6 +55,62 @@ describe("Function: getStoredStatus", () => {
     });
   });
 
+  describe("When: topology is invalid", () => {
+    const closeConnection = jest.fn();
+    let result1, result2;
+    beforeEach(async () => {
+      mongodb.MongoClient.connect.mockImplementation(() => ({
+        db: () => ({
+          collection: () => ({
+            findOne: () => storedStatusMock
+          })
+        }),
+        topology: null,
+        close: () => closeConnection()
+      }));
+      result1 = await getStoredStatus();
+      result2 = await getStoredStatus();
+    });
+
+    it("Should close broken connection", () => {
+      expect(closeConnection).toHaveBeenCalledTimes(1);
+    });
+    it("Should return identical, valid results both times", () => {
+      expect(typeof result1).toBe("object");
+      expect(typeof result2).toBe("object");
+      expect(result1).toEqual(result2);
+    });
+  });
+
+  describe("When: connection is lost", () => {
+    const closeConnection = jest.fn();
+    let result1, result2;
+    beforeEach(async () => {
+      mongodb.MongoClient.connect.mockImplementation(() => ({
+        db: () => ({
+          collection: () => ({
+            findOne: () => storedStatusMock
+          })
+        }),
+        topology: {
+          isConnected: () => false
+        },
+        close: () => closeConnection()
+      }));
+      result1 = await getStoredStatus();
+      result2 = await getStoredStatus();
+    });
+
+    it("Should close broken connection", () => {
+      expect(closeConnection).toHaveBeenCalledTimes(1);
+    });
+    it("Should return identical, valid results both times", () => {
+      expect(typeof result1).toBe("object");
+      expect(typeof result2).toBe("object");
+      expect(result1).toEqual(result2);
+    });
+  });
+
   describe("when running in double mode", () => {
     beforeEach(() => {
       process.env.DOUBLE_MODE = true;
@@ -64,12 +121,43 @@ describe("Function: getStoredStatus", () => {
       await expect(getStoredStatus()).resolves.toEqual(storedStatusMock);
     });
   });
+
+  describe("When: two db calls are made", () => {
+    const closeConnection = jest.fn();
+    let result1, result2;
+    beforeEach(async () => {
+      process.env.DOUBLE_MODE = false;
+      clearMongoConnection("TWO CALLS");
+      mongodb.MongoClient.connect.mockImplementation(() => ({
+        db: () => ({
+          collection: () => ({
+            findOne: () => storedStatusMock
+          })
+        }),
+        topology: {
+          isConnected: () => true
+        },
+        close: () => closeConnection()
+      }));
+      result1 = await getStoredStatus();
+      result2 = await getStoredStatus();
+    });
+
+    it("Should return identical, valid results both times", () => {
+      expect(typeof result1).toBe("object");
+      expect(typeof result2).toBe("object");
+      expect(result1).toEqual(result2);
+    });
+    it("Should not close connection", () => {
+      expect(closeConnection).toHaveBeenCalledTimes(0);
+    });
+  });
 });
 
 describe("Function: updateStoredStatus", () => {
   let result;
-
   beforeEach(async () => {
+    clearMongoConnection();
     mongodb.MongoClient.connect.mockImplementation(() => ({
       db: () => ({
         collection: () => ({
