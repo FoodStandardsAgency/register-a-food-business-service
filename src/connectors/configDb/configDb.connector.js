@@ -14,7 +14,7 @@ const establishConnectionToMongo = async collectionName => {
     logEmitter.emit(
       "doubleMode",
       "configDb.connector",
-      "getAllLocalCouncilConfig"
+      "establishConnectionToMongo"
     );
     return lcConfigCollectionDouble;
   } else {
