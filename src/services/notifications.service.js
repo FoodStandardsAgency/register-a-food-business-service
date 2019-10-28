@@ -98,12 +98,10 @@ const transformDataForNotify = (
 /**
  * Function that uses Notify to send an email to either the LC or FBO with the relevant data. It also uses the pdfmake generator to pipe the base64pdf to Notify.
  *
+ * @param {object} emailsToSend The object containing all emails to be sent. Should include, type, address and template.
  * @param {object} registration The object containing all the answers the user has submitted during the sesion
  * @param {object} postRegistrationMetaData The object containing the metadata from the submission i.e. fsa-rn number and submission date
  * @param {object} lcContactConfig The object containing the local council information
- * @param {string} typeOfEmail String containing information on whether email gets sent to FBO or LC
- * @param {string} recipientEmailAddress String that is email address of recipient
- * @param {object} notifyTemplateKeys Notify keys to determine template to be used (can be found on Notify)
  *
  * @returns {object} Object that returns email sent status and recipients email address
  */
@@ -123,23 +121,24 @@ const sendEmails = async (
       lcContactConfig
     );
 
-    for (let email in emailsToSend) {
-      let pdfFile = undefined;
+    const dataForPDF = transformDataForPdf(
+      registration,
+      postRegistrationMetadata,
+      lcContactConfig
+    );
+    const pdfFile = await pdfGenerator(dataForPDF);
 
-      if (emailsToSend[email].type === "LC") {
-        const dataForPDF = transformDataForPdf(
-          registration,
-          postRegistrationMetadata,
-          lcContactConfig
-        );
-        pdfFile = await pdfGenerator(dataForPDF);
+    for (let index in emailsToSend) {
+      let fileToSend = undefined;
+      if (emailsToSend[index].type === "LC") {
+        fileToSend = pdfFile;
       }
 
       await sendSingleEmail(
-        emailsToSend[email].templateId,
-        emailsToSend[email].address,
+        emailsToSend[index].templateId,
+        emailsToSend[index].address,
         data,
-        pdfFile
+        fileToSend
       );
     }
   } catch (err) {
