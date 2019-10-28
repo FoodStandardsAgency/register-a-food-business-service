@@ -35,27 +35,6 @@ const testRegistrationData = {
   }
 };
 
-const testRegistrationDataWithFeedback = {
-  establishment: {
-    establishment_details: {
-      establishment_trading_name: "Itsu",
-      establishment_opening_date: "2017-12-30"
-    },
-    operator: {
-      operator_first_name: "Fred"
-    },
-    premise: {
-      establishment_postcode: "SW12 9RQ"
-    },
-    activities: {
-      customer_type: "End consumer"
-    }
-  },
-  metadata: {
-    declaration1: "Declaration"
-  }
-};
-
 const testRegistrationDataForPartnership = {
   establishment: {
     establishment_details: {
@@ -499,39 +478,95 @@ describe("Function: sendEmailOfType: ", () => {
   });
 
   describe("When the connector responds successfully with feedback", () => {
+    const testPdfFile = "example base64 string";
+
+    const mockRegistrationData = {
+      establishment: {
+        establishment_details: {
+          establishment_trading_name: "Itsu",
+          establishment_primary_number: "329857245",
+          establishment_secondary_number: "84345245",
+          establishment_email: "django@email.com",
+          establishment_opening_date: "2018-06-07"
+        },
+        operator: {
+          operator_first_name: "Fred",
+          operator_last_name: "Bloggs",
+          operator_postcode: "SW12 9RQ",
+          operator_first_line: "335",
+          operator_street: "Some St.",
+          operator_town: "London",
+          operator_primary_number: "9827235",
+          operator_email: "operator@email.com",
+          operator_type: "Sole trader",
+          partners: [
+            {
+              partner_name: "Tom",
+              partner_is_primary_contact: true
+            },
+            {
+              partner_name: "Fred",
+              partner_is_primary_contact: false
+            }
+          ]
+        },
+        premise: {
+          establishment_postcode: "SW12 9RQ",
+          establishment_first_line: "123",
+          establishment_street: "Street",
+          establishment_town: "London",
+          establishment_type: "Place"
+        },
+        activities: {
+          customer_type: "End consumer",
+          business_type: "Livestock farm",
+          import_export_activities: "None",
+          opening_day_monday: true,
+          opening_day_tuesday: true,
+          opening_day_wednesday: true,
+          opening_day_thursday: true,
+          opening_day_friday: true,
+          opening_day_saturday: true,
+          opening_day_sunday: true
+        }
+      },
+      metadata: {
+        declaration1: "Declaration",
+        declaration2: "Declaration",
+        declaration3: "Declaration",
+        feedback1: "Feedback"
+      }
+    };
+
     beforeEach(async () => {
-      const testPdfFile = "example base64 string";
+      pdfGenerator.mockImplementation(() => testPdfFile);
+      sendSingleEmail.mockImplementation(() => ({
+        id: "123-456"
+      }));
+      await sendNotifications(
+        mockLcContactConfig,
+        mockRegistrationData,
+        mockPostRegistrationData,
+        configData
+      );
+    });
 
-      beforeEach(async () => {
-        pdfGenerator.mockImplementation(() => testPdfFile);
-        sendSingleEmail.mockImplementation(() => ({
-          id: "123-456"
-        }));
-        await sendNotifications(
-          mockLcContactConfig,
-          testRegistrationDataWithFeedback,
-          mockPostRegistrationData,
-          configData
-        );
-      });
+    it("should have called the connector with the correct arguments for the FBO-FB", () => {
+      expect(sendSingleEmail.mock.calls[2][0]).toBe(
+        testNotifyTemplateKeys.fbo_feedback
+      );
+      expect(sendSingleEmail.mock.calls[2][1]).toBe("operator@email.com");
+      expect(sendSingleEmail.mock.calls[2][3]).toBe(undefined);
+    });
 
-      it("should have called the connector with the correct arguments for the FBO-FB", () => {
-        expect(sendSingleEmail.mock.calls[2][0]).toBe(
-          testNotifyTemplateKeys.fbo_feedback
-        );
-        expect(sendSingleEmail.mock.calls[2][1]).toBe("operator@email.com");
-        expect(sendSingleEmail.mock.calls[2][3]).toBe(undefined);
-      });
-
-      it("should have called the connector with the correct arguments for the FD-FB", () => {
-        expect(sendSingleEmail.mock.calls[2][0]).toBe(
-          testNotifyTemplateKeys.fd_feedback
-        );
-        expect(sendSingleEmail.mock.calls[2][1]).toBe(
-          configData.future_delivery_email
-        );
-        expect(sendSingleEmail.mock.calls[2][3]).toBe(undefined);
-      });
+    it("should have called the connector with the correct arguments for the FD-FB", () => {
+      expect(sendSingleEmail.mock.calls[3][0]).toBe(
+        testNotifyTemplateKeys.fd_feedback
+      );
+      expect(sendSingleEmail.mock.calls[3][1]).toBe(
+        configData.future_delivery_email
+      );
+      expect(sendSingleEmail.mock.calls[3][3]).toBe(undefined);
     });
   });
 
