@@ -164,10 +164,10 @@ const sendEmails = async (
 /**
  * Function that calls the sendSingleEmail function with the relevant parameters in the right order
  *
+ * @param {object} lcContactConfig The object containing the local council information
  * @param {object} registration The object containing all the answers the user has submitted during the sesion
  * @param {object} postRegistrationMetaData The object containing the metadata from the submission i.e. fsa-rn number and submission date
- * @param {object} lcContactConfig The object containing the local council information
- * @param {object} notifyTemplateKeys Notify keys to determine template to be used (can be found on Notify)
+ * @param {object} configData Object containing notify_template_keys and future_delivery_email
  */
 const sendNotifications = async (
   lcContactConfig,
