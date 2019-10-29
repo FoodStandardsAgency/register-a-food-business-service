@@ -3,11 +3,20 @@ const { notifyClientDouble } = require("./notify.double");
 const { NOTIFY_KEY } = require("../../config");
 const { logEmitter } = require("../../services/logging.service");
 
+/**
+ * Send a single email
+ * @param {string} templateId The template Id for the relevant email in notify
+ * @param {string} recipientEmail The email address for notifaction to be sent to
+ * @param {object} flattenedData The data for the template properties
+ * @param {object} pdfFile The pdf file to be sent with email
+ * @param {function} updateCache The function to update the  notification status
+ */
 const sendSingleEmail = async (
   templateId,
   recipientEmail,
   flattenedData,
-  pdfFile
+  pdfFile,
+  updateCache
 ) => {
   logEmitter.emit("functionCall", "notify.connector", "sendSingleEmail");
 
@@ -63,6 +72,7 @@ const sendSingleEmail = async (
 
     const notifyResponse = await notifyClient.sendEmail(...notifyArguments);
     const responseBody = notifyResponse.body;
+    updateCache("Success");
     logEmitter.emit("functionSuccess", "notify.connector", "sendSingleEmail");
     return responseBody;
   } catch (err) {
@@ -86,6 +96,7 @@ const sendSingleEmail = async (
       "sendSingleEmail",
       newError
     );
+    updateCache("Failure");
     throw newError;
   }
 };
