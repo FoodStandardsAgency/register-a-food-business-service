@@ -96,38 +96,23 @@ const transformDataForNotify = (
 };
 
 /**
- * Function that uses Notify to send an email to either the LC or FBO with the relevant data. It also uses the pdfmake generator to pipe the base64pdf to Notify.
+ * Function that uses Notify to send passed in emails  with the relevant data. It also uses the pdfmake generator to pipe the base64pdf to Notify.
  *
+ * @param {object} emailsToSend The object containing all emails to be sent. Should include, type, address and template.
  * @param {object} registration The object containing all the answers the user has submitted during the sesion
  * @param {object} postRegistrationMetaData The object containing the metadata from the submission i.e. fsa-rn number and submission date
  * @param {object} lcContactConfig The object containing the local council information
- * @param {string} typeOfEmail String containing information on whether email gets sent to FBO or LC
- * @param {string} recipientEmailAddress String that is email address of recipient
- * @param {object} notifyTemplateKeys Notify keys to determine template to be used (can be found on Notify)
  *
  * @returns {object} Object that returns email sent status and recipients email address
  */
 
-const sendEmailOfType = async (
-  typeOfEmail,
+const sendEmails = async (
+  emailsToSend,
   registration,
   postRegistrationMetadata,
-  lcContactConfig,
-  recipientEmailAddress,
-  notifyTemplateKeys
+  lcContactConfig
 ) => {
-  logEmitter.emit("functionCall", "registration.service", "sendEmailOfType");
-
-  const emailSent = { success: undefined, recipient: recipientEmailAddress };
-
-  let templateId;
-
-  if (typeOfEmail === "LC") {
-    templateId = notifyTemplateKeys.lc_new_registration;
-  }
-  if (typeOfEmail === "FBO") {
-    templateId = notifyTemplateKeys.fbo_submission_complete;
-  }
+  logEmitter.emit("functionCall", "registration.service", "sendEmails");
 
   try {
     const data = transformDataForNotify(
@@ -141,26 +126,28 @@ const sendEmailOfType = async (
       postRegistrationMetadata,
       lcContactConfig
     );
+    const pdfFile = await pdfGenerator(dataForPDF);
 
-    let pdfFile = undefined;
-    if (typeOfEmail === "LC") {
-      pdfFile = await pdfGenerator(dataForPDF);
+    for (let index in emailsToSend) {
+      let fileToSend = undefined;
+      if (emailsToSend[index].type === "LC") {
+        fileToSend = pdfFile;
+      }
+
+      await sendSingleEmail(
+        emailsToSend[index].templateId,
+        emailsToSend[index].address,
+        data,
+        fileToSend
+      );
     }
-
-    await sendSingleEmail(templateId, recipientEmailAddress, data, pdfFile);
-    emailSent.success = true;
-
     statusEmitter.emit("incrementCount", "emailNotificationsSucceeded");
     statusEmitter.emit(
       "setStatus",
       "mostRecentEmailNotificationSucceeded",
       true
     );
-    logEmitter.emit(
-      "functionSuccess",
-      "registration.service",
-      "sendEmailOfType"
-    );
+    logEmitter.emit("functionSuccess", "registration.service", "sendEmails");
   } catch (err) {
     statusEmitter.emit("incrementCount", "emailNotificationsFailed");
     statusEmitter.emit(
@@ -168,44 +155,37 @@ const sendEmailOfType = async (
       "mostRecentEmailNotificationSucceeded",
       false
     );
-    logEmitter.emit(
-      "functionFail",
-      "registration.service",
-      "sendEmailOfType",
-      err
-    );
+    logEmitter.emit("functionFail", "registration.service", "sendEmails", err);
     throw err;
   }
-  return emailSent;
 };
 
 /**
  * Function that calls the sendSingleEmail function with the relevant parameters in the right order
  *
+ * @param {object} lcContactConfig The object containing the local council information
  * @param {object} registration The object containing all the answers the user has submitted during the sesion
  * @param {object} postRegistrationMetaData The object containing the metadata from the submission i.e. fsa-rn number and submission date
- * @param {object} lcContactConfig The object containing the local council information
- * @param {object} notifyTemplateKeys Notify keys to determine template to be used (can be found on Notify)
+ * @param {object} configData Object containing notify_template_keys and future_delivery_email
  */
 const sendNotifications = async (
   lcContactConfig,
   registration,
   postRegistrationMetadata,
-  notifyTemplateKeys
+  configData
 ) => {
+  let emailsToSend = [];
+
   for (let typeOfCouncil in lcContactConfig) {
     const lcNotificationEmailAddresses =
       lcContactConfig[typeOfCouncil].local_council_notify_emails;
 
     for (let recipientEmailAddress in lcNotificationEmailAddresses) {
-      await sendEmailOfType(
-        "LC",
-        registration,
-        postRegistrationMetadata,
-        lcContactConfig,
-        lcNotificationEmailAddresses[recipientEmailAddress],
-        notifyTemplateKeys
-      );
+      emailsToSend.push({
+        type: "LC",
+        address: lcNotificationEmailAddresses[recipientEmailAddress],
+        templateId: configData.notify_template_keys.lc_new_registration
+      });
     }
   }
 
@@ -213,13 +193,31 @@ const sendNotifications = async (
     registration.establishment.operator.operator_email ||
     registration.establishment.operator.contact_representative_email;
 
-  await sendEmailOfType(
-    "FBO",
+  emailsToSend.push({
+    type: "FBO",
+    address: fboEmailAddress,
+    templateId: configData.notify_template_keys.fbo_submission_complete
+  });
+
+  if (registration.metadata.feedback1) {
+    emailsToSend.push({
+      type: "FBO_FB",
+      address: fboEmailAddress,
+      templateId: configData.notify_template_keys.fbo_feedback
+    });
+
+    emailsToSend.push({
+      type: "FD_FB",
+      address: configData.future_delivery_email,
+      templateId: configData.notify_template_keys.fd_feedback
+    });
+  }
+
+  await sendEmails(
+    emailsToSend,
     registration,
     postRegistrationMetadata,
-    lcContactConfig,
-    fboEmailAddress,
-    notifyTemplateKeys
+    lcContactConfig
   );
 };
 

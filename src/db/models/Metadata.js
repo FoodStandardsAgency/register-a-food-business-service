@@ -9,7 +9,8 @@ module.exports = (sequelize, DataTypes) => {
       },
       declaration1: { type: DataTypes.STRING },
       declaration2: { type: DataTypes.STRING },
-      declaration3: { type: DataTypes.STRING }
+      declaration3: { type: DataTypes.STRING },
+      feedback1: { type: DataTypes.STRING }
     },
     {}
   );
