@@ -8,6 +8,10 @@ const { logEmitter } = require("./logging.service");
 const { statusEmitter } = require("./statusEmitter.service");
 const { sendSingleEmail } = require("../connectors/notify/notify.connector");
 const { pdfGenerator, transformDataForPdf } = require("./pdf.service");
+const {
+  addNotificationToCompleted,
+  updateNotificationOnCompleted
+} = require("../connectors/cacheDb/cacheDb.connector");
 
 /**
  * Function that converts the data into format for Notify and creates a new object
@@ -138,7 +142,14 @@ const sendEmails = async (
         emailsToSend[index].templateId,
         emailsToSend[index].address,
         data,
-        fileToSend
+        fileToSend,
+        value =>
+          updateNotificationOnCompleted(
+            postRegistrationMetadata["fsa-rn"],
+            emailsToSend[index].type,
+            emailsToSend[index].address,
+            value
+          )
       );
     }
     statusEmitter.emit("incrementCount", "emailNotificationsSucceeded");
@@ -212,6 +223,8 @@ const sendNotifications = async (
       templateId: configData.notify_template_keys.fd_feedback
     });
   }
+
+  addNotificationToCompleted(postRegistrationMetadata["fsa-rn"], emailsToSend);
 
   await sendEmails(
     emailsToSend,
