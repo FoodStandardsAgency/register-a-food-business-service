@@ -27,6 +27,13 @@ const establishConnectionToMongo = async () => {
   }
 };
 
+const getDate = () => {
+  return new Date().toLocaleString("en-GB", {
+    hour12: false,
+    timeZone: "Europe/London"
+  });
+};
+
 const cacheRegistration = async registration => {
   logEmitter.emit("functionCall", "cacheDb.connector", "cacheRegistration");
   try {
@@ -68,6 +75,12 @@ const cacheRegistration = async registration => {
   }
 };
 
+/**
+ * Update the completed objects for the Registration and Tascomi objects
+ * @param {string} fsa_rn The FSA-RN for the registration to be updated
+ * @param {string} property The specific field to be updated
+ * @param {string} value The value for the result
+ */
 const updateCompletedInCache = async (fsa_rn, property, value) => {
   logEmitter.emit("functionCall", "cacheDb.connector", "updateCache");
   try {
@@ -78,10 +91,7 @@ const updateCompletedInCache = async (fsa_rn, property, value) => {
 
     let newCompleted = cachedRegistration.completed;
     newCompleted[property] = {
-      time: new Date().toLocaleString("en-GB", {
-        hour12: false,
-        timeZone: "Europe/London"
-      }),
+      time: getDate(),
       result: value
     };
 
@@ -115,6 +125,117 @@ const updateCompletedInCache = async (fsa_rn, property, value) => {
   }
 };
 
+/**
+ * Updates a specific notification when completed, finding the notification status from the type and address and updating the time and result fields
+ * @param {string} fsa_rn The FSA-RN number for the registration to be updated
+ * @param {string} notificationType The type of notification to be sent
+ * @param {string} notificationAddress The address of the notification to be sent
+ * @param {string} value The value to be recorded in the result parameter
+ */
+const updateNotificationOnCompleted = async (
+  fsa_rn,
+  notificationType,
+  notificationAddress,
+  value
+) => {
+  logEmitter.emit(
+    "functionCall",
+    "cacheDb.connector",
+    "updateNotificationOnCompleted"
+  );
+  try {
+    const cachedRegistrations = await establishConnectionToMongo();
+    let cachedRegistration = await cachedRegistrations.findOne({
+      "fsa-rn": fsa_rn
+    });
+    let newCompleted = cachedRegistration.completed;
+    let index = newCompleted.notifications.findIndex(
+      ({ type, address }) =>
+        type === notificationType && address === notificationAddress
+    );
+    newCompleted.notifications[index].time = getDate();
+    newCompleted.notifications[index].result = value;
+
+    await cachedRegistrations.updateOne(
+      { "fsa-rn": fsa_rn },
+      {
+        $set: { completed: newCompleted }
+      }
+    );
+  } catch (err) {
+    statusEmitter.emit("incrementCount", "updateRegistrationsInCacheFailed");
+    statusEmitter.emit(
+      "setStatus",
+      "mostRecentUpdateRegistrationInCacheSucceeded",
+      false
+    );
+    logEmitter.emit(
+      "functionFail",
+      "cacheDb.connector",
+      "updateNotificationOnCompleted",
+      err
+    );
+
+    const newError = new Error();
+    newError.name = "mongoConnectionError";
+    newError.message = err.message;
+
+    throw newError;
+  }
+};
+
+/**
+ * Add an object to the notifications field containing the status for each email to be sent
+ * @param {string} fsa_rn The FSA-RN for the registration to have completed notifications for
+ * @param {object} emailsToSend An object containing all of the emails to be sent
+ */
+const addNotificationToCompleted = async (fsa_rn, emailsToSend) => {
+  logEmitter.emit(
+    "functionCall",
+    "cacheDb.connector",
+    "addNotificationToCompleted"
+  );
+  try {
+    const cachedRegistrations = await establishConnectionToMongo();
+    let cachedRegistration = await cachedRegistrations.findOne({
+      "fsa-rn": fsa_rn
+    });
+    let newCompleted = cachedRegistration.completed;
+    newCompleted.notifications = [];
+    for (let index in emailsToSend) {
+      newCompleted.notifications.push({
+        time: undefined,
+        result: undefined,
+        type: emailsToSend[index].type,
+        address: emailsToSend[index].address
+      });
+    }
+
+    await cachedRegistrations.updateOne(
+      { "fsa-rn": fsa_rn },
+      { $set: { completed: newCompleted } }
+    );
+  } catch (err) {
+    statusEmitter.emit("incrementCount", "updateRegistrationsInCacheFailed");
+    statusEmitter.emit(
+      "setStatus",
+      "mostRecentUpdateRegistrationInCacheSucceeded",
+      false
+    );
+    logEmitter.emit(
+      "functionFail",
+      "cacheDb.connector",
+      "addNotificationToCompleted",
+      err
+    );
+
+    const newError = new Error();
+    newError.name = "mongoConnectionError";
+    newError.message = err.message;
+    throw newError;
+  }
+};
+
 const clearMongoConnection = () => {
   client = undefined;
   cacheDB = undefined;
@@ -123,5 +244,7 @@ const clearMongoConnection = () => {
 module.exports = {
   cacheRegistration,
   clearMongoConnection,
-  updateCompletedInCache
+  updateCompletedInCache,
+  addNotificationToCompleted,
+  updateNotificationOnCompleted
 };
