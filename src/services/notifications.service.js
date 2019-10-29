@@ -96,7 +96,7 @@ const transformDataForNotify = (
 };
 
 /**
- * Function that uses Notify to send an email to either the LC or FBO with the relevant data. It also uses the pdfmake generator to pipe the base64pdf to Notify.
+ * Function that uses Notify to send passed in emails  with the relevant data. It also uses the pdfmake generator to pipe the base64pdf to Notify.
  *
  * @param {object} emailsToSend The object containing all emails to be sent. Should include, type, address and template.
  * @param {object} registration The object containing all the answers the user has submitted during the sesion
@@ -112,7 +112,7 @@ const sendEmails = async (
   postRegistrationMetadata,
   lcContactConfig
 ) => {
-  logEmitter.emit("functionCall", "registration.service", "sendEmailOfType");
+  logEmitter.emit("functionCall", "registration.service", "sendEmails");
 
   try {
     const data = transformDataForNotify(
@@ -141,6 +141,13 @@ const sendEmails = async (
         fileToSend
       );
     }
+    statusEmitter.emit("incrementCount", "emailNotificationsSucceeded");
+    statusEmitter.emit(
+      "setStatus",
+      "mostRecentEmailNotificationSucceeded",
+      true
+    );
+    logEmitter.emit("functionSuccess", "registration.service", "sendEmails");
   } catch (err) {
     statusEmitter.emit("incrementCount", "emailNotificationsFailed");
     statusEmitter.emit(
@@ -148,17 +155,9 @@ const sendEmails = async (
       "mostRecentEmailNotificationSucceeded",
       false
     );
-    logEmitter.emit(
-      "functionFail",
-      "registration.service",
-      "sendEmailOfType",
-      err
-    );
+    logEmitter.emit("functionFail", "registration.service", "sendEmails", err);
     throw err;
   }
-  statusEmitter.emit("incrementCount", "emailNotificationsSucceeded");
-  statusEmitter.emit("setStatus", "mostRecentEmailNotificationSucceeded", true);
-  logEmitter.emit("functionSuccess", "registration.service", "sendEmailOfType");
 };
 
 /**
