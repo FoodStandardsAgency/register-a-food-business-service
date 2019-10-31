@@ -9,8 +9,7 @@ const { statusEmitter } = require("./statusEmitter.service");
 const { sendSingleEmail } = require("../connectors/notify/notify.connector");
 const { pdfGenerator, transformDataForPdf } = require("./pdf.service");
 const {
-  addNotificationToCompleted,
-  updateNotificationOnCompleted
+  addNotificationToCompleted
 } = require("../connectors/cacheDb/cacheDb.connector");
 
 /**
@@ -143,13 +142,10 @@ const sendEmails = async (
         emailsToSend[index].address,
         data,
         fileToSend,
-        value =>
-          updateNotificationOnCompleted(
-            postRegistrationMetadata["fsa-rn"],
-            emailsToSend[index].type,
-            emailsToSend[index].address,
-            value
-          )
+        {
+          "fsa-rn": postRegistrationMetadata["fsa-rn"],
+          type: emailsToSend[index].type
+        }
       );
     }
     statusEmitter.emit("incrementCount", "emailNotificationsSucceeded");
