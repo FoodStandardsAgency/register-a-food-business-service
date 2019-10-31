@@ -82,7 +82,11 @@ const cacheRegistration = async registration => {
  * @param {string} value The value for the result
  */
 const updateCompletedInCache = async (fsa_rn, property, value) => {
-  logEmitter.emit("functionCall", "cacheDb.connector", "updateCache");
+  logEmitter.emit(
+    "functionCall",
+    "cacheDb.connector",
+    "updateCompletedInCache"
+  );
   try {
     const cachedRegistrations = await establishConnectionToMongo();
     let cachedRegistration = await cachedRegistrations.findOne({
@@ -101,21 +105,30 @@ const updateCompletedInCache = async (fsa_rn, property, value) => {
         $set: { completed: newCompleted }
       }
     );
-    statusEmitter.emit("incrementCount", "updateRegistrationsInCacheSucceeded");
+    statusEmitter.emit("incrementCount", "updateCompletedInCacheSucceeded");
     statusEmitter.emit(
       "setStatus",
-      "mostRecentUpdateRegistrationInCacheSucceeded",
+      "mostRecentUpdateCompletedInCacheSucceeded",
       true
     );
-    logEmitter.emit("functionSuccess", "cacheDb.connector", "updateCache");
+    logEmitter.emit(
+      "functionSuccess",
+      "cacheDb.connector",
+      "updateCompletedInCache"
+    );
   } catch (err) {
-    statusEmitter.emit("incrementCount", "updateRegistrationsInCacheFailed");
+    statusEmitter.emit("incrementCount", "updateCompletedInCacheFailed");
     statusEmitter.emit(
       "setStatus",
-      "mostRecentUpdateRegistrationInCacheSucceeded",
+      "mostRecentUpdateCompletedInCacheSucceeded",
       false
     );
-    logEmitter.emit("functionFail", "cacheDb.connector", "updateCache", err);
+    logEmitter.emit(
+      "functionFail",
+      "cacheDb.connector",
+      "updateCompletedInCache",
+      err
+    );
 
     const newError = new Error();
     newError.name = "mongoConnectionError";
@@ -162,11 +175,25 @@ const updateNotificationOnCompleted = async (
         $set: { completed: newCompleted }
       }
     );
-  } catch (err) {
-    statusEmitter.emit("incrementCount", "updateRegistrationsInCacheFailed");
+    statusEmitter.emit(
+      "incrementCount",
+      "UpdateNotificationOnCompletedSucceeded"
+    );
     statusEmitter.emit(
       "setStatus",
-      "mostRecentUpdateRegistrationInCacheSucceeded",
+      "mostRecentUpdateNotificationOnCompletedSucceeded",
+      true
+    );
+    logEmitter.emit(
+      "functionSuccess",
+      "cacheDb.connector",
+      "updateNotificationOnCompleted"
+    );
+  } catch (err) {
+    statusEmitter.emit("incrementCount", "updateNotificationOnCompletedFailed");
+    statusEmitter.emit(
+      "setStatus",
+      "mostRecentUpdateNotificationOnCompletedSucceeded",
       false
     );
     logEmitter.emit(
@@ -215,11 +242,23 @@ const addNotificationToCompleted = async (fsa_rn, emailsToSend) => {
       { "fsa-rn": fsa_rn },
       { $set: { completed: newCompleted } }
     );
-  } catch (err) {
-    statusEmitter.emit("incrementCount", "updateRegistrationsInCacheFailed");
+
+    statusEmitter.emit("incrementCount", "addNotificationToCompletedSucceeded");
     statusEmitter.emit(
       "setStatus",
-      "mostRecentUpdateRegistrationInCacheSucceeded",
+      "mostRecentAddNotificationToCompletedSucceeded",
+      true
+    );
+    logEmitter.emit(
+      "functionSuccess",
+      "cacheDb.connector",
+      "addNotificationToCompleted"
+    );
+  } catch (err) {
+    statusEmitter.emit("incrementCount", "addNotificationToCompletedFailed");
+    statusEmitter.emit(
+      "setStatus",
+      "mostRecentAddNotificationToCompletedSucceeded",
       false
     );
     logEmitter.emit(
