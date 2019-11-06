@@ -79,54 +79,43 @@ const cacheRegistration = async registration => {
  * Update the completed objects for the Registration and Tascomi objects
  * @param {string} fsa_rn The FSA-RN for the registration to be updated
  * @param {string} property The specific field to be updated
- * @param {string} value The value for the result
+ * @param {boolean} value The value for the result
  */
-const updateCompletedInCache = async (fsa_rn, property, value) => {
-  logEmitter.emit(
-    "functionCall",
-    "cacheDb.connector",
-    "updateCompletedInCache"
-  );
+const updateStatusInCache = async (fsa_rn, property, value) => {
+  logEmitter.emit("functionCall", "cacheDb.connector", "updateStatusInCache");
   try {
     const cachedRegistrations = await establishConnectionToMongo();
-    let cachedRegistration = await cachedRegistrations.findOne({
-      "fsa-rn": fsa_rn
-    });
+    let status = await getStatus(cachedRegistrations, fsa_rn);
 
-    let newCompleted = cachedRegistration.completed;
-    newCompleted[property] = {
+    status[property] = {
       time: getDate(),
-      result: value
+      complete: value
     };
 
-    await cachedRegistrations.updateOne(
-      { "fsa-rn": fsa_rn },
-      {
-        $set: { completed: newCompleted }
-      }
-    );
-    statusEmitter.emit("incrementCount", "updateCompletedInCacheSucceeded");
+    await updateStatus(cachedRegistrations, fsa_rn, status);
+
+    statusEmitter.emit("incrementCount", "updateStatusInCacheSucceeded");
     statusEmitter.emit(
       "setStatus",
-      "mostRecentUpdateCompletedInCacheSucceeded",
+      "mostRecentUpdateStatusInCacheSucceeded",
       true
     );
     logEmitter.emit(
       "functionSuccess",
       "cacheDb.connector",
-      "updateCompletedInCache"
+      "updateStatusInCache"
     );
   } catch (err) {
-    statusEmitter.emit("incrementCount", "updateCompletedInCacheFailed");
+    statusEmitter.emit("incrementCount", "updateStatusInCacheFailed");
     statusEmitter.emit(
       "setStatus",
-      "mostRecentUpdateCompletedInCacheSucceeded",
+      "mostRecentUpdateStatusInCacheSucceeded",
       false
     );
     logEmitter.emit(
       "functionFail",
       "cacheDb.connector",
-      "updateCompletedInCache",
+      "updateStatusInCache",
       err
     );
 
@@ -138,68 +127,73 @@ const updateCompletedInCache = async (fsa_rn, property, value) => {
   }
 };
 
+const getStatus = async (cachedRegistrations, fsa_rn) => {
+  const cachedRegistration = await cachedRegistrations.findOne({
+    "fsa-rn": fsa_rn
+  });
+  return Object.assign({}, cachedRegistration.status);
+};
+
+const updateStatus = async (cachedRegistrations, fsa_rn, newStatus) => {
+  await cachedRegistrations.updateOne(
+    { "fsa-rn": fsa_rn },
+    {
+      $set: { status: newStatus }
+    }
+  );
+}
+
 /**
- * Updates a specific notification when completed, finding the notification status from the type and address and updating the time and result fields
+ * Updates a specific notification when sent, finding the notification status from the type and address and updating the time and result fields
  * @param {string} fsa_rn The FSA-RN number for the registration to be updated
  * @param {string} notificationType The type of notification to be sent
  * @param {string} notificationAddress The address of the notification to be sent
- * @param {string} value The value to be recorded in the result parameter
  */
-const updateNotificationOnCompleted = async (
+const updateNotificationOnSent = async (
   fsa_rn,
   notificationType,
-  notificationAddress,
-  value
+  notificationAddress
 ) => {
   logEmitter.emit(
     "functionCall",
     "cacheDb.connector",
-    "updateNotificationOnCompleted"
+    "updateNotificationOnSent"
   );
   try {
     const cachedRegistrations = await establishConnectionToMongo();
-    let cachedRegistration = await cachedRegistrations.findOne({
-      "fsa-rn": fsa_rn
-    });
-    let newCompleted = cachedRegistration.completed;
-    let index = newCompleted.notifications.findIndex(
+    let status = await getStatus(cachedRegistrations, fsa_rn);
+
+    let index = status.notifications.findIndex(
       ({ type, address }) =>
         type === notificationType && address === notificationAddress
     );
-    newCompleted.notifications[index].time = getDate();
-    newCompleted.notifications[index].result = value;
+    status.notifications[index].time = getDate();
+    status.notifications[index].sent = true;
 
-    await cachedRegistrations.updateOne(
-      { "fsa-rn": fsa_rn },
-      {
-        $set: { completed: newCompleted }
-      }
-    );
-    statusEmitter.emit(
-      "incrementCount",
-      "UpdateNotificationOnCompletedSucceeded"
-    );
+    await updateStatus(cachedRegistrations, fsa_rn, status);
+
+    statusEmitter.emit("incrementCount", "updateNotificationOnSentSucceeded");
     statusEmitter.emit(
       "setStatus",
-      "mostRecentUpdateNotificationOnCompletedSucceeded",
+      "mostRecentUpdateNotificationOnSentSucceeded",
       true
     );
     logEmitter.emit(
       "functionSuccess",
       "cacheDb.connector",
-      "updateNotificationOnCompleted"
+      "updateNotificationOnSent"
     );
   } catch (err) {
-    statusEmitter.emit("incrementCount", "updateNotificationOnCompletedFailed");
+    statusEmitter.emit("incrementCount", "updateNotificationOnSentFailed");
     statusEmitter.emit(
       "setStatus",
-      "mostRecentUpdateNotificationOnCompletedSucceeded",
+      "mostRecentUpdateNotificationOnSentSucceeded",
       false
     );
     logEmitter.emit(
       "functionFail",
       "cacheDb.connector",
-      "updateNotificationOnCompleted",
+      "updateNotificationOnSent",
       err
     );
 
@@ -212,59 +206,54 @@ const updateNotificationOnCompleted = async (
 };
 
 /**
- * Add an object to the notifications field containing the status for each email to be sent
+ * Add an object to the notifications field containing the status for each email to be sent, initialises with false
  * @param {string} fsa_rn The FSA-RN for the registration to have completed notifications for
  * @param {object} emailsToSend An object containing all of the emails to be sent
  */
-const addNotificationToCompleted = async (fsa_rn, emailsToSend) => {
+const addNotificationToStatus = async (fsa_rn, emailsToSend) => {
   logEmitter.emit(
     "functionCall",
     "cacheDb.connector",
-    "addNotificationToCompleted"
+    "addNotificationToStatus"
   );
   try {
     const cachedRegistrations = await establishConnectionToMongo();
-    let cachedRegistration = await cachedRegistrations.findOne({
-      "fsa-rn": fsa_rn
-    });
-    let newCompleted = cachedRegistration.completed;
-    newCompleted.notifications = [];
+    let status = await getStatus(cachedRegistrations, fsa_rn);
+
+    status.notifications = [];
     for (let index in emailsToSend) {
-      newCompleted.notifications.push({
+      status.notifications.push({
         time: undefined,
-        result: undefined,
+        sent: false,
         type: emailsToSend[index].type,
         address: emailsToSend[index].address
       });
     }
 
-    await cachedRegistrations.updateOne(
-      { "fsa-rn": fsa_rn },
-      { $set: { completed: newCompleted } }
-    );
+    await updateStatus(cachedRegistrations, fsa_rn, status);
 
-    statusEmitter.emit("incrementCount", "addNotificationToCompletedSucceeded");
+    statusEmitter.emit("incrementCount", "addNotificationToStatusSucceeded");
     statusEmitter.emit(
       "setStatus",
-      "mostRecentAddNotificationToCompletedSucceeded",
+      "mostRecentAddNotificationToStatusSucceeded",
       true
     );
     logEmitter.emit(
       "functionSuccess",
       "cacheDb.connector",
-      "addNotificationToCompleted"
+      "addNotificationToStatus"
     );
   } catch (err) {
-    statusEmitter.emit("incrementCount", "addNotificationToCompletedFailed");
+    statusEmitter.emit("incrementCount", "addNotificationToStatusFailed");
     statusEmitter.emit(
       "setStatus",
-      "mostRecentAddNotificationToCompletedSucceeded",
+      "mostRecentAddNotificationToStatusSucceeded",
       false
     );
     logEmitter.emit(
       "functionFail",
       "cacheDb.connector",
-      "addNotificationToCompleted",
+      "addNotificationToStatus",
       err
     );
 
@@ -283,7 +272,7 @@ const clearMongoConnection = () => {
 module.exports = {
   cacheRegistration,
   clearMongoConnection,
-  updateCompletedInCache,
-  addNotificationToCompleted,
-  updateNotificationOnCompleted
+  updateStatusInCache,
+  addNotificationToStatus,
+  updateNotificationOnSent
 };

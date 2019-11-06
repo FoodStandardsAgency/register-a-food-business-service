@@ -10,7 +10,7 @@ const { pdfGenerator } = require("./pdf.service");
 
 const { sendSingleEmail } = require("../connectors/notify/notify.connector");
 const {
-  addNotificationToCompleted
+  addNotificationToStatus
 } = require("../connectors/cacheDb/cacheDb.connector.js");
 
 const {
@@ -454,7 +454,7 @@ describe("Function: sendEmailOfType: ", () => {
       sendSingleEmail.mockImplementation(() => ({
         id: "123-456"
       }));
-      addNotificationToCompleted.mockImplementation();
+      addNotificationToStatus.mockImplementation();
       await sendNotifications(
         mockLcContactConfig,
         mockRegistrationData,

@@ -12,8 +12,7 @@ const {
 const { sendNotifications } = require("../../services/notifications.service");
 
 const {
-  cacheRegistration,
-  updateCompletedInCache
+  cacheRegistration
 } = require("../../connectors/cacheDb/cacheDb.connector");
 
 const {
@@ -69,8 +68,7 @@ const createNewRegistration = async (
     registration,
     lcContactConfig,
     {
-      completed: {
-        tascomi: undefined,
+      status: {
         registration: undefined,
         notifications: undefined
       }
@@ -92,12 +90,6 @@ const createNewRegistration = async (
         hygiene_council_code: hygieneCouncilCode
       }),
       localCouncilUrl
-    );
-  } else {
-    await updateCompletedInCache(
-      postRegistrationMetadata["fsa-rn"],
-      "tascomi",
-      "n/a"
     );
   }
 

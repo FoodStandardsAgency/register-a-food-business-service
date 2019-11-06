@@ -9,7 +9,8 @@ const { statusEmitter } = require("./statusEmitter.service");
 const { sendSingleEmail } = require("../connectors/notify/notify.connector");
 const { pdfGenerator, transformDataForPdf } = require("./pdf.service");
 const {
-  addNotificationToCompleted
+  addNotificationToStatus,
+  updateNotificationOnSent
 } = require("../connectors/cacheDb/cacheDb.connector");
 
 /**
@@ -147,6 +148,11 @@ const sendEmails = async (
           type: emailsToSend[index].type
         }
       );
+
+      updateNotificationOnSent(
+        postRegistrationMetadata["fsa-rn"],
+        emailsToSend[index].type
+      );
     }
     statusEmitter.emit("incrementCount", "emailNotificationsSucceeded");
     statusEmitter.emit(
@@ -220,7 +226,7 @@ const sendNotifications = async (
     });
   }
 
-  addNotificationToCompleted(postRegistrationMetadata["fsa-rn"], emailsToSend);
+  addNotificationToStatus(postRegistrationMetadata["fsa-rn"], emailsToSend);
 
   await sendEmails(
     emailsToSend,

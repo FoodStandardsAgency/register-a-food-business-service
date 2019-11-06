@@ -176,8 +176,7 @@ describe("registration controller", () => {
             testRegistration,
             exampleLcConfig,
             {
-              completed: {
-                tascomi: undefined,
+              status: {
                 registration: undefined,
                 notifications: undefined
               }

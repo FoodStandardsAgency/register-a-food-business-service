@@ -2,9 +2,9 @@ const mongodb = require("mongodb");
 const {
   cacheRegistration,
   clearMongoConnection,
-  updateCompletedInCache,
-  updateNotificationOnCompleted,
-  addNotificationToCompleted
+  updateStatusInCache,
+  updateNotificationOnSent,
+  addNotificationToStatus
 } = require("./cacheDb.connector");
 
 jest.mock("mongodb");
@@ -113,14 +113,14 @@ describe("Connector: cacheDb", () => {
         mongodb.MongoClient.connect.mockImplementation(async () => ({
           db: () => ({
             collection: () => ({
-              findOne: () => ({ completed: { register: undefined } }),
+              findOne: () => ({ status: { register: undefined } }),
               updateOne: () => {}
             })
           })
         }));
 
         try {
-          await updateCompletedInCache("123", "123", "123");
+          await updateStatusInCache("123", "123", "123");
         } catch (err) {
           result = err;
         }
@@ -139,7 +139,7 @@ describe("Connector: cacheDb", () => {
         mongodb.MongoClient.connect.mockImplementation(async () => ({
           db: () => ({
             collection: () => ({
-              findOne: () => ({ completed: { register: undefined } }),
+              findOne: () => ({ status: { register: undefined } }),
               updateOne: () => {
                 throw new Error("Example mongo error");
               }
@@ -148,7 +148,7 @@ describe("Connector: cacheDb", () => {
         }));
 
         try {
-          await updateCompletedInCache("123", "123", "123");
+          await updateStatusInCache("123", "123", "123");
         } catch (err) {
           result = err;
         }
@@ -169,13 +169,13 @@ describe("Connector: cacheDb", () => {
             db: () => ({
               collection: () => ({
                 findOne: () => ({
-                  completed: {
+                  status: {
                     notifications: [
                       {
                         type: "LC",
                         address: "example@example.com",
                         time: undefined,
-                        result: undefined
+                        sent: undefined
                       }
                     ]
                   }
@@ -186,12 +186,7 @@ describe("Connector: cacheDb", () => {
           }));
 
           try {
-            await updateNotificationOnCompleted(
-              "123",
-              "LC",
-              "example@example.com",
-              "success"
-            );
+            await updateNotificationOnSent("123", "LC", "example@example.com");
           } catch (err) {
             result = err;
           }
@@ -211,13 +206,13 @@ describe("Connector: cacheDb", () => {
             db: () => ({
               collection: () => ({
                 findOne: () => ({
-                  completed: {
+                  status: {
                     notifications: [
                       {
                         type: "LC",
                         address: "example@example.com",
                         time: undefined,
-                        result: undefined
+                        sent: undefined
                       }
                     ]
                   }
@@ -230,12 +225,7 @@ describe("Connector: cacheDb", () => {
           }));
 
           try {
-            await updateNotificationOnCompleted(
-              "123",
-              "LC",
-              "example@example.com",
-              "failure"
-            );
+            await updateNotificationOnSent("123", "LC", "example@example.com");
           } catch (err) {
             result = err;
           }
@@ -264,7 +254,7 @@ describe("Connector: cacheDb", () => {
         }));
 
         try {
-          await updateCompletedInCache("123", "123", "123");
+          await updateStatusInCache("123", "123", "123");
         } catch (err) {
           result = err;
         }
@@ -292,7 +282,7 @@ describe("Connector: cacheDb", () => {
         }));
 
         try {
-          await updateCompletedInCache("123", "123", "123");
+          await updateStatusInCache("123", "123", "123");
         } catch (err) {
           result = err;
         }
@@ -321,7 +311,7 @@ describe("Connector: cacheDb", () => {
           }));
 
           try {
-            await addNotificationToCompleted("123", [
+            await addNotificationToStatus("123", [
               {
                 type: "LC",
                 address: "example@example.com"
@@ -356,7 +346,7 @@ describe("Connector: cacheDb", () => {
           }));
 
           try {
-            await addNotificationToCompleted("123", [
+            await addNotificationToStatus("123", [
               {
                 type: "LC",
                 address: "example@example.com"

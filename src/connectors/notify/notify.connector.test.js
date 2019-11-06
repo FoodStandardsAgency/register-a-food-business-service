@@ -1,17 +1,12 @@
 const { NotifyClient } = require("notifications-node-client");
 const { sendSingleEmail } = require("./notify.connector");
 const { notifyClientDouble } = require("./notify.double");
-const {
-  updateNotificationOnCompleted
-} = require("../cacheDb/cacheDb.connector");
 
 jest.mock("notifications-node-client");
 jest.mock("./notify.double");
-jest.mock("../cacheDb/cacheDb.connector");
 
 describe("Function: sendSingleEmail", () => {
   let mockNotifyClient;
-  let mockCacheDbConnector;
   const testTemplateId = "123456";
   const testRecipient = "email@email.com";
   const testPdfFile = "example pdf file";
@@ -46,12 +41,6 @@ describe("Function: sendSingleEmail", () => {
         prepareUpload: jest.fn()
       };
       NotifyClient.mockImplementation(() => mockNotifyClient);
-      mockCacheDbConnector = {
-        updateNotificationOnCompleted: jest.fn()
-      };
-      updateNotificationOnCompleted.mockImplementation(
-        () => mockCacheDbConnector.updateNotificationOnCompleted
-      );
     });
 
     it("Should resolve with the success message", async () => {
@@ -77,41 +66,7 @@ describe("Function: sendSingleEmail", () => {
           testRecipient,
           { personalisation: expectedFlattenedDataWithExists }
         );
-        expect(updateNotificationOnCompleted).not.toHaveBeenCalled();
       });
-    });
-  });
-  describe("given the request is successful with update cache", () => {
-    beforeEach(async () => {
-      process.env.DOUBLE_MODE = false;
-      jest.clearAllMocks();
-      mockNotifyClient = {
-        sendEmail: jest.fn(async () => {
-          return { body: "This is a success message from the notify client" };
-        }),
-        getTemplateById: jest.fn(() => testFetchedTemplate),
-        prepareUpload: jest.fn()
-      };
-      mockCacheDbConnector = {
-        updateNotificationOnCompleted: jest.fn()
-      };
-      NotifyClient.mockImplementation(() => mockNotifyClient);
-      updateNotificationOnCompleted.mockImplementation(
-        () => mockCacheDbConnector.updateNotificationOnCompleted
-      );
-    });
-    it("Should update the notification status", async () => {
-      return sendSingleEmail(...args, {
-        type: "LC",
-        "fsa-rn": "example"
-      }).then(() =>
-        expect(updateNotificationOnCompleted).toHaveBeenCalledWith(
-          "example",
-          "LC",
-          testRecipient,
-          "Success"
-        )
-      );
     });
   });
 
@@ -256,48 +211,6 @@ describe("Function: sendSingleEmail", () => {
     it("Should resolve with the success message", async () => {
       await expect(sendSingleEmail(...args)).resolves.toBe(
         "This is a success message from the notify client"
-      );
-    });
-  });
-
-  describe("given the request is throws error update cache", () => {
-    beforeEach(async () => {
-      mockNotifyClient = {
-        sendEmail: jest.fn(async () => {
-          const error = new Error();
-          error.statusCode = 400;
-          error.error = {
-            errors: [
-              {
-                error: "BadRequestError"
-              }
-            ]
-          };
-          error.message = "notify error";
-          throw error;
-        }),
-        prepareUpload: jest.fn(),
-        getTemplateById: jest.fn(() => testFetchedTemplate)
-      };
-      NotifyClient.mockImplementation(() => mockNotifyClient);
-      let mockCacheDbConnectora = {
-        updateNotificationOnCompleted: jest.fn()
-      };
-      updateNotificationOnCompleted.mockImplementation(
-        () => mockCacheDbConnectora.updateNotificationOnCompleted
-      );
-      sendSingleEmail(...args, {
-        type: "LC",
-        "fsa-rn": "example"
-      });
-    });
-    it("Should update the notification status", async () => {
-      //expect(result).toBeDefined();
-      expect(updateNotificationOnCompleted).toHaveBeenCalledWith(
-        "example",
-        "LC",
-        testRecipient,
-        "Failure"
       );
     });
   });
