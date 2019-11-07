@@ -141,7 +141,7 @@ const updateStatus = async (cachedRegistrations, fsa_rn, newStatus) => {
       $set: { status: newStatus }
     }
   );
-}
+};
 
 /**
  * Updates a specific notification when sent, finding the notification status from the type and address and updating the time and result fields
