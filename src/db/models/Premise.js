@@ -9,6 +9,7 @@ module.exports = (sequelize, DataTypes) => {
       },
       establishment_first_line: { type: DataTypes.STRING },
       establishment_street: { type: DataTypes.STRING },
+      establishment_dependent_locality: { type: DataTypes.STRING },
       establishment_town: { type: DataTypes.STRING },
       establishment_postcode: { type: DataTypes.STRING },
       establishment_uprn: { type: DataTypes.STRING },
