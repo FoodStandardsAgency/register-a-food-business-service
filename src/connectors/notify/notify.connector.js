@@ -2,7 +2,13 @@ const { NotifyClient } = require("notifications-node-client");
 const { notifyClientDouble } = require("./notify.double");
 const { NOTIFY_KEY } = require("../../config");
 const { logEmitter } = require("../../services/logging.service");
-
+/**
+ * Send a single email
+ * @param {string} templateId The template Id for the relevant email in notify
+ * @param {string} recipientEmail The email address for notifaction to be sent to
+ * @param {object} flattenedData The data for the template properties
+ * @param {object} pdfFile The pdf file to be sent with email
+ */
 const sendSingleEmail = async (
   templateId,
   recipientEmail,

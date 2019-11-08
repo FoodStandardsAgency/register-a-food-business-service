@@ -1,3 +1,4 @@
+jest.mock("../connectors/cacheDb/cacheDb.connector.js");
 jest.mock("../connectors/notify/notify.connector", () => ({
   sendSingleEmail: jest.fn()
 }));
@@ -8,6 +9,9 @@ jest.mock("./statusEmitter.service");
 const { pdfGenerator } = require("./pdf.service");
 
 const { sendSingleEmail } = require("../connectors/notify/notify.connector");
+const {
+  addNotificationToStatus
+} = require("../connectors/cacheDb/cacheDb.connector.js");
 
 const {
   transformDataForNotify,
@@ -450,6 +454,7 @@ describe("Function: sendEmailOfType: ", () => {
       sendSingleEmail.mockImplementation(() => ({
         id: "123-456"
       }));
+      addNotificationToStatus.mockImplementation();
       await sendNotifications(
         mockLcContactConfig,
         mockRegistrationData,

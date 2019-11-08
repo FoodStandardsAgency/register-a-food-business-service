@@ -34,6 +34,10 @@ const {
   addDeletedId
 } = require("../../connectors/configDb/configDb.connector");
 
+const {
+  updateStatusInCache
+} = require("../../connectors/cacheDb/cacheDb.connector");
+
 const { logEmitter } = require("../../services/logging.service");
 const { statusEmitter } = require("../../services/statusEmitter.service");
 
@@ -68,7 +72,7 @@ const saveRegistration = async (registration, fsa_rn, council) => {
     }
 
     const metadata = await createMetadata(registration.metadata, reg.id);
-
+    await updateStatusInCache(fsa_rn, "registration", true);
     statusEmitter.emit("incrementCount", "storeRegistrationsInDbSucceeded");
     statusEmitter.emit(
       "setStatus",
@@ -90,6 +94,7 @@ const saveRegistration = async (registration, fsa_rn, council) => {
       metadataId: metadata.id
     };
   } catch (err) {
+    await updateStatusInCache(fsa_rn, "registration", false);
     statusEmitter.emit("incrementCount", "storeRegistrationsInDbFailed");
     statusEmitter.emit(
       "setStatus",
@@ -201,6 +206,8 @@ const sendTascomiRegistration = async (
       err.name = "tascomiRefNumber";
       throw err;
     }
+    updateStatusInCache(postRegistrationMetadata["fsa-rn"], "tascomi", true);
+
     logEmitter.emit(
       "functionSuccess",
       "registration.service",
@@ -208,6 +215,7 @@ const sendTascomiRegistration = async (
     );
     return response;
   } catch (err) {
+    updateStatusInCache(postRegistrationMetadata["fsa_rn"], "tascomi", false);
     logEmitter.emit(
       "functionFail",
       "registrationService",
