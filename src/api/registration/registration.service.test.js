@@ -88,6 +88,14 @@ const {
   getLcAuth
 } = require("./registration.service");
 
+const {
+  updateStatusInCache
+} = require("../../connectors/cacheDb/cacheDb.connector");
+
+jest.mock("../../connectors/cacheDb/cacheDb.connector", () => ({
+  updateStatusInCache: jest.fn()
+}));
+
 let result;
 
 describe("Function: saveRegistration: ", () => {
@@ -113,12 +121,16 @@ describe("Function: saveRegistration: ", () => {
     createMetadata.mockImplementation(() => {
       return { id: "901" };
     });
-    result = await saveRegistration({
-      establishment: {
-        establishment_details: {},
-        operator: { partners: ["John", "Doe"] }
-      }
-    });
+    updateStatusInCache.mockImplementation(() => {});
+    result = await saveRegistration(
+      {
+        establishment: {
+          establishment_details: {},
+          operator: { partners: ["John", "Doe"] }
+        }
+      },
+      123
+    );
   });
 
   it("Should return the result of createRegistration", () => {
@@ -133,19 +145,31 @@ describe("Function: saveRegistration: ", () => {
     });
   });
 
+  it("Should should call the updateStatusInCache with true", () => {
+    expect(updateStatusInCache).toHaveBeenLastCalledWith(
+      123,
+      "registration",
+      true
+    );
+  });
+
   // TODO JMB: add proper error case for this in handler.
   describe("Given one of the calls fails", () => {
     beforeEach(async () => {
+      updateStatusInCache.mockImplementation(() => {});
       createMetadata.mockImplementation(() => {
         throw new Error();
       });
 
       try {
-        result = await saveRegistration({
-          establishment: {
-            establishment_details: {}
-          }
-        });
+        result = await saveRegistration(
+          {
+            establishment: {
+              establishment_details: {}
+            }
+          },
+          123
+        );
       } catch (err) {
         result = err;
       }
@@ -153,6 +177,13 @@ describe("Function: saveRegistration: ", () => {
 
     it("Should throw an error", () => {
       expect(result.message).toBeDefined();
+    });
+    it("Should should call the updateStatusInCache with true", () => {
+      expect(updateStatusInCache).toHaveBeenLastCalledWith(
+        123,
+        "registration",
+        false
+      );
     });
   });
 });

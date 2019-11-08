@@ -72,7 +72,7 @@ const saveRegistration = async (registration, fsa_rn, council) => {
     }
 
     const metadata = await createMetadata(registration.metadata, reg.id);
-    updateStatusInCache(fsa_rn, "registration", true);
+    await updateStatusInCache(fsa_rn, "registration", true);
     statusEmitter.emit("incrementCount", "storeRegistrationsInDbSucceeded");
     statusEmitter.emit(
       "setStatus",
@@ -94,7 +94,7 @@ const saveRegistration = async (registration, fsa_rn, council) => {
       metadataId: metadata.id
     };
   } catch (err) {
-    updateStatusInCache(fsa_rn, "registration", false);
+    await updateStatusInCache(fsa_rn, "registration", false);
     statusEmitter.emit("incrementCount", "storeRegistrationsInDbFailed");
     statusEmitter.emit(
       "setStatus",

@@ -85,7 +85,7 @@ const updateStatusInCache = async (fsa_rn, property, value) => {
   logEmitter.emit("functionCall", "cacheDb.connector", "updateStatusInCache");
   try {
     const cachedRegistrations = await establishConnectionToMongo();
-    let status = await getStatus(cachedRegistrations, fsa_rn);
+    const status = await getStatus(cachedRegistrations, fsa_rn);
 
     status[property] = {
       time: getDate(),
@@ -161,9 +161,9 @@ const updateNotificationOnSent = async (
   );
   try {
     const cachedRegistrations = await establishConnectionToMongo();
-    let status = await getStatus(cachedRegistrations, fsa_rn);
+    const status = await getStatus(cachedRegistrations, fsa_rn);
 
-    let index = status.notifications.findIndex(
+    const index = status.notifications.findIndex(
       ({ type, address }) =>
         type === notificationType && address === notificationAddress
     );
@@ -218,7 +218,7 @@ const addNotificationToStatus = async (fsa_rn, emailsToSend) => {
   );
   try {
     const cachedRegistrations = await establishConnectionToMongo();
-    let status = await getStatus(cachedRegistrations, fsa_rn);
+    const status = await getStatus(cachedRegistrations, fsa_rn);
 
     status.notifications = [];
     for (let index in emailsToSend) {
