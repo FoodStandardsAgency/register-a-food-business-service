@@ -149,7 +149,7 @@ const sendEmails = async (
         }
       );
 
-      updateNotificationOnSent(
+      await updateNotificationOnSent(
         postRegistrationMetadata["fsa-rn"],
         emailsToSend[index].type
       );
@@ -226,7 +226,7 @@ const sendNotifications = async (
     });
   }
 
-  addNotificationToStatus(postRegistrationMetadata["fsa-rn"], emailsToSend);
+  await addNotificationToStatus(postRegistrationMetadata["fsa-rn"], emailsToSend);
 
   await sendEmails(
     emailsToSend,
