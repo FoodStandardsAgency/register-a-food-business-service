@@ -119,6 +119,7 @@ const sendEmails = async (
   logEmitter.emit("functionCall", "registration.service", "sendEmails");
 
   let newError;
+  let success = true;
   try {
     const data = transformDataForNotify(
       registration,
@@ -132,7 +133,6 @@ const sendEmails = async (
       lcContactConfig
     );
     const pdfFile = await pdfGenerator(dataForPDF);
-    let success = true;
 
     for (let index in emailsToSend) {
       let fileToSend = undefined;
