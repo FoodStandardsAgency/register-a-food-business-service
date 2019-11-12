@@ -140,20 +140,22 @@ const sendEmails = async (
         fileToSend = pdfFile;
       }
 
-      success =
-        success &&
-        (await sendSingleEmail(
+      if (
+        await sendSingleEmail(
           emailsToSend[index].templateId,
           emailsToSend[index].address,
           data,
           fileToSend
-        ));
-
-      await updateNotificationOnSent(
-        postRegistrationMetadata["fsa-rn"],
-        emailsToSend[index].type,
-        emailsToSend[index].address
-      );
+        )
+      ) {
+        await updateNotificationOnSent(
+          postRegistrationMetadata["fsa-rn"],
+          emailsToSend[index].type,
+          emailsToSend[index].address
+        );
+      } else {
+        success = false;
+      }
     }
     if (!success) {
       newError = new Error("sendSingleEmail error");
