@@ -36,8 +36,9 @@ describe("Notify integration: sendSingleEmail", () => {
       testFlattenedData
     ];
 
-    it("Should reject", async () => {
-      await expect(sendSingleEmail(...notifyArguments)).rejects.toBeDefined();
+    it("Should return null", async () => {
+      const result = await sendSingleEmail(...notifyArguments);
+      expect(result).toBe(null);
     });
   });
 
@@ -48,8 +49,9 @@ describe("Notify integration: sendSingleEmail", () => {
       testFlattenedData
     ];
 
-    it("Should reject", async () => {
-      await expect(sendSingleEmail(...notifyArguments)).rejects.toBeDefined();
+    it("Should return null", async () => {
+      const result = await sendSingleEmail(...notifyArguments);
+      expect(result).toBe(null);
     });
   });
 
@@ -60,8 +62,9 @@ describe("Notify integration: sendSingleEmail", () => {
       { this_should_include_estabishment_trading_name: "not there" }
     ];
 
-    it("Should reject", async () => {
-      await expect(sendSingleEmail(...notifyArguments)).rejects.toBeDefined();
+    it("Should return null", async () => {
+      const result = await sendSingleEmail(...notifyArguments);
+      expect(result).toBe(null);
     });
   });
 });
