@@ -142,16 +142,13 @@ const sendEmails = async (
         emailsToSend[index].templateId,
         emailsToSend[index].address,
         data,
-        fileToSend,
-        {
-          "fsa-rn": postRegistrationMetadata["fsa-rn"],
-          type: emailsToSend[index].type
-        }
+        fileToSend
       );
 
       await updateNotificationOnSent(
         postRegistrationMetadata["fsa-rn"],
-        emailsToSend[index].type
+        emailsToSend[index].type,
+        emailsToSend[index].address
       );
     }
     statusEmitter.emit("incrementCount", "emailNotificationsSucceeded");
