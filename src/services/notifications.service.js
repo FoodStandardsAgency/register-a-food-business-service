@@ -118,6 +118,7 @@ const sendEmails = async (
 ) => {
   logEmitter.emit("functionCall", "registration.service", "sendEmails");
 
+  let newError;
   try {
     const data = transformDataForNotify(
       registration,
@@ -131,6 +132,7 @@ const sendEmails = async (
       lcContactConfig
     );
     const pdfFile = await pdfGenerator(dataForPDF);
+    let success = true;
 
     for (let index in emailsToSend) {
       let fileToSend = undefined;
@@ -138,12 +140,14 @@ const sendEmails = async (
         fileToSend = pdfFile;
       }
 
-      await sendSingleEmail(
-        emailsToSend[index].templateId,
-        emailsToSend[index].address,
-        data,
-        fileToSend
-      );
+      success =
+        success &&
+        (await sendSingleEmail(
+          emailsToSend[index].templateId,
+          emailsToSend[index].address,
+          data,
+          fileToSend
+        ));
 
       await updateNotificationOnSent(
         postRegistrationMetadata["fsa-rn"],
@@ -151,6 +155,16 @@ const sendEmails = async (
         emailsToSend[index].address
       );
     }
+    if (!success) {
+      newError = new Error("sendSingleEmail error");
+      newError.message = "An email has failed to send";
+    }
+  } catch (err) {
+    success = false;
+    logEmitter.emit("functionFail", "registration.service", "sendEmails", err);
+  }
+
+  if (success) {
     statusEmitter.emit("incrementCount", "emailNotificationsSucceeded");
     statusEmitter.emit(
       "setStatus",
@@ -158,15 +172,21 @@ const sendEmails = async (
       true
     );
     logEmitter.emit("functionSuccess", "registration.service", "sendEmails");
-  } catch (err) {
+  } else {
     statusEmitter.emit("incrementCount", "emailNotificationsFailed");
     statusEmitter.emit(
       "setStatus",
       "mostRecentEmailNotificationSucceeded",
       false
     );
-    logEmitter.emit("functionFail", "registration.service", "sendEmails", err);
-    throw err;
+    if (newError) {
+      logEmitter.emit(
+        "functionFail",
+        "registration.service",
+        "sendEmails",
+        newError
+      );
+    }
   }
 };
 

@@ -73,17 +73,16 @@ const sendSingleEmail = async (
     return responseBody;
   } catch (err) {
     const newError = new Error("Notify error");
+    newError.message = err.message;
     if (err.message === "secretOrPrivateKey must have a value") {
       newError.name = "notifyMissingKey";
     }
     if (err.statusCode === 400) {
       if (err.error.errors[0].error === "ValidationError") {
         newError.name = "notifyInvalidTemplate";
-        newError.message = err.message;
       }
       if (err.error.errors[0].error === "BadRequestError") {
         newError.name = "notifyMissingPersonalisation";
-        newError.message = err.message;
       }
     }
     logEmitter.emit(
@@ -92,7 +91,7 @@ const sendSingleEmail = async (
       "sendSingleEmail",
       newError
     );
-    throw newError;
+    return null;
   }
 };
 
