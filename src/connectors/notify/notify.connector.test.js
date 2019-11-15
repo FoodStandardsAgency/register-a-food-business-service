@@ -89,23 +89,6 @@ describe("Function: sendSingleEmail", () => {
       process.env.DOUBLE_MODE = false;
       jest.clearAllMocks();
     });
-    describe("when the error is a missing key", () => {
-      beforeEach(async () => {
-        mockNotifyClient = {
-          sendEmail: jest.fn(async () => {
-            throw new Error("secretOrPrivateKey must have a value");
-          }),
-          prepareUpload: jest.fn(),
-          getTemplateById: jest.fn(() => testFetchedTemplate)
-        };
-        NotifyClient.mockImplementation(() => mockNotifyClient);
-      });
-      it("Should reject with the error message", async () => {
-        const response = new Error("Notify error");
-        response.name = "notifyMissingKey";
-        await expect(sendSingleEmail(...args)).rejects.toEqual(response);
-      });
-    });
 
     describe("when the error is an invalid template id", () => {
       let result;
@@ -128,18 +111,12 @@ describe("Function: sendSingleEmail", () => {
           getTemplateById: jest.fn(() => testFetchedTemplate)
         };
         NotifyClient.mockImplementation(() => mockNotifyClient);
-        try {
-          await sendSingleEmail(...args);
-        } catch (err) {
-          result = err;
-        }
+        result = await sendSingleEmail(...args);
       });
-      it("Should throw notifyInvalidTemplate error", async () => {
-        expect(result.name).toBe("notifyInvalidTemplate");
-        expect(result.message).toBe("notify error");
+      it("Should return null", async () => {
+        expect(result).toBe(null);
       });
     });
-
     describe("when the error missing personalisation", () => {
       let result;
       beforeEach(async () => {
@@ -161,15 +138,37 @@ describe("Function: sendSingleEmail", () => {
           getTemplateById: jest.fn(() => testFetchedTemplate)
         };
         NotifyClient.mockImplementation(() => mockNotifyClient);
-        try {
-          await sendSingleEmail(...args);
-        } catch (err) {
-          result = err;
-        }
+        result = await sendSingleEmail(...args);
       });
-      it("Should throw notifyMissingPersonalisation error", async () => {
-        expect(result.name).toBe("notifyMissingPersonalisation");
-        expect(result.message).toBe("notify error");
+      it("Should return null", async () => {
+        expect(result).toBe(null);
+      });
+    });
+    describe("when the error missing key", () => {
+      let result;
+      beforeEach(async () => {
+        mockNotifyClient = {
+          sendEmail: jest.fn(async () => {
+            const error = new Error();
+            error.statusCode = 300;
+            error.error = {
+              errors: [
+                {
+                  error: "BadRequestError"
+                }
+              ]
+            };
+            error.message = "secretOrPrivateKey must have a value";
+            throw error;
+          }),
+          prepareUpload: jest.fn(),
+          getTemplateById: jest.fn(() => testFetchedTemplate)
+        };
+        NotifyClient.mockImplementation(() => mockNotifyClient);
+        result = await sendSingleEmail(...args);
+      });
+      it("Should return null", async () => {
+        expect(result).toBe(null);
       });
     });
   });

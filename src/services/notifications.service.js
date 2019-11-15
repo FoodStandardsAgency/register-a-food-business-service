@@ -118,6 +118,8 @@ const sendEmails = async (
 ) => {
   logEmitter.emit("functionCall", "registration.service", "sendEmails");
 
+  let newError;
+  let success = true;
   try {
     const data = transformDataForNotify(
       registration,
@@ -138,22 +140,33 @@ const sendEmails = async (
         fileToSend = pdfFile;
       }
 
-      await sendSingleEmail(
-        emailsToSend[index].templateId,
-        emailsToSend[index].address,
-        data,
-        fileToSend,
-        {
-          "fsa-rn": postRegistrationMetadata["fsa-rn"],
-          type: emailsToSend[index].type
-        }
-      );
-
-      updateNotificationOnSent(
-        postRegistrationMetadata["fsa-rn"],
-        emailsToSend[index].type
-      );
+      if (
+        await sendSingleEmail(
+          emailsToSend[index].templateId,
+          emailsToSend[index].address,
+          data,
+          fileToSend
+        )
+      ) {
+        await updateNotificationOnSent(
+          postRegistrationMetadata["fsa-rn"],
+          emailsToSend[index].type,
+          emailsToSend[index].address
+        );
+      } else {
+        success = false;
+      }
     }
+    if (!success) {
+      newError = new Error("sendSingleEmail error");
+      newError.message = "An email has failed to send";
+    }
+  } catch (err) {
+    success = false;
+    logEmitter.emit("functionFail", "registration.service", "sendEmails", err);
+  }
+
+  if (success) {
     statusEmitter.emit("incrementCount", "emailNotificationsSucceeded");
     statusEmitter.emit(
       "setStatus",
@@ -161,15 +174,21 @@ const sendEmails = async (
       true
     );
     logEmitter.emit("functionSuccess", "registration.service", "sendEmails");
-  } catch (err) {
+  } else {
     statusEmitter.emit("incrementCount", "emailNotificationsFailed");
     statusEmitter.emit(
       "setStatus",
       "mostRecentEmailNotificationSucceeded",
       false
     );
-    logEmitter.emit("functionFail", "registration.service", "sendEmails", err);
-    throw err;
+    if (newError) {
+      logEmitter.emit(
+        "functionFail",
+        "registration.service",
+        "sendEmails",
+        newError
+      );
+    }
   }
 };
 
@@ -226,7 +245,10 @@ const sendNotifications = async (
     });
   }
 
-  addNotificationToStatus(postRegistrationMetadata["fsa-rn"], emailsToSend);
+  await addNotificationToStatus(
+    postRegistrationMetadata["fsa-rn"],
+    emailsToSend
+  );
 
   await sendEmails(
     emailsToSend,

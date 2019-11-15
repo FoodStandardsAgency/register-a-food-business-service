@@ -126,7 +126,7 @@ describe("Connector: cacheDb", () => {
         }
       });
 
-      it("should have aclled this", () => {
+      it("should have called this", () => {
         expect(result).toBe(undefined);
       });
     });
@@ -154,8 +154,8 @@ describe("Connector: cacheDb", () => {
         }
       });
 
-      it("Should throw an error", () => {
-        expect(result.message).toBe("Example mongo error");
+      it("Shouldn't throw an error", () => {
+        expect(result).toBe(undefined);
       });
     });
 
@@ -192,7 +192,7 @@ describe("Connector: cacheDb", () => {
           }
         });
 
-        it("should have aclled this", () => {
+        it("should have called this", () => {
           expect(result).toBe(undefined);
         });
       });
@@ -231,8 +231,8 @@ describe("Connector: cacheDb", () => {
           }
         });
 
-        it("Should throw an error", () => {
-          expect(result.message).toBe("Example mongo error");
+        it("Shouldn't throw an error", () => {
+          expect(result).toBe(undefined);
         });
       });
     });
@@ -260,7 +260,7 @@ describe("Connector: cacheDb", () => {
         }
       });
 
-      it("should have aclled this", () => {
+      it("should have called this", () => {
         expect(result).toBe(undefined);
       });
     });
@@ -288,8 +288,8 @@ describe("Connector: cacheDb", () => {
         }
       });
 
-      it("Should throw an error", () => {
-        expect(result.message).toBe("Example mongo error");
+      it("Shouldn't throw an error", () => {
+        expect(result).toBe(undefined);
       });
     });
 
@@ -322,7 +322,7 @@ describe("Connector: cacheDb", () => {
           }
         });
 
-        it("should have aclled this", () => {
+        it("should have called this", () => {
           expect(result).toBe(undefined);
         });
       });
@@ -357,8 +357,8 @@ describe("Connector: cacheDb", () => {
           }
         });
 
-        it("Should throw an error", () => {
-          expect(result.message).toBe("Example mongo error");
+        it("Shouldn't throw an error", () => {
+          expect(result).toBe(undefined);
         });
       });
     });

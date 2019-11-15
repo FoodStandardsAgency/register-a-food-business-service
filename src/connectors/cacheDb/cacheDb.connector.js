@@ -118,12 +118,6 @@ const updateStatusInCache = async (fsa_rn, property, value) => {
       "updateStatusInCache",
       err
     );
-
-    const newError = new Error();
-    newError.name = "mongoConnectionError";
-    newError.message = err.message;
-
-    throw newError;
   }
 };
 
@@ -196,12 +190,6 @@ const updateNotificationOnSent = async (
       "updateNotificationOnSent",
       err
     );
-
-    const newError = new Error();
-    newError.name = "mongoConnectionError";
-    newError.message = err.message;
-
-    throw newError;
   }
 };
 
@@ -256,11 +244,6 @@ const addNotificationToStatus = async (fsa_rn, emailsToSend) => {
       "addNotificationToStatus",
       err
     );
-
-    const newError = new Error();
-    newError.name = "mongoConnectionError";
-    newError.message = err.message;
-    throw newError;
   }
 };
 

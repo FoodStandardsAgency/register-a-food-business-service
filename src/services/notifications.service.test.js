@@ -2,12 +2,14 @@ jest.mock("../connectors/cacheDb/cacheDb.connector.js");
 jest.mock("../connectors/notify/notify.connector", () => ({
   sendSingleEmail: jest.fn()
 }));
-
+const mockEmit = jest.fn();
 jest.mock("./pdf.service");
 jest.mock("./statusEmitter.service");
+jest.mock("./logging.service", () => ({
+  logEmitter: { emit: mockEmit }
+}));
 
 const { pdfGenerator } = require("./pdf.service");
-
 const { sendSingleEmail } = require("../connectors/notify/notify.connector");
 const {
   addNotificationToStatus
@@ -576,25 +578,51 @@ describe("Function: sendEmailOfType: ", () => {
   });
 
   describe("When the connector throws an error", () => {
-    let result;
     beforeEach(async () => {
       sendSingleEmail.mockImplementation(() => {
         throw new Error("Notify error");
       });
-      try {
-        await sendNotifications(
-          mockLcContactConfig,
-          mockRegistrationData,
-          mockPostRegistrationData,
-          configData
-        );
-      } catch (err) {
-        result = err;
-      }
+      await sendNotifications(
+        mockLcContactConfig,
+        mockRegistrationData,
+        mockPostRegistrationData,
+        configData
+      );
     });
 
-    it("should throw the error to the higher level", () => {
-      expect(result.message).toBe("Notify error");
+    it("should call the correct log emitter", () => {
+      const newError = new Error("Notify error");
+      expect(mockEmit).toHaveBeenCalledWith(
+        "functionFail",
+        "registration.service",
+        "sendEmails",
+        newError
+      );
+    });
+  });
+
+  describe("When the connector returns null", () => {
+    beforeEach(async () => {
+      sendSingleEmail.mockImplementation(() => {
+        return null;
+      });
+      await sendNotifications(
+        mockLcContactConfig,
+        mockRegistrationData,
+        mockPostRegistrationData,
+        configData
+      );
+    });
+
+    it("should call the correct log emitter", () => {
+      const newError = new Error("sendSingleEmail error");
+      newError.message = "An email has failed to send";
+      expect(mockEmit).toHaveBeenCalledWith(
+        "functionFail",
+        "registration.service",
+        "sendEmails",
+        newError
+      );
     });
   });
 
