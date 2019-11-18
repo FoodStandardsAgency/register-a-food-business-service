@@ -215,7 +215,7 @@ const sendTascomiRegistration = async (
     );
     return response;
   } catch (err) {
-    updateStatusInCache(postRegistrationMetadata["fsa_rn"], "tascomi", false);
+    updateStatusInCache(postRegistrationMetadata["fsa-rn"], "tascomi", false);
     logEmitter.emit(
       "functionFail",
       "registrationService",
