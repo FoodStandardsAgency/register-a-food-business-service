@@ -296,6 +296,7 @@ describe("Function: sendTascomiRegistration: ", () => {
       createFoodBusinessRegistration.mockImplementation(
         () => new Promise(resolve => resolve('{ "id": "123"}'))
       );
+      updateStatusInCache.mockImplementation(() => {});
       createReferenceNumber.mockImplementation(
         () =>
           new Promise(resolve =>
@@ -312,7 +313,7 @@ describe("Function: sendTascomiRegistration: ", () => {
           }
         }
       ]);
-      result = await sendTascomiRegistration({}, {}, "cardiff");
+      result = await sendTascomiRegistration({}, { "fsa-rn": 123 }, "cardiff");
     });
 
     it("should call createFoodBusinessRegistration", () => {
@@ -330,6 +331,14 @@ describe("Function: sendTascomiRegistration: ", () => {
     it("should return response of createReferenceNumber", () => {
       expect(result).toBe('{ "id": "123", "online_reference": "0000123"}');
     });
+
+    it("should update the tascomi status with true", () => {
+      expect(updateStatusInCache).toHaveBeenLastCalledWith(
+        123,
+        "tascomi",
+        true
+      );
+    });
   });
 
   describe("When createReferenceNumber fails", () => {
@@ -341,6 +350,7 @@ describe("Function: sendTascomiRegistration: ", () => {
       createReferenceNumber.mockImplementation(
         () => new Promise(reject => reject('{ "id": 0 }'))
       );
+      updateStatusInCache.mockImplementation(() => {});
       getAllLocalCouncilConfig.mockImplementation(() => [
         {
           local_council_url: "cardiff",
@@ -352,7 +362,7 @@ describe("Function: sendTascomiRegistration: ", () => {
         }
       ]);
       try {
-        await sendTascomiRegistration({}, {}, "cardiff");
+        await sendTascomiRegistration({}, { "fsa-rn": 123 }, "cardiff");
       } catch (err) {
         result = err;
       }
@@ -360,6 +370,14 @@ describe("Function: sendTascomiRegistration: ", () => {
 
     it("Should throw tascomiRefNumber error", () => {
       expect(result.name).toBe("tascomiRefNumber");
+    });
+
+    it("Should update the tascomi status with fail", () => {
+      expect(updateStatusInCache).toHaveBeenLastCalledWith(
+        123,
+        "tascomi",
+        false
+      );
     });
   });
 });
