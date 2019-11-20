@@ -142,7 +142,7 @@ const schema = {
                 type: "string",
                 validation: validateCompanyName
               },
-              operator_company_house_number: {
+              operator_companies_house_number: {
                 type: "string",
                 validation: validateCompaniesHouseNumber
               },
@@ -166,7 +166,7 @@ const schema = {
                   {
                     required: [
                       "operator_company_name",
-                      "operator_company_house_number"
+                      "operator_companies_house_number"
                     ]
                   },
                   { required: ["operator_charity_name"] },

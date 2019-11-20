@@ -79,8 +79,8 @@ const createFoodBusinessRegistration = async (
       owner_surname: operatorDetails.operator_last_name,
       operator_type: operatorDetails.operator_type,
       operator_company_name: operatorDetails.operator_company_name,
-      operator_company_house_number:
-        operatorDetails.operator_company_house_number,
+      operator_companies_house_number:
+        operatorDetails.operator_companies_house_number,
       operator_charity_name: operatorDetails.operator_charity_name,
       operator_charity_number: operatorDetails.operator_charity_number,
       contact_representative_number:
