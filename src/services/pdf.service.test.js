@@ -49,7 +49,7 @@ describe("Pdf Service: ", () => {
             opening_day_sunday: true
           }
         },
-        metadata: {
+        declaration: {
           declaration1: "Declaration",
           declaration2: "Declaration",
           declaration3: "Declaration"
@@ -191,7 +191,7 @@ describe("Pdf Service: ", () => {
             opening_day_sunday: true
           }
         },
-        metadata: {
+        declaration: {
           declaration1: "Declaration",
           declaration2: "Declaration",
           declaration3: "Declaration"

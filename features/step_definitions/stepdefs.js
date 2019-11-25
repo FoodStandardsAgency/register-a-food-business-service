@@ -89,7 +89,7 @@ Given("I have a new registration with all valid required fields", function() {
           water_supply: "Public"
         }
       },
-      metadata: {
+      declaration: {
         declaration1: "Declaration",
         declaration2: "Declaration",
         declaration3: "Declaration"
@@ -137,7 +137,7 @@ Given(
             water_supply: "Public"
           }
         },
-        metadata: {
+        declaration: {
           declaration1: "Declaration",
           declaration2: "Declaration",
           declaration3: "Declaration"

@@ -88,7 +88,7 @@ describe("Tascomi integration: createFoodBusinessRegistration", () => {
             opening_hours_sunday: "From 9:30 to 19:00"
           }
         },
-        metadata: {
+        declaration: {
           declaration1: "Declaration",
           declaration2: "Declaration",
           declaration3: "Declaration"

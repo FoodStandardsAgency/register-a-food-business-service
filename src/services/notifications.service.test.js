@@ -36,7 +36,7 @@ const testRegistrationData = {
       customer_type: "End consumer"
     }
   },
-  metadata: {
+  declaration: {
     declaration1: "Declaration"
   }
 };
@@ -67,7 +67,7 @@ const testRegistrationDataForPartnership = {
       customer_type: "End consumer"
     }
   },
-  metadata: {
+  declaration: {
     declaration1: "Declaration"
   }
 };
@@ -415,7 +415,7 @@ describe("Function: sendEmailOfType: ", () => {
         opening_day_sunday: true
       }
     },
-    metadata: {
+    declaration: {
       declaration1: "Declaration",
       declaration2: "Declaration",
       declaration3: "Declaration"
@@ -537,7 +537,7 @@ describe("Function: sendEmailOfType: ", () => {
           opening_day_sunday: true
         }
       },
-      metadata: {
+      declaration: {
         declaration1: "Declaration",
         declaration2: "Declaration",
         declaration3: "Declaration",

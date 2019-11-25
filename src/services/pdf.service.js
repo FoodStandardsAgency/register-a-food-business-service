@@ -44,7 +44,7 @@ const transformDataForPdf = (
       ...registrationData.establishment.premise
     },
     activities: { ...registrationData.establishment.activities },
-    declaration: { ...registrationData.metadata },
+    declaration: { ...registrationData.declaration },
     metaData: { ...postRegistrationData, lcInfo }
   };
 

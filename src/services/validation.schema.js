@@ -328,7 +328,7 @@ const schema = {
         },
         required: ["establishment_details", "operator", "premise", "activities"]
       },
-      metadata: {
+      declaration: {
         type: "object",
         properties: {
           declaration1: { type: "string", validation: validateDeclaration },
@@ -339,7 +339,7 @@ const schema = {
         required: ["declaration1", "declaration2", "declaration3"]
       }
     },
-    required: ["establishment", "metadata"]
+    required: ["establishment", "declaration"]
   },
   local_council_url: { type: "string" }
 };
