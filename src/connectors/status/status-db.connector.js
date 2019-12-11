@@ -24,13 +24,40 @@ const establishConnectionToMongo = async () => {
     );
     statusCollection = statusCollectionDouble;
   } else {
-    client = await mongodb.MongoClient.connect(CONFIGDB_URL, {
-      useNewUrlParser: true
-    });
+    logEmitter.emit(
+      "functionCall",
+      "status-db.connector",
+      "establishConnectionToMongo"
+    );
+
+    // If no connection or connection is not valid after downtime
+    if (!client || !client.topology || !client.topology.isConnected()) {
+      try {
+        if (client && client.topology !== undefined) {
+          client.close();
+        }
+        client = await mongodb.MongoClient.connect(CONFIGDB_URL, {
+          useNewUrlParser: true
+        });
+      } catch (err) {
+        logEmitter.emit(
+          "functionFail",
+          "status-db.connector",
+          "establishConnectionToMongo",
+          err
+        );
+        throw err;
+      }
+    }
 
     statusDB = client.db("register_a_food_business_status");
-
     statusCollection = statusDB.collection("status");
+
+    logEmitter.emit(
+      "functionSuccess",
+      "status-db.connector",
+      "establishConnectionToMongo"
+    );
   }
 };
 
@@ -144,4 +171,15 @@ const updateStoredStatus = async (statusName, newStatus) => {
   }
 };
 
-module.exports = { getStoredStatus, updateStoredStatus, getEmailDistribution };
+const clearMongoConnection = () => {
+  client = undefined;
+  statusDB = undefined;
+  statusCollection = undefined;
+};
+
+module.exports = {
+  getStoredStatus,
+  clearMongoConnection,
+  updateStoredStatus,
+  getEmailDistribution
+};

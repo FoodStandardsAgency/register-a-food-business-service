@@ -17,7 +17,8 @@ jest.mock("../../services/notifications.service", () => ({
 }));
 
 jest.mock("../../connectors/cacheDb/cacheDb.connector", () => ({
-  cacheRegistration: jest.fn()
+  cacheRegistration: jest.fn(),
+  updateCompletedInCache: jest.fn()
 }));
 
 jest.mock("../../connectors/configDb/configDb.connector", () => ({
@@ -36,6 +37,11 @@ const {
 const { sendNotifications } = require("../../services/notifications.service");
 
 const { validate } = require("../../services/validation.service");
+
+const {
+  cacheRegistration
+} = require("../../connectors/cacheDb/cacheDb.connector");
+
 const {
   createNewRegistration,
   getRegistration,
@@ -74,6 +80,11 @@ describe("registration controller", () => {
     }
   };
 
+  const postRegistrationMetadata = {
+    reg_submission_date: 1,
+    "fsa-rn": "AA1AAA-AA11AA-A1AAA1"
+  };
+
   const testRegistration = {
     establishment: { operator: { operator_email: "operator@example.com" } }
   };
@@ -101,7 +112,7 @@ describe("registration controller", () => {
             return [];
           });
           getRegistrationMetaData.mockImplementation(() => {
-            return { reg_submission_date: 1, "fsa-rn": "AA1AAA-AA11AA-A1AAA1" };
+            return postRegistrationMetadata;
           });
           getLcContactConfig.mockImplementation(() => exampleLcConfig);
           getConfigVersion.mockImplementation(() => testConfigVersion);
@@ -140,7 +151,7 @@ describe("registration controller", () => {
             return [];
           });
           getRegistrationMetaData.mockImplementation(() => {
-            return { reg_submission_date: 1, "fsa-rn": "AA1AAA-AA11AA-A1AAA1" };
+            return postRegistrationMetadata;
           });
           getLcContactConfig.mockImplementation(() => exampleLcConfig);
           getConfigVersion.mockImplementation(() => testConfigVersion);
@@ -153,6 +164,25 @@ describe("registration controller", () => {
         });
         it("should call sendResponse with the result of getRegistrationMetaData", () => {
           expect(mockSendResponse.mock.calls[0][0].reg_submission_date).toBe(1);
+        });
+        it("should call cache registration", () => {
+          expect(cacheRegistration).toHaveBeenCalled();
+          const expectedToCache = Object.assign(
+            {},
+            {
+              "fsa-rn": postRegistrationMetadata["fsa-rn"],
+              reg_submission_date: postRegistrationMetadata.reg_submission_date
+            },
+            testRegistration,
+            exampleLcConfig,
+            {
+              status: {
+                registration: undefined,
+                notifications: undefined
+              }
+            }
+          );
+          expect(cacheRegistration).toHaveBeenLastCalledWith(expectedToCache);
         });
         it("should not call sendTascomiRegistration", () => {
           expect(sendTascomiRegistration.mock.calls.length).toBe(0);
@@ -172,7 +202,7 @@ describe("registration controller", () => {
           return [];
         });
         getRegistrationMetaData.mockImplementation(() => {
-          return { reg_submission_date: 1, "fsa-rn": "AA1AAA-AA11AA-A1AAA1" };
+          return postRegistrationMetadata;
         });
         getConfigVersion.mockImplementation(() => testConfigVersion);
         getLcContactConfig.mockImplementation(() => exampleLcConfig);
@@ -203,7 +233,7 @@ describe("registration controller", () => {
           return [];
         });
         getRegistrationMetaData.mockImplementation(() => {
-          return { reg_submission_date: 1, "fsa-rn": "AA1AAA-AA11AA-A1AAA1" };
+          return postRegistrationMetadata;
         });
         getConfigVersion.mockImplementation(() => testConfigVersion);
         getLcContactConfig.mockImplementation(() => exampleMultiLcConfig);
@@ -242,6 +272,10 @@ describe("registration controller", () => {
 
       it("should throw a validation error", () => {
         expect(result.name).toEqual("validationError");
+      });
+
+      it("should not cache the registration", () => {
+        expect(cacheRegistration).not.toHaveBeenCalled();
       });
     });
 
