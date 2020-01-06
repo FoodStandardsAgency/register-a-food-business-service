@@ -1,5 +1,5 @@
+require('dotenv').config()
 const mongodb = require("mongodb");
-const { CONFIGDB_URL } = require("../src/db/config/config");
 const { logEmitter } = require("../src/services/logging.service");
 const { Council, connectToDb, closeConnection } = require("../src/db/db");
 
@@ -8,7 +8,7 @@ let configDB;
 let lcConfigCollection;
 
 const establishConnectionToMongo = async () => {
-  client = await mongodb.MongoClient.connect(CONFIGDB_URL, {
+  client = await mongodb.MongoClient.connect(process.env.CONFIGDB_URL, {
     useNewUrlParser: true
   });
 
@@ -21,7 +21,7 @@ const getLocalCouncils = async () => {
   let localCouncils = null;
   logEmitter.emit(
     "functionCall",
-    "configDb.council.script",
+    "populate-council-table",
     "getLocalCouncils"
   );
 
@@ -33,29 +33,33 @@ const getLocalCouncils = async () => {
         { local_council_url: { $ne: "" } },
         { local_council_url: { $ne: null } }
       ]
-    });
+    })
+    .toArray();
 
     if (localCouncils !== null) {
       localCouncils = localCouncils.map(res => ({
         competent_authority_id: res._id,
-        local_council: res.local_council,
+        local_council_full_name: res.local_council,
         local_council_url: res.local_council_url
       }));
     }
   } catch (err) {
     logEmitter.emit(
       "functionFail",
-      "configDb.council.script",
+      "populate-council-table",
       "getLocalCouncils",
       err
     );
 
-    const newError = new Error();
-    newError.name = "mongoConnectionError";
-    newError.message = err.message;
-
-    throw newError;
+    throw err;
   }
+
+  logEmitter.emit(
+    "functionSuccess",
+    "populate-council-table",
+    "getLocalCouncils"
+  );
+
   return localCouncils;
 };
 
@@ -69,11 +73,28 @@ const run = async () => {
   const data = await getLocalCouncils();
   const promises = [];
   console.log("working");
-  data.forEach(async record => {
-    promises.push(modelCreate(record, Council));
-  });
-  await Promise.all(promises);
-  closeConnection();
+  console.log(data);
+  try {
+    data.forEach(async record => {
+      promises.push(modelCreate(record, Council));
+    });
+    await Promise.all(promises);
+  } catch (err) {
+    logEmitter.emit(
+      "functionFail",
+      "populate-council-table",
+      "run",
+      err
+    );
+  }
+  client.close();
+  await closeConnection();
+
+  logEmitter.emit(
+    "functionSuccess",
+    "populate-council-table",
+    "run"
+  );
 };
 
-run();
+run().then(() => console.log("done"));

@@ -1,7 +1,7 @@
 "use strict";
 
 const createCouncil = (queryInterface, Sequelize) =>
-  queryInterface.createTable("council", {
+  queryInterface.createTable("councils", {
     createdAt: {
       type: Sequelize.DATE
     },
@@ -9,7 +9,8 @@ const createCouncil = (queryInterface, Sequelize) =>
       type: Sequelize.DATE
     },
     local_council_url: {
-      type: Sequelize.STRING
+      type: Sequelize.STRING,
+      primaryKey: true,
     },
     local_council_full_name: {
       type: Sequelize.STRING
@@ -24,6 +25,6 @@ module.exports = {
     return Promise.all([createCouncil(queryInterface, Sequelize)]);
   },
   down: queryInterface => {
-    return Promise.all([queryInterface.dropTable("council")]);
+    return Promise.all([queryInterface.dropTable("councils")]);
   }
 };

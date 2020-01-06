@@ -11,7 +11,7 @@ const connectToDb = async () => {
 };
 
 const closeConnection = async () => {
-  return db.sequelize.close();
+  return await db.sequelize.close();
 };
 module.exports = {
   Activities: db.activities,
