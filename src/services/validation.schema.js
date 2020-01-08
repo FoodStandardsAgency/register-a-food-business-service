@@ -110,6 +110,18 @@ const schema = {
                 type: "string",
                 validation: validateOptionalString
               },
+              operator_address_line_1: {
+                type: "string",
+                validation: validateOptionalString
+              },
+              operator_address_line_2: {
+                type: "string",
+                validation: validateOptionalString
+              },
+              operator_address_line_3: {
+                type: "string",
+                validation: validateOptionalString
+              },
               operator_town: {
                 type: "string",
                 validation: validateTown
@@ -205,6 +217,18 @@ const schema = {
                 validation: validateOptionalString
               },
               establishment_dependent_locality: {
+                type: "string",
+                validation: validateOptionalString
+              },
+              establishment_address_line_1: {
+                type: "string",
+                validation: validateOptionalString
+              },
+              establishment_address_line_2: {
+                type: "string",
+                validation: validateOptionalString
+              },
+              establishment_address_line_3: {
                 type: "string",
                 validation: validateOptionalString
               },
