@@ -63,12 +63,12 @@ const getLocalCouncils = async () => {
   return localCouncils;
 };
 
-const modelCreate = async (data, model) => {
-  const response = await model.create(data);
+const modelCreate = async (data, model, transaction) => {
+  const response = await model.create(data, { transaction: transaction });
   return response;
 };
 
-const run = async () => {
+const populateCouncils = async (transaction) => {
   await connectToDb();
   const data = await getLocalCouncils();
   const promises = [];
@@ -76,7 +76,7 @@ const run = async () => {
   console.log(data);
   try {
     data.forEach(async record => {
-      promises.push(modelCreate(record, Council));
+      promises.push(modelCreate(record, Council, transaction));
     });
     await Promise.all(promises);
   } catch (err) {
@@ -97,4 +97,4 @@ const run = async () => {
   );
 };
 
-run().then(() => console.log("done"));
+module.exports = { populateCouncils };
