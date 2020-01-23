@@ -1,4 +1,4 @@
-require('dotenv').config()
+require("dotenv").config();
 const mongodb = require("mongodb");
 const { logEmitter } = require("../src/services/logging.service");
 const { Council, connectToDb, closeConnection } = require("../src/db/db");
@@ -19,22 +19,19 @@ const establishConnectionToMongo = async () => {
 
 const getLocalCouncils = async () => {
   let localCouncils = null;
-  logEmitter.emit(
-    "functionCall",
-    "populate-council-table",
-    "getLocalCouncils"
-  );
+  logEmitter.emit("functionCall", "populate-council-table", "getLocalCouncils");
 
   try {
     await establishConnectionToMongo();
 
-    localCouncils = await lcConfigCollection.find({
-      $and: [
-        { local_council_url: { $ne: "" } },
-        { local_council_url: { $ne: null } }
-      ]
-    })
-    .toArray();
+    localCouncils = await lcConfigCollection
+      .find({
+        $and: [
+          { local_council_url: { $ne: "" } },
+          { local_council_url: { $ne: null } }
+        ]
+      })
+      .toArray();
 
     if (localCouncils !== null) {
       localCouncils = localCouncils.map(res => ({
@@ -68,11 +65,10 @@ const modelCreate = async (data, model, transaction) => {
   return response;
 };
 
-const populateCouncils = async (transaction) => {
+const populateCouncils = async transaction => {
   await connectToDb();
   const data = await getLocalCouncils();
   const promises = [];
-  console.log("working");
   console.log(data);
   try {
     data.forEach(async record => {
@@ -83,9 +79,11 @@ const populateCouncils = async (transaction) => {
     logEmitter.emit(
       "functionFail",
       "populate-council-table",
-      "run",
+      "populateCouncils",
       err
     );
+
+    throw err;
   }
   client.close();
   await closeConnection();
@@ -93,7 +91,7 @@ const populateCouncils = async (transaction) => {
   logEmitter.emit(
     "functionSuccess",
     "populate-council-table",
-    "run"
+    "populateCouncils"
   );
 };
 

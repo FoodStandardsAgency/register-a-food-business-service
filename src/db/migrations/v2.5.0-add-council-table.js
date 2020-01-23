@@ -18,7 +18,7 @@ const createCouncil = async (queryInterface, Sequelize) => {
       type: Sequelize.STRING
     },
     competent_authority_id: {
-      type: Sequelize.STRING
+      type: Sequelize.INTEGER
     }
   });
 };
@@ -40,7 +40,7 @@ const createCouncilsForeignKey = (queryInterface, transaction) => {
 const dropCouncilsForeignKey = (queryInterface, transaction) => {
   return queryInterface.removeConstraint(
     "registrations",
-    "councils_council_url",
+    "councils_council_fkey",
     { transaction: transaction }
   );
 };
@@ -48,8 +48,6 @@ const dropCouncilsForeignKey = (queryInterface, transaction) => {
 module.exports = {
   up: (queryInterface, Sequelize) => {
     return queryInterface.sequelize.transaction(async transaction => {
-      console.log(typeof populateCouncils);
-      console.log(populateCouncils);
       await createCouncil(queryInterface, Sequelize);
       await populateCouncils(transaction);
       return createCouncilsForeignKey(queryInterface, transaction);
