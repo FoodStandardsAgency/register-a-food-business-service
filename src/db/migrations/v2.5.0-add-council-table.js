@@ -23,10 +23,10 @@ const createCouncil = async (queryInterface, Sequelize) => {
   });
 };
 
-const createCouncilsForeignKey = (queryInterface, transaction) => {
+const createCouncilsForeignKey = async (queryInterface, transaction) => {
   return queryInterface.addConstraint("registrations", ["council"], {
     type: "foreign key",
-    name: "councils_council_fkey",
+    name: "registrations_council_fkey",
     references: {
       table: "councils",
       field: "local_council_url"
@@ -37,10 +37,10 @@ const createCouncilsForeignKey = (queryInterface, transaction) => {
   });
 };
 
-const dropCouncilsForeignKey = (queryInterface, transaction) => {
+const dropCouncilsForeignKey = async (queryInterface, transaction) => {
   return queryInterface.removeConstraint(
     "registrations",
-    "councils_council_fkey",
+    "registrations_council_fkey",
     { transaction: transaction }
   );
 };
@@ -56,7 +56,7 @@ module.exports = {
   down: queryInterface => {
     return queryInterface.sequelize.transaction(async transaction => {
       await dropCouncilsForeignKey(queryInterface, transaction);
-      return queryInterface.dropTable("councils");
+      return queryInterface.dropTable("councils", { transaction: transaction });
     });
   }
 };
