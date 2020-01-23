@@ -3,23 +3,23 @@
 const { populateCouncils } = require("../../../scripts/populate-council-table");
 
 const createCouncil = async (queryInterface, Sequelize) => {
-    queryInterface.createTable("councils", {
-      createdAt: {
-        type: Sequelize.DATE
-      },
-      updatedAt: {
-        type: Sequelize.DATE
-      },
-      local_council_url: {
-        type: Sequelize.STRING,
-        primaryKey: true,
-      },
-      local_council_full_name: {
-        type: Sequelize.STRING
-      },
-      competent_authority_id: {
-        type: Sequelize.STRING
-      }
+  queryInterface.createTable("councils", {
+    createdAt: {
+      type: Sequelize.DATE
+    },
+    updatedAt: {
+      type: Sequelize.DATE
+    },
+    local_council_url: {
+      type: Sequelize.STRING,
+      primaryKey: true
+    },
+    local_council_full_name: {
+      type: Sequelize.STRING
+    },
+    competent_authority_id: {
+      type: Sequelize.STRING
+    }
   });
 };
 
@@ -37,17 +37,28 @@ const createCouncilsForeignKey = (queryInterface, transaction) => {
   });
 };
 
+const dropCouncilsForeignKey = (queryInterface, transaction) => {
+  return queryInterface.removeConstraint(
+    "registrations",
+    "councils_council_url",
+    { transaction: transaction }
+  );
+};
+
 module.exports = {
   up: (queryInterface, Sequelize) => {
     return queryInterface.sequelize.transaction(async transaction => {
-        console.log(typeof populateCouncils);
-        console.log(populateCouncils);
-        await createCouncil(queryInterface, Sequelize);
-        await populateCouncils(transaction);
-        return createCouncilsForeignKey(queryInterface, transaction);
-    })
+      console.log(typeof populateCouncils);
+      console.log(populateCouncils);
+      await createCouncil(queryInterface, Sequelize);
+      await populateCouncils(transaction);
+      return createCouncilsForeignKey(queryInterface, transaction);
+    });
   },
   down: queryInterface => {
-    return Promise.all([queryInterface.dropTable("councils")]);
+    return queryInterface.sequelize.transaction(async transaction => {
+      await dropCouncilsForeignKey(queryInterface, transaction);
+      return queryInterface.dropTable("councils");
+    });
   }
 };
