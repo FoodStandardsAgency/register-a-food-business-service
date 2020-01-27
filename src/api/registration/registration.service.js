@@ -1,5 +1,6 @@
 const moment = require("moment");
 const fetch = require("node-fetch");
+const HttpsProxyAgent = require("https-proxy-agent");
 const promiseRetry = require("promise-retry");
 
 const {
@@ -238,8 +239,13 @@ const getRegistrationMetaData = async councilCode => {
   let fsa_rn;
 
   try {
+    options = {};
+    if (process.env.HTTP_PROXY) {
+      options.agent = new HttpsProxyAgent(process.env.HTTP_PROXY);
+    }
     const fsaRnResponse = await fetch(
-      `https://fsa-reference-numbers.epimorphics.net/generate/${councilCode}/${typeCode}`
+      `https://fsa-reference-numbers.epimorphics.net/generate/${councilCode}/${typeCode}`,
+      options
     );
     if (fsaRnResponse.status === 200) {
       fsa_rn = await fsaRnResponse.json();
