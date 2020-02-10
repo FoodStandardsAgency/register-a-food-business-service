@@ -5,7 +5,6 @@ const {
   validateOptionalString,
   validateMandatoryString,
   validateName,
-  validateTown,
   validateEstablishmentTradingName,
   validatePhoneNumber,
   validatePhoneNumberOptional,

@@ -239,7 +239,7 @@ const getRegistrationMetaData = async councilCode => {
   let fsa_rn;
 
   try {
-    options = {};
+    const options = {};
     if (process.env.HTTP_PROXY) {
       options.agent = new HttpsProxyAgent(process.env.HTTP_PROXY);
     }
