@@ -7,9 +7,6 @@ module.exports = (sequelize, DataTypes) => {
         primaryKey: true,
         autoIncrement: true
       },
-      establishment_first_line: { type: DataTypes.STRING },
-      establishment_street: { type: DataTypes.STRING },
-      establishment_dependent_locality: { type: DataTypes.STRING },
       establishment_address_line_1: { type: DataTypes.STRING },
       establishment_address_line_2: { type: DataTypes.STRING },
       establishment_address_line_3: { type: DataTypes.STRING },
