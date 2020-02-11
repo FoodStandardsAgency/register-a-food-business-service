@@ -24,6 +24,7 @@
     "start:local": "export $(grep -v '^#' .env | xargs -d '\n') && node src/app.js",
     "start:docker": "node src/db/check-connection.js && npm run migrate:local && node src/app.js",
     "seed:configdb": "node src/connectors/configDb/configDb-seed/runSeedScripts",
+    "migrate": "sequelize db:migrate:undo",
     "migrate:local": "export NODE_ENV=local && sequelize db:migrate",
     "jsdoc": "rm -rf ./docs/jsdoc && jsdoc -r ./src -d ./docs/jsdoc"
   },
@@ -45,6 +46,7 @@
     "express": "4.16.3",
     "express-rate-limit": "3.2.0",
     "helmet": "3.13.0",
+    "https-proxy-agent": "^5.0.0",
     "inquirer": "6.2.0",
     "jsonschema": "1.2.4",
     "moment": "2.22.2",
