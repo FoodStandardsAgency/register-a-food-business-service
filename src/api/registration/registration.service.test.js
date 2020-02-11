@@ -395,7 +395,8 @@ describe("Function: getRegistrationMetaData: ", () => {
     });
     it("fetch should be called with the passed councilCode and a typeCode of 000", () => {
       expect(fetch).toHaveBeenLastCalledWith(
-        "https://fsa-reference-numbers.epimorphics.net/generate/1234/000"
+        "https://fsa-reference-numbers.epimorphics.net/generate/1234/000",
+        {}
       );
     });
     it("should return an object that contains fsa-rn", () => {
@@ -417,7 +418,8 @@ describe("Function: getRegistrationMetaData: ", () => {
     });
     it("fetch should be called with the passed councilCode and a typeCode of 001", () => {
       expect(fetch).toHaveBeenLastCalledWith(
-        "https://fsa-reference-numbers.epimorphics.net/generate/1234/001"
+        "https://fsa-reference-numbers.epimorphics.net/generate/1234/001",
+        {}
       );
     });
     it("should return an object that contains fsa-rn", () => {
