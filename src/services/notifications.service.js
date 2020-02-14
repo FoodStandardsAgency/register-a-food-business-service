@@ -35,6 +35,8 @@ const transformDataForNotify = (
     lcInfo.local_council_email =
       lcContactConfig.hygieneAndStandards.local_council_email;
 
+    lcInfo.country = lcContactConfig.hygieneAndStandards.country;
+
     if (lcContactConfig.hygieneAndStandards.local_council_phone_number) {
       lcInfo.local_council_phone_number =
         lcContactConfig.hygieneAndStandards.local_council_phone_number;
@@ -44,6 +46,8 @@ const transformDataForNotify = (
 
     lcInfo.local_council_email_hygiene =
       lcContactConfig.hygiene.local_council_email;
+
+    lcInfo.country = lcContactConfig.hygiene.country;
 
     if (lcContactConfig.hygiene.local_council_phone_number) {
       lcInfo.local_council_phone_number_hygiene =
