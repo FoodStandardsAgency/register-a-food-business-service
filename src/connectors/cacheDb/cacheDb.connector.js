@@ -129,12 +129,17 @@ const getStatus = async (cachedRegistrations, fsa_rn) => {
 };
 
 const updateStatus = async (cachedRegistrations, fsa_rn, newStatus) => {
-  await cachedRegistrations.updateOne(
-    { "fsa-rn": fsa_rn },
-    {
-      $set: { status: newStatus }
-    }
-  );
+  try {
+    await cachedRegistrations.updateOne(
+      { "fsa-rn": fsa_rn },
+      {
+        $set: { status: newStatus }
+      }
+    );
+    logEmitter.emit("functionSuccess", "cacheDb.connector", "updateStatus");
+  } catch (err) {
+    logEmitter.emit("functionFail", "cacheDb.connector", "updateStatus", err);
+  }
 };
 
 /**

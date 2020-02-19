@@ -73,7 +73,6 @@ const saveRegistration = async (registration, fsa_rn, council) => {
     }
 
     const metadata = await createMetadata(registration.metadata, reg.id);
-    await updateStatusInCache(fsa_rn, "registration", true);
     statusEmitter.emit("incrementCount", "storeRegistrationsInDbSucceeded");
     statusEmitter.emit(
       "setStatus",
@@ -85,6 +84,7 @@ const saveRegistration = async (registration, fsa_rn, council) => {
       "registration.service",
       "saveRegistration"
     );
+    await updateStatusInCache(fsa_rn, "registration", true);
     return {
       regId: reg.id,
       establishmentId: establishment.id,
@@ -95,7 +95,6 @@ const saveRegistration = async (registration, fsa_rn, council) => {
       metadataId: metadata.id
     };
   } catch (err) {
-    await updateStatusInCache(fsa_rn, "registration", false);
     statusEmitter.emit("incrementCount", "storeRegistrationsInDbFailed");
     statusEmitter.emit(
       "setStatus",
@@ -108,6 +107,7 @@ const saveRegistration = async (registration, fsa_rn, council) => {
       "saveRegistration",
       err
     );
+    await updateStatusInCache(fsa_rn, "registration", false);
     throw err;
   }
 };
@@ -207,21 +207,28 @@ const sendTascomiRegistration = async (
       err.name = "tascomiRefNumber";
       throw err;
     }
-    updateStatusInCache(postRegistrationMetadata["fsa-rn"], "tascomi", true);
-
     logEmitter.emit(
       "functionSuccess",
       "registration.service",
       "sendTascomiRegistration"
     );
+    await updateStatusInCache(
+      postRegistrationMetadata["fsa-rn"],
+      "tascomi",
+      true
+    );
     return response;
   } catch (err) {
-    updateStatusInCache(postRegistrationMetadata["fsa-rn"], "tascomi", false);
     logEmitter.emit(
       "functionFail",
       "registrationService",
       "sendTascomiRegistration",
       err
+    );
+    await updateStatusInCache(
+      postRegistrationMetadata["fsa-rn"],
+      "tascomi",
+      false
     );
     throw err;
   }
