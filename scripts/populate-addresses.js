@@ -15,12 +15,9 @@ let cacheDB;
 let registrationsCollection;
 
 const establishConnectionToMongo = async () => {
-  client = await mongodb.MongoClient.connect(
-    process.env.CACHEDB_URL,
-    {
-      useNewUrlParser: true
-    }
-  );
+  client = await mongodb.MongoClient.connect(process.env.CACHEDB_URL, {
+    useNewUrlParser: true
+  });
 
   cacheDB = client.db("register_a_food_business_cache");
 
@@ -63,7 +60,6 @@ const logError = (text, err) => {
 };
 
 const populateAddresses = async transaction => {
-  
   await connectToDb();
   const data = await getRegistrations();
 

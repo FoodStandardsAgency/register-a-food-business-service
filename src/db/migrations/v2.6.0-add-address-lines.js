@@ -39,13 +39,18 @@ const addNewColumns = async (queryInterface, Sequelize, transaction) => {
 
 const copyData = async (queryInterface, transaction) => {
   return Promise.all([
-    await queryInterface.sequelize.query(
-      "UPDATE operators SET operator_address_line_1 = operator_first_line",
-      "UPDATE operators SET operator_address_line_2 = operator_street",
-      "UPDATE operators SET operator_address_line_3 = operator_dependent_locality",
-      "UPDATE premises SET establishment_address_line_1 = establishment_first_line",
-      "UPDATE premises SET establishment_address_line_2 = establishment_street",
-      "UPDATE premises SET establishment_address_line_3 = establishment_dependent_locality",
+    queryInterface.sequelize.query(
+      "UPDATE operators " +
+        "SET operator_address_line_1 = operator_first_line, " +
+        "operator_address_line_2 = operator_street, " +
+        "operator_address_line_3 = operator_dependent_locality",
+      { transaction: transaction }
+    ),
+    queryInterface.sequelize.query(
+      "UPDATE premises " +
+        "SET establishment_address_line_1 = establishment_first_line, " +
+        "establishment_address_line_2 = establishment_street, " +
+        "establishment_address_line_3 = establishment_dependent_locality",
       { transaction: transaction }
     )
   ]);
@@ -79,13 +84,16 @@ const removeNewColumns = async (queryInterface, transaction) => {
 
 const recopyData = async (queryInterface, transaction) => {
   return Promise.all([
-    await queryInterface.sequelize.query(
-      "UPDATE operators SET operator_first_line = operator_address_line_1",
-      "UPDATE operators SET operator_street = operator_address_line_2",
-      "UPDATE operators SET operator_dependent_locality = operator_address_line_3",
-      "UPDATE premises SET establishment_first_line = establishment_address_line_1",
-      "UPDATE premises SET establishment_street = establishment_address_line_2",
-      "UPDATE premises SET establishment_dependent_locality = establishment_address_line_3",
+    queryInterface.sequelize.query(
+      "UPDATE operators SET operator_first_line = operator_address_line_1, " +
+        "operator_street = operator_address_line_2, " +
+        "operator_dependent_locality = operator_address_line_3",
+      { transaction: transaction }
+    ),
+    queryInterface.sequelize.query(
+      "UPDATE premises SET establishment_first_line = establishment_address_line_1, " +
+        "establishment_street = establishment_address_line_2, " +
+        "establishment_dependent_locality = establishment_address_line_3",
       { transaction: transaction }
     )
   ]);
