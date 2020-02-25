@@ -1,40 +1,43 @@
 "use strict";
 const addNewColumns = async (queryInterface, Sequelize, transaction) => {
-  return (
-    Promise.all([
-      queryInterface.addColumn(
-        "operators",
-        "operator_address_line_1",
-        Sequelize.STRING
-      ),
-      queryInterface.addColumn(
-        "operators",
-        "operator_address_line_2",
-        Sequelize.STRING
-      ),
-      queryInterface.addColumn(
-        "operators",
-        "operator_address_line_3",
-        Sequelize.STRING
-      ),
-      queryInterface.addColumn(
-        "premises",
-        "establishment_address_line_1",
-        Sequelize.STRING
-      ),
-      queryInterface.addColumn(
-        "premises",
-        "establishment_address_line_2",
-        Sequelize.STRING
-      ),
-      queryInterface.addColumn(
-        "premises",
-        "establishment_address_line_3",
-        Sequelize.STRING
-      )
-    ]),
-    { transaction: transaction }
-  );
+  return Promise.all([
+    queryInterface.addColumn(
+      "operators",
+      "operator_address_line_1",
+      Sequelize.STRING,
+      { transaction: transaction }
+    ),
+    queryInterface.addColumn(
+      "operators",
+      "operator_address_line_2",
+      Sequelize.STRING,
+      { transaction: transaction }
+    ),
+    queryInterface.addColumn(
+      "operators",
+      "operator_address_line_3",
+      Sequelize.STRING,
+      { transaction: transaction }
+    ),
+    queryInterface.addColumn(
+      "premises",
+      "establishment_address_line_1",
+      Sequelize.STRING,
+      { transaction: transaction }
+    ),
+    queryInterface.addColumn(
+      "premises",
+      "establishment_address_line_2",
+      Sequelize.STRING,
+      { transaction: transaction }
+    ),
+    queryInterface.addColumn(
+      "premises",
+      "establishment_address_line_3",
+      Sequelize.STRING,
+      { transaction: transaction }
+    )
+  ]);
 };
 
 const copyData = async (queryInterface, transaction) => {
@@ -57,29 +60,51 @@ const copyData = async (queryInterface, transaction) => {
 };
 
 const removeOldColumns = async (queryInterface, transaction) => {
-  return (
-    queryInterface.removeColumn("operators", "operator_first_line"),
-    queryInterface.removeColumn("operators", "operator_street"),
-    queryInterface.removeColumn("operators", "operator_dependent_locality"),
-    queryInterface.removeColumn("premises", "establishment_first_line"),
-    queryInterface.removeColumn("premises", "establishment_street"),
-    queryInterface.removeColumn("premises", "establishment_dependent_locality"),
-    { transaction: transaction }
-  );
+  return Promise.all([
+    queryInterface.removeColumn("operators", "operator_first_line", {
+      transaction: transaction
+    }),
+    queryInterface.removeColumn("operators", "operator_street", {
+      transaction: transaction
+    }),
+    queryInterface.removeColumn("operators", "operator_dependent_locality", {
+      transaction: transaction
+    }),
+    queryInterface.removeColumn("premises", "establishment_first_line", {
+      transaction: transaction
+    }),
+    queryInterface.removeColumn("premises", "establishment_street", {
+      transaction: transaction
+    }),
+    queryInterface.removeColumn(
+      "premises",
+      "establishment_dependent_locality",
+      { transaction: transaction }
+    )
+  ]);
 };
 
 const removeNewColumns = async (queryInterface, transaction) => {
-  return (
-    Promise.all([
-      queryInterface.removeColumn("operators", "operator_address_line_1"),
-      queryInterface.removeColumn("operators", "operator_address_line_2"),
-      queryInterface.removeColumn("operators", "operator_address_line_3"),
-      queryInterface.removeColumn("premises", "establishment_address_line_1"),
-      queryInterface.removeColumn("premises", "establishment_address_line_2"),
-      queryInterface.removeColumn("premises", "establishment_address_line_3")
-    ]),
-    { transaction: transaction }
-  );
+  return Promise.all([
+    queryInterface.removeColumn("operators", "operator_address_line_1", {
+      transaction: transaction
+    }),
+    queryInterface.removeColumn("operators", "operator_address_line_2", {
+      transaction: transaction
+    }),
+    queryInterface.removeColumn("operators", "operator_address_line_3", {
+      transaction: transaction
+    }),
+    queryInterface.removeColumn("premises", "establishment_address_line_1", {
+      transaction: transaction
+    }),
+    queryInterface.removeColumn("premises", "establishment_address_line_2", {
+      transaction: transaction
+    }),
+    queryInterface.removeColumn("premises", "establishment_address_line_3", {
+      transaction: transaction
+    })
+  ]);
 };
 
 const recopyData = async (queryInterface, transaction) => {
@@ -99,41 +124,41 @@ const recopyData = async (queryInterface, transaction) => {
   ]);
 };
 const addOldColumns = async (queryInterface, Sequelize, transaction) => {
-  return (
-    Promise.all([
-      queryInterface.addColumn(
-        "operators",
-        "operator_first_line",
-        Sequelize.STRING
-      ),
-      queryInterface.addColumn(
-        "operators",
-        "operator_street",
-        Sequelize.STRING
-      ),
-      queryInterface.addColumn(
-        "operators",
-        "operator_dependent_locality",
-        Sequelize.STRING
-      ),
-      queryInterface.addColumn(
-        "premises",
-        "establishment_first_line",
-        Sequelize.STRING
-      ),
-      queryInterface.addColumn(
-        "premises",
-        "establishment_street",
-        Sequelize.STRING
-      ),
-      queryInterface.addColumn(
-        "premises",
-        "establishment_dependent_locality",
-        Sequelize.STRING
-      )
-    ]),
-    { transaction: transaction }
-  );
+  return Promise.all([
+    queryInterface.addColumn(
+      "operators",
+      "operator_first_line",
+      Sequelize.STRING,
+      { transaction: transaction }
+    ),
+    queryInterface.addColumn("operators", "operator_street", Sequelize.STRING, {
+      transaction: transaction
+    }),
+    queryInterface.addColumn(
+      "operators",
+      "operator_dependent_locality",
+      Sequelize.STRING,
+      { transaction: transaction }
+    ),
+    queryInterface.addColumn(
+      "premises",
+      "establishment_first_line",
+      Sequelize.STRING,
+      { transaction: transaction }
+    ),
+    queryInterface.addColumn(
+      "premises",
+      "establishment_street",
+      Sequelize.STRING,
+      { transaction: transaction }
+    ),
+    queryInterface.addColumn(
+      "premises",
+      "establishment_dependent_locality",
+      Sequelize.STRING,
+      { transaction: transaction }
+    )
+  ]);
 };
 
 module.exports = {
