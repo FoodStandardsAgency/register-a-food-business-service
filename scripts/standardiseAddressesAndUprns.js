@@ -1,3 +1,4 @@
+const { Op } = require("sequelize");
 const {
   getOperatorByEstablishmentId,
   getPremiseByEstablishmentId,
@@ -11,27 +12,46 @@ const {
 const { Registration, Operator, Premise } = require("../src/db/db");
 
 const getAllRegistrations = async () => {
-  return Registration.findAll();
+  return Registration.findAll({
+    where: { id: { [Op.gte]: 200, [Op.lte]: 6960 } }
+  });
+};
+
+/**
+ * Trims the UPRN field of any non-numeric characters (and any characters to the right of them)
+ * This is to account for postcoder API returning values such as 0123456789-1
+ *
+ * @param {string} uprn The raw UPRN returned from postcode lookup
+ *
+ * @returns {string} The trimmed UPRN or an empty string if invalid, empty or not defined
+ */
+const trimUprn = uprn => {
+  if (typeof uprn === "string" || uprn instanceof String) {
+    const regEx = /^(\d+).*/;
+    const match = uprn.match(regEx);
+    return (match && match[1]) || "";
+  }
+  return "";
 };
 
 const updateOperator = async (id, address) => {
   const update = {
-    operator_uprn: address.uprn,
+    operator_uprn: trimUprn(address.uprn),
     operator_address_line_1: address.addressline1,
-    operator_address_line_2: address.addressline2,
-    operator_address_line_3: address.addressline3
+    operator_address_line_2: address.addressline2 || null,
+    operator_address_line_3: address.addressline3 || null
   };
-  await Operator.update(update, { where: { id: id } });
+  await Operator.update(update, { omitNull: false, where: { id: id } });
 };
 
 const updatePremise = async (id, address) => {
   const update = {
-    establishment_uprn: address.uprn,
+    establishment_uprn: trimUprn(address.uprn),
     establishment_address_line_1: address.addressline1,
-    establishment_address_line_2: address.addressline2,
-    establishment_address_line_3: address.addressline3
+    establishment_address_line_2: address.addressline2 || null,
+    establishment_address_line_3: address.addressline3 || null
   };
-  await Premise.update(update, { where: { id: id } });
+  await Premise.update(update, { omitNull: false, where: { id: id } });
 };
 
 const getFullEstablishment = async id => {
@@ -54,7 +74,10 @@ const getAddress = async (postcode, firstLine) => {
   let addresses = [];
   addresses = await getUkAddressesByPostcode(postcode);
   const result = addresses.find(
-    ({ addressline1, premise }) => (premise === firstLine || addressline1 === firstLine)
+    ({ addressline1, premise, organisation }) =>
+      premise === firstLine ||
+      addressline1 === firstLine ||
+      organisation === firstLine
   );
   return result;
 };
@@ -74,10 +97,13 @@ const updateAddressesAndUprns = async () => {
     try {
       const establishment = await getFullEstablishment(registrations[index].id);
       if (!establishment) {
-        throw new Error("Establishment not found in database");      
+        throw new Error("Establishment not found in database");
       } else if (!establishment.operator) {
         throw new Error("Operator not found in database");
-      } else if (!establishment.premise) {
+      } else if (
+        !establishment.premise ||
+        !establishment.premise.establishment_address_line_1
+      ) {
         throw new Error("Premise not found in database");
       }
 
@@ -99,24 +125,34 @@ const updateAddressesAndUprns = async () => {
       } else {
         console.log("*** NOT Matching Addresses ***");
         // if no then call postcoder again for operator address
-        operatorAddress = await getAddress(
-          establishment.operator.operator_postcode,
-          establishment.operator.operator_address_line_1
-        );
+        if (establishment.operator.operator_address_line_1) {
+          operatorAddress = await getAddress(
+            establishment.operator.operator_postcode,
+            establishment.operator.operator_address_line_1
+          );
+        }
       }
 
       if (operatorAddress) {
         await updateOperator(establishment.operator.id, operatorAddress);
         console.log("Operator updated successfully");
       } else {
-        throw new Error("Operator address not found in Postcoder");
+        console.log(
+          "Registration " +
+            registrations[index].fsa_rn +
+            " - Operator address not found in Postcoder"
+        );
       }
 
       if (premiseAddress) {
         await updatePremise(establishment.premise.id, premiseAddress);
         console.log("Premise updated successfully");
       } else {
-        throw new Error("Premise address not found in Postcoder");
+        console.log(
+          "Registration " +
+            registrations[index].fsa_rn +
+            " - Premise address not found in Postcoder"
+        );
       }
 
       successCount++;
