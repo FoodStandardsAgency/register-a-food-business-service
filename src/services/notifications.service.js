@@ -63,6 +63,10 @@ const transformDataForNotify = (
 
   const partners = registrationClone.establishment.operator.partners;
   delete registrationClone.establishment.operator.partners;
+  delete registrationClone.establishment.operator.operator_first_line;
+  delete registrationClone.establishment.operator.operator_street;
+  delete registrationClone.establishment.premise.establishment_first_line;
+  delete registrationClone.establishment.premise.establishment_street;
 
   registrationClone.establishment.establishment_details.establishment_opening_date = moment(
     registrationClone.establishment.establishment_details
