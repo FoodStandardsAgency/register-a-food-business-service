@@ -27,6 +27,24 @@ const establishConnectionToMongo = async () => {
   }
 };
 
+const connectToBeCacheDb = async () => {
+  if (process.env.DOUBLE_MODE === "true") {
+    logEmitter.emit( "doubleMode", "cacheDb.connector",   "getAllLocalCouncilConfig" );
+    return cachedRegistrationsDouble;
+  } else {
+    if (cacheDB === undefined) {
+      client = await mongodb.MongoClient.connect(CACHEDB_URL, {
+        useNewUrlParser: true
+      });
+      cacheDB = client.db("register_a_food_business_cache");
+    }
+
+    return cacheDB;
+  }
+};
+
+const CachedRegistrationsCollection = async (client) => (client.collection("cachedRegistrations"));
+
 const getDate = () => {
   return new Date().toLocaleString("en-GB", {
     hour12: false,
@@ -119,6 +137,13 @@ const updateStatusInCache = async (fsa_rn, property, value) => {
       err
     );
   }
+};
+
+const findOneById = async (cachedRegistrations, fsa_rn) => {
+  const cachedRegistration = await cachedRegistrations.findOne({
+    "fsa-rn": fsa_rn
+  });
+  return Object.assign({}, cachedRegistration);
 };
 
 const getStatus = async (cachedRegistrations, fsa_rn) => {
@@ -262,5 +287,9 @@ module.exports = {
   clearMongoConnection,
   updateStatusInCache,
   addNotificationToStatus,
-  updateNotificationOnSent
+  updateNotificationOnSent,
+  establishConnectionToMongo,
+  findOneById,
+  CachedRegistrationsCollection,
+  connectToBeCacheDb
 };

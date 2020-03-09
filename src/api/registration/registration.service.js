@@ -170,16 +170,24 @@ const deleteRegistrationByFsaRn = async fsa_rn => {
 
 const sendTascomiRegistration = async (
   registration,
-  postRegistrationMetadata,
   localCouncil
 ) => {
+  // hack to reduce repair work needed
+  let postRegistrationMetadata = registration;
+
   logEmitter.emit(
     "functionCall",
     "registration.service",
     "sendTascomiRegistration"
   );
-  try {
-    const auth = await getLcAuth(localCouncil);
+
+  if(!(localCouncil.auth)){
+    //no auth so cannot return a value
+    return null;
+  }
+
+
+    const auth = localCouncil.auth;
     const reg = await promiseRetry({ retries: 3 }, (retry, number) => {
       logEmitter.emit(
         "functionCall",
@@ -193,13 +201,22 @@ const sendTascomiRegistration = async (
       ).catch(retry);
     });
 
+    let regParsed = JSON.parse(reg);
+    let referenceIdInput = regParsed.id ? regParsed.id : null;
+
+    if(referenceIdInput === null){
+      const err = new Error("createReferenceNumber failed");
+      err.name = "tascomiRefNumber";
+      throw err;
+    }
+
     const response = await promiseRetry({ retries: 3 }, (retry, number) => {
       logEmitter.emit(
         "functionCall",
         "registration.service",
         `createdReferenceNumber attempt ${number}`
       );
-      return createReferenceNumber(JSON.parse(reg).id, auth).catch(retry);
+      return createReferenceNumber(referenceIdInput, auth).catch(retry);
     });
 
     if (JSON.parse(response).id === 0) {
@@ -207,32 +224,81 @@ const sendTascomiRegistration = async (
       err.name = "tascomiRefNumber";
       throw err;
     }
+
     logEmitter.emit(
       "functionSuccess",
       "registration.service",
       "sendTascomiRegistration"
     );
-    await updateStatusInCache(
-      postRegistrationMetadata["fsa-rn"],
-      "tascomi",
-      true
-    );
+
     return response;
-  } catch (err) {
-    logEmitter.emit(
-      "functionFail",
-      "registrationService",
-      "sendTascomiRegistration",
-      err
-    );
-    await updateStatusInCache(
-      postRegistrationMetadata["fsa-rn"],
-      "tascomi",
-      false
-    );
-    throw err;
-  }
 };
+
+// const sendTascomiRegistrationDeprecated = async (
+//     registration,
+//     postRegistrationMetadata,
+//     localCouncil
+// ) => {
+//   logEmitter.emit(
+//       "functionCall",
+//       "registration.service",
+//       "sendTascomiRegistration"
+//   );
+//   try {
+//     const auth = await getLcAuth(localCouncil);
+//     const reg = await promiseRetry({ retries: 3 }, (retry, number) => {
+//       logEmitter.emit(
+//           "functionCall",
+//           "registration.service",
+//           `createdFoodBusinessRegistration attempt ${number}`
+//       );
+//       return createFoodBusinessRegistration(
+//           registration,
+//           postRegistrationMetadata,
+//           auth
+//       ).catch(retry);
+//     });
+//
+//     const response = await promiseRetry({ retries: 3 }, (retry, number) => {
+//       logEmitter.emit(
+//           "functionCall",
+//           "registration.service",
+//           `createdReferenceNumber attempt ${number}`
+//       );
+//       return createReferenceNumber(JSON.parse(reg).id, auth).catch(retry);
+//     });
+//
+//     if (JSON.parse(response).id === 0) {
+//       const err = new Error("createReferenceNumber failed");
+//       err.name = "tascomiRefNumber";
+//       throw err;
+//     }
+//     logEmitter.emit(
+//         "functionSuccess",
+//         "registration.service",
+//         "sendTascomiRegistration"
+//     );
+//     await updateStatusInCache(
+//         postRegistrationMetadata["fsa-rn"],
+//         "tascomi",
+//         true
+//     );
+//     return response;
+//   } catch (err) {
+//     logEmitter.emit(
+//         "functionFail",
+//         "registrationService",
+//         "sendTascomiRegistration",
+//         err
+//     );
+//     await updateStatusInCache(
+//         postRegistrationMetadata["fsa-rn"],
+//         "tascomi",
+//         false
+//     );
+//     throw err;
+//   }
+// };
 
 const getRegistrationMetaData = async councilCode => {
   logEmitter.emit(

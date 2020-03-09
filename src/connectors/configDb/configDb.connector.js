@@ -12,9 +12,9 @@ let allLcConfigData;
 const establishConnectionToMongo = async collectionName => {
   if (process.env.DOUBLE_MODE === "true") {
     logEmitter.emit(
-      "doubleMode",
-      "configDb.connector",
-      "establishConnectionToMongo"
+        "doubleMode",
+        "configDb.connector",
+        "establishConnectionToMongo"
     );
     return lcConfigCollectionDouble;
   } else {
@@ -27,6 +27,23 @@ const establishConnectionToMongo = async collectionName => {
     return configDB.collection(collectionName);
   }
 };
+
+const connectToConfigDb = async () => {
+  if (process.env.DOUBLE_MODE === "true") {
+    logEmitter.emit( "doubleMode", "configDb.connector",  "establishConnectionToMongo" );
+    return lcConfigCollectionDouble;
+  } else {
+    if (configDB === undefined) {
+      client = await mongodb.MongoClient.connect(CONFIGDB_URL, {
+        useNewUrlParser: true
+      });
+      configDB = client.db("register_a_food_business_config");
+    }
+    return configDB;
+  }
+};
+
+const ConfigDbCollection = async (client) => (await client.collection('lcConfig'));
 
 const getConfigVersion = async regDataVersion => {
   logEmitter.emit("functionCall", "configDb.connector", "getConfigVersion");
@@ -67,6 +84,18 @@ const getConfigVersion = async regDataVersion => {
 
     throw newError;
   }
+};
+
+const findCouncilById = async (collection, id) => {
+    return await collection.find({
+      _id: id
+    });
+};
+
+const findCouncilByUrl = async (collection, url) => {
+  return await collection.find({
+      local_council_url: url
+    });
 };
 
 const getAllLocalCouncilConfig = async () => {
@@ -125,8 +154,13 @@ const addDeletedId = async id => {
 };
 
 module.exports = {
+  establishConnectionToMongo,
+  connectToConfigDb,
+  ConfigDbCollection,
   getAllLocalCouncilConfig,
   clearMongoConnection,
   addDeletedId,
-  getConfigVersion
+  getConfigVersion,
+  findCouncilByUrl,
+  findCouncilById
 };

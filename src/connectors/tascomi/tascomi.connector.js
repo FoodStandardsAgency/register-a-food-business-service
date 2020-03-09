@@ -4,6 +4,10 @@ const { doubleRequest } = require("./tascomi.double");
 const { logEmitter } = require("../../services/logging.service");
 const { statusEmitter } = require("../../services/statusEmitter.service");
 
+const TASCOMI_SKIPPING = 'skipping';
+const TASCOMI_SUCCESS = true;
+const TASCOMI_FAIL = false;
+
 const sendRequest = async (url, method, body, public_key, private_key) => {
   const tascomiApiOptions = {
     url: url,
@@ -11,7 +15,7 @@ const sendRequest = async (url, method, body, public_key, private_key) => {
     form: body
   };
 
-  if (process.env.DOUBLE_MODE === "true") {
+  if (process.env.TASCOMI_DOUBLE_MODE === "true") {
     logEmitter.emit("doubleMode", "tascomi.connector", "sendRequest");
     return doubleRequest(tascomiApiOptions);
   } else {
@@ -246,39 +250,30 @@ const createReferenceNumber = async (id, auth) => {
       auth.private_key
     );
 
-    statusEmitter.emit(
-      "incrementCount",
-      "tascomiCreateRefnumberCallsSucceeded"
-    );
-    statusEmitter.emit(
-      "setStatus",
-      "mostRecentTascomiCreateRefnumberSucceeded",
-      true
-    );
-    logEmitter.emit(
-      "functionSuccess",
-      "tascomi.connector",
-      "createReferenceNumber"
-    );
+    statusEmitter.emit(  "incrementCount","tascomiCreateRefnumberCallsSucceeded" );
+    statusEmitter.emit(    "setStatus","mostRecentTascomiCreateRefnumberSucceeded",  true);
+    logEmitter.emit( "functionSuccess", "tascomi.connector", "createReferenceNumber");
+
     return response;
+
   } catch (err) {
+
     statusEmitter.emit("incrementCount", "tascomiCreateRefnumberCallsFailed");
-    statusEmitter.emit(
-      "setStatus",
-      "mostRecentTascomiCreateRefnumberSucceeded",
-      false
-    );
-    logEmitter.emit(
-      "functionFail",
-      "tascomi.connector",
-      "createReferenceNumber",
-      err
-    );
+    statusEmitter.emit( "setStatus","mostRecentTascomiCreateRefnumberSucceeded", false);
+    logEmitter.emit( "functionFail", "tascomi.connector",   "createReferenceNumber", err);
+
     if (err.statusCode === 401) {
       err.name = "tascomiAuth";
     }
+
     throw err;
   }
 };
 
-module.exports = { createFoodBusinessRegistration, createReferenceNumber };
+module.exports = {
+  createFoodBusinessRegistration,
+  createReferenceNumber,
+  TASCOMI_SKIPPING,
+  TASCOMI_SUCCESS,
+  TASCOMI_FAIL
+};

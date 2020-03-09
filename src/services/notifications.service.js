@@ -205,9 +205,9 @@ const sendEmails = async (
  * @param {object} configData Object containing notify_template_keys and future_delivery_email
  */
 const sendNotifications = async (
+  fsaId,
   lcContactConfig,
   registration,
-  postRegistrationMetadata,
   configData
 ) => {
   let emailsToSend = [];
@@ -250,14 +250,14 @@ const sendNotifications = async (
   }
 
   await addNotificationToStatus(
-    postRegistrationMetadata["fsa-rn"],
+    fsaId,
     emailsToSend
   );
 
   await sendEmails(
     emailsToSend,
     registration,
-    postRegistrationMetadata,
+    fsaId,
     lcContactConfig
   );
 };
