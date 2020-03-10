@@ -43,7 +43,14 @@ const connectToConfigDb = async () => {
   }
 };
 
-const ConfigDbCollection = async (client) => (await client.collection('lcConfig'));
+const disconnectConfigDb = async () => {
+  if(client){
+    client.close();
+  }
+};
+
+const ConfigVersionCollection = async (client) => (await client.collection('configVersion'));
+const LocalCouncilConfigDbCollection = async (client) => (await client.collection('lcConfig'));
 
 const getConfigVersion = async regDataVersion => {
   logEmitter.emit("functionCall", "configDb.connector", "getConfigVersion");
@@ -87,13 +94,13 @@ const getConfigVersion = async regDataVersion => {
 };
 
 const findCouncilById = async (collection, id) => {
-    return await collection.find({
+    return await collection.findOne({
       _id: id
     });
 };
 
 const findCouncilByUrl = async (collection, url) => {
-  return await collection.find({
+  return await collection.findOne({
       local_council_url: url
     });
 };
@@ -156,7 +163,9 @@ const addDeletedId = async id => {
 module.exports = {
   establishConnectionToMongo,
   connectToConfigDb,
-  ConfigDbCollection,
+  disconnectConfigDb,
+  LocalCouncilConfigDbCollection,
+  ConfigVersionCollection,
   getAllLocalCouncilConfig,
   clearMongoConnection,
   addDeletedId,

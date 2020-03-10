@@ -32,18 +32,23 @@ const connectToBeCacheDb = async () => {
     logEmitter.emit( "doubleMode", "cacheDb.connector",   "getAllLocalCouncilConfig" );
     return cachedRegistrationsDouble;
   } else {
-    if (cacheDB === undefined) {
+    if (client === undefined) {
       client = await mongodb.MongoClient.connect(CACHEDB_URL, {
         useNewUrlParser: true
       });
-      cacheDB = client.db("register_a_food_business_cache");
     }
 
-    return cacheDB;
+    return await client.db("register_a_food_business_cache");
   }
 };
 
-const CachedRegistrationsCollection = async (client) => (client.collection("cachedRegistrations"));
+const disconnectCacheDb = async () => {
+  if(client){
+    client.close();
+  }
+};
+
+const CachedRegistrationsCollection = async (client) => (await client.collection("cachedRegistrations"));
 
 const getDate = () => {
   return new Date().toLocaleString("en-GB", {
@@ -291,5 +296,6 @@ module.exports = {
   establishConnectionToMongo,
   findOneById,
   CachedRegistrationsCollection,
-  connectToBeCacheDb
+  connectToBeCacheDb,
+  disconnectCacheDb
 };

@@ -12,6 +12,7 @@ const {
 
 const {
     connectToBeCacheDb,
+    disconnectCacheDb,
     CachedRegistrationsCollection,
     findOneById,
     updateStatusInCache
@@ -20,7 +21,9 @@ const {
 const {
     findCouncilById,
     connectToConfigDb,
-    ConfigDbCollection
+    disconnectConfigDb,
+    ConfigVersionCollection,
+    LocalCouncilConfigDbCollection
 } = require("../../connectors/configDb/configDb.connector");
 
 const {
@@ -32,8 +35,8 @@ const {
 //actions
 const sendRegistrationToTascomiAction = async (fsaId, req, res) => {
     //GET REGISTRATION
-    const beCacheDb = connectToBeCacheDb();
-    const configDb = connectToConfigDb();
+    const beCacheDb = await connectToBeCacheDb();
+    const configDb = await connectToConfigDb();
 
     const cachedRegistrations = await CachedRegistrationsCollection(beCacheDb);
     const registration = await findOneById(cachedRegistrations, fsaId);
@@ -43,7 +46,7 @@ const sendRegistrationToTascomiAction = async (fsaId, req, res) => {
         throw message;
     }
     logEmitter.emit(INFO, `Found registration with ID ${fsaId}`);
-
+    console.log('banana');
     //GET LOCAL COUNCIL
     let localCouncil = await getCouncilFromConfigDb(configDb, registration);
     if(isEmpty(localCouncil)) {
@@ -77,19 +80,17 @@ const sendRegistrationToTascomiAction = async (fsaId, req, res) => {
         await updateStatusInCache(  fsaId, "tascomi", TASCOMI_SKIPPING );
     }
 
-    configDb.close();
-    beCacheDb.close();
+    console.log(configDb, beCacheDb);
 
-    await success(res, {fsaId});
+    await success(res, {fsaId, message:`Updated tascomi registration status`});
 };
 
 const sendNotificationsForRegistrationAction = async (fsaId, req, res) => {
-    const beCacheDb = connectToBeCacheDb();
-    const configDb = connectToConfigDb();
+    const beCacheDb = await connectToBeCacheDb();
+    const configDb = await connectToConfigDb();
 
     //GET REGISTRATION
-    const cachedRegistrations = await CachedRegistrationsCollection(beCacheDb);
-    const registration = await findOneById(cachedRegistrations, fsaId);
+    let registration = await getRegistration(beCacheDb, fsaId);
 
     if(isEmpty(registration)) {
         let message =  `Could not find registration with ID ${fsaId}`;
@@ -106,40 +107,54 @@ const sendNotificationsForRegistrationAction = async (fsaId, req, res) => {
         throw message;
     }
 
-    let configVersion = registration.registrationDataVersion ? registration.registrationDataVersion : null;
-    let config = getConfig(configDb, configVersion);
-    if(isEmpty(localCouncil)) {
-        let message =  `Could not find config ${fsaId}`;
+    let configVersion = registration.registrationDataVersion ? registration.registrationDataVersion : '1.6.0';
+    let config = await getConfig(configDb, configVersion);
+
+    if(isEmpty(config)) {
+        let message =  `Could not find config ${fsaId} version : ${configVersion}`;
         logEmitter.emit(ERROR, message);
         throw message;
     }
 
-    await sendNotifications(
+    console.log(
+        fsaId,
         localCouncil,
         registration,
+        config
+    );
+
+    await sendNotifications(
         fsaId,
+        localCouncil,
+        registration,
         config
     );
 
     logEmitter.emit(INFO, `Send notifications for ${fsaId}`);
 
-    configDb.close();
-    beCacheDb.close();
-
-    await success(res, {fsaId});
+    await success(res, {fsaId, message:`Updated notifications status`});
 };
 
-const saveRegistrationsAction = async (fsaId, req, res) => {
-    const beCacheDb = connectToBeCacheDb();
-    const configDb = connectToConfigDb();
+const saveRegistrationsToTempStoreAction = async (fsaId, req, res) => {
+    console.log(':( banana');
 
+    const beCacheDb = await connectToBeCacheDb();
+
+    console.log(':| banana');
+    const configDb = await connectToConfigDb();
+
+    console.log(':|> banana');
     //GET REGISTRATION
-    let registration = getRegistration(beCacheDb, fsaId);
+    let registration = await getRegistration(beCacheDb, fsaId);
+
+    console.log(registration);
     if(isEmpty(registration)) {
         let message =  `Could not find registration with ID ${fsaId}`;
         logEmitter.emit(ERROR, message);
         throw message;
     }
+
+    console.log('banana');
 
     logEmitter.emit(INFO, `Found registration with ID ${fsaId}`);
 
@@ -157,16 +172,13 @@ const saveRegistrationsAction = async (fsaId, req, res) => {
         localCouncil.local_council_url
     );
 
-    configDb.close();
-    beCacheDb.close();
-
-    await success(res, {fsaId});
+    await success(res, {fsaId, message:`Updated temp-store status`});
 };
 
 // Convenience methods for this controller - dont put else where
-const getConfig = async (client, configVersion = '1.6.0') => {
-    let configCollection = await ConfigDbCollection(client);
-    return configCollection.findOne({_id: configVersion });
+const getConfig = async (client, configVersion) => {
+    let configCollection = await ConfigVersionCollection(client);
+    return await configCollection.findOne({_id: configVersion });
 };
 
 const getRegistration = async (client, fsaId) => {
@@ -176,7 +188,7 @@ const getRegistration = async (client, fsaId) => {
 
 const getCouncilFromConfigDb = async (client, registration) => {
     //this is a strange nasty hack to extract the council id of the initial registration for older records
-    const lcConfigCollection = await ConfigDbCollection(client);
+    const lcConfigCollection = await LocalCouncilConfigDbCollection(client);
     let councilId;
     if(registration.sourceCouncilId){
         // POST feature RS-79
@@ -194,5 +206,5 @@ const getCouncilFromConfigDb = async (client, registration) => {
 module.exports = {
     sendRegistrationToTascomiAction,
     sendNotificationsForRegistrationAction,
-    saveRegistrationsAction
+    saveRegistrationsToTempStoreAction
 };

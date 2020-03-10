@@ -9,7 +9,8 @@ const {success, fail} = require('../../utils/express/response');
 
 const {
     sendRegistrationToTascomiAction,
-    sendNotificationsForRegistrationAction
+    sendNotificationsForRegistrationAction,
+    saveRegistrationsToTempStoreAction
 }  = require('./Tasks.controller');
 
 const {viewDeleteRegistrationAuth} = require("../../middleware/authHandler");
@@ -45,13 +46,15 @@ const TaskRouter = () => {
     });
 
     //SAVE IN POSTGRES
-    // router.get('/registersubmissions', async (req, res)=>{
-    //     // let outcome = registerSubmissionWithTascomiAction();
-    //
-    //     res.send({
-    //         test:"test"
-    //     });
-    // });
+    router.get('/savetotempstore/:fsaId', async (req, res)=>{
+        const {fsaId=null} = req.params;
+        try {
+            await saveRegistrationsToTempStoreAction(fsaId, req, res);
+        }
+        catch(e) {
+            await fail(406, res, e.message);
+        }
+    });
 
     return router;
 };
