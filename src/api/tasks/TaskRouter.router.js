@@ -8,6 +8,7 @@ const {success, fail} = require('../../utils/express/response');
 
 
 const {
+    sendOutstandingRegistrationsToTascomi,
     sendRegistrationToTascomiAction,
     sendNotificationsForRegistrationAction,
     saveRegistrationsToTempStoreAction
@@ -21,9 +22,17 @@ const TaskRouter = () => {
     //apply any middleware
     //router.use(viewDeleteRegistrationAuth);
 
-    router.get('/createtascomiregistration/:fsaId', async (req, res)=>{
-        // let outcome = registerSubmissionWithTascomiAction();
+    router.get('/bulk/createtascomiregistration', async (req, res)=>{
+        const {fsaId=null} = req.params;
+        try {
+            await sendOutstandingRegistrationsToTascomi(req, res);
+        }
+        catch(e) {
+            await fail(406, res, e.message);
+        }
+    });
 
+    router.get('/createtascomiregistration/:fsaId', async (req, res)=>{
         const {fsaId=null} = req.params;
         try {
             await sendRegistrationToTascomiAction(fsaId, req, res);
