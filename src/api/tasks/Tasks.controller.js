@@ -33,21 +33,9 @@ const {
     TASCOMI_FAIL
 } = require('../../connectors/tascomi/tascomi.connector');
 
-const sendOutstandingRegistrationsToTascomi = async (req, res) => {
-    const beCacheDb = await connectToBeCacheDb();
-    const configDb = await connectToConfigDb();
 
-    const registrationsCollection = await CachedRegistrationsCollection(beCacheDb);
 
-    const ids = await findOutstandingTascomiRegistrationsByFsaId(registrationsCollection);
-    console.log('count', await ids.count());
-    let fsaId;
-    ids.forEach( multiSendRegistrationToTascomi(configDb) );
-
-    await success(res, {fsaId, message:`Updated tascomi registration status`});
-};
-
-const multiSendRegistrationToTascomi = async (configDb) => (registration) => {
+const multiSendRegistrationToTascomi = async (configDb) => async (registration) => {
     let fsaId = registration['fsa-rn'];
 
     let localCouncil = await getCouncilFromConfigDb(configDb, registration);
@@ -81,6 +69,20 @@ const multiSendRegistrationToTascomi = async (configDb) => (registration) => {
         //NOT APPLICABLE - nothing to update
         await updateStatusInCache(  fsaId, "tascomi", TASCOMI_SKIPPING );
     }
+};
+
+const sendOutstandingRegistrationsToTascomi = async (req, res) => {
+    const beCacheDb = await connectToBeCacheDb();
+    const configDb = await connectToConfigDb();
+
+    const registrationsCollection = await CachedRegistrationsCollection(beCacheDb);
+
+    const ids = await findOutstandingTascomiRegistrationsByFsaId(registrationsCollection);
+    console.log('count', await ids.count());
+    let fsaId;
+    await ids.forEach( async (registration) => await (await multiSendRegistrationToTascomi(configDb))(registration) );
+
+    await success(res, {fsaId, message:`Updated tascomi registration status`});
 };
 
 //actions
