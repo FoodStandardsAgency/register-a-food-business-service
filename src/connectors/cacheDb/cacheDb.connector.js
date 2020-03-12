@@ -144,10 +144,18 @@ const updateStatusInCache = async (fsa_rn, property, value) => {
   }
 };
 
-const findOutstandingTascomiRegistrationsByFsaId = async (cachedRegistrations, limit= 100) => {
+const findAllOutstandingNotificationsRegistrations = async (cachedRegistrations, limit = 100) => {
+  return await cachedRegistrations.find({
+    $or: [
+      {"status.notifications": { $all: [  { "$elemMatch" : { sent: {$ne: true} } } ] }},
+      {"status.notifications": {$exists: false} }]
+    }).sort( { reg_submission_date: 1 } ).limit( limit );
+};
+
+const findOutstandingTascomiRegistrationsFsaIds = async (cachedRegistrations, limit= 100) => {
   return await cachedRegistrations.find({
     $or:[
-      { "status.tascomi.complete": {$eq: false}},
+      { "status.notifications.complete": {$eq: false}},
       { "status.tascomi": {$exists: false}},
     ]
   }, {_id:1, "fsa-rn": 1}).sort( { reg_submission_date: 1 } ).limit( limit );
@@ -297,7 +305,8 @@ const clearMongoConnection = () => {
 };
 
 module.exports = {
-  findOutstandingTascomiRegistrationsByFsaId,
+  findAllOutstandingNotificationsRegistrations,
+  findOutstandingTascomiRegistrationsFsaIds,
   cacheRegistration,
   clearMongoConnection,
   updateStatusInCache,

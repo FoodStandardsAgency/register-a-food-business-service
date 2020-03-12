@@ -6,12 +6,12 @@ const { logEmitter } = require("../../services/logging.service");
 const { statusEmitter } = require("../../services/statusEmitter.service");
 const {success, fail} = require('../../utils/express/response');
 
-
 const {
-    sendOutstandingRegistrationsToTascomi,
+    sendAllOutstandingRegistrationsToTascomi,
     sendRegistrationToTascomiAction,
     sendNotificationsForRegistrationAction,
-    saveRegistrationsToTempStoreAction
+    saveRegistrationsToTempStoreAction,
+    sendAllNotificationsForRegistrationsAction
 }  = require('./Tasks.controller');
 
 const {viewDeleteRegistrationAuth} = require("../../middleware/authHandler");
@@ -25,7 +25,7 @@ const TaskRouter = () => {
     router.get('/bulk/createtascomiregistration', async (req, res)=>{
         const {fsaId=null} = req.params;
         try {
-            await sendOutstandingRegistrationsToTascomi(req, res);
+            await sendAllOutstandingRegistrationsToTascomi(req, res);
         }
         catch(e) {
             await fail(406, res, e.message);
@@ -44,6 +44,16 @@ const TaskRouter = () => {
 
 
     // SEND EMAILS AND STUFF
+    router.get('/bulk/sendnotification', async (req, res)=>{
+        const {fsaId=null} = req.params;
+        try {
+            await sendAllNotificationsForRegistrationsAction(req, res);
+        }
+        catch(e) {
+            await fail(406, res, e.message);
+        }
+    });
+
     router.get('/sendnotification/:fsaId', async (req, res)=>{
         const {fsaId=null} = req.params;
         try {

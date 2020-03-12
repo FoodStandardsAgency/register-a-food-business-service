@@ -16,13 +16,13 @@ const {
     CachedRegistrationsCollection,
     findOneById,
     updateStatusInCache,
-    findOutstandingTascomiRegistrationsByFsaId
+    findOutstandingTascomiRegistrationsFsaIds,
+    findAllOutstandingNotificationsRegistrations
 } = require("../../connectors/cacheDb/cacheDb.connector");
 
 const {
     findCouncilById,
     connectToConfigDb,
-    disconnectConfigDb,
     ConfigVersionCollection,
     LocalCouncilConfigDbCollection
 } = require("../../connectors/configDb/configDb.connector");
@@ -34,6 +34,32 @@ const {
 } = require('../../connectors/tascomi/tascomi.connector');
 
 
+const multiSendNotifications = async (configDb) => async (registration) => {
+    let fsaId = registration['fsa-rn'];
+
+    let localCouncil = await getCouncilFromConfigDb(configDb, registration);
+    if(isEmpty(localCouncil)) {
+        let message =  `Could not find local council with ID ${fsaId}`;
+        logEmitter.emit(ERROR, message);
+        throw message;
+    }
+
+    let configVersion = registration.registrationDataVersion ? registration.registrationDataVersion : '1.6.0';
+    let config = await getConfig(configDb, configVersion);
+
+    if(isEmpty(config)) {
+        let message =  `Could not find config ${fsaId} version : ${configVersion}`;
+        logEmitter.emit(ERROR, message);
+        throw message;
+    }
+
+    await sendNotifications(
+        fsaId,
+        localCouncil,
+        registration,
+        config
+    );
+};
 
 const multiSendRegistrationToTascomi = async (configDb) => async (registration) => {
     let fsaId = registration['fsa-rn'];
@@ -64,23 +90,24 @@ const multiSendRegistrationToTascomi = async (configDb) => async (registration) 
         }
     }
     else{
-        console.log('not sending tascomi registraion');
-
         //NOT APPLICABLE - nothing to update
         await updateStatusInCache(  fsaId, "tascomi", TASCOMI_SKIPPING );
     }
 };
 
-const sendOutstandingRegistrationsToTascomi = async (req, res) => {
+const sendAllOutstandingRegistrationsToTascomi = async (req, res) => {
     const beCacheDb = await connectToBeCacheDb();
     const configDb = await connectToConfigDb();
 
     const registrationsCollection = await CachedRegistrationsCollection(beCacheDb);
 
-    const ids = await findOutstandingTascomiRegistrationsByFsaId(registrationsCollection);
-    console.log('count', await ids.count());
+    const ids = await findOutstandingTascomiRegistrationsFsaIds(registrationsCollection);
     let fsaId;
-    await ids.forEach( async (registration) => await (await multiSendRegistrationToTascomi(configDb))(registration) );
+
+    ids.forEach( async (registration) => {
+        await (await multiSendRegistrationToTascomi(configDb))(registration);
+        logEmitter.emit(INFO, `Sent tascomi registraions for FSAId ${fsaId}`)
+    });
 
     await success(res, {fsaId, message:`Updated tascomi registration status`});
 };
@@ -99,7 +126,6 @@ const sendRegistrationToTascomiAction = async (fsaId, req, res) => {
         throw message;
     }
     logEmitter.emit(INFO, `Found registration with ID ${fsaId}`);
-    console.log('banana');
     //GET LOCAL COUNCIL
     let localCouncil = await getCouncilFromConfigDb(configDb, registration);
     if(isEmpty(localCouncil)) {
@@ -127,15 +153,27 @@ const sendRegistrationToTascomiAction = async (fsaId, req, res) => {
         }
     }
     else{
-        console.log('not sending tascomi registraion');
-
         //NOT APPLICABLE - nothing to update
         await updateStatusInCache(  fsaId, "tascomi", TASCOMI_SKIPPING );
     }
 
-    console.log(configDb, beCacheDb);
-
     await success(res, {fsaId, message:`Updated tascomi registration status`});
+};
+
+const sendAllNotificationsForRegistrationsAction = async (req, res) => {
+    const beCacheDb = await connectToBeCacheDb();
+    const configDb = await connectToConfigDb();
+
+    const registrationsCollection = await CachedRegistrationsCollection(beCacheDb);
+
+    const ids = await findAllOutstandingNotificationsRegistrations(registrationsCollection);
+    let fsaId;
+    ids.forEach( async (registration) => {
+        await (await multiSendNotifications(configDb))(registration);
+        logEmitter.emit(INFO, `Sent notifications for FSAId ${fsaId}`)
+    });
+
+    await success(res, {fsaId, message:`Updated notification status`});
 };
 
 const sendNotificationsForRegistrationAction = async (fsaId, req, res) => {
@@ -169,13 +207,6 @@ const sendNotificationsForRegistrationAction = async (fsaId, req, res) => {
         throw message;
     }
 
-    console.log(
-        fsaId,
-        localCouncil,
-        registration,
-        config
-    );
-
     await sendNotifications(
         fsaId,
         localCouncil,
@@ -189,25 +220,19 @@ const sendNotificationsForRegistrationAction = async (fsaId, req, res) => {
 };
 
 const saveRegistrationsToTempStoreAction = async (fsaId, req, res) => {
-    console.log(':( banana');
 
     const beCacheDb = await connectToBeCacheDb();
 
-    console.log(':| banana');
     const configDb = await connectToConfigDb();
 
-    console.log(':|> banana');
     //GET REGISTRATION
     let registration = await getRegistration(beCacheDb, fsaId);
 
-    console.log(registration);
     if(isEmpty(registration)) {
         let message =  `Could not find registration with ID ${fsaId}`;
         logEmitter.emit(ERROR, message);
         throw message;
     }
-
-    console.log('banana');
 
     logEmitter.emit(INFO, `Found registration with ID ${fsaId}`);
 
@@ -257,8 +282,9 @@ const getCouncilFromConfigDb = async (client, registration) => {
 };
 
 module.exports = {
+    sendAllNotificationsForRegistrationsAction,
     sendRegistrationToTascomiAction,
     sendNotificationsForRegistrationAction,
     saveRegistrationsToTempStoreAction,
-    sendOutstandingRegistrationsToTascomi
+    sendAllOutstandingRegistrationsToTascomi
 };
