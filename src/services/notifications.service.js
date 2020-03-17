@@ -249,17 +249,9 @@ const sendNotifications = async (
     });
   }
 
-  await addNotificationToStatus(
-    fsaId,
-    emailsToSend
-  );
+  await addNotificationToStatus(fsaId, emailsToSend);
 
-  await sendEmails(
-    emailsToSend,
-    registration,
-    fsaId,
-    lcContactConfig
-  );
+  await sendEmails(emailsToSend, registration, fsaId, lcContactConfig);
 };
 
 /**

@@ -12,9 +12,9 @@ let allLcConfigData;
 const establishConnectionToMongo = async collectionName => {
   if (process.env.DOUBLE_MODE === "true") {
     logEmitter.emit(
-        "doubleMode",
-        "configDb.connector",
-        "establishConnectionToMongo"
+      "doubleMode",
+      "configDb.connector",
+      "establishConnectionToMongo"
     );
     return lcConfigCollectionDouble;
   } else {
@@ -30,7 +30,11 @@ const establishConnectionToMongo = async collectionName => {
 
 const connectToConfigDb = async () => {
   if (process.env.DOUBLE_MODE === "true") {
-    logEmitter.emit( "doubleMode", "configDb.connector",  "establishConnectionToMongo" );
+    logEmitter.emit(
+      "doubleMode",
+      "configDb.connector",
+      "establishConnectionToMongo"
+    );
     return lcConfigCollectionDouble;
   } else {
     if (configDB === undefined) {
@@ -44,13 +48,15 @@ const connectToConfigDb = async () => {
 };
 
 const disconnectConfigDb = async () => {
-  if(client){
+  if (client) {
     client.close();
   }
 };
 
-const ConfigVersionCollection = async (client) => (await client.collection('configVersion'));
-const LocalCouncilConfigDbCollection = async (client) => (await client.collection('lcConfig'));
+const ConfigVersionCollection = async client =>
+  await client.collection("configVersion");
+const LocalCouncilConfigDbCollection = async client =>
+  await client.collection("lcConfig");
 
 const getConfigVersion = async regDataVersion => {
   logEmitter.emit("functionCall", "configDb.connector", "getConfigVersion");
@@ -94,15 +100,15 @@ const getConfigVersion = async regDataVersion => {
 };
 
 const findCouncilById = async (collection, id) => {
-    return await collection.findOne({
-      _id: id
-    });
+  return await collection.findOne({
+    _id: id
+  });
 };
 
 const findCouncilByUrl = async (collection, url) => {
   return await collection.findOne({
-      local_council_url: url
-    });
+    local_council_url: url
+  });
 };
 
 const getAllLocalCouncilConfig = async () => {

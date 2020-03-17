@@ -85,7 +85,7 @@ const createNewRegistration = async (
       //the council id resolved from the localCouncilUrl
       sourceCouncilId: sourceCouncil.id
     },
-      {registrationDataVersion: regDataVersion}
+    { registrationDataVersion: regDataVersion }
   );
 
   await cacheRegistration(completeCacheRecord);

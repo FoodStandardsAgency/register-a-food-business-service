@@ -29,7 +29,11 @@ const establishConnectionToMongo = async () => {
 
 const connectToBeCacheDb = async () => {
   if (process.env.DOUBLE_MODE === "true") {
-    logEmitter.emit( "doubleMode", "cacheDb.connector",   "getAllLocalCouncilConfig" );
+    logEmitter.emit(
+      "doubleMode",
+      "cacheDb.connector",
+      "getAllLocalCouncilConfig"
+    );
     return cachedRegistrationsDouble;
   } else {
     if (client === undefined) {
@@ -43,12 +47,13 @@ const connectToBeCacheDb = async () => {
 };
 
 const disconnectCacheDb = async () => {
-  if(client){
+  if (client) {
     client.close();
   }
 };
 
-const CachedRegistrationsCollection = async (client) => (await client.collection("cachedRegistrations"));
+const CachedRegistrationsCollection = async client =>
+  await client.collection("cachedRegistrations");
 
 const getDate = () => {
   return new Date().toLocaleString("en-GB", {
@@ -144,21 +149,41 @@ const updateStatusInCache = async (fsa_rn, property, value) => {
   }
 };
 
-const findAllOutstandingNotificationsRegistrations = async (cachedRegistrations, limit = 100) => {
-  return await cachedRegistrations.find({
-    $or: [
-      {"status.notifications": { $all: [  { "$elemMatch" : { sent: {$ne: true} } } ] }},
-      {"status.notifications": {$exists: false} }]
-    }).sort( { reg_submission_date: 1 } ).limit( limit );
+const findAllOutstandingNotificationsRegistrations = async (
+  cachedRegistrations,
+  limit = 100
+) => {
+  return await cachedRegistrations
+    .find({
+      $or: [
+        {
+          "status.notifications": {
+            $all: [{ $elemMatch: { sent: { $ne: true } } }]
+          }
+        },
+        { "status.notifications": { $exists: false } }
+      ]
+    })
+    .sort({ reg_submission_date: 1 })
+    .limit(limit);
 };
 
-const findOutstandingTascomiRegistrationsFsaIds = async (cachedRegistrations, limit= 100) => {
-  return await cachedRegistrations.find({
-    $or:[
-      { "status.notifications.complete": {$eq: false}},
-      { "status.tascomi": {$exists: false}},
-    ]
-  }, {_id:1, "fsa-rn": 1}).sort( { reg_submission_date: 1 } ).limit( limit );
+const findOutstandingTascomiRegistrationsFsaIds = async (
+  cachedRegistrations,
+  limit = 100
+) => {
+  return await cachedRegistrations
+    .find(
+      {
+        $or: [
+          { "status.tascomi.complete": { $eq: false } },
+          { "status.tascomi": { $exists: false } }
+        ]
+      },
+      { _id: 1, "fsa-rn": 1 }
+    )
+    .sort({ reg_submission_date: 1 })
+    .limit(limit);
 };
 
 const findOneById = async (cachedRegistrations, fsa_rn) => {

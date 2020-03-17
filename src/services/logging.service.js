@@ -3,13 +3,13 @@ const { info, error, debug } = require("winston");
 
 class LogEmitter extends EventEmitter {}
 
-const DEBUG='debug';
-const ERROR='error';
-const INFO='info';
-const FUNCTION_CALL='functionCall';
-const FUNCTION_SUCCESS='functionSuccess';
-const FUNCTION_FAIL='functionFail';
-const DOUBLE_MODE='doubleMode';
+const DEBUG = "debug";
+const ERROR = "error";
+const INFO = "info";
+const FUNCTION_CALL = "functionCall";
+const FUNCTION_SUCCESS = "functionSuccess";
+const FUNCTION_FAIL = "functionFail";
+const DOUBLE_MODE = "doubleMode";
 
 const logEmitter = new LogEmitter();
 
@@ -29,15 +29,15 @@ logEmitter.on(DOUBLE_MODE, (module, functionName) => {
   info(`${module}: ${functionName}: running in double mode`);
 });
 
-logEmitter.on(INFO, (message)=>{
+logEmitter.on(INFO, message => {
   info(message);
 });
 
-logEmitter.on(DEBUG, (message)=>{
+logEmitter.on(DEBUG, message => {
   debug(message);
 });
 
-logEmitter.on(ERROR, (message)=>{
+logEmitter.on(ERROR, message => {
   error(message);
 });
 

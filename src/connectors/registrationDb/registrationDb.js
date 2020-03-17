@@ -8,18 +8,20 @@ const {
   Registration,
   Partner
 } = require("../../db/db");
+
+const db = require("../../db/models");
+
 const { logEmitter } = require("../../services/logging.service");
 
-const modelCreate = async (data, model, modelName) => {
+const managedTransaction = async (callback = () => {}) => async () =>
+  await db.sequelize.transaction(async t => callback(t));
+
+const modelCreate = async (data, model, modelName, transaction = null) => {
   try {
-    const response = await promiseRetry({ retries: 3 }, (retry, number) => {
-      logEmitter.emit(
-        "functionCall",
-        "registration.connector.js",
-        `create${modelName} attempt ${number}`
-      );
-      return model.create(data).catch(retry);
-    });
+    let options = transaction === null ? {} : { transaction };
+
+    const response = model.create(data, options).catch(retry);
+
     logEmitter.emit(
       "functionSuccess",
       "registration.connector.js",
@@ -37,39 +39,51 @@ const modelCreate = async (data, model, modelName) => {
   }
 };
 
-const createActivities = async (activities, establishmentId) => {
+const createActivities = async (
+  activities,
+  establishmentId,
+  transaction = null
+) => {
   const data = Object.assign({}, activities, { establishmentId });
-  return modelCreate(data, Activities, "Activities");
+  return modelCreate(data, Activities, "Activities", transaction);
 };
 
-const createEstablishment = async (establishment, registrationId) => {
+const createEstablishment = async (
+  establishment,
+  registrationId,
+  transaction = null
+) => {
   const data = Object.assign({}, establishment, { registrationId });
-  return modelCreate(data, Establishment, "Establishment");
+  return modelCreate(data, Establishment, "Establishment", transaction);
 };
 
-const createMetadata = async (metadata, registrationId) => {
+const createMetadata = async (metadata, registrationId, transaction = null) => {
   const data = Object.assign({}, metadata, { registrationId });
-  return modelCreate(data, Metadata, "Metadata");
+  return modelCreate(data, Metadata, "Metadata", transaction);
 };
 
-const createOperator = async (operator, establishmentId) => {
+const createOperator = async (
+  operator,
+  establishmentId,
+  transaction = null
+) => {
   const data = Object.assign({}, operator, { establishmentId });
-  return modelCreate(data, Operator, "Operator");
+  return modelCreate(data, Operator, "Operator", transaction);
 };
 
-const createPartner = async (partner, operatorId) => {
+const createPartner = async (partner, operatorId, transaction = null) => {
   const data = Object.assign({}, partner, { operatorId });
-  return modelCreate(data, Partner, "Partner");
+  return modelCreate(data, Partner, "Partner", transaction);
 };
 
-const createPremise = async (premise, establishmentId) => {
+const createPremise = async (premise, establishmentId, transaction = null) => {
   const data = Object.assign({}, premise, { establishmentId });
-  return modelCreate(data, Premise, "Premise");
+  return modelCreate(data, Premise, "Premise", transaction);
 };
 
-const createRegistration = async (fsa_rn, council) => {
+const createRegistration = async (fsa_rn, council, transaction = null) => {
   const data = { fsa_rn, council };
-  return modelCreate(data, Registration, "Registration");
+  return modelCreate(data, Registration, "Registration", transaction);
 };
 
 const modelFindOne = async (query, model, functionName) => {
@@ -219,6 +233,7 @@ const destroyActivitiesByEstablishmentId = async id => {
 };
 
 module.exports = {
+  managedTransaction,
   createActivities,
   createEstablishment,
   createMetadata,

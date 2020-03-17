@@ -4,7 +4,7 @@ const { doubleRequest } = require("./tascomi.double");
 const { logEmitter } = require("../../services/logging.service");
 const { statusEmitter } = require("../../services/statusEmitter.service");
 
-const TASCOMI_SKIPPING = 'skipping';
+const TASCOMI_SKIPPING = "skipping";
 const TASCOMI_SUCCESS = true;
 const TASCOMI_FAIL = false;
 
@@ -250,17 +250,35 @@ const createReferenceNumber = async (id, auth) => {
       auth.private_key
     );
 
-    statusEmitter.emit(  "incrementCount","tascomiCreateRefnumberCallsSucceeded" );
-    statusEmitter.emit(    "setStatus","mostRecentTascomiCreateRefnumberSucceeded",  true);
-    logEmitter.emit( "functionSuccess", "tascomi.connector", "createReferenceNumber");
+    statusEmitter.emit(
+      "incrementCount",
+      "tascomiCreateRefnumberCallsSucceeded"
+    );
+    statusEmitter.emit(
+      "setStatus",
+      "mostRecentTascomiCreateRefnumberSucceeded",
+      true
+    );
+    logEmitter.emit(
+      "functionSuccess",
+      "tascomi.connector",
+      "createReferenceNumber"
+    );
 
     return response;
-
   } catch (err) {
-
     statusEmitter.emit("incrementCount", "tascomiCreateRefnumberCallsFailed");
-    statusEmitter.emit( "setStatus","mostRecentTascomiCreateRefnumberSucceeded", false);
-    logEmitter.emit( "functionFail", "tascomi.connector",   "createReferenceNumber", err);
+    statusEmitter.emit(
+      "setStatus",
+      "mostRecentTascomiCreateRefnumberSucceeded",
+      false
+    );
+    logEmitter.emit(
+      "functionFail",
+      "tascomi.connector",
+      "createReferenceNumber",
+      err
+    );
 
     if (err.statusCode === 401) {
       err.name = "tascomiAuth";
