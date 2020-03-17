@@ -11,6 +11,7 @@
     "debug:local": "export $(grep -v '^#' .env | xargs -d '\n') && node --inspect src/app.js",
     "test": "jest ./src --coverage",
     "test:unit:ci": "export TEST_TYPE=unit && jest ./src --coverage",
+    "test:raw": "export TEST_TYPE=unit && jest",
     "test:watch": "export TEST_TYPE=unit && jest ./src --watch",
     "test:integration": "export TEST_TYPE=integration && jest tests/integration/*.js",
     "test:contract": "jest tests/contract/*.js",
