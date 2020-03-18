@@ -1,3 +1,6 @@
+jest.mock("mongodb");
+jest.mock("../../services/statusEmitter.service");
+
 const mongodb = require("mongodb");
 const {
   cacheRegistration,
@@ -6,9 +9,6 @@ const {
   updateNotificationOnSent,
   addNotificationToStatus
 } = require("./cacheDb.connector");
-
-jest.mock("mongodb");
-jest.mock("../../services/statusEmitter.service");
 
 describe("Connector: cacheDb", () => {
   let response;

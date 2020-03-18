@@ -15,6 +15,8 @@ const sendSingleEmail = async (
   flattenedData,
   pdfFile
 ) => {
+  console.log(templateId, recipientEmail, flattenedData);
+
   logEmitter.emit("functionCall", "notify.connector", "sendSingleEmail");
 
   let notifyClient;
