@@ -53,8 +53,9 @@ describe("Tascomi integration: createFoodBusinessRegistration", () => {
             operator_first_name: "Fred",
             operator_last_name: "Bloggs",
             operator_postcode: "SW12 9RQ",
-            operator_first_line: "335",
-            operator_street: "Some St.",
+            operator_address_line_1: "335",
+            operator_address_line_2: "Some St.",
+            operator_address_line_3: "Locality",
             operator_town: "London",
             operator_primary_number: "9827235",
             operator_email: "operator@email.com",
@@ -63,8 +64,9 @@ describe("Tascomi integration: createFoodBusinessRegistration", () => {
           },
           premise: {
             establishment_postcode: "SW12 9RQ",
-            establishment_first_line: "123",
-            establishment_street: "Street",
+            establishment_address_line_1: "123",
+            establishment_address_line_2: "Street",
+            establishment_address_line_3: "Locality",
             establishment_town: "London",
             establishment_type: "somewhere"
           },

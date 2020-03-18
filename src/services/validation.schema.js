@@ -3,8 +3,8 @@ const {
   validatePostCode,
   validateFirstLine,
   validateOptionalString,
+  validateMandatoryString,
   validateName,
-  validateTown,
   validateEstablishmentTradingName,
   validatePhoneNumber,
   validatePhoneNumberOptional,
@@ -98,21 +98,21 @@ const schema = {
                 type: "string",
                 validation: validatePostCode
               },
-              operator_first_line: {
+              operator_address_line_1: {
                 type: "string",
-                validation: validateFirstLine
+                validation: validateMandatoryString
               },
-              operator_street: {
+              operator_address_line_2: {
                 type: "string",
                 validation: validateOptionalString
               },
-              operator_dependent_locality: {
+              operator_address_line_3: {
                 type: "string",
                 validation: validateOptionalString
               },
               operator_town: {
                 type: "string",
-                validation: validateTown
+                validation: validateMandatoryString
               },
               operator_primary_number: {
                 type: "string",
@@ -158,7 +158,8 @@ const schema = {
             required: [
               "operator_type",
               "operator_postcode",
-              "operator_first_line"
+              "operator_address_line_1",
+              "operator_town"
             ],
             allOf: [
               {
@@ -196,21 +197,21 @@ const schema = {
                 type: "string",
                 validation: validatePostCode
               },
-              establishment_first_line: {
+              establishment_address_line_1: {
                 type: "string",
-                validation: validateFirstLine
+                validation: validateMandatoryString
               },
-              establishment_street: {
+              establishment_address_line_2: {
                 type: "string",
                 validation: validateOptionalString
               },
-              establishment_dependent_locality: {
+              establishment_address_line_3: {
                 type: "string",
                 validation: validateOptionalString
               },
               establishment_town: {
                 type: "string",
-                validation: validateTown
+                validation: validateMandatoryString
               },
               establishment_type: {
                 type: "string",
@@ -219,8 +220,9 @@ const schema = {
             },
             required: [
               "establishment_postcode",
-              "establishment_first_line",
-              "establishment_type"
+              "establishment_address_line_1",
+              "establishment_type",
+              "establishment_town"
             ]
           },
           activities: {

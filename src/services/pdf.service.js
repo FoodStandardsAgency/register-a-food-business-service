@@ -34,14 +34,19 @@ const transformDataForPdf = (
   const lcInfo = getLcNames(lcContactConfig);
 
   const operator = { ...registrationData.establishment.operator };
+  delete operator.operator_first_line;
+  delete operator.operator_street;
   const partners = registrationData.establishment.operator.partners;
   delete operator.partners;
+  const premise = { ...registrationData.establishment.premise };
+  delete premise.establishment_first_line;
+  delete premise.establishment_street;
 
   const pdfData = {
     operator,
     establishment: {
       ...registrationData.establishment.establishment_details,
-      ...registrationData.establishment.premise
+      ...premise
     },
     activities: { ...registrationData.establishment.activities },
     declaration: { ...registrationData.declaration },

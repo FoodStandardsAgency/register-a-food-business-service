@@ -6,11 +6,23 @@
   "configurations": [
     {
       "type": "node",
+      "request": "launch",
+      "name": "Launch via NPM",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run-script", "debug:local"],
+      "port": 9229,
+      "skipFiles": [
+        "${workspaceFolder}/node_modules/**/*.js",
+        "${workspaceFolder}/lib/**/*.js",
+        "<node_internals>/**/*.js",
+        "**/async_hooks.js"
+      ]
+    },
+    {
+      "type": "node",
       "name": "vscode-jest-tests",
       "request": "launch",
-      "args": [
-        "--runInBand"
-      ],
+      "args": ["--runInBand"],
       "cwd": "${workspaceFolder}",
       "console": "integratedTerminal",
       "internalConsoleOptions": "neverOpen",
@@ -21,6 +33,19 @@
       "request": "launch",
       "name": "Launch Program",
       "program": "${workspaceFolder}/src/app.js"
+    },
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "Debug unit tests",
+      "program": "${workspaceFolder}/node_modules/jest/bin/jest",
+      "args": ["--runInBand", "./src"],
+      "console": "integratedTerminal",
+      "internalConsoleOptions": "neverOpen",
+      "disableOptimisticBPs": true,
+      "windows": {
+        "program": "${workspaceFolder}/node_modules/jest/bin/jest"
+      }
     }
   ]
 }
