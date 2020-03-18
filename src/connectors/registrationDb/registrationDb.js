@@ -2,7 +2,7 @@ const promiseRetry = require("promise-retry");
 const {
   Activities,
   Establishment,
-  Metadata,
+  Declaration,
   Operator,
   Premise,
   Registration,
@@ -47,9 +47,9 @@ const createEstablishment = async (establishment, registrationId) => {
   return modelCreate(data, Establishment, "Establishment");
 };
 
-const createMetadata = async (metadata, registrationId) => {
-  const data = Object.assign({}, metadata, { registrationId });
-  return modelCreate(data, Metadata, "Metadata");
+const createDeclaration = async (declaration, registrationId) => {
+  const data = Object.assign({}, declaration, { registrationId });
+  return modelCreate(data, Declaration, "Declaration");
 };
 
 const createOperator = async (operator, establishmentId) => {
@@ -117,11 +117,11 @@ const getEstablishmentByRegId = async id => {
   );
 };
 
-const getMetadataByRegId = async id => {
+const getDeclarationByRegId = async id => {
   return modelFindOne(
     { where: { registrationId: id } },
-    Metadata,
-    "getMetadataByRegId"
+    Declaration,
+    "getDeclarationByRegId"
   );
 };
 
@@ -186,11 +186,11 @@ const destroyEstablishmentByRegId = async id => {
   );
 };
 
-const destroyMetadataByRegId = async id => {
+const destroyDeclarationByRegId = async id => {
   return modelDestroy(
     { where: { registrationId: id } },
-    Metadata,
-    "destroyMetadataByRegId"
+    Declaration,
+    "destroyDeclarationByRegId"
   );
 };
 
@@ -221,7 +221,7 @@ const destroyActivitiesByEstablishmentId = async id => {
 module.exports = {
   createActivities,
   createEstablishment,
-  createMetadata,
+  createDeclaration,
   createOperator,
   createPremise,
   createPartner,
@@ -229,13 +229,13 @@ module.exports = {
   getRegistrationById,
   getRegistrationByFsaRn,
   getEstablishmentByRegId,
-  getMetadataByRegId,
+  getDeclarationByRegId,
   getOperatorByEstablishmentId,
   getPremiseByEstablishmentId,
   getActivitiesByEstablishmentId,
   destroyRegistrationById,
   destroyEstablishmentByRegId,
-  destroyMetadataByRegId,
+  destroyDeclarationByRegId,
   destroyOperatorByEstablishmentId,
   destroyPremiseByEstablishmentId,
   destroyActivitiesByEstablishmentId

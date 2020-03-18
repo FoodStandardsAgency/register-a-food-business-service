@@ -87,7 +87,7 @@ const transformDataForNotify = (
     registrationClone.establishment.establishment_details,
     registrationClone.establishment.operator,
     registrationClone.establishment.activities,
-    registrationClone.metadata,
+    registrationClone.declaration,
     postRegistrationMetadataClone,
     lcInfo
   );
@@ -235,7 +235,7 @@ const sendNotifications = async (
     templateId: configData.notify_template_keys.fbo_submission_complete
   });
 
-  if (registration.metadata.feedback1) {
+  if (registration.declaration.feedback1) {
     emailsToSend.push({
       type: "FBO_FB",
       address: fboEmailAddress,
