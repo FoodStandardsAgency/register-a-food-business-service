@@ -1,22 +1,17 @@
 const { validate } = require("../../services/validation.service");
 const {
-  saveRegistration,
   getFullRegistrationByFsaRn,
   deleteRegistrationByFsaRn,
-  sendTascomiRegistration,
   getRegistrationMetaData,
-  getLcContactConfig,
-  getLcAuth
+  getLcContactConfig
 } = require("./registration.service");
-
-const { sendNotifications } = require("../../services/notifications.service");
 
 const {
   cacheRegistration
 } = require("../../connectors/cacheDb/cacheDb.connector");
 
 const {
-  getConfigVersion
+  findCouncilByUrl
 } = require("../../connectors/configDb/configDb.connector");
 
 const { logEmitter } = require("../../services/logging.service");
@@ -81,11 +76,11 @@ const createNewRegistration = async (
       hygiene_council_code: hygieneCouncilCode
     },
     {
-      localCouncilUrl,
+      local_council_url: localCouncilUrl,
       //the council id resolved from the localCouncilUrl
-      sourceCouncilId: sourceCouncil.id
+      source_council_id: sourceCouncil.id
     },
-    { registrationDataVersion: regDataVersion }
+    { registration_data_version: regDataVersion }
   );
 
   await cacheRegistration(completeCacheRecord);

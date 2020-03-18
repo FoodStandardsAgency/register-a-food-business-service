@@ -1,4 +1,5 @@
-const promiseRetry = require("promise-retry");
+"use strict";
+// const promiseRetry = require("promise-retry");
 const {
   Activities,
   Establishment,
@@ -20,7 +21,7 @@ const modelCreate = async (data, model, modelName, transaction = null) => {
   try {
     let options = transaction === null ? {} : { transaction };
 
-    const response = model.create(data, options).catch(retry);
+    const response = model.create(data, options);
 
     logEmitter.emit(
       "functionSuccess",

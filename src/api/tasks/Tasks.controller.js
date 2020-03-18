@@ -12,7 +12,6 @@ const {
 
 const {
   connectToBeCacheDb,
-  disconnectCacheDb,
   CachedRegistrationsCollection,
   findOneById,
   updateStatusInCache,
@@ -41,6 +40,7 @@ const sendAllOutstandingRegistrationsToTascomiAction = async (req, res) => {
     registrationsCollection
   );
   let fsaId;
+  let idsAttempted = [];
 
   ids.forEach(async registration => {
     idsAttempted.push(registration["fsa-rn"]);
@@ -62,7 +62,6 @@ const sendRegistrationToTascomiAction = async (fsaId, req, res) => {
   let configDb = await connectToConfigDb();
   let cachedRegistrations = await CachedRegistrationsCollection(beCacheDb);
   let registration = await findOneById(cachedRegistrations, fsaId);
-  let idsAttempted = [];
 
   if (isEmpty(registration)) {
     let message = `Could not find registration with ID ${fsaId}`;
@@ -82,7 +81,7 @@ const sendRegistrationToTascomiAction = async (fsaId, req, res) => {
   if (localCouncil.auth) {
     try {
       //GOT AUTH DATA
-      let response = await sendTascomiRegistration(registration, localCouncil);
+      await sendTascomiRegistration(registration, localCouncil);
 
       //SUCCESS
       await updateStatusInCache(fsaId, "tascomi", TASCOMI_SUCCESS);
@@ -92,7 +91,7 @@ const sendRegistrationToTascomiAction = async (fsaId, req, res) => {
         ERROR,
         `Could not push to tascomi for ${fsaId} and local council ${
           localCouncil._id
-        }. Error: "${err}"`
+        }. Error: "${e.message}"`
       );
       await updateStatusInCache(fsaId, "tascomi", TASCOMI_FAIL);
     }
@@ -128,8 +127,8 @@ const sendAllNotificationsForRegistrationsAction = async (req, res) => {
 };
 
 const sendNotificationsForRegistrationAction = async (fsaId, req, res) => {
-  const beCacheDb = await connectToBeCacheDb();
-  const configDb = await connectToConfigDb();
+  let beCacheDb = await connectToBeCacheDb();
+  let configDb = await connectToConfigDb();
 
   //GET REGISTRATION
   let registration = await getRegistration(beCacheDb, fsaId);
@@ -149,8 +148,8 @@ const sendNotificationsForRegistrationAction = async (fsaId, req, res) => {
     throw message;
   }
 
-  let configVersion = registration.registrationDataVersion
-    ? registration.registrationDataVersion
+  let configVersion = registration.registration_data_version
+    ? registration.registration_data_version
     : "1.6.0";
   let config = await getConfig(configDb, configVersion);
 
@@ -230,8 +229,8 @@ const multiSendNotifications = async configDb => async registration => {
     throw message;
   }
 
-  let configVersion = registration.registrationDataVersion
-    ? registration.registrationDataVersion
+  let configVersion = registration.registration_data_version
+    ? registration.registration_data_version
     : "1.6.0";
   let config = await getConfig(configDb, configVersion);
 
@@ -258,7 +257,7 @@ const multiSendRegistrationToTascomi = async configDb => async registration => {
   if (localCouncil.auth) {
     try {
       //GOT AUTH DATA
-      let response = await sendTascomiRegistration(registration, localCouncil);
+      await sendTascomiRegistration(registration, localCouncil);
 
       //SUCCESS
       await updateStatusInCache(fsaId, "tascomi", TASCOMI_SUCCESS);
@@ -268,7 +267,7 @@ const multiSendRegistrationToTascomi = async configDb => async registration => {
         ERROR,
         `Could not push to tascomi for ${fsaId} and local council ${
           localCouncil._id
-        }. Error: "${err}"`
+        }. Error: "${e.message}"`
       );
       await updateStatusInCache(fsaId, "tascomi", TASCOMI_FAIL);
     }
@@ -306,9 +305,9 @@ const getCouncilFromConfigDb = async (client, registration) => {
   //this is a strange nasty hack to extract the council id of the initial registration for older records
   const lcConfigCollection = await LocalCouncilConfigDbCollection(client);
   let councilId;
-  if (registration.sourceCouncilId) {
+  if (registration.source_council_id) {
     // POST feature RS-79
-    councilId = registration.sourceCouncilId;
+    councilId = registration.source_council_id;
   } else {
     // PRE feature RS-79
     councilId = registration.hygieneAndStandards

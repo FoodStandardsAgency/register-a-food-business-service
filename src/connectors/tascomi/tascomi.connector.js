@@ -15,7 +15,10 @@ const sendRequest = async (url, method, body, public_key, private_key) => {
     form: body
   };
 
-  if (process.env.TASCOMI_DOUBLE_MODE === "true" || process.env.DOUBLE_MODE === "true") {
+  if (
+    process.env.TASCOMI_DOUBLE_MODE === "true" ||
+    process.env.DOUBLE_MODE === "true"
+  ) {
     logEmitter.emit("doubleMode", "tascomi.connector", "sendRequest");
     return doubleRequest(tascomiApiOptions);
   } else {

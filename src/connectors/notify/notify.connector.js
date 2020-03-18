@@ -19,7 +19,10 @@ const sendSingleEmail = async (
 
   let notifyClient;
 
-  if (process.env.NOTIFY_DOUBLE_MODE === "true" || process.env.DOUBLE_MODE === "true") {
+  if (
+    process.env.NOTIFY_DOUBLE_MODE === "true" ||
+    process.env.DOUBLE_MODE === "true"
+  ) {
     logEmitter.emit("doubleMode", "notify.connector", "sendSingleEmail");
     notifyClient = notifyClientDouble;
   } else {

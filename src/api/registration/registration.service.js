@@ -3,7 +3,7 @@ const fetch = require("node-fetch");
 const HttpsProxyAgent = require("https-proxy-agent");
 const promiseRetry = require("promise-retry");
 const { isEmpty } = require("lodash");
-const { INFO, ERROR } = require("../../services/logging.service");
+const { INFO } = require("../../services/logging.service");
 const {
   managedTransaction,
   createRegistration,
@@ -121,11 +121,7 @@ const saveRegistration = async (registration, fsa_rn, council) => {
     }
 
     //execute the transaction
-    let tempStoreSaved = (await managedTransaction(transaction))().then(
-      data => {
-        console.log("it worked...", data);
-      }
-    );
+    let tempStoreSaved = (await managedTransaction(transaction))();
 
     logEmitter.emit(
       "functionSuccess",
@@ -138,8 +134,9 @@ const saveRegistration = async (registration, fsa_rn, council) => {
     );
 
     await updateStatusInCache(fsa_rn, "registration", true);
+
+    return tempStoreSaved;
   } catch (err) {
-    console.error(err);
     statusEmitter.emit("incrementCount", "storeRegistrationsInDbFailed");
     statusEmitter.emit(
       "setStatus",
@@ -246,7 +243,7 @@ const sendTascomiRegistration = async (registration, localCouncil) => {
   let referenceIdInput = regParsed.id ? regParsed.id : null;
 
   if (referenceIdInput === null) {
-    const err = new Error("createReferenceNumber failed");
+    const err = new Error("createFoodBusinessRegistration failed");
     err.name = "tascomiRefNumber";
     throw err;
   }

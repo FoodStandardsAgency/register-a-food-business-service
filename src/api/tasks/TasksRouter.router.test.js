@@ -16,10 +16,9 @@ jest.mock("../../services/statusEmitter.service");
 const registrationController = require("./registration.controller");
 const { registrationRouter } = require("./registration.router");
 describe("registration router", () => {
-  let router, send, handler, status;
+  let router, send, handler;
   beforeEach(() => {
     send = jest.fn();
-    status = jest.fn();
     router = registrationRouter();
   });
 

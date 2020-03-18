@@ -20,6 +20,7 @@
     "test:securityall": "snyk wizard",
     "test:security": "snyk wizard --severity-threshold=medium",
     "lint": "eslint ./src",
+    "lint:fix": "eslint --fix ./src ",
     "format:verify": "prettier --list-different '{src,tests}/**/*.js'",
     "format": "prettier --write '{src,tests}/**/*.js'",
     "start": "node src/app.js",
@@ -74,6 +75,7 @@
     "eslint-plugin-prettier": "2.6.1",
     "jest": "24.8.0",
     "jest-junit": "5.1.0",
+    "jest-transform-stealthy-require": "1.0.0",
     "jsdoc": "3.6.3",
     "prettier": "1.12.1",
     "snyk": "1.198.0"

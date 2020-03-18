@@ -1,16 +1,19 @@
 "use strict";
 module.exports = {
-  up: (queryInterface, Sequelize) => {
+  up: queryInterface => {
     return queryInterface.sequelize.transaction(async transaction => {
       return queryInterface.addIndex("registrations", ["fsa_rn"], {
         unique: true,
-        name: "uqx_fsa_rn"
+        name: "uqx_fsa_rn",
+        transaction
       });
     });
   },
-  down: (queryInterface, Sequelize) => {
+  down: queryInterface => {
     return queryInterface.sequelize.transaction(async transaction => {
-      return queryInterface.removeIndex("registrations", "uqx_fsa_rn");
+      return queryInterface.removeIndex("registrations", "uqx_fsa_rn", {
+        transaction
+      });
     });
   }
 };
