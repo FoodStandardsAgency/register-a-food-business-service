@@ -5,7 +5,6 @@ const emails = [{ email: "test@test.com" }];
 const statusCollectionDouble = {
   findOne: query => {
     if (query._id === "backEndStatus") {
-      console.log("backendstatu doul");
       return storedStatus;
     } else {
       return null;

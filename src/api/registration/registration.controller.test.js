@@ -32,15 +32,12 @@ jest.mock("../../connectors/configDb/configDb.connector", () => ({
 // }));
 
 const {
-  saveRegistration,
   getFullRegistrationByFsaRn,
   deleteRegistrationByFsaRn,
   getRegistrationMetaData,
-  sendTascomiRegistration,
   getLcContactConfig,
   getLcAuth
 } = require("./registration.service");
-const { sendNotifications } = require("../../services/notifications.service");
 
 const { validate } = require("../../services/validation.service");
 
@@ -55,22 +52,19 @@ const {
 } = require("./registration.controller");
 const {
   getConfigVersion,
-    findCouncilByUrl,
-    findCouncilById
+  findCouncilByUrl
 } = require("../../connectors/configDb/configDb.connector");
 
 const exampleLCUrl = "http://example-council-url";
 
 const exampleCouncil = {
-  "_id" : 1,
-  "local_council" : "Example council name",
-  "local_council_email" : "example@example.com",
-  "local_council_notify_emails" : [
-    "example@example.com"
-  ],
-  "local_council_phone_number" : "01234 567890",
-  "local_council_url" : exampleLCUrl,
-  "country" : "test"
+  _id: 1,
+  local_council: "Example council name",
+  local_council_email: "example@example.com",
+  local_council_notify_emails: ["example@example.com"],
+  local_council_phone_number: "01234 567890",
+  local_council_url: exampleLCUrl,
+  country: "test"
 };
 
 describe("registration controller", () => {
@@ -120,7 +114,7 @@ describe("registration controller", () => {
     beforeEach(() => {
       jest.clearAllMocks();
 
-      findCouncilByUrl.mockImplementation(() => (exampleCouncil));
+      findCouncilByUrl.mockImplementation(() => exampleCouncil);
     });
     describe("when given valid data", () => {
       describe("when auth object exists", () => {
@@ -205,14 +199,13 @@ describe("registration controller", () => {
                 registration: undefined,
                 notifications: undefined
               }
-
             },
             {
               local_council_url: exampleLCUrl,
               hygiene_council_code: 1234,
               registration_data_version: "1.2.0",
               source_council_id: exampleCouncil.id
-            },
+            }
           );
           expect(cacheRegistration).toHaveBeenLastCalledWith(expectedToCache);
         });

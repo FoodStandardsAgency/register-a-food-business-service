@@ -10,8 +10,8 @@ jest.mock("./logging.service", () => ({
   logEmitter: { emit: mockEmit }
 }));
 
-const moment = require('moment');
-const today = moment().format('DD MMM YYYY');
+const moment = require("moment");
+const today = moment().format("DD MMM YYYY");
 const { pdfGenerator } = require("./pdf.service");
 const { sendSingleEmail } = require("../connectors/notify/notify.connector");
 const {
@@ -30,7 +30,7 @@ const exampleMetadata = {
 const exampleRegistrationEstablishment = {
   establishment_details: {
     establishment_trading_name: "Itsu",
-        establishment_opening_date: "2017-12-30"
+    establishment_opening_date: "2017-12-30"
   },
   operator: {
     operator_first_name: "Fred"
@@ -482,7 +482,6 @@ describe("Function: sendEmailOfType: ", () => {
     });
 
     it("should have called the connector with the correct arguments for the LC", () => {
-      console.log(sendSingleEmail.mock.calls);
       expect(sendSingleEmail.mock.calls[0][0]).toBe("lc-123");
       expect(sendSingleEmail.mock.calls[0][1]).toBe(
         "fsatestemail.valid@gmail.com"
@@ -572,7 +571,7 @@ describe("Function: sendEmailOfType: ", () => {
         id: "123-456"
       }));
       await sendNotifications(
-        mockRegistrationData['fsa_rn'],
+        mockRegistrationData["fsa_rn"],
         mockLcContactConfig,
         mockRegistrationData,
         configData
@@ -604,7 +603,7 @@ describe("Function: sendEmailOfType: ", () => {
         throw new Error("Notify error");
       });
       await sendNotifications(
-        mockRegistrationData['fsa_rn'],
+        mockRegistrationData["fsa_rn"],
         mockLcContactConfig,
         mockRegistrationData,
         configData
@@ -628,7 +627,7 @@ describe("Function: sendEmailOfType: ", () => {
         return null;
       });
       await sendNotifications(
-        mockRegistrationData['fsa_rn'],
+        mockRegistrationData["fsa_rn"],
         mockLcContactConfig,
         mockRegistrationData,
         configData
@@ -661,7 +660,7 @@ describe("Function: sendEmailOfType: ", () => {
         id: "123-456"
       }));
       await sendNotifications(
-        newMockRegistrationData['fsa_rn'],
+        newMockRegistrationData["fsa_rn"],
         mockLcContactConfig,
         newMockRegistrationData,
         configData

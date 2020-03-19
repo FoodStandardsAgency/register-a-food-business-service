@@ -106,9 +106,10 @@ describe("RegistrationDb connector", () => {
       });
 
       it("Should call the create model with combined data", () => {
-        expect(Activities.create).toBeCalledWith({
-          establishmentId: "45",
-          some: "data"
+        expect(Activities.create).toBeCalledWith(
+          {
+            establishmentId: "45",
+            some: "data"
           },
           {}
         );
@@ -147,12 +148,13 @@ describe("RegistrationDb connector", () => {
       });
 
       it("Should call the create model with combined data", () => {
-        expect(Establishment.create).toBeCalledWith({
+        expect(Establishment.create).toBeCalledWith(
+          {
             registrationId: "45",
             some: "data"
           },
           {}
-          );
+        );
       });
     });
   });
@@ -188,7 +190,8 @@ describe("RegistrationDb connector", () => {
       });
 
       it("Should call the create model with combined data", () => {
-        expect(Metadata.create).toBeCalledWith({
+        expect(Metadata.create).toBeCalledWith(
+          {
             registrationId: "45",
             some: "data"
           },
@@ -229,11 +232,12 @@ describe("RegistrationDb connector", () => {
       });
 
       it("Should call the create model with combined data", () => {
-        expect(Operator.create).toBeCalledWith({
-          establishmentId: "45",
-          some: "data"
-        },
-        {}
+        expect(Operator.create).toBeCalledWith(
+          {
+            establishmentId: "45",
+            some: "data"
+          },
+          {}
         );
       });
     });
@@ -270,11 +274,12 @@ describe("RegistrationDb connector", () => {
       });
 
       it("Should call the create model with combined data", () => {
-        expect(Partner.create).toBeCalledWith({
-          operatorId: "45",
-          some: "data"
-        },
-        {}
+        expect(Partner.create).toBeCalledWith(
+          {
+            operatorId: "45",
+            some: "data"
+          },
+          {}
         );
       });
     });
@@ -311,7 +316,8 @@ describe("RegistrationDb connector", () => {
       });
 
       it("Should call the create model with combined data", () => {
-        expect(Premise.create).toBeCalledWith({
+        expect(Premise.create).toBeCalledWith(
+          {
             establishmentId: "45",
             some: "data"
           },
@@ -352,7 +358,8 @@ describe("RegistrationDb connector", () => {
       });
 
       it("Should call the create model with fsa rn and council", () => {
-        expect(Registration.create).toBeCalledWith({
+        expect(Registration.create).toBeCalledWith(
+          {
             fsa_rn: "fsa-rn",
             council: "cardiff"
           },

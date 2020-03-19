@@ -19,7 +19,7 @@ jest.mock("../../connectors/registrationDb/registrationDb", () => ({
   destroyOperatorByEstablishmentId: jest.fn(),
   destroyPremiseByEstablishmentId: jest.fn(),
   destroyActivitiesByEstablishmentId: jest.fn(),
-  managedTransaction: jest.fn(),
+  managedTransaction: jest.fn()
 }));
 
 jest.mock("../../connectors/notify/notify.connector", () => ({
@@ -98,8 +98,6 @@ const {
   updateStatusInCache
 } = require("../../connectors/cacheDb/cacheDb.connector");
 
-
-
 let result;
 
 describe("Function: saveRegistration: ", () => {
@@ -126,16 +124,15 @@ describe("Function: saveRegistration: ", () => {
       return { id: "901" };
     });
     //it returns a function...
-    managedTransaction.mockImplementation(() => ( () => ({
-          regId: "435",
-          establishmentId: "225",
-          operatorId: "123",
-          activitiesId: "562",
-          partnerIds: ["145", "145"],
-          premiseId: "495",
-          metadataId: "901"
-        })
-    ));
+    managedTransaction.mockImplementation(() => () => ({
+      regId: "435",
+      establishmentId: "225",
+      operatorId: "123",
+      activitiesId: "562",
+      partnerIds: ["145", "145"],
+      premiseId: "495",
+      metadataId: "901"
+    }));
     updateStatusInCache.mockImplementation(() => {});
     result = await saveRegistration(
       {
@@ -327,10 +324,11 @@ describe("Function: sendTascomiRegistration: ", () => {
             resolve('{ "id": "123", "online_reference": "0000123"}')
           )
       );
-      getAllLocalCouncilConfig.mockImplementation(() => [
-
-      ]);
-      result = await sendTascomiRegistration({fsa_rn: "test"}, exampleLocalCouncil);
+      getAllLocalCouncilConfig.mockImplementation(() => []);
+      result = await sendTascomiRegistration(
+        { fsa_rn: "test" },
+        exampleLocalCouncil
+      );
     });
 
     it("should call createFoodBusinessRegistration", () => {
@@ -338,7 +336,10 @@ describe("Function: sendTascomiRegistration: ", () => {
     });
 
     it("should call createReferenceNumber with result of previous call", () => {
-      expect(createReferenceNumber).toBeCalledWith("123", exampleCouncilAuthKey);
+      expect(createReferenceNumber).toBeCalledWith(
+        "123",
+        exampleCouncilAuthKey
+      );
     });
 
     it("should return response of createReferenceNumber", () => {
@@ -376,7 +377,7 @@ describe("Function: sendTascomiRegistration: ", () => {
         }
       ]);
       try {
-        await sendTascomiRegistration({fsa_rn: "test"}, exampleLocalCouncil);
+        await sendTascomiRegistration({ fsa_rn: "test" }, exampleLocalCouncil);
       } catch (err) {
         result = err;
       }

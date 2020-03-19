@@ -121,7 +121,6 @@ const sendEmails = async (
   lcContactConfig
 ) => {
   logEmitter.emit("functionCall", "registration.service", "sendEmails");
-  console.log('apple');
   let newError;
   let success = true;
   let postRegistrationMetadata = registration;
@@ -139,7 +138,6 @@ const sendEmails = async (
       lcContactConfig
     );
     const pdfFile = await pdfGenerator(dataForPDF);
-console.log('banana');
     for (let index in emailsToSend) {
       let fileToSend = undefined;
       if (emailsToSend[index].type === "LC") {
@@ -170,7 +168,6 @@ console.log('banana');
   } catch (err) {
     success = false;
     logEmitter.emit("functionFail", "registration.service", "sendEmails", err);
-    console.error('concealed',err);
   }
 
   if (success) {
@@ -213,8 +210,6 @@ const sendNotifications = async (
   registration,
   configData
 ) => {
-  console.log('reg', registration);
-
   let emailsToSend = [];
 
   for (let typeOfCouncil in lcContactConfig) {
@@ -233,8 +228,6 @@ const sendNotifications = async (
   const fboEmailAddress =
     registration.establishment.operator.operator_email ||
     registration.establishment.operator.contact_representative_email;
-
-  console.log(fboEmailAddress);
 
   emailsToSend.push({
     type: "FBO",
@@ -255,7 +248,6 @@ const sendNotifications = async (
       templateId: configData.notify_template_keys.fd_feedback
     });
   }
-  console.log(emailsToSend);
 
   await addNotificationToStatus(fsaId, emailsToSend);
 
