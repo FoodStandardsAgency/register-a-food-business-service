@@ -1,22 +1,15 @@
-# base build
-FROM node:8.9.4 AS base
+FROM node:8.9.4
+
+ARG NPM_TOKEN
+ARG http_proxy
+ARG https_proxy
+RUN echo $http_proxy
 
 RUN mkdir -p /usr/src/app
 WORKDIR /usr/src/app
 COPY . /usr/src/app
-ARG NPM_TOKEN
-
-RUN echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" > .npmrc && \
-    npm config set registry https://registry.npmjs.org/ && \
-    npm install --production --verbose --maxsockets=10 && \
-    rm -f .npmrc
 
 ENV PATH="//usr/local/bin:${PATH}"
 
-# second build
-FROM node:8.9.4
-WORKDIR /usr/src/app
-COPY --from=base /usr/src/app /usr/src/app
-RUN npm install -g sequelize-cli --verbose
 EXPOSE 4000
 USER node
