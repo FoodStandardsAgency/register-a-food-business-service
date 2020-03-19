@@ -158,7 +158,7 @@ const findAllOutstandingNotificationsRegistrations = async (
       $or: [
         {
           "status.notifications": {
-            $all: [{ $elemMatch: { sent: { $ne: true } } }]
+            $elemMatch: { sent: { $ne: true } }
           }
         },
         { "status.notifications": { $exists: false } }

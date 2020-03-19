@@ -27,10 +27,6 @@ jest.mock("../../connectors/configDb/configDb.connector", () => ({
   findCouncilById: jest.fn()
 }));
 
-// jest.mock("../../connectors/cacheDb/cacheDb.connector", () => ({
-//
-// }));
-
 const {
   getFullRegistrationByFsaRn,
   deleteRegistrationByFsaRn,
