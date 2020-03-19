@@ -109,7 +109,9 @@ describe("RegistrationDb connector", () => {
         expect(Activities.create).toBeCalledWith({
           establishmentId: "45",
           some: "data"
-        });
+          },
+          {}
+        );
       });
     });
   });
@@ -146,9 +148,11 @@ describe("RegistrationDb connector", () => {
 
       it("Should call the create model with combined data", () => {
         expect(Establishment.create).toBeCalledWith({
-          registrationId: "45",
-          some: "data"
-        });
+            registrationId: "45",
+            some: "data"
+          },
+          {}
+          );
       });
     });
   });
@@ -185,9 +189,11 @@ describe("RegistrationDb connector", () => {
 
       it("Should call the create model with combined data", () => {
         expect(Metadata.create).toBeCalledWith({
-          registrationId: "45",
-          some: "data"
-        });
+            registrationId: "45",
+            some: "data"
+          },
+          {}
+        );
       });
     });
   });
@@ -226,7 +232,9 @@ describe("RegistrationDb connector", () => {
         expect(Operator.create).toBeCalledWith({
           establishmentId: "45",
           some: "data"
-        });
+        },
+        {}
+        );
       });
     });
   });
@@ -265,7 +273,9 @@ describe("RegistrationDb connector", () => {
         expect(Partner.create).toBeCalledWith({
           operatorId: "45",
           some: "data"
-        });
+        },
+        {}
+        );
       });
     });
   });
@@ -302,9 +312,11 @@ describe("RegistrationDb connector", () => {
 
       it("Should call the create model with combined data", () => {
         expect(Premise.create).toBeCalledWith({
-          establishmentId: "45",
-          some: "data"
-        });
+            establishmentId: "45",
+            some: "data"
+          },
+          {}
+        );
       });
     });
   });
@@ -341,9 +353,11 @@ describe("RegistrationDb connector", () => {
 
       it("Should call the create model with fsa rn and council", () => {
         expect(Registration.create).toBeCalledWith({
-          fsa_rn: "fsa-rn",
-          council: "cardiff"
-        });
+            fsa_rn: "fsa-rn",
+            council: "cardiff"
+          },
+          {}
+        );
       });
     });
   });

@@ -5,64 +5,51 @@ jest.mock("express", () => ({
     delete: jest.fn()
   }))
 }));
+
 jest.mock("./Tasks.controller", () => ({
-  createNewRegistration: jest.fn((a, b, c, sendResponse) => {
-    sendResponse();
-  }),
-  getRegistration: jest.fn(),
-  deleteRegistration: jest.fn()
+  sendRegistrationToTascomiAction: jest.fn(),
+  sendNotificationsForRegistrationAction: jest.fn(),
+  saveRegistrationToTempStoreAction: jest.fn(),
+  sendAllOutstandingRegistrationsToTascomiAction: jest.fn(),
+  sendAllNotificationsForRegistrationsAction: jest.fn(),
+  saveAllOutstandingRegistrationsToTempStoreAction: jest.fn()
 }));
 jest.mock("../../services/statusEmitter.service");
-const registrationController = require("./registration.controller");
-const { registrationRouter } = require("./registration.router");
+
+const { TaskRouter } = require("./TaskRouter.router");
+const { TaskController } = require("./Tasks.controller");
+
+const {
+  sendRegistrationToTascomiAction,
+  sendNotificationsForRegistrationAction,
+  saveRegistrationToTempStoreAction,
+  sendAllOutstandingRegistrationsToTascomiAction,
+  sendAllNotificationsForRegistrationsAction,
+  saveAllOutstandingRegistrationsToTempStoreAction
+} = require("./Tasks.controller");
+
+let router, send, handler;
+
 describe("registration router", () => {
-  let router, send, handler;
+
   beforeEach(() => {
     send = jest.fn();
-    router = registrationRouter();
+    router = TaskRouter();
   });
 
   afterEach(() => jest.clearAllMocks());
 
-  describe("Get to /registersubmissions", () => {
+  describe("Get to /bulk/createtascomiregistration", () => {
     beforeEach(() => {
       handler = router.get.mock.calls[0][2];
+      sendAllOutstandingRegistrationsToTascomiAction.mockImplementation((req, res)=>{});
     });
 
-    describe("when making a valid request", () => {
-      beforeEach(async () => {
-        await handler({ params: {} }, { send });
-      });
-
-      it("should call res.send", () => {
-        expect(send).toBeCalled();
-      });
-
-      it("should call registerSubmissionWithTascomiAction", () => {
-        expect(
-          registrationController.registerSubmissionWithTascomiAction
-        ).toBeCalled();
-      });
+    it("should call registerSubmissionWithTascomiAction", () => {
+      expect(
+        sendAllOutstandingRegistrationsToTascomiAction
+      ).toBeCalled();
     });
   });
 
-  describe("Get to /sendnotifications", () => {
-    beforeEach(() => {
-      handler = router.get.mock.calls[0][2];
-    });
-
-    describe("when making a valid request", () => {
-      beforeEach(async () => {
-        await handler({ params: {} }, { send });
-      });
-
-      it("should call res.send", () => {
-        expect(send).toBeCalled();
-      });
-
-      it("should call sendNotificationsAction", () => {
-        expect(registrationController.sendNotificationsAction).toBeCalled();
-      });
-    });
-  });
 });
