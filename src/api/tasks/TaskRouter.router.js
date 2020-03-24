@@ -22,11 +22,11 @@ const TaskRouter = () => {
 
   router.get("/bulk/createtascomiregistration", async (req, res) => {
     let dryrun = !!req.query.dryrun;
-    // try {
+    try {
       await sendAllOutstandingRegistrationsToTascomiAction(req, res, dryrun);
-    // } catch (e) {
-    //   await fail(406, res, e.message);
-    // }
+    } catch (e) {
+      await fail(406, res, e.message);
+    }
   });
 
   router.get("/createtascomiregistration/:fsaId", async (req, res) => {

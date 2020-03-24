@@ -161,9 +161,10 @@ const sendNotificationsForRegistrationAction = async (fsaId, req, res) => {
   }
 
   //this method is in dire need of refactoring...
-  let lcContactConfig = getLcContactConfig(localCouncil);
+  let lcContactConfig = await getLcContactConfig(localCouncil.local_council_url);
+  console.log(lcContactConfig);
   if (isEmpty(lcContactConfig)) {
-    let message = `Could not find config ${fsaId} ${localCouncil}`;
+    let message = `Could not find local council config ${fsaId} ${localCouncil.local_council_url}`;
     logEmitter.emit(ERROR, message);
     throw message;
   }
@@ -251,9 +252,10 @@ const multiSendNotifications = async configDb => async registration => {
   }
 
   //this method is in dire need of refactoring...
-  let lcContactConfig = getLcContactConfig(localCouncil);
+  let lcContactConfig = await getLcContactConfig(localCouncil.local_council_url);
+  console.log(lcContactConfig);
   if (isEmpty(lcContactConfig)) {
-    let message = `Could not find config ${fsaId} ${localCouncil}`;
+    let message = `Could not find lcContactConfig ${fsaId} ${localCouncil.local_council_url}`;
     logEmitter.emit(ERROR, message);
     throw message;
   }
