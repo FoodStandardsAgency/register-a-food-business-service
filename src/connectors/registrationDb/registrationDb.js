@@ -3,7 +3,7 @@
 const {
   Activities,
   Establishment,
-  Metadata,
+  Declaration,
   Operator,
   Premise,
   Registration,
@@ -58,9 +58,9 @@ const createEstablishment = async (
   return modelCreate(data, Establishment, "Establishment", transaction);
 };
 
-const createMetadata = async (metadata, registrationId, transaction = null) => {
-  const data = Object.assign({}, metadata, { registrationId });
-  return modelCreate(data, Metadata, "Metadata", transaction);
+const createDeclaration = async (declaration, registrationId, transaction = null) => {
+  const data = Object.assign({}, declaration, { registrationId });
+  return modelCreate(data, Declaration, "Declaration", transaction);
 };
 
 const createOperator = async (
@@ -135,11 +135,11 @@ const getEstablishmentByRegId = async id => {
   );
 };
 
-const getMetadataByRegId = async id => {
+const getDeclarationByRegId = async id => {
   return modelFindOne(
     { where: { registrationId: id } },
-    Metadata,
-    "getMetadataByRegId"
+    Declaration,
+    "getDeclarationByRegId"
   );
 };
 
@@ -204,11 +204,11 @@ const destroyEstablishmentByRegId = async id => {
   );
 };
 
-const destroyMetadataByRegId = async id => {
+const destroyDeclarationByRegId = async id => {
   return modelDestroy(
     { where: { registrationId: id } },
-    Metadata,
-    "destroyMetadataByRegId"
+    Declaration,
+    "destroyDeclarationByRegId"
   );
 };
 
@@ -240,7 +240,7 @@ module.exports = {
   managedTransaction,
   createActivities,
   createEstablishment,
-  createMetadata,
+  createDeclaration,
   createOperator,
   createPremise,
   createPartner,
@@ -248,13 +248,13 @@ module.exports = {
   getRegistrationById,
   getRegistrationByFsaRn,
   getEstablishmentByRegId,
-  getMetadataByRegId,
+  getDeclarationByRegId,
   getOperatorByEstablishmentId,
   getPremiseByEstablishmentId,
   getActivitiesByEstablishmentId,
   destroyRegistrationById,
   destroyEstablishmentByRegId,
-  destroyMetadataByRegId,
+  destroyDeclarationByRegId,
   destroyOperatorByEstablishmentId,
   destroyPremiseByEstablishmentId,
   destroyActivitiesByEstablishmentId

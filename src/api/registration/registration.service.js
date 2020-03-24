@@ -12,16 +12,16 @@ const {
   createActivities,
   createPremise,
   createPartner,
-  createMetadata,
+  createDeclaration,
   getRegistrationByFsaRn,
   getEstablishmentByRegId,
-  getMetadataByRegId,
+  getDeclarationByRegId,
   getOperatorByEstablishmentId,
   getPremiseByEstablishmentId,
   getActivitiesByEstablishmentId,
   destroyRegistrationById,
   destroyEstablishmentByRegId,
-  destroyMetadataByRegId,
+  destroyDeclarationByRegId,
   destroyOperatorByEstablishmentId,
   destroyPremiseByEstablishmentId,
   destroyActivitiesByEstablishmentId
@@ -101,10 +101,10 @@ const saveRegistration = async (registration, fsa_rn, council) => {
       partnerIds.push(partner.id);
     }
 
-    let metadata = await createMetadata(
-      registration.metadata,
-      reg.id,
-      transaction
+    const declaration = await createDeclaration(
+        registration.declaration,
+        reg.id,
+        transaction
     );
 
     statusEmitter.emit("incrementCount", "storeRegistrationsInDbSucceeded");
@@ -121,7 +121,7 @@ const saveRegistration = async (registration, fsa_rn, council) => {
       activitiesId: activities.id,
       premiseId: premise.id,
       partnerIds,
-      metadataId: metadata.id
+      declarationId: declaration.id
     };
   };
 
@@ -173,7 +173,7 @@ const getFullRegistrationByFsaRn = async fsa_rn => {
     return `No registration found for fsa_rn: ${fsa_rn}`;
   }
   const establishment = await getEstablishmentByRegId(registration.id);
-  const metadata = await getMetadataByRegId(registration.id);
+  const declaration = await getDeclarationByRegId(registration.id);
   const operator = await getOperatorByEstablishmentId(establishment.id);
   const activities = await getActivitiesByEstablishmentId(establishment.id);
   const premise = await getPremiseByEstablishmentId(establishment.id);
@@ -188,7 +188,7 @@ const getFullRegistrationByFsaRn = async fsa_rn => {
     operator,
     activities,
     premise,
-    metadata
+    declaration
   };
 };
 
@@ -203,7 +203,7 @@ const deleteRegistrationByFsaRn = async fsa_rn => {
     return `No registration found for fsa_rn: ${fsa_rn}`;
   }
   const establishment = await getEstablishmentByRegId(registration.id);
-  await destroyMetadataByRegId(registration.id);
+  await destroyDeclarationByRegId(registration.id);
   await destroyOperatorByEstablishmentId(establishment.id);
   await destroyActivitiesByEstablishmentId(establishment.id);
   await destroyPremiseByEstablishmentId(establishment.id);
@@ -350,7 +350,7 @@ const getRegistrationMetaData = async councilCode => {
   logEmitter.emit(
     "functionCall",
     "registration.service",
-    "getRegistrationMetadata"
+    "getRegistrationDeclaration"
   );
 
   const typeCode = process.env.NODE_ENV === "production" ? "001" : "000";
@@ -375,7 +375,7 @@ const getRegistrationMetaData = async councilCode => {
     logEmitter.emit(
       "functionSuccess",
       "registration.service",
-      "getRegistrationMetadata"
+      "getRegistrationDeclaration"
     );
     return {
       "fsa-rn": fsa_rn ? fsa_rn["fsa-rn"] : undefined,

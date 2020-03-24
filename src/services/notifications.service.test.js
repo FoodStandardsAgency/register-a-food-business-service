@@ -23,7 +23,7 @@ const {
   sendNotifications
 } = require("./notifications.service");
 
-const exampleMetadata = {
+const exampleDeclaration = {
   declaration1: "Declaration"
 };
 
@@ -45,7 +45,7 @@ const exampleRegistrationEstablishment = {
 
 const testRegistrationData = {
   establishment: exampleRegistrationEstablishment,
-  metadata: exampleMetadata,
+  declaration: exampleDeclaration,
   example: "value",
   reg_submission_date: "2018-12-01"
 };
@@ -78,7 +78,7 @@ const examplePartnershipRegistrationEstablishment = {
 
 const testRegistrationDataForPartnership = {
   establishment: examplePartnershipRegistrationEstablishment,
-  metadata: exampleMetadata
+  declaration: exampleDeclaration
 };
 
 const testLcContactConfigSplitWithPhoneNumber = {
@@ -135,7 +135,7 @@ describe("Function: transformDataForNotify", () => {
 
       it("should return the flattened data with two sets of council details", () => {
         const expectedFormat = {
-          metadata: exampleMetadata,
+          declaration: exampleDeclaration,
           establishment: exampleRegistrationEstablishment,
           establishment_trading_name: "Itsu",
           operator_first_name: "Fred",
@@ -167,7 +167,7 @@ describe("Function: transformDataForNotify", () => {
 
       it("should return the flattened data with one set of council details", () => {
         const expectedFormat = {
-          metadata: exampleMetadata,
+          declaration: exampleDeclaration,
           establishment: exampleRegistrationEstablishment,
           establishment_trading_name: "Itsu",
           operator_first_name: "Fred",
@@ -197,7 +197,7 @@ describe("Function: transformDataForNotify", () => {
 
       it("should return the flattened data with one set of council details", () => {
         const expectedFormat = {
-          metadata: exampleMetadata,
+          declaration: exampleDeclaration,
           establishment: exampleRegistrationEstablishment,
           establishment_trading_name: "Itsu",
           operator_first_name: "Fred",
@@ -226,7 +226,7 @@ describe("Function: transformDataForNotify", () => {
 
       it("should return the flattened data with two sets of council details", () => {
         const expectedFormat = {
-          metadata: exampleMetadata,
+          declaration: exampleDeclaration,
           establishment: exampleRegistrationEstablishment,
           establishment_trading_name: "Itsu",
           operator_first_name: "Fred",
@@ -259,7 +259,7 @@ describe("Function: transformDataForNotify", () => {
 
       it("should return the flattened data with two sets of council details", () => {
         const expectedFormat = {
-          metadata: exampleMetadata,
+          declaration: exampleDeclaration,
           establishment: examplePartnershipRegistrationEstablishment,
           establishment_trading_name: "Itsu",
           operator_first_name: "Fred",
@@ -292,7 +292,7 @@ describe("Function: transformDataForNotify", () => {
 
       it("should return the flattened data with one set of council details", () => {
         const expectedFormat = {
-          metadata: exampleMetadata,
+          declaration: exampleDeclaration,
           establishment: examplePartnershipRegistrationEstablishment,
           establishment_trading_name: "Itsu",
           operator_first_name: "Fred",
@@ -323,7 +323,7 @@ describe("Function: transformDataForNotify", () => {
 
       it("should return the flattened data with one set of council details", () => {
         const expectedFormat = {
-          metadata: exampleMetadata,
+          declaration: exampleDeclaration,
           establishment: examplePartnershipRegistrationEstablishment,
           establishment_trading_name: "Itsu",
           operator_first_name: "Fred",
@@ -353,7 +353,7 @@ describe("Function: transformDataForNotify", () => {
 
       it("should return the flattened data with two sets of council details", () => {
         const expectedFormat = {
-          metadata: exampleMetadata,
+          declaration: exampleDeclaration,
           establishment: examplePartnershipRegistrationEstablishment,
           establishment_trading_name: "Itsu",
           operator_first_name: "Fred",
@@ -435,7 +435,7 @@ describe("Function: sendEmailOfType: ", () => {
         opening_day_sunday: true
       }
     },
-    metadata: {
+    declaration: {
       declaration1: "Declaration",
       declaration2: "Declaration",
       declaration3: "Declaration"
@@ -557,7 +557,7 @@ describe("Function: sendEmailOfType: ", () => {
           opening_day_sunday: true
         }
       },
-      metadata: {
+      declaration: {
         declaration1: "Declaration",
         declaration2: "Declaration",
         declaration3: "Declaration",

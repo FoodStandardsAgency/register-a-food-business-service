@@ -76,7 +76,7 @@ describe("Tascomi contract: createFoodBusinessRegistration", () => {
             customer_type: "End consumer"
           }
         },
-        metadata: {
+        declaration: {
           declaration1: "Declaration",
           declaration2: "Declaration",
           declaration3: "Declaration"

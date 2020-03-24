@@ -1,7 +1,7 @@
 jest.mock("../../connectors/registrationDb/registrationDb", () => ({
   createActivities: jest.fn(),
   createEstablishment: jest.fn(),
-  createMetadata: jest.fn(),
+  createDeclaration: jest.fn(),
   createOperator: jest.fn(),
   createPartner: jest.fn(),
   createPremise: jest.fn(),
@@ -9,13 +9,13 @@ jest.mock("../../connectors/registrationDb/registrationDb", () => ({
   getRegistrationById: jest.fn(),
   getRegistrationByFsaRn: jest.fn(),
   getEstablishmentByRegId: jest.fn(),
-  getMetadataByRegId: jest.fn(),
+  getDeclarationByRegId: jest.fn(),
   getOperatorByEstablishmentId: jest.fn(),
   getPremiseByEstablishmentId: jest.fn(),
   getActivitiesByEstablishmentId: jest.fn(),
   destroyRegistrationById: jest.fn(),
   destroyEstablishmentByRegId: jest.fn(),
-  destroyMetadataByRegId: jest.fn(),
+  destroyDeclarationByRegId: jest.fn(),
   destroyOperatorByEstablishmentId: jest.fn(),
   destroyPremiseByEstablishmentId: jest.fn(),
   destroyActivitiesByEstablishmentId: jest.fn(),
@@ -69,16 +69,16 @@ const {
   createPartner,
   createActivities,
   createPremise,
-  createMetadata,
+  createDeclaration,
   getRegistrationByFsaRn,
   getEstablishmentByRegId,
-  getMetadataByRegId,
+  getDeclarationByRegId,
   getOperatorByEstablishmentId,
   getPremiseByEstablishmentId,
   getActivitiesByEstablishmentId,
   destroyRegistrationById,
   destroyEstablishmentByRegId,
-  destroyMetadataByRegId,
+  destroyDeclarationByRegId,
   destroyOperatorByEstablishmentId,
   destroyPremiseByEstablishmentId,
   destroyActivitiesByEstablishmentId
@@ -120,7 +120,7 @@ describe("Function: saveRegistration: ", () => {
     createPremise.mockImplementation(() => {
       return { id: "495" };
     });
-    createMetadata.mockImplementation(() => {
+    createDeclaration.mockImplementation(() => {
       return { id: "901" };
     });
     //it returns a function...
@@ -131,7 +131,7 @@ describe("Function: saveRegistration: ", () => {
       activitiesId: "562",
       partnerIds: ["145", "145"],
       premiseId: "495",
-      metadataId: "901"
+      declarationId: "901"
     }));
     updateStatusInCache.mockImplementation(() => {});
     result = await saveRegistration(
@@ -153,7 +153,7 @@ describe("Function: saveRegistration: ", () => {
       activitiesId: "562",
       partnerIds: ["145", "145"],
       premiseId: "495",
-      metadataId: "901"
+      declarationId: "901"
     });
   });
 
@@ -211,8 +211,8 @@ describe("Function: getFullRegistrationByFsaRn: ", () => {
       getEstablishmentByRegId.mockImplementation(() => {
         return { id: "1" };
       });
-      getMetadataByRegId.mockImplementation(() => {
-        return "metadata";
+      getDeclarationByRegId.mockImplementation(() => {
+        return "declaration";
       });
       getOperatorByEstablishmentId.mockImplementation(() => {
         return "operator";
@@ -234,7 +234,7 @@ describe("Function: getFullRegistrationByFsaRn: ", () => {
         operator: "operator",
         activities: "activities",
         premise: "premise",
-        metadata: "metadata"
+        declaration: "declaration"
       });
     });
   });
@@ -266,7 +266,7 @@ describe("Function: deleteRegistrationByFsaRn: ", () => {
       destroyEstablishmentByRegId.mockImplementation(() => {
         return "";
       });
-      destroyMetadataByRegId.mockImplementation(() => {
+      destroyDeclarationByRegId.mockImplementation(() => {
         return "";
       });
       destroyOperatorByEstablishmentId.mockImplementation(() => {
