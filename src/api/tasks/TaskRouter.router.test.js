@@ -28,7 +28,7 @@ describe("/api/tasks route: ", () => {
       );
       handler = router.get.mock.calls[0][1];
 
-      req = {query:{}};
+      req = { query: {} };
       res = {
         send: jest.fn()
       };
@@ -36,7 +36,6 @@ describe("/api/tasks route: ", () => {
     });
 
     it("Should call sendAllOutstandingRegistrationsToTascomiAction", () => {
-
       expect(
         sendAllOutstandingRegistrationsToTascomiAction
       ).toHaveBeenLastCalledWith(req, res, false);
@@ -45,17 +44,17 @@ describe("/api/tasks route: ", () => {
     it("Should call sendAllOutstandingRegistrationsToTascomiAction with dryrun true", () => {
       router = TaskRouter();
       sendAllOutstandingRegistrationsToTascomiAction.mockImplementation(
-          () => {}
+        () => {}
       );
       handler = router.get.mock.calls[0][1];
 
-      req = {query:{dryrun:true}};
+      req = { query: { dryrun: true } };
       res = {
         send: jest.fn()
       };
       handler(req, res);
       expect(
-          sendAllOutstandingRegistrationsToTascomiAction
+        sendAllOutstandingRegistrationsToTascomiAction
       ).toHaveBeenLastCalledWith(req, res, true);
     });
   });
@@ -66,7 +65,7 @@ describe("/api/tasks route: ", () => {
       sendAllNotificationsForRegistrationsAction.mockImplementation(() => {});
       handler = router.get.mock.calls[2][1];
 
-      req = {query:{}};
+      req = { query: {} };
       res = {
         send: jest.fn()
       };
@@ -84,14 +83,14 @@ describe("/api/tasks route: ", () => {
       sendAllNotificationsForRegistrationsAction.mockImplementation(() => {});
       handler = router.get.mock.calls[2][1];
 
-      req = {query:{dryrun:true}};
+      req = { query: { dryrun: true } };
       res = {
         send: jest.fn()
       };
       handler(req, res);
 
       expect(
-          sendAllNotificationsForRegistrationsAction
+        sendAllNotificationsForRegistrationsAction
       ).toHaveBeenLastCalledWith(req, res, true);
     });
   });
@@ -104,7 +103,7 @@ describe("/api/tasks route: ", () => {
       );
       handler = router.get.mock.calls[5][1];
 
-      req = {query:{}};
+      req = { query: {} };
       res = {
         send: jest.fn()
       };
@@ -120,18 +119,18 @@ describe("/api/tasks route: ", () => {
     it("Should call saveAllOutstandingRegistrationsToTempStoreAction with dryrun true", () => {
       router = TaskRouter();
       saveAllOutstandingRegistrationsToTempStoreAction.mockImplementation(
-          () => {}
+        () => {}
       );
       handler = router.get.mock.calls[5][1];
 
-      req = {query:{dryrun:true}};
+      req = { query: { dryrun: true } };
       res = {
         send: jest.fn()
       };
       handler(req, res);
 
       expect(
-          saveAllOutstandingRegistrationsToTempStoreAction
+        saveAllOutstandingRegistrationsToTempStoreAction
       ).toHaveBeenLastCalledWith(req, res, true);
     });
   });

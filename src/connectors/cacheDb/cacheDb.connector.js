@@ -150,18 +150,18 @@ const updateStatusInCache = async (fsa_rn, property, value) => {
 };
 
 const findAllOutstandingSavesToTempStore = async (
-    cachedRegistrations,
-    limit = 100
+  cachedRegistrations,
+  limit = 100
 ) => {
   return await cachedRegistrations
-      .find({
-        $or: [
-          { "status.registration.complete": { $eq: false } },
-          { "status.registration": { $exists: false } }
-        ]
-      })
-      .sort({ reg_submission_date: 1 })
-      .limit(limit);
+    .find({
+      $or: [
+        { "status.registration.complete": { $eq: false } },
+        { "status.registration": { $exists: false } }
+      ]
+    })
+    .sort({ reg_submission_date: 1 })
+    .limit(limit);
 };
 
 const findAllOutstandingNotificationsRegistrations = async (

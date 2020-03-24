@@ -190,11 +190,13 @@ describe("RegistrationDb connector", () => {
       });
 
       it("Should call the create model with combined data", () => {
-        expect(Declaration.create).toBeCalledWith({
-          registrationId: "45",
-          some: "data"
-        },
-            {});
+        expect(Declaration.create).toBeCalledWith(
+          {
+            registrationId: "45",
+            some: "data"
+          },
+          {}
+        );
       });
     });
   });
@@ -594,7 +596,7 @@ describe("RegistrationDb connector", () => {
 
       it("Should call the findOne model with query", () => {
         expect(Premise.findOne).toBeCalledWith({
-          where: { establishmentId: "45"} ,
+          where: { establishmentId: "45" },
           transaction: null
         });
       });

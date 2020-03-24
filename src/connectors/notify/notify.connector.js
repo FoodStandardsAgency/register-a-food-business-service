@@ -1,7 +1,7 @@
 const { NotifyClient } = require("notifications-node-client");
 const { notifyClientDouble } = require("./notify.double");
 const { NOTIFY_KEY } = require("../../config");
-const { logEmitter, ERROR  } = require("../../services/logging.service");
+const { logEmitter, ERROR } = require("../../services/logging.service");
 /**
  * Send a single email
  * @param {string} templateId The template Id for the relevant email in notify

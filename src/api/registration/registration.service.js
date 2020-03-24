@@ -5,7 +5,7 @@ const promiseRetry = require("promise-retry");
 const { isEmpty } = require("lodash");
 const { INFO } = require("../../services/logging.service");
 const {
-  managedTransaction,
+  // managedTransaction,
   createRegistration,
   createEstablishment,
   createOperator,
@@ -57,7 +57,7 @@ const saveRegistration = async (registration, fsa_rn, council) => {
     let pgReg = await getRegistrationByFsaRn(fsa_rn, transaction);
     if (!isEmpty(pgReg)) {
       throw new Error(
-          `Registration with fsa id '${fsa_rn}' already exists in temp-store`
+        `Registration with fsa id '${fsa_rn}' already exists in temp-store`
       );
     }
 
@@ -75,13 +75,11 @@ const saveRegistration = async (registration, fsa_rn, council) => {
       transaction
     );
 
-
     activities = await createActivities(
       registration.establishment.activities,
       establishment.id,
       transaction
     );
-
 
     premise = await createPremise(
       registration.establishment.premise,
@@ -102,9 +100,9 @@ const saveRegistration = async (registration, fsa_rn, council) => {
     }
 
     const declaration = await createDeclaration(
-        registration.declaration,
-        reg.id,
-        transaction
+      registration.declaration,
+      reg.id,
+      transaction
     );
 
     statusEmitter.emit("incrementCount", "storeRegistrationsInDbSucceeded");
@@ -126,8 +124,6 @@ const saveRegistration = async (registration, fsa_rn, council) => {
   };
 
   try {
-
-
     //execute the transaction
     let tempStoreSaved = await transaction();
 

@@ -58,7 +58,11 @@ const createEstablishment = async (
   return modelCreate(data, Establishment, "Establishment", transaction);
 };
 
-const createDeclaration = async (declaration, registrationId, transaction = null) => {
+const createDeclaration = async (
+  declaration,
+  registrationId,
+  transaction = null
+) => {
   const data = Object.assign({}, declaration, { registrationId });
   return modelCreate(data, Declaration, "Declaration", transaction);
 };
@@ -90,7 +94,7 @@ const createRegistration = async (fsa_rn, council, transaction = null) => {
 const modelFindOne = async (query, model, functionName, transaction = null) => {
   logEmitter.emit("functionCall", "registration.connector.js", functionName);
 
-  let t = Object.assign({}, query, {transaction});
+  let t = Object.assign({}, query, { transaction });
   try {
     const response = await model.findOne(t);
     logEmitter.emit(
@@ -122,8 +126,8 @@ const getRegistrationByFsaRn = async (fsa_rn, transaction) => {
   return modelFindOne(
     { where: { fsa_rn: fsa_rn } },
     Registration,
-      "getRegistrationByFsaRn",
-      transaction
+    "getRegistrationByFsaRn",
+    transaction
   );
 };
 

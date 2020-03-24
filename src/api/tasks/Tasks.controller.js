@@ -34,20 +34,28 @@ const {
   TASCOMI_FAIL
 } = require("../../connectors/tascomi/tascomi.connector");
 
-const sendAllOutstandingRegistrationsToTascomiAction = async (req, res, dryrun) => {
+const sendAllOutstandingRegistrationsToTascomiAction = async (
+  req,
+  res,
+  dryrun
+) => {
   let beCacheDb = await connectToBeCacheDb();
   let configDb = await connectToConfigDb();
   let registrationsCollection = await CachedRegistrationsCollection(beCacheDb);
   let ids = await findOutstandingTascomiRegistrationsFsaIds(
     registrationsCollection
   );
-  let fsaId;
   let idsAttempted = [];
 
   await ids.forEach(async registration => {
     idsAttempted.push(registration["fsa-rn"]);
-    if(!dryrun) await (await multiSendRegistrationToTascomi(configDb))(registration);
-    logEmitter.emit(INFO, `Sent tascomi registraions for FSAId ${registration["fsa-rn"]}`);
+    if (!dryrun) {
+      await (await multiSendRegistrationToTascomi(configDb))(registration);
+    }
+    logEmitter.emit(
+      INFO,
+      `Sent tascomi registraions for FSAId ${registration["fsa-rn"]}`
+    );
   });
 
   await success(res, {
@@ -113,12 +121,16 @@ const sendAllNotificationsForRegistrationsAction = async (req, res, dryrun) => {
   let ids = await findAllOutstandingNotificationsRegistrations(
     registrationsCollection
   );
-  let fsaId;
 
   await ids.forEach(async registration => {
     idsAttempted.push(registration["fsa-rn"]);
-    if(!dryrun) await (await multiSendNotifications(configDb))(registration);
-    logEmitter.emit(INFO, `Sent notifications for FSAId ${registration["fsa-rn"]}`);
+    if (!dryrun) {
+      await (await multiSendNotifications(configDb))(registration);
+    }
+    logEmitter.emit(
+      INFO,
+      `Sent notifications for FSAId ${registration["fsa-rn"]}`
+    );
   });
 
   await success(res, {
@@ -161,10 +173,13 @@ const sendNotificationsForRegistrationAction = async (fsaId, req, res) => {
   }
 
   //this method is in dire need of refactoring...
-  let lcContactConfig = await getLcContactConfig(localCouncil.local_council_url);
-  console.log(lcContactConfig);
+  let lcContactConfig = await getLcContactConfig(
+    localCouncil.local_council_url
+  );
   if (isEmpty(lcContactConfig)) {
-    let message = `Could not find local council config ${fsaId} ${localCouncil.local_council_url}`;
+    let message = `Could not find local council config ${fsaId} ${
+      localCouncil.local_council_url
+    }`;
     logEmitter.emit(ERROR, message);
     throw message;
   }
@@ -176,21 +191,26 @@ const sendNotificationsForRegistrationAction = async (fsaId, req, res) => {
   await success(res, { fsaId, message: `Updated notifications status` });
 };
 
-const saveAllOutstandingRegistrationsToTempStoreAction = async (req, res, dryrun) => {
+const saveAllOutstandingRegistrationsToTempStoreAction = async (
+  req,
+  res,
+  dryrun
+) => {
   let beCacheDb = await connectToBeCacheDb();
   let configDb = await connectToConfigDb();
   let idsAttempted = [];
   let registrationsCollection = await CachedRegistrationsCollection(beCacheDb);
-  let ids = await findAllOutstandingSavesToTempStore(
-    registrationsCollection
-  );
-  let fsaId;
+  let ids = await findAllOutstandingSavesToTempStore(registrationsCollection);
 
   await ids.forEach(async registration => {
-    console.log(registration['fsa-rn']);
-    console.log(idsAttempted.push(registration['fsa-rn']));
-    if(!dryrun) await (await multiSaveRegistrationsToTempStore(configDb))(registration);
-    logEmitter.emit(INFO, `saved to temp store for FSAId ${registration["fsa-rn"]}`);
+    idsAttempted.push(registration["fsa-rn"]);
+    if (!dryrun) {
+      await (await multiSaveRegistrationsToTempStore(configDb))(registration);
+    }
+    logEmitter.emit(
+      INFO,
+      `saved to temp store for FSAId ${registration["fsa-rn"]}`
+    );
   });
 
   await success(res, {
@@ -252,10 +272,13 @@ const multiSendNotifications = async configDb => async registration => {
   }
 
   //this method is in dire need of refactoring...
-  let lcContactConfig = await getLcContactConfig(localCouncil.local_council_url);
-  console.log(lcContactConfig);
+  let lcContactConfig = await getLcContactConfig(
+    localCouncil.local_council_url
+  );
   if (isEmpty(lcContactConfig)) {
-    let message = `Could not find lcContactConfig ${fsaId} ${localCouncil.local_council_url}`;
+    let message = `Could not find lcContactConfig ${fsaId} ${
+      localCouncil.local_council_url
+    }`;
     logEmitter.emit(ERROR, message);
     throw message;
   }
