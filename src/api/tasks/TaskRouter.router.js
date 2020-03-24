@@ -21,11 +21,12 @@ const TaskRouter = () => {
   //router.use(viewDeleteRegistrationAuth);
 
   router.get("/bulk/createtascomiregistration", async (req, res) => {
-    try {
-      await sendAllOutstandingRegistrationsToTascomiAction(req, res);
-    } catch (e) {
-      await fail(406, res, e.message);
-    }
+    let dryrun = !!req.query.dryrun;
+    // try {
+      await sendAllOutstandingRegistrationsToTascomiAction(req, res, dryrun);
+    // } catch (e) {
+    //   await fail(406, res, e.message);
+    // }
   });
 
   router.get("/createtascomiregistration/:fsaId", async (req, res) => {
@@ -39,8 +40,9 @@ const TaskRouter = () => {
 
   // SEND EMAILS AND STUFF
   router.get("/bulk/sendnotification", async (req, res) => {
+    let dryrun = !!req.query.dryrun;
     try {
-      await sendAllNotificationsForRegistrationsAction(req, res);
+      await sendAllNotificationsForRegistrationsAction(req, res, dryrun);
     } catch (e) {
       await fail(406, res, e.message);
     }
@@ -66,8 +68,9 @@ const TaskRouter = () => {
   });
 
   router.get("/bulk/savetotempstore", async (req, res) => {
+    let dryrun = !!req.query.dryrun;
     try {
-      await saveAllOutstandingRegistrationsToTempStoreAction(req, res);
+      await saveAllOutstandingRegistrationsToTempStoreAction(req, res, dryrun);
     } catch (e) {
       await fail(406, res, e.message);
     }

@@ -67,20 +67,16 @@ const createNewRegistration = async (
     registration,
     lcContactConfig,
     {
-      status: {
-        registration: undefined,
-        notifications: undefined
-      }
+      status: {}
     },
     {
-      hygiene_council_code: hygieneCouncilCode
-    },
-    {
+      hygiene_council_code: hygieneCouncilCode,
       local_council_url: localCouncilUrl,
       //the council id resolved from the localCouncilUrl
-      source_council_id: sourceCouncil.id
+      source_council_id: sourceCouncil.id,
+      registration_data_version: regDataVersion
     },
-    { registration_data_version: regDataVersion }
+    postRegistrationMetadata
   );
 
   await cacheRegistration(completeCacheRecord);

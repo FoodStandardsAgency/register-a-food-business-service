@@ -54,27 +54,40 @@ const saveRegistration = async (registration, fsa_rn, council) => {
     let premise;
     let establishment;
 
+    let pgReg = await getRegistrationByFsaRn(fsa_rn, transaction);
+    if (!isEmpty(pgReg)) {
+      throw new Error(
+          `Registration with fsa id '${fsa_rn}' already exists in temp-store`
+      );
+    }
+
     reg = await createRegistration(fsa_rn, council);
+
     establishment = await createEstablishment(
       registration.establishment.establishment_details,
       reg.id,
       transaction
     );
+
     operator = await createOperator(
       registration.establishment.operator,
-      establishment.id
+      establishment.id,
+      transaction
     );
+
+
     activities = await createActivities(
       registration.establishment.activities,
       establishment.id,
       transaction
     );
+
+
     premise = await createPremise(
       registration.establishment.premise,
       establishment.id,
       transaction
     );
-
     let partnerIds = [];
     let partner;
     let partnerIndex;
@@ -113,15 +126,10 @@ const saveRegistration = async (registration, fsa_rn, council) => {
   };
 
   try {
-    let pgReg = await getRegistrationByFsaRn(fsa_rn);
-    if (!isEmpty(pgReg)) {
-      throw new Error(
-        `Registration with fsa id '${fsa_rn}' already exists in temp-store`
-      );
-    }
+
 
     //execute the transaction
-    let tempStoreSaved = (await managedTransaction(transaction))();
+    let tempStoreSaved = await transaction();
 
     logEmitter.emit(
       "functionSuccess",

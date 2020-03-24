@@ -401,7 +401,8 @@ describe("RegistrationDb connector", () => {
 
       it("Should call the findOne model with query", () => {
         expect(Registration.findOne).toBeCalledWith({
-          where: { id: "45" }
+          where: { id: "45" },
+          transaction: null
         });
       });
     });
@@ -439,7 +440,8 @@ describe("RegistrationDb connector", () => {
 
       it("Should call the findOne model with query", () => {
         expect(Registration.findOne).toBeCalledWith({
-          where: { fsa_rn: "ASH-89K" }
+          where: { fsa_rn: "ASH-89K" },
+          transaction: null
         });
       });
     });
@@ -477,7 +479,8 @@ describe("RegistrationDb connector", () => {
 
       it("Should call the findOne model with query", () => {
         expect(Establishment.findOne).toBeCalledWith({
-          where: { registrationId: "45" }
+          where: { registrationId: "45" },
+          transaction: null
         });
       });
     });
@@ -515,7 +518,8 @@ describe("RegistrationDb connector", () => {
 
       it("Should call the findOne model with query", () => {
         expect(Metadata.findOne).toBeCalledWith({
-          where: { registrationId: "45" }
+          where: { registrationId: "45" },
+          transaction: null
         });
       });
     });
@@ -553,7 +557,8 @@ describe("RegistrationDb connector", () => {
 
       it("Should call the findOne model with query", () => {
         expect(Operator.findOne).toBeCalledWith({
-          where: { establishmentId: "45" }
+          where: { establishmentId: "45" },
+          transaction: null
         });
       });
     });
@@ -591,7 +596,8 @@ describe("RegistrationDb connector", () => {
 
       it("Should call the findOne model with query", () => {
         expect(Premise.findOne).toBeCalledWith({
-          where: { establishmentId: "45" }
+          where: { establishmentId: "45"} ,
+          transaction: null
         });
       });
     });
@@ -629,7 +635,8 @@ describe("RegistrationDb connector", () => {
 
       it("Should call the findOne model with query", () => {
         expect(Activities.findOne).toBeCalledWith({
-          where: { establishmentId: "45" }
+          where: { establishmentId: "45" },
+          transaction: null
         });
       });
     });
