@@ -29,10 +29,7 @@ const transformDataForNotify = (
   lcContactConfig
 ) => {
   const lcInfo = {};
-  if (
-    Object.keys(lcContactConfig).length === 1 ||
-    lcContactConfig.hygieneAndStandards
-  ) {
+  if (  lcContactConfig.hygieneAndStandards ) {
     lcInfo.local_council = lcContactConfig.hygieneAndStandards.local_council;
 
     lcInfo.local_council_email =
