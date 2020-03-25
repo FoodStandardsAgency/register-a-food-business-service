@@ -137,24 +137,6 @@ describe("registration controller", () => {
             mockSendResponse
           );
         });
-        // it("should call sendResponse with the result of getRegistrationMetaData", () => {
-        //   expect(mockSendResponse.mock.calls[0][0].reg_submission_date).toBe(1);
-        // });
-        // it("should call sendTascomiRegistration with the registration and full postRegistrationMetadata", () => {
-        //   expect(sendTascomiRegistration.mock.calls[0][1]).toEqual({
-        //     reg_submission_date: 1,
-        //     "fsa-rn": "AA1AAA-AA11AA-A1AAA1",
-        //     hygiene_council_code: 1234
-        //   });
-        // });
-
-        // it("should call sendNotifications", () => {
-        //   expect(sendNotifications).toHaveBeenCalled();
-        // });
-        //
-        // it("should call saveRegistration", () => {
-        //   expect(saveRegistration).toHaveBeenCalled();
-        // });
       });
       describe("when auth object does not exist", () => {
         beforeEach(async () => {
@@ -176,9 +158,6 @@ describe("registration controller", () => {
             mockSendResponse
           );
         });
-        // it("should call sendResponse with the result of getRegistrationMetaData", () => {
-        //   expect(mockSendResponse.mock.calls[0][0].reg_submission_date).toBe(1);
-        // });
         it("should call cache registration", () => {
           expect(cacheRegistration).toHaveBeenCalled();
           const expectedToCache = Object.assign(
@@ -205,15 +184,6 @@ describe("registration controller", () => {
           );
           expect(cacheRegistration).toHaveBeenLastCalledWith(expectedToCache);
         });
-        // it("should not call sendTascomiRegistration", () => {
-        //   expect(sendTascomiRegistration.mock.calls.length).toBe(0);
-        // });
-        // it("should call sendNotifications", () => {
-        //   expect(sendNotifications).toHaveBeenCalled();
-        // });
-        // it("should call saveRegistration", () => {
-        //   expect(saveRegistration).toHaveBeenCalled();
-        // });
       });
     });
 
