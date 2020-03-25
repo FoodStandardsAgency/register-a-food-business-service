@@ -50,7 +50,7 @@ const sendAllOutstandingRegistrationsToTascomiAction = async (
   await ids.forEach(async registration => {
     idsAttempted.push(registration["fsa-rn"]);
     if (!dryrun) {
-      await (await multiSendRegistrationToTascomi(configDb))(registration);
+      await multiSendRegistrationToTascomi(configDb, registration);
     }
     logEmitter.emit(
       INFO,
@@ -250,7 +250,7 @@ const saveRegistrationToTempStoreAction = async (fsaId, req, res) => {
 };
 
 // Convenience methods for this controller - dont put else where
-const multiSendNotifications = async configDb => async registration => {
+const multiSendNotifications = async (configDb, registration) => {
   let fsaId = registration["fsa-rn"];
 
   let localCouncil = await getCouncilFromConfigDb(configDb, registration);
@@ -286,7 +286,7 @@ const multiSendNotifications = async configDb => async registration => {
   await sendNotifications(fsaId, lcContactConfig, registration, config);
 };
 
-const multiSendRegistrationToTascomi = async configDb => async registration => {
+const multiSendRegistrationToTascomi = async (configDb,registration) => {
   let fsaId = registration["fsa-rn"];
 
   let localCouncil = await getCouncilFromConfigDb(configDb, registration);
@@ -320,7 +320,7 @@ const multiSendRegistrationToTascomi = async configDb => async registration => {
   }
 };
 
-const multiSaveRegistrationsToTempStore = async configDb => async registration => {
+const multiSaveRegistrationsToTempStore = async (configDb, registration) => {
   let fsaId = registration["fsa-rn"];
 
   //GET LOCAL COUNCIL

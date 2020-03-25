@@ -128,15 +128,12 @@ describe("Function: transformDataForNotify", () => {
       beforeEach(() => {
         result = transformDataForNotify(
           testRegistrationData,
-          testRegistrationData,
           testLcContactConfigSplitWithPhoneNumber
         );
       });
 
       it("should return the flattened data with two sets of council details", () => {
         const expectedFormat = {
-          declaration: exampleDeclaration,
-          establishment: exampleRegistrationEstablishment,
           establishment_trading_name: "Itsu",
           operator_first_name: "Fred",
           establishment_postcode: "SW12 9RQ",
@@ -160,15 +157,12 @@ describe("Function: transformDataForNotify", () => {
       beforeEach(() => {
         result = transformDataForNotify(
           testRegistrationData,
-          testRegistrationData,
           testLcContactConfigCombinedWithPhoneNumber
         );
       });
 
       it("should return the flattened data with one set of council details", () => {
         const expectedFormat = {
-          declaration: exampleDeclaration,
-          establishment: exampleRegistrationEstablishment,
           establishment_trading_name: "Itsu",
           operator_first_name: "Fred",
           establishment_postcode: "SW12 9RQ",
@@ -190,15 +184,12 @@ describe("Function: transformDataForNotify", () => {
       beforeEach(() => {
         result = transformDataForNotify(
           testRegistrationData,
-          testRegistrationData,
           testLcContactConfigCombined
         );
       });
 
       it("should return the flattened data with one set of council details", () => {
         const expectedFormat = {
-          declaration: exampleDeclaration,
-          establishment: exampleRegistrationEstablishment,
           establishment_trading_name: "Itsu",
           operator_first_name: "Fred",
           establishment_postcode: "SW12 9RQ",
@@ -219,15 +210,12 @@ describe("Function: transformDataForNotify", () => {
       beforeEach(() => {
         result = transformDataForNotify(
           testRegistrationData,
-          testRegistrationData,
           testLcContactConfigSplit
         );
       });
 
       it("should return the flattened data with two sets of council details", () => {
         const expectedFormat = {
-          declaration: exampleDeclaration,
-          establishment: exampleRegistrationEstablishment,
           establishment_trading_name: "Itsu",
           operator_first_name: "Fred",
           establishment_postcode: "SW12 9RQ",
@@ -252,15 +240,12 @@ describe("Function: transformDataForNotify", () => {
       beforeEach(() => {
         result = transformDataForNotify(
           testRegistrationDataForPartnership,
-          testRegistrationDataForPartnership,
           testLcContactConfigSplitWithPhoneNumber
         );
       });
 
       it("should return the flattened data with two sets of council details", () => {
         const expectedFormat = {
-          declaration: exampleDeclaration,
-          establishment: examplePartnershipRegistrationEstablishment,
           establishment_trading_name: "Itsu",
           operator_first_name: "Fred",
           main_contact: "Tom",
@@ -285,15 +270,12 @@ describe("Function: transformDataForNotify", () => {
       beforeEach(() => {
         result = transformDataForNotify(
           testRegistrationDataForPartnership,
-          testRegistrationDataForPartnership,
           testLcContactConfigCombinedWithPhoneNumber
         );
       });
 
       it("should return the flattened data with one set of council details", () => {
         const expectedFormat = {
-          declaration: exampleDeclaration,
-          establishment: examplePartnershipRegistrationEstablishment,
           establishment_trading_name: "Itsu",
           operator_first_name: "Fred",
           main_contact: "Tom",
@@ -316,15 +298,12 @@ describe("Function: transformDataForNotify", () => {
       beforeEach(() => {
         result = transformDataForNotify(
           testRegistrationDataForPartnership,
-          testRegistrationDataForPartnership,
           testLcContactConfigCombined
         );
       });
 
       it("should return the flattened data with one set of council details", () => {
         const expectedFormat = {
-          declaration: exampleDeclaration,
-          establishment: examplePartnershipRegistrationEstablishment,
           establishment_trading_name: "Itsu",
           operator_first_name: "Fred",
           main_contact: "Tom",
@@ -346,15 +325,12 @@ describe("Function: transformDataForNotify", () => {
       beforeEach(() => {
         result = transformDataForNotify(
           testRegistrationDataForPartnership,
-          testRegistrationDataForPartnership,
           testLcContactConfigSplit
         );
       });
 
       it("should return the flattened data with two sets of council details", () => {
         const expectedFormat = {
-          declaration: exampleDeclaration,
-          establishment: examplePartnershipRegistrationEstablishment,
           establishment_trading_name: "Itsu",
           operator_first_name: "Fred",
           main_contact: "Tom",

@@ -16,8 +16,7 @@ const {
 /**
  * Function that converts the data into format for Notify and creates a new object
  *
- * @param {object} registration The object containing all the answers the user has submitted during the sesion
- * @param {object} postRegistrationMetaData The object containing all the metadata from the submission e.g. fsa-rn number, submission time
+ * @param {object} registration The cached registration
  * @param {object} lcContactConfig The object containing the local council information
  *
  * @returns {object} Object containing key-value pairs of the data needed to populate corresponding keys in notify template
@@ -25,7 +24,6 @@ const {
 
 const transformDataForNotify = (
   registration,
-  postRegistrationMetadata,
   lcContactConfig
 ) => {
   const lcInfo = {};
@@ -73,23 +71,31 @@ const transformDataForNotify = (
       .establishment_opening_date
   ).format("DD MMM YYYY");
 
-  const postRegistrationMetadataClone = JSON.parse(
-    JSON.stringify(postRegistrationMetadata)
-  );
-
-  postRegistrationMetadataClone.reg_submission_date = moment(
-    postRegistrationMetadataClone.reg_submission_date
+  registrationClone.reg_submission_date = moment(
+      registrationClone.reg_submission_date
   ).format("DD MMM YYYY");
 
-  const flattenedData = Object.assign(
+
+
+  let flattenedData = Object.assign(
     {},
     registrationClone.establishment.premise,
     registrationClone.establishment.establishment_details,
     registrationClone.establishment.operator,
     registrationClone.establishment.activities,
     registrationClone.declaration,
-    postRegistrationMetadataClone,
+    {
+      reg_submission_date: registrationClone.reg_submission_date
+    },
     lcInfo
+  );
+
+  delete registrationClone.establishment;
+  delete registrationClone.declaration;
+
+  flattenedData = Object.assign({},
+    flattenedData,
+    registrationClone
   );
 
   if (Array.isArray(partners)) {
@@ -123,18 +129,15 @@ const sendEmails = async (
   logEmitter.emit("functionCall", "registration.service", "sendEmails");
   let newError;
   let success = true;
-  let postRegistrationMetadata = registration;
 
   try {
     const data = transformDataForNotify(
       registration,
-      postRegistrationMetadata,
       lcContactConfig
     );
 
     const dataForPDF = transformDataForPdf(
       registration,
-      postRegistrationMetadata,
       lcContactConfig
     );
     const pdfFile = await pdfGenerator(dataForPDF);

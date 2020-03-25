@@ -19,8 +19,7 @@ const {
 /**
  * Function that does data manipulation to return an object with data in the needed format
  *
- * @param {object} registrationData The object containing all the answers the user has submitted during the sesion
- * @param {object} postRegistrationData The object containing all the metadata from the submission e.g. fsa-rn number, submission time
+ * @param {object} registrationData The cached registration data
  * @param {object} lcContactConfig The object containing the local council information
  *
  * @returns {object} An object containing the set of data in the correct format for the pdf service
@@ -28,7 +27,6 @@ const {
 
 const transformDataForPdf = (
   registrationData,
-  postRegistrationData,
   lcContactConfig
 ) => {
   const lcInfo = getLcNames(lcContactConfig);
@@ -50,7 +48,7 @@ const transformDataForPdf = (
     },
     activities: { ...registrationData.establishment.activities },
     declaration: { ...registrationData.declaration },
-    metaData: { ...postRegistrationData, lcInfo }
+    metaData: { ...registrationData, lcInfo }
   };
 
   if (Array.isArray(partners)) {

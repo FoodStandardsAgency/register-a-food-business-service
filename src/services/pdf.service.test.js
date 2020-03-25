@@ -76,7 +76,6 @@ describe("Pdf Service: ", () => {
         beforeEach(() => {
           result = transformDataForPdf(
             mockRegistraionData,
-            mockPostRegistrationData,
             mockLcContactConfig
           );
         });
@@ -118,7 +117,6 @@ describe("Pdf Service: ", () => {
         beforeEach(() => {
           result = transformDataForPdf(
             mockRegistraionData,
-            mockPostRegistrationData,
             mockLcContactConfig
           );
         });
@@ -220,7 +218,6 @@ describe("Pdf Service: ", () => {
         beforeEach(() => {
           result = transformDataForPdf(
             mockRegistraionData,
-            mockPostRegistrationData,
             mockLcContactConfig
           );
         });
@@ -263,7 +260,6 @@ describe("Pdf Service: ", () => {
         beforeEach(() => {
           result = transformDataForPdf(
             mockRegistraionData,
-            mockPostRegistrationData,
             mockLcContactConfig
           );
         });
