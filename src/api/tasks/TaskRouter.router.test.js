@@ -139,11 +139,8 @@ describe("/api/tasks route: ", () => {
     let fsaId = "test";
     beforeEach(() => {
       router = TaskRouter();
-      sendRegistrationToTascomiAction.mockImplementation(
-          () => {}
-      );
+      sendRegistrationToTascomiAction.mockImplementation(() => {});
       handler = router.get.mock.calls[1][1];
-      console.log(router.get.mock.calls);
       req = { params: { fsaId } };
       res = {
         send: jest.fn()
@@ -152,9 +149,11 @@ describe("/api/tasks route: ", () => {
     });
 
     it("Should call sendRegistrationToTascomiAction", () => {
-      expect(
-          sendRegistrationToTascomiAction
-      ).toHaveBeenLastCalledWith(fsaId, req, res);
+      expect(sendRegistrationToTascomiAction).toHaveBeenLastCalledWith(
+        fsaId,
+        req,
+        res
+      );
     });
   });
 
@@ -162,9 +161,7 @@ describe("/api/tasks route: ", () => {
     let fsaId = "test";
     beforeEach(() => {
       router = TaskRouter();
-      sendNotificationsForRegistrationAction.mockImplementation(
-          () => {}
-      );
+      sendNotificationsForRegistrationAction.mockImplementation(() => {});
       handler = router.get.mock.calls[3][1];
       req = { params: { fsaId } };
       res = {
@@ -174,9 +171,11 @@ describe("/api/tasks route: ", () => {
     });
 
     it("Should call sendNotificationsForRegistrationAction", () => {
-      expect(
-          sendNotificationsForRegistrationAction
-      ).toHaveBeenLastCalledWith(fsaId, req, res);
+      expect(sendNotificationsForRegistrationAction).toHaveBeenLastCalledWith(
+        fsaId,
+        req,
+        res
+      );
     });
   });
 
@@ -184,9 +183,7 @@ describe("/api/tasks route: ", () => {
     let fsaId = "test";
     beforeEach(() => {
       router = TaskRouter();
-      saveRegistrationToTempStoreAction.mockImplementation(
-          () => {}
-      );
+      saveRegistrationToTempStoreAction.mockImplementation(() => {});
       handler = router.get.mock.calls[4][1];
       req = { params: { fsaId } };
       res = {
@@ -196,9 +193,11 @@ describe("/api/tasks route: ", () => {
     });
 
     it("Should call sendNotificationsForRegistrationAction", () => {
-      expect(
-          saveRegistrationToTempStoreAction
-      ).toHaveBeenLastCalledWith(fsaId, req, res);
+      expect(saveRegistrationToTempStoreAction).toHaveBeenLastCalledWith(
+        fsaId,
+        req,
+        res
+      );
     });
   });
 });

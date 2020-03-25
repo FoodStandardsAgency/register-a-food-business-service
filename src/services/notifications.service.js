@@ -22,12 +22,9 @@ const {
  * @returns {object} Object containing key-value pairs of the data needed to populate corresponding keys in notify template
  */
 
-const transformDataForNotify = (
-  registration,
-  lcContactConfig
-) => {
+const transformDataForNotify = (registration, lcContactConfig) => {
   const lcInfo = {};
-  if (  lcContactConfig.hygieneAndStandards ) {
+  if (lcContactConfig.hygieneAndStandards) {
     lcInfo.local_council = lcContactConfig.hygieneAndStandards.local_council;
 
     lcInfo.local_council_email =
@@ -72,10 +69,8 @@ const transformDataForNotify = (
   ).format("DD MMM YYYY");
 
   registrationClone.reg_submission_date = moment(
-      registrationClone.reg_submission_date
+    registrationClone.reg_submission_date
   ).format("DD MMM YYYY");
-
-
 
   let flattenedData = Object.assign(
     {},
@@ -93,10 +88,7 @@ const transformDataForNotify = (
   delete registrationClone.establishment;
   delete registrationClone.declaration;
 
-  flattenedData = Object.assign({},
-    flattenedData,
-    registrationClone
-  );
+  flattenedData = Object.assign({}, flattenedData, registrationClone);
 
   if (Array.isArray(partners)) {
     const partnershipDetails = {
@@ -131,15 +123,9 @@ const sendEmails = async (
   let success = true;
 
   try {
-    const data = transformDataForNotify(
-      registration,
-      lcContactConfig
-    );
+    const data = transformDataForNotify(registration, lcContactConfig);
 
-    const dataForPDF = transformDataForPdf(
-      registration,
-      lcContactConfig
-    );
+    const dataForPDF = transformDataForPdf(registration, lcContactConfig);
     const pdfFile = await pdfGenerator(dataForPDF);
     for (let index in emailsToSend) {
       let fileToSend = undefined;

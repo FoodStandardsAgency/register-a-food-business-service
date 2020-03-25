@@ -25,10 +25,7 @@ const {
  * @returns {object} An object containing the set of data in the correct format for the pdf service
  */
 
-const transformDataForPdf = (
-  registrationData,
-  lcContactConfig
-) => {
+const transformDataForPdf = (registrationData, lcContactConfig) => {
   const lcInfo = getLcNames(lcContactConfig);
 
   const operator = { ...registrationData.establishment.operator };

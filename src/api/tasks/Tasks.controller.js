@@ -125,7 +125,7 @@ const sendAllNotificationsForRegistrationsAction = async (req, res, dryrun) => {
   await ids.forEach(async registration => {
     idsAttempted.push(registration["fsa-rn"]);
     if (!dryrun) {
-      await multiSendNotifications(configDb,registration);
+      await multiSendNotifications(configDb, registration);
     }
     logEmitter.emit(
       INFO,
@@ -205,7 +205,7 @@ const saveAllOutstandingRegistrationsToTempStoreAction = async (
   await ids.forEach(async registration => {
     idsAttempted.push(registration["fsa-rn"]);
     if (!dryrun) {
-      await multiSaveRegistrationsToTempStore(configDb,registration);
+      await multiSaveRegistrationsToTempStore(configDb, registration);
     }
     logEmitter.emit(
       INFO,
@@ -286,7 +286,7 @@ const multiSendNotifications = async (configDb, registration) => {
   await sendNotifications(fsaId, lcContactConfig, registration, config);
 };
 
-const multiSendRegistrationToTascomi = async (configDb,registration) => {
+const multiSendRegistrationToTascomi = async (configDb, registration) => {
   let fsaId = registration["fsa-rn"];
 
   let localCouncil = await getCouncilFromConfigDb(configDb, registration);

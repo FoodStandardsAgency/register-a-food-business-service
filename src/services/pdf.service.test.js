@@ -57,10 +57,6 @@ describe("Pdf Service: ", () => {
           declaration3: "Declaration"
         }
       };
-      const mockPostRegistrationData = {
-        "fsa-rn": "DYRKYP-NPLKN7-YFDF6V",
-        reg_submission_date: "2018-11-05"
-      };
 
       describe("When given single council", () => {
         const mockLcContactConfig = {
@@ -198,10 +194,6 @@ describe("Pdf Service: ", () => {
           declaration2: "Declaration",
           declaration3: "Declaration"
         }
-      };
-      const mockPostRegistrationData = {
-        "fsa-rn": "DYRKYP-NPLKN7-YFDF6V",
-        reg_submission_date: "2018-11-05"
       };
 
       describe("When given single council", () => {
