@@ -125,7 +125,7 @@ const sendAllNotificationsForRegistrationsAction = async (req, res, dryrun) => {
   await ids.forEach(async registration => {
     idsAttempted.push(registration["fsa-rn"]);
     if (!dryrun) {
-      await (await multiSendNotifications(configDb))(registration);
+      await multiSendNotifications(configDb,registration);
     }
     logEmitter.emit(
       INFO,
@@ -205,7 +205,7 @@ const saveAllOutstandingRegistrationsToTempStoreAction = async (
   await ids.forEach(async registration => {
     idsAttempted.push(registration["fsa-rn"]);
     if (!dryrun) {
-      await (await multiSaveRegistrationsToTempStore(configDb))(registration);
+      await multiSaveRegistrationsToTempStore(configDb,registration);
     }
     logEmitter.emit(
       INFO,
