@@ -67,7 +67,11 @@ const createNewRegistration = async (
     registration,
     lcContactConfig,
     {
-      status: {}
+      status: {
+        registration: null,
+        notifications: null,
+        tascomi: null
+      }
     },
     {
       hygiene_council_code: hygieneCouncilCode,
