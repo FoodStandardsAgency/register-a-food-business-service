@@ -11,7 +11,9 @@ const {
 } = require("../../connectors/cacheDb/cacheDb.connector");
 
 const {
-  findCouncilByUrl
+  findCouncilByUrl,
+  connectToConfigDb,
+  LocalCouncilConfigDbCollection
 } = require("../../connectors/configDb/configDb.connector");
 
 const { logEmitter } = require("../../services/logging.service");
@@ -41,7 +43,15 @@ const createNewRegistration = async (
   }
 
   // RESOLUTION
-  const sourceCouncil = await findCouncilByUrl(localCouncilUrl);
+  let configDb = await connectToConfigDb();
+  const lcConfigCollection = await LocalCouncilConfigDbCollection(configDb);
+
+  console.error("blah", localCouncilUrl);
+  const sourceCouncil = await findCouncilByUrl(
+    lcConfigCollection,
+    localCouncilUrl
+  );
+  console.error("blah", sourceCouncil);
 
   //left here as legacy code
   const lcContactConfig = await getLcContactConfig(localCouncilUrl);
@@ -53,9 +63,11 @@ const createNewRegistration = async (
     hygieneCouncilCode = lcContactConfig.hygiene.code;
   }
 
+  console.error("blah2");
   const postRegistrationMetadata = await getRegistrationMetaData(
     hygieneCouncilCode
   );
+  console.error("endblah2", postRegistrationMetadata);
 
   //this is all very messy but ported from legacy code.
   const completeCacheRecord = Object.assign(

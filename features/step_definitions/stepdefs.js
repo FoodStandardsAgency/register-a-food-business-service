@@ -10,6 +10,11 @@ const {
 
 setDefaultTimeout(60 * 1000);
 
+let apiUrl = "https://test-register-a-food-business-service.azurewebsites.net";
+if(process.env.NODE_ENV === 'local'){
+  apiUrl = process.env.API_URL ? process.env.API_URL : apiUrl;
+}
+
 const sendRequest = async body => {
   const headers = {
     "Content-Type": "application/json",
@@ -18,7 +23,7 @@ const sendRequest = async body => {
     "registration-data-version": "1.2.1"
   };
   const res = await fetch(
-    "https://test-register-a-food-business-service.azurewebsites.net/api/registration/createNewRegistration",
+    `${apiUrl}/api/registration/createNewRegistration`,
     {
       method: "POST",
       headers,
@@ -35,7 +40,7 @@ const getRequest = async id => {
     "client-name": ADMIN_NAME
   };
   const res = await fetch(
-    `http://test-register-a-food-business-service.azurewebsites.net/api/registration/${id}`,
+    `${apiUrl}/api/registration/${id}`,
     {
       headers
     }
