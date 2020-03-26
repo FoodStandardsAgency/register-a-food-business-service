@@ -16,20 +16,15 @@ const {
 /**
  * Function that converts the data into format for Notify and creates a new object
  *
- * @param {object} registration The object containing all the answers the user has submitted during the sesion
- * @param {object} postRegistrationMetaData The object containing all the metadata from the submission e.g. fsa-rn number, submission time
+ * @param {object} registration The cached registration
  * @param {object} lcContactConfig The object containing the local council information
  *
  * @returns {object} Object containing key-value pairs of the data needed to populate corresponding keys in notify template
  */
 
-const transformDataForNotify = (
-  registration,
-  postRegistrationMetadata,
-  lcContactConfig
-) => {
+const transformDataForNotify = (registration, lcContactConfig) => {
   const lcInfo = {};
-  if (Object.keys(lcContactConfig).length === 1) {
+  if (lcContactConfig.hygieneAndStandards) {
     lcInfo.local_council = lcContactConfig.hygieneAndStandards.local_council;
 
     lcInfo.local_council_email =
@@ -73,24 +68,27 @@ const transformDataForNotify = (
       .establishment_opening_date
   ).format("DD MMM YYYY");
 
-  const postRegistrationMetadataClone = JSON.parse(
-    JSON.stringify(postRegistrationMetadata)
-  );
-
-  postRegistrationMetadataClone.reg_submission_date = moment(
-    postRegistrationMetadataClone.reg_submission_date
+  registrationClone.reg_submission_date = moment(
+    registrationClone.reg_submission_date
   ).format("DD MMM YYYY");
 
-  const flattenedData = Object.assign(
+  let flattenedData = Object.assign(
     {},
     registrationClone.establishment.premise,
     registrationClone.establishment.establishment_details,
     registrationClone.establishment.operator,
     registrationClone.establishment.activities,
     registrationClone.declaration,
-    postRegistrationMetadataClone,
+    {
+      reg_submission_date: registrationClone.reg_submission_date
+    },
     lcInfo
   );
+
+  delete registrationClone.establishment;
+  delete registrationClone.declaration;
+
+  flattenedData = Object.assign({}, flattenedData, registrationClone);
 
   if (Array.isArray(partners)) {
     const partnershipDetails = {
@@ -108,7 +106,7 @@ const transformDataForNotify = (
  *
  * @param {object} emailsToSend The object containing all emails to be sent. Should include, type, address and template.
  * @param {object} registration The object containing all the answers the user has submitted during the sesion
- * @param {object} postRegistrationMetaData The object containing the metadata from the submission i.e. fsa-rn number and submission date
+ * @param fsaId
  * @param {object} lcContactConfig The object containing the local council information
  *
  * @returns {object} Object that returns email sent status and recipients email address
@@ -117,27 +115,18 @@ const transformDataForNotify = (
 const sendEmails = async (
   emailsToSend,
   registration,
-  postRegistrationMetadata,
+  fsaId,
   lcContactConfig
 ) => {
   logEmitter.emit("functionCall", "registration.service", "sendEmails");
-
   let newError;
   let success = true;
+
   try {
-    const data = transformDataForNotify(
-      registration,
-      postRegistrationMetadata,
-      lcContactConfig
-    );
+    const data = transformDataForNotify(registration, lcContactConfig);
 
-    const dataForPDF = transformDataForPdf(
-      registration,
-      postRegistrationMetadata,
-      lcContactConfig
-    );
+    const dataForPDF = transformDataForPdf(registration, lcContactConfig);
     const pdfFile = await pdfGenerator(dataForPDF);
-
     for (let index in emailsToSend) {
       let fileToSend = undefined;
       if (emailsToSend[index].type === "LC") {
@@ -153,7 +142,7 @@ const sendEmails = async (
         )
       ) {
         await updateNotificationOnSent(
-          postRegistrationMetadata["fsa-rn"],
+          fsaId,
           emailsToSend[index].type,
           emailsToSend[index].address
         );
@@ -199,15 +188,15 @@ const sendEmails = async (
 /**
  * Function that calls the sendSingleEmail function with the relevant parameters in the right order
  *
+ * @param fsaId
  * @param {object} lcContactConfig The object containing the local council information
  * @param {object} registration The object containing all the answers the user has submitted during the sesion
- * @param {object} postRegistrationMetaData The object containing the metadata from the submission i.e. fsa-rn number and submission date
  * @param {object} configData Object containing notify_template_keys and future_delivery_email
  */
 const sendNotifications = async (
+  fsaId,
   lcContactConfig,
   registration,
-  postRegistrationMetadata,
   configData
 ) => {
   let emailsToSend = [];
@@ -249,17 +238,9 @@ const sendNotifications = async (
     });
   }
 
-  await addNotificationToStatus(
-    postRegistrationMetadata["fsa-rn"],
-    emailsToSend
-  );
+  await addNotificationToStatus(fsaId, emailsToSend);
 
-  await sendEmails(
-    emailsToSend,
-    registration,
-    postRegistrationMetadata,
-    lcContactConfig
-  );
+  await sendEmails(emailsToSend, registration, fsaId, lcContactConfig);
 };
 
 /**

@@ -1,22 +1,17 @@
 const { validate } = require("../../services/validation.service");
 const {
-  saveRegistration,
   getFullRegistrationByFsaRn,
   deleteRegistrationByFsaRn,
-  sendTascomiRegistration,
   getRegistrationMetaData,
-  getLcContactConfig,
-  getLcAuth
+  getLcContactConfig
 } = require("./registration.service");
-
-const { sendNotifications } = require("../../services/notifications.service");
 
 const {
   cacheRegistration
 } = require("../../connectors/cacheDb/cacheDb.connector");
 
 const {
-  getConfigVersion
+  findCouncilByUrl
 } = require("../../connectors/configDb/configDb.connector");
 
 const { logEmitter } = require("../../services/logging.service");
@@ -46,6 +41,9 @@ const createNewRegistration = async (
   }
 
   // RESOLUTION
+  const sourceCouncil = await findCouncilByUrl(localCouncilUrl);
+
+  //left here as legacy code
   const lcContactConfig = await getLcContactConfig(localCouncilUrl);
 
   let hygieneCouncilCode;
@@ -59,6 +57,7 @@ const createNewRegistration = async (
     hygieneCouncilCode
   );
 
+  //this is all very messy but ported from legacy code.
   const completeCacheRecord = Object.assign(
     {},
     {
@@ -69,44 +68,29 @@ const createNewRegistration = async (
     lcContactConfig,
     {
       status: {
-        registration: undefined,
-        notifications: undefined
+        registration: null,
+        notifications: null,
+        tascomi: null
       }
-    }
+    },
+    {
+      hygiene_council_code: hygieneCouncilCode,
+      local_council_url: localCouncilUrl,
+      //the council id resolved from the localCouncilUrl
+      source_council_id: sourceCouncil.id,
+      registration_data_version: regDataVersion
+    },
+    postRegistrationMetadata
   );
 
-  cacheRegistration(completeCacheRecord);
+  await cacheRegistration(completeCacheRecord);
 
   const combinedResponse = Object.assign({}, postRegistrationMetadata, {
     lc_config: lcContactConfig
   });
 
   sendResponse(combinedResponse);
-  const auth = await getLcAuth(localCouncilUrl);
-  if (auth) {
-    sendTascomiRegistration(
-      registration,
-      Object.assign({}, postRegistrationMetadata, {
-        hygiene_council_code: hygieneCouncilCode
-      }),
-      localCouncilUrl
-    );
-  }
 
-  saveRegistration(
-    registration,
-    postRegistrationMetadata["fsa-rn"],
-    localCouncilUrl
-  );
-
-  const configVersion = await getConfigVersion(regDataVersion);
-
-  sendNotifications(
-    lcContactConfig,
-    registration,
-    postRegistrationMetadata,
-    configVersion
-  );
   logEmitter.emit(
     "functionSuccess",
     "registration.controller",

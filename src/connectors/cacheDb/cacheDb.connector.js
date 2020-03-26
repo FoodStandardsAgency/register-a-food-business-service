@@ -27,6 +27,34 @@ const establishConnectionToMongo = async () => {
   }
 };
 
+const connectToBeCacheDb = async () => {
+  if (process.env.DOUBLE_MODE === "true") {
+    logEmitter.emit(
+      "doubleMode",
+      "cacheDb.connector",
+      "getAllLocalCouncilConfig"
+    );
+    return cachedRegistrationsDouble;
+  } else {
+    if (client === undefined) {
+      client = await mongodb.MongoClient.connect(CACHEDB_URL, {
+        useNewUrlParser: true
+      });
+    }
+
+    return await client.db("register_a_food_business_cache");
+  }
+};
+
+const disconnectCacheDb = async () => {
+  if (client) {
+    client.close();
+  }
+};
+
+const CachedRegistrationsCollection = async client =>
+  await client.collection("cachedRegistrations");
+
 const getDate = () => {
   return new Date().toLocaleString("en-GB", {
     hour12: false,
@@ -119,6 +147,65 @@ const updateStatusInCache = async (fsa_rn, property, value) => {
       err
     );
   }
+};
+
+const findAllOutstandingSavesToTempStore = async (
+  cachedRegistrations,
+  limit = 100
+) => {
+  return await cachedRegistrations
+    .find({
+      $or: [
+        { "status.registration.complete": { $eq: false } },
+        { "status.registration": { $exists: false } }
+      ]
+    })
+    .sort({ reg_submission_date: 1 })
+    .limit(limit);
+};
+
+const findAllOutstandingNotificationsRegistrations = async (
+  cachedRegistrations,
+  limit = 100
+) => {
+  return await cachedRegistrations
+    .find({
+      $or: [
+        {
+          "status.notifications": {
+            $elemMatch: { sent: { $ne: true } }
+          }
+        },
+        { "status.notifications": { $exists: false } }
+      ]
+    })
+    .sort({ reg_submission_date: 1 })
+    .limit(limit);
+};
+
+const findOutstandingTascomiRegistrationsFsaIds = async (
+  cachedRegistrations,
+  limit = 100
+) => {
+  return await cachedRegistrations
+    .find(
+      {
+        $or: [
+          { "status.tascomi.complete": { $eq: false } },
+          { "status.tascomi": { $exists: false } }
+        ]
+      },
+      { _id: 1, "fsa-rn": 1 }
+    )
+    .sort({ reg_submission_date: 1 })
+    .limit(limit);
+};
+
+const findOneById = async (cachedRegistrations, fsa_rn) => {
+  const cachedRegistration = await cachedRegistrations.findOne({
+    "fsa-rn": fsa_rn
+  });
+  return Object.assign({}, cachedRegistration);
 };
 
 const getStatus = async (cachedRegistrations, fsa_rn) => {
@@ -258,9 +345,17 @@ const clearMongoConnection = () => {
 };
 
 module.exports = {
+  findAllOutstandingSavesToTempStore,
+  findAllOutstandingNotificationsRegistrations,
+  findOutstandingTascomiRegistrationsFsaIds,
   cacheRegistration,
   clearMongoConnection,
   updateStatusInCache,
   addNotificationToStatus,
-  updateNotificationOnSent
+  updateNotificationOnSent,
+  establishConnectionToMongo,
+  findOneById,
+  CachedRegistrationsCollection,
+  connectToBeCacheDb,
+  disconnectCacheDb
 };

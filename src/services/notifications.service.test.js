@@ -1,3 +1,4 @@
+"use strict";
 jest.mock("../connectors/cacheDb/cacheDb.connector.js");
 jest.mock("../connectors/notify/notify.connector", () => ({
   sendSingleEmail: jest.fn()
@@ -9,6 +10,8 @@ jest.mock("./logging.service", () => ({
   logEmitter: { emit: mockEmit }
 }));
 
+const moment = require("moment");
+const today = moment().format("DD MMM YYYY");
 const { pdfGenerator } = require("./pdf.service");
 const { sendSingleEmail } = require("../connectors/notify/notify.connector");
 const {
@@ -20,61 +23,62 @@ const {
   sendNotifications
 } = require("./notifications.service");
 
-const testRegistrationData = {
-  establishment: {
-    establishment_details: {
-      establishment_trading_name: "Itsu",
-      establishment_opening_date: "2017-12-30"
-    },
-    operator: {
-      operator_first_name: "Fred"
-    },
-    premise: {
-      establishment_postcode: "SW12 9RQ"
-    },
-    activities: {
-      customer_type: "End consumer"
-    }
+const exampleDeclaration = {
+  declaration1: "Declaration"
+};
+
+const exampleRegistrationEstablishment = {
+  establishment_details: {
+    establishment_trading_name: "Itsu",
+    establishment_opening_date: "2017-12-30"
   },
-  declaration: {
-    declaration1: "Declaration"
+  operator: {
+    operator_first_name: "Fred"
+  },
+  premise: {
+    establishment_postcode: "SW12 9RQ"
+  },
+  activities: {
+    customer_type: "End consumer"
+  }
+};
+
+const testRegistrationData = {
+  establishment: exampleRegistrationEstablishment,
+  declaration: exampleDeclaration,
+  example: "value",
+  reg_submission_date: "2018-12-01"
+};
+
+const examplePartnershipRegistrationEstablishment = {
+  establishment_details: {
+    establishment_trading_name: "Itsu",
+    establishment_opening_date: "2017-12-30"
+  },
+  operator: {
+    operator_first_name: "Fred",
+    partners: [
+      {
+        partner_name: "Tom",
+        partner_is_primary_contact: true
+      },
+      {
+        partner_name: "Fred",
+        partner_is_primary_contact: false
+      }
+    ]
+  },
+  premise: {
+    establishment_postcode: "SW12 9RQ"
+  },
+  activities: {
+    customer_type: "End consumer"
   }
 };
 
 const testRegistrationDataForPartnership = {
-  establishment: {
-    establishment_details: {
-      establishment_trading_name: "Itsu",
-      establishment_opening_date: "2017-12-30"
-    },
-    operator: {
-      operator_first_name: "Fred",
-      partners: [
-        {
-          partner_name: "Tom",
-          partner_is_primary_contact: true
-        },
-        {
-          partner_name: "Fred",
-          partner_is_primary_contact: false
-        }
-      ]
-    },
-    premise: {
-      establishment_postcode: "SW12 9RQ"
-    },
-    activities: {
-      customer_type: "End consumer"
-    }
-  },
-  declaration: {
-    declaration1: "Declaration"
-  }
-};
-
-const testPostRegistrationMetadata = {
-  example: "value",
-  reg_submission_date: "2018-12-01"
+  establishment: examplePartnershipRegistrationEstablishment,
+  declaration: exampleDeclaration
 };
 
 const testLcContactConfigSplitWithPhoneNumber = {
@@ -124,7 +128,6 @@ describe("Function: transformDataForNotify", () => {
       beforeEach(() => {
         result = transformDataForNotify(
           testRegistrationData,
-          testPostRegistrationMetadata,
           testLcContactConfigSplitWithPhoneNumber
         );
       });
@@ -154,7 +157,6 @@ describe("Function: transformDataForNotify", () => {
       beforeEach(() => {
         result = transformDataForNotify(
           testRegistrationData,
-          testPostRegistrationMetadata,
           testLcContactConfigCombinedWithPhoneNumber
         );
       });
@@ -182,7 +184,6 @@ describe("Function: transformDataForNotify", () => {
       beforeEach(() => {
         result = transformDataForNotify(
           testRegistrationData,
-          testPostRegistrationMetadata,
           testLcContactConfigCombined
         );
       });
@@ -209,7 +210,6 @@ describe("Function: transformDataForNotify", () => {
       beforeEach(() => {
         result = transformDataForNotify(
           testRegistrationData,
-          testPostRegistrationMetadata,
           testLcContactConfigSplit
         );
       });
@@ -240,7 +240,6 @@ describe("Function: transformDataForNotify", () => {
       beforeEach(() => {
         result = transformDataForNotify(
           testRegistrationDataForPartnership,
-          testPostRegistrationMetadata,
           testLcContactConfigSplitWithPhoneNumber
         );
       });
@@ -255,14 +254,13 @@ describe("Function: transformDataForNotify", () => {
           establishment_opening_date: "30 Dec 2017",
           customer_type: "End consumer",
           declaration1: "Declaration",
-          example: "value",
           local_council_hygiene: "Hygiene council name",
           local_council_email_hygiene: "hygiene@example.com",
           local_council_phone_number_hygiene: "123456789",
           local_council_standards: "Standards council name",
           local_council_email_standards: "standards@example.com",
           local_council_phone_number_standards: "123456789",
-          reg_submission_date: "01 Dec 2018"
+          reg_submission_date: today
         };
 
         expect(result).toEqual(expectedFormat);
@@ -272,7 +270,6 @@ describe("Function: transformDataForNotify", () => {
       beforeEach(() => {
         result = transformDataForNotify(
           testRegistrationDataForPartnership,
-          testPostRegistrationMetadata,
           testLcContactConfigCombinedWithPhoneNumber
         );
       });
@@ -287,11 +284,10 @@ describe("Function: transformDataForNotify", () => {
           establishment_opening_date: "30 Dec 2017",
           customer_type: "End consumer",
           declaration1: "Declaration",
-          example: "value",
           local_council: "Hygiene and standards council name",
           local_council_email: "both@example.com",
           local_council_phone_number: "123456789",
-          reg_submission_date: "01 Dec 2018"
+          reg_submission_date: today
         };
 
         expect(result).toEqual(expectedFormat);
@@ -302,7 +298,6 @@ describe("Function: transformDataForNotify", () => {
       beforeEach(() => {
         result = transformDataForNotify(
           testRegistrationDataForPartnership,
-          testPostRegistrationMetadata,
           testLcContactConfigCombined
         );
       });
@@ -317,10 +312,9 @@ describe("Function: transformDataForNotify", () => {
           establishment_opening_date: "30 Dec 2017",
           customer_type: "End consumer",
           declaration1: "Declaration",
-          example: "value",
           local_council: "Hygiene and standards council name",
           local_council_email: "both@example.com",
-          reg_submission_date: "01 Dec 2018"
+          reg_submission_date: today
         };
 
         expect(result).toEqual(expectedFormat);
@@ -331,7 +325,6 @@ describe("Function: transformDataForNotify", () => {
       beforeEach(() => {
         result = transformDataForNotify(
           testRegistrationDataForPartnership,
-          testPostRegistrationMetadata,
           testLcContactConfigSplit
         );
       });
@@ -346,12 +339,11 @@ describe("Function: transformDataForNotify", () => {
           establishment_opening_date: "30 Dec 2017",
           customer_type: "End consumer",
           declaration1: "Declaration",
-          example: "value",
           local_council_hygiene: "Hygiene council name",
           local_council_email_hygiene: "hygiene@example.com",
           local_council_standards: "Standards council name",
           local_council_email_standards: "standards@example.com",
-          reg_submission_date: "01 Dec 2018"
+          reg_submission_date: today
         };
 
         expect(result).toEqual(expectedFormat);
@@ -366,6 +358,8 @@ describe("Function: sendEmailOfType: ", () => {
   });
 
   const mockRegistrationData = {
+    "fsa-rn": "DYRKYP-NPLKN7-YFDF6V",
+    reg_submission_date: "2018-11-05",
     establishment: {
       establishment_details: {
         establishment_trading_name: "Itsu",
@@ -423,10 +417,6 @@ describe("Function: sendEmailOfType: ", () => {
       declaration3: "Declaration"
     }
   };
-  const mockPostRegistrationData = {
-    "fsa-rn": "DYRKYP-NPLKN7-YFDF6V",
-    reg_submission_date: "2018-11-05"
-  };
 
   const mockLcContactConfig = {
     hygieneAndStandards: {
@@ -447,7 +437,7 @@ describe("Function: sendEmailOfType: ", () => {
 
   const configData = {
     notify_template_keys: testNotifyTemplateKeys,
-    future_delivery_email: "testEmail@test.com"
+    future_delivery_email: "fsatestemail.valid@gmail.com"
   };
 
   describe("When the connector responds successfully", () => {
@@ -460,9 +450,9 @@ describe("Function: sendEmailOfType: ", () => {
       }));
       addNotificationToStatus.mockImplementation();
       await sendNotifications(
+        mockRegistrationData["fsa-rn"],
         mockLcContactConfig,
         mockRegistrationData,
-        mockPostRegistrationData,
         configData
       );
     });
@@ -486,10 +476,12 @@ describe("Function: sendEmailOfType: ", () => {
     });
   });
 
-  describe("When the connector responds successfully with feedback", () => {
+  describe("*When the connector responds successfully with feedback", () => {
     const testPdfFile = "example base64 string";
 
     const mockRegistrationData = {
+      "fsa-rn": "DYRKYP-NPLKN7-YFDF6V",
+      reg_submission_date: "2018-11-05",
       establishment: {
         establishment_details: {
           establishment_trading_name: "Itsu",
@@ -555,9 +547,9 @@ describe("Function: sendEmailOfType: ", () => {
         id: "123-456"
       }));
       await sendNotifications(
+        mockRegistrationData["fsa_rn"],
         mockLcContactConfig,
         mockRegistrationData,
-        mockPostRegistrationData,
         configData
       );
     });
@@ -587,9 +579,9 @@ describe("Function: sendEmailOfType: ", () => {
         throw new Error("Notify error");
       });
       await sendNotifications(
+        mockRegistrationData["fsa_rn"],
         mockLcContactConfig,
         mockRegistrationData,
-        mockPostRegistrationData,
         configData
       );
     });
@@ -611,9 +603,9 @@ describe("Function: sendEmailOfType: ", () => {
         return null;
       });
       await sendNotifications(
+        mockRegistrationData["fsa_rn"],
         mockLcContactConfig,
         mockRegistrationData,
-        mockPostRegistrationData,
         configData
       );
     });
@@ -644,9 +636,9 @@ describe("Function: sendEmailOfType: ", () => {
         id: "123-456"
       }));
       await sendNotifications(
+        newMockRegistrationData["fsa_rn"],
         mockLcContactConfig,
         newMockRegistrationData,
-        mockPostRegistrationData,
         configData
       );
     });

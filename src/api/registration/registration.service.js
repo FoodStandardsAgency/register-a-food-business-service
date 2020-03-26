@@ -2,8 +2,10 @@ const moment = require("moment");
 const fetch = require("node-fetch");
 const HttpsProxyAgent = require("https-proxy-agent");
 const promiseRetry = require("promise-retry");
-
+const { isEmpty } = require("lodash");
+const { INFO } = require("../../services/logging.service");
 const {
+  // managedTransaction,
   createRegistration,
   createEstablishment,
   createOperator,
@@ -45,49 +47,71 @@ const { statusEmitter } = require("../../services/statusEmitter.service");
 const saveRegistration = async (registration, fsa_rn, council) => {
   logEmitter.emit("functionCall", "registration.service", "saveRegistration");
 
-  try {
-    const reg = await createRegistration(fsa_rn, council);
-    const establishment = await createEstablishment(
+  const transaction = async transaction => {
+    let reg;
+    let operator;
+    let activities;
+    let premise;
+    let establishment;
+
+    let pgReg = await getRegistrationByFsaRn(fsa_rn, transaction);
+    if (!isEmpty(pgReg)) {
+      throw new Error(
+        `Registration with fsa id '${fsa_rn}' already exists in temp-store`
+      );
+    }
+
+    reg = await createRegistration(fsa_rn, council);
+
+    establishment = await createEstablishment(
       registration.establishment.establishment_details,
-      reg.id
+      reg.id,
+      transaction
     );
-    const operator = await createOperator(
+
+    operator = await createOperator(
       registration.establishment.operator,
-      establishment.id
+      establishment.id,
+      transaction
     );
-    const activities = await createActivities(
+
+    activities = await createActivities(
       registration.establishment.activities,
-      establishment.id
+      establishment.id,
+      transaction
     );
-    const premise = await createPremise(
+
+    premise = await createPremise(
       registration.establishment.premise,
-      establishment.id
+      establishment.id,
+      transaction
     );
-    const partnerIds = [];
-    for (const partnerIndex in registration.establishment.operator.partners) {
-      const partner = await createPartner(
+    let partnerIds = [];
+    let partner;
+    let partnerIndex;
+
+    for (partnerIndex in registration.establishment.operator.partners) {
+      partner = await createPartner(
         registration.establishment.operator.partners[partnerIndex],
-        operator.id
+        operator.id,
+        transaction
       );
       partnerIds.push(partner.id);
     }
 
     const declaration = await createDeclaration(
       registration.declaration,
-      reg.id
+      reg.id,
+      transaction
     );
+
     statusEmitter.emit("incrementCount", "storeRegistrationsInDbSucceeded");
     statusEmitter.emit(
       "setStatus",
       "mostRecentStoreRegistrationInDbSucceeded",
       true
     );
-    logEmitter.emit(
-      "functionSuccess",
-      "registration.service",
-      "saveRegistration"
-    );
-    await updateStatusInCache(fsa_rn, "registration", true);
+
     return {
       regId: reg.id,
       establishmentId: establishment.id,
@@ -97,6 +121,25 @@ const saveRegistration = async (registration, fsa_rn, council) => {
       partnerIds,
       declarationId: declaration.id
     };
+  };
+
+  try {
+    //execute the transaction
+    let tempStoreSaved = await transaction();
+
+    logEmitter.emit(
+      "functionSuccess",
+      "registration.service",
+      "saveRegistration"
+    );
+    logEmitter.emit(
+      INFO,
+      `Saved ${tempStoreSaved.id} fsaId: ${fsa_rn} in temp store `
+    );
+
+    await updateStatusInCache(fsa_rn, "registration", true);
+
+    return tempStoreSaved;
   } catch (err) {
     statusEmitter.emit("incrementCount", "storeRegistrationsInDbFailed");
     statusEmitter.emit(
@@ -171,70 +214,66 @@ const deleteRegistrationByFsaRn = async fsa_rn => {
   return "Registration succesfully deleted";
 };
 
-const sendTascomiRegistration = async (
-  registration,
-  postRegistrationMetadata,
-  localCouncil
-) => {
+const sendTascomiRegistration = async (registration, localCouncil) => {
+  // hack to reduce repair work needed
+  let postRegistrationMetadata = registration;
+
   logEmitter.emit(
     "functionCall",
     "registration.service",
     "sendTascomiRegistration"
   );
-  try {
-    const auth = await getLcAuth(localCouncil);
-    const reg = await promiseRetry({ retries: 3 }, (retry, number) => {
-      logEmitter.emit(
-        "functionCall",
-        "registration.service",
-        `createdFoodBusinessRegistration attempt ${number}`
-      );
-      return createFoodBusinessRegistration(
-        registration,
-        postRegistrationMetadata,
-        auth
-      ).catch(retry);
-    });
 
-    const response = await promiseRetry({ retries: 3 }, (retry, number) => {
-      logEmitter.emit(
-        "functionCall",
-        "registration.service",
-        `createdReferenceNumber attempt ${number}`
-      );
-      return createReferenceNumber(JSON.parse(reg).id, auth).catch(retry);
-    });
+  if (!localCouncil.auth) {
+    //no auth so cannot return a value
+    return null;
+  }
 
-    if (JSON.parse(response).id === 0) {
-      const err = new Error("createReferenceNumber failed");
-      err.name = "tascomiRefNumber";
-      throw err;
-    }
+  const auth = localCouncil.auth;
+  const reg = await promiseRetry({ retries: 3 }, (retry, number) => {
     logEmitter.emit(
-      "functionSuccess",
+      "functionCall",
       "registration.service",
-      "sendTascomiRegistration"
+      `createdFoodBusinessRegistration attempt ${number}`
     );
-    await updateStatusInCache(
-      postRegistrationMetadata["fsa-rn"],
-      "tascomi",
-      true
-    );
-    return response;
-  } catch (err) {
-    logEmitter.emit(
-      "functionFail",
-      "registrationService",
-      "sendTascomiRegistration",
-      err
-    );
-    await updateStatusInCache(
-      postRegistrationMetadata["fsa-rn"],
-      "tascomi",
-      false
-    );
+    return createFoodBusinessRegistration(
+      registration,
+      postRegistrationMetadata,
+      auth
+    ).catch(retry);
+  });
+
+  let regParsed = JSON.parse(reg);
+  let referenceIdInput = regParsed.id ? regParsed.id : null;
+
+  if (referenceIdInput === null) {
+    const err = new Error("createFoodBusinessRegistration failed");
+    err.name = "tascomiRefNumber";
     throw err;
   }
+
+  const response = await promiseRetry({ retries: 3 }, (retry, number) => {
+    logEmitter.emit(
+      "functionCall",
+      "registration.service",
+      `createdReferenceNumber attempt ${number}`
+    );
+    return createReferenceNumber(referenceIdInput, auth).catch(retry);
+  });
+
+  if (JSON.parse(response).id === 0) {
+    const err = new Error("createReferenceNumber failed");
+    err.name = "tascomiRefNumber";
+    throw err;
+  }
+
+  logEmitter.emit(
+    "functionSuccess",
+    "registration.service",
+    "sendTascomiRegistration"
+  );
+
+  return response;
 };
 
 const getRegistrationMetaData = async councilCode => {

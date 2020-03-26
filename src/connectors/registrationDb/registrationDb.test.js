@@ -106,10 +106,13 @@ describe("RegistrationDb connector", () => {
       });
 
       it("Should call the create model with combined data", () => {
-        expect(Activities.create).toBeCalledWith({
-          establishmentId: "45",
-          some: "data"
-        });
+        expect(Activities.create).toBeCalledWith(
+          {
+            establishmentId: "45",
+            some: "data"
+          },
+          {}
+        );
       });
     });
   });
@@ -145,10 +148,13 @@ describe("RegistrationDb connector", () => {
       });
 
       it("Should call the create model with combined data", () => {
-        expect(Establishment.create).toBeCalledWith({
-          registrationId: "45",
-          some: "data"
-        });
+        expect(Establishment.create).toBeCalledWith(
+          {
+            registrationId: "45",
+            some: "data"
+          },
+          {}
+        );
       });
     });
   });
@@ -184,10 +190,13 @@ describe("RegistrationDb connector", () => {
       });
 
       it("Should call the create model with combined data", () => {
-        expect(Declaration.create).toBeCalledWith({
-          registrationId: "45",
-          some: "data"
-        });
+        expect(Declaration.create).toBeCalledWith(
+          {
+            registrationId: "45",
+            some: "data"
+          },
+          {}
+        );
       });
     });
   });
@@ -223,10 +232,13 @@ describe("RegistrationDb connector", () => {
       });
 
       it("Should call the create model with combined data", () => {
-        expect(Operator.create).toBeCalledWith({
-          establishmentId: "45",
-          some: "data"
-        });
+        expect(Operator.create).toBeCalledWith(
+          {
+            establishmentId: "45",
+            some: "data"
+          },
+          {}
+        );
       });
     });
   });
@@ -262,10 +274,13 @@ describe("RegistrationDb connector", () => {
       });
 
       it("Should call the create model with combined data", () => {
-        expect(Partner.create).toBeCalledWith({
-          operatorId: "45",
-          some: "data"
-        });
+        expect(Partner.create).toBeCalledWith(
+          {
+            operatorId: "45",
+            some: "data"
+          },
+          {}
+        );
       });
     });
   });
@@ -301,10 +316,13 @@ describe("RegistrationDb connector", () => {
       });
 
       it("Should call the create model with combined data", () => {
-        expect(Premise.create).toBeCalledWith({
-          establishmentId: "45",
-          some: "data"
-        });
+        expect(Premise.create).toBeCalledWith(
+          {
+            establishmentId: "45",
+            some: "data"
+          },
+          {}
+        );
       });
     });
   });
@@ -340,10 +358,13 @@ describe("RegistrationDb connector", () => {
       });
 
       it("Should call the create model with fsa rn and council", () => {
-        expect(Registration.create).toBeCalledWith({
-          fsa_rn: "fsa-rn",
-          council: "cardiff"
-        });
+        expect(Registration.create).toBeCalledWith(
+          {
+            fsa_rn: "fsa-rn",
+            council: "cardiff"
+          },
+          {}
+        );
       });
     });
   });
@@ -380,7 +401,8 @@ describe("RegistrationDb connector", () => {
 
       it("Should call the findOne model with query", () => {
         expect(Registration.findOne).toBeCalledWith({
-          where: { id: "45" }
+          where: { id: "45" },
+          transaction: null
         });
       });
     });
@@ -418,7 +440,8 @@ describe("RegistrationDb connector", () => {
 
       it("Should call the findOne model with query", () => {
         expect(Registration.findOne).toBeCalledWith({
-          where: { fsa_rn: "ASH-89K" }
+          where: { fsa_rn: "ASH-89K" },
+          transaction: null
         });
       });
     });
@@ -456,7 +479,8 @@ describe("RegistrationDb connector", () => {
 
       it("Should call the findOne model with query", () => {
         expect(Establishment.findOne).toBeCalledWith({
-          where: { registrationId: "45" }
+          where: { registrationId: "45" },
+          transaction: null
         });
       });
     });
@@ -494,7 +518,8 @@ describe("RegistrationDb connector", () => {
 
       it("Should call the findOne model with query", () => {
         expect(Declaration.findOne).toBeCalledWith({
-          where: { registrationId: "45" }
+          where: { registrationId: "45" },
+          transaction: null
         });
       });
     });
@@ -532,7 +557,8 @@ describe("RegistrationDb connector", () => {
 
       it("Should call the findOne model with query", () => {
         expect(Operator.findOne).toBeCalledWith({
-          where: { establishmentId: "45" }
+          where: { establishmentId: "45" },
+          transaction: null
         });
       });
     });
@@ -570,7 +596,8 @@ describe("RegistrationDb connector", () => {
 
       it("Should call the findOne model with query", () => {
         expect(Premise.findOne).toBeCalledWith({
-          where: { establishmentId: "45" }
+          where: { establishmentId: "45" },
+          transaction: null
         });
       });
     });
@@ -608,7 +635,8 @@ describe("RegistrationDb connector", () => {
 
       it("Should call the findOne model with query", () => {
         expect(Activities.findOne).toBeCalledWith({
-          where: { establishmentId: "45" }
+          where: { establishmentId: "45" },
+          transaction: null
         });
       });
     });

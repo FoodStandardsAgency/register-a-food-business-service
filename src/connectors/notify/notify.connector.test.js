@@ -1,9 +1,11 @@
-const { NotifyClient } = require("notifications-node-client");
-const { sendSingleEmail } = require("./notify.connector");
-const { notifyClientDouble } = require("./notify.double");
+"use strict";
 
 jest.mock("notifications-node-client");
 jest.mock("./notify.double");
+
+const { NotifyClient } = require("notifications-node-client");
+const { sendSingleEmail } = require("./notify.connector");
+const { notifyClientDouble } = require("./notify.double");
 
 describe("Function: sendSingleEmail", () => {
   let mockNotifyClient;
