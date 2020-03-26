@@ -171,8 +171,9 @@ describe("registration controller", () => {
 
             {
               status: {
-                registration: undefined,
-                notifications: undefined
+                registration: null,
+                notifications: null,
+                tascomi: null,
               }
             },
             {
