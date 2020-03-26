@@ -34,7 +34,8 @@ const {
 
 const {
   getAllLocalCouncilConfig,
-  addDeletedId
+  addDeletedId,
+  mongodb
 } = require("../../connectors/configDb/configDb.connector");
 
 const {
@@ -282,6 +283,15 @@ const getRegistrationMetaData = async councilCode => {
     "registration.service",
     "getRegistrationDeclaration"
   );
+
+  if (process.env.NODE_ENV === "local") {
+    let oId = mongodb.ObjectId();
+
+    return {
+      "fsa-rn": oId.toString(),
+      reg_submission_date: moment().format("YYYY-MM-DD")
+    };
+  }
 
   const typeCode = process.env.NODE_ENV === "production" ? "001" : "000";
   const reg_submission_date = moment().format("YYYY-MM-DD");

@@ -11,7 +11,9 @@ const {
 } = require("../../connectors/cacheDb/cacheDb.connector");
 
 const {
-  findCouncilByUrl
+  findCouncilByUrl,
+  connectToConfigDb,
+  LocalCouncilConfigDbCollection
 } = require("../../connectors/configDb/configDb.connector");
 
 const { logEmitter } = require("../../services/logging.service");
@@ -41,7 +43,13 @@ const createNewRegistration = async (
   }
 
   // RESOLUTION
-  const sourceCouncil = await findCouncilByUrl(localCouncilUrl);
+  let configDb = await connectToConfigDb();
+  const lcConfigCollection = await LocalCouncilConfigDbCollection(configDb);
+
+  const sourceCouncil = await findCouncilByUrl(
+    lcConfigCollection,
+    localCouncilUrl
+  );
 
   //left here as legacy code
   const lcContactConfig = await getLcContactConfig(localCouncilUrl);

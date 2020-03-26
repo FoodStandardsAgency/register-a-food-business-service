@@ -24,7 +24,9 @@ jest.mock("../../connectors/cacheDb/cacheDb.connector", () => ({
 jest.mock("../../connectors/configDb/configDb.connector", () => ({
   getConfigVersion: jest.fn(),
   findCouncilByUrl: jest.fn(),
-  findCouncilById: jest.fn()
+  findCouncilById: jest.fn(),
+  connectToConfigDb: jest.fn(),
+  LocalCouncilConfigDbCollection: jest.fn()
 }));
 
 const {

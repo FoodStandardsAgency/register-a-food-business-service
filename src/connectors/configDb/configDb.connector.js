@@ -53,10 +53,10 @@ const disconnectConfigDb = async () => {
   }
 };
 
-const ConfigVersionCollection = async client =>
-  await client.collection("configVersion");
-const LocalCouncilConfigDbCollection = async client =>
-  await client.collection("lcConfig");
+const ConfigVersionCollection = async database =>
+  await database.collection("configVersion");
+const LocalCouncilConfigDbCollection = async database =>
+  await database.collection("lcConfig");
 
 const getConfigVersion = async regDataVersion => {
   logEmitter.emit("functionCall", "configDb.connector", "getConfigVersion");
@@ -167,6 +167,7 @@ const addDeletedId = async id => {
 };
 
 module.exports = {
+  mongodb,
   establishConnectionToMongo,
   connectToConfigDb,
   disconnectConfigDb,
