@@ -63,6 +63,8 @@ const TaskRouter = () => {
     try {
       await saveRegistrationToTempStoreAction(fsaId, req, res);
     } catch (e) {
+      console.error(e);
+      console.log(`Caught ${e.message} in savetotempstore`);
       await fail(406, res, e.message);
     }
   });
