@@ -222,13 +222,9 @@ const saveAllOutstandingRegistrationsToTempStoreAction = async (
 
 const saveRegistrationToTempStoreAction = async (fsaId, req, res) => {
   const beCacheDb = await connectToBeCacheDb();
-  logEmitter.emit(
-    INFO,
-    `Back-end connection acquired for FSAId ${fsaID}`);
+  logEmitter.emit(INFO, `Back-end connection acquired for FSAId ${fsaId}`);
   const configDb = await connectToConfigDb();
-  logEmitter.emit(
-    INFO,
-    `Config connection acquired for FSAId ${fsaID}`);
+  logEmitter.emit(INFO, `Config connection acquired for FSAId ${fsaId}`);
 
   //GET REGISTRATION
   let registration = await getRegistration(beCacheDb, fsaId);

@@ -25,7 +25,7 @@ const TaskRouter = () => {
     try {
       await sendAllOutstandingRegistrationsToTascomiAction(req, res, dryrun);
     } catch (e) {
-      await fail(406, res, e.message);
+      await fail(406, res, e.message || e);
     }
   });
 
@@ -34,7 +34,7 @@ const TaskRouter = () => {
     try {
       await sendRegistrationToTascomiAction(fsaId, req, res);
     } catch (e) {
-      await fail(406, res, e.message);
+      await fail(406, res, e.message || e);
     }
   });
 
@@ -44,7 +44,7 @@ const TaskRouter = () => {
     try {
       await sendAllNotificationsForRegistrationsAction(req, res, dryrun);
     } catch (e) {
-      await fail(406, res, e.message);
+      await fail(406, res, e.message || e);
     }
   });
 
@@ -53,7 +53,7 @@ const TaskRouter = () => {
     try {
       await sendNotificationsForRegistrationAction(fsaId, req, res);
     } catch (e) {
-      await fail(406, res, e.message);
+      await fail(406, res, e.message || e);
     }
   });
 
@@ -63,9 +63,7 @@ const TaskRouter = () => {
     try {
       await saveRegistrationToTempStoreAction(fsaId, req, res);
     } catch (e) {
-      console.error(e);
-      console.log(`Caught ${e.message} in savetotempstore`);
-      await fail(406, res, e.message);
+      await fail(406, res, e.message || e);
     }
   });
 
@@ -74,7 +72,7 @@ const TaskRouter = () => {
     try {
       await saveAllOutstandingRegistrationsToTempStoreAction(req, res, dryrun);
     } catch (e) {
-      await fail(406, res, e.message);
+      await fail(406, res, e.message || e);
     }
   });
 

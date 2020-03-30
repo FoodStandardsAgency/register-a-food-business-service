@@ -1,4 +1,4 @@
-const { logEmitter, INFO, ERROR } = require("../../services/logging.service");
+const { logEmitter, ERROR } = require("../../services/logging.service");
 
 const success = async (res, payload = {}) => {
   res.status(200).send(payload);
