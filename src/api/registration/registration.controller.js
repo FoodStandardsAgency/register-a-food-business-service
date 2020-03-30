@@ -64,6 +64,14 @@ const createNewRegistration = async (
   const postRegistrationMetadata = await getRegistrationMetaData(
     hygieneCouncilCode
   );
+  
+  const status = {
+    registration: null,
+    notifications: null
+  }
+  if (sourceCouncil.auth) {
+    status.tascomi = {}
+  }
 
   //this is all very messy but ported from legacy code.
   const completeCacheRecord = Object.assign(
@@ -75,11 +83,7 @@ const createNewRegistration = async (
     registration,
     lcContactConfig,
     {
-      status: {
-        registration: null,
-        notifications: null,
-        tascomi: null
-      }
+      status: status
     },
     {
       hygiene_council_code: hygieneCouncilCode,

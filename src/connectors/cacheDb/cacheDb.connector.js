@@ -191,8 +191,7 @@ const findOutstandingTascomiRegistrationsFsaIds = async (
     .find(
       {
         $or: [
-          { "status.tascomi.complete": { $eq: false } },
-          { "status.tascomi": { $exists: false } }
+          { "status.tascomi.complete": { $eq: false } }
         ]
       },
       { _id: 1, "fsa-rn": 1 }
