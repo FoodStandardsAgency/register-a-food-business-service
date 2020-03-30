@@ -14,7 +14,7 @@
 // 7 - notifyMissingPersonalisation
 // 8 - mongoConnectionError
 
-const { logEmitter, ERROR } = require("../../services/logging.service");
+const { logEmitter, ERROR } = require("../services/logging.service");
 const errorDetails = require("./errors.json");
 
 const errorHandler = (err, req, res, next) => {
