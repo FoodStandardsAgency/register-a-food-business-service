@@ -125,7 +125,7 @@ const createFsaRnBox = (fsarnNumber, lcInfo) => {
   fsaRnBox.push({
     text: [
       {
-        text: "The unique food business registration number is",
+        text: "The unique food business registration application reference is",
         color: "white",
         fontSize: 16
       }

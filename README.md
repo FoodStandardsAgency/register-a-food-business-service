@@ -36,7 +36,7 @@ A successful `POST` request to the `/createNewRegistration` route performs the f
 * Saves the registration data to the `*-back-end-cache` database on Azure. This action means that any failed subsequent steps will be recoverable via a manual search of the cache database, rather than the user data being lost forever.
 * Validates the registration data against the [schema](/src/services/validation.schema.js)
 * Fetches the config details (such as contact details) for the specified district council and, optionally, its corresponding county council in cases where the county council manages food standards.
-* Gets metadata for the registration. Currently, this is the unique food business registration number (via an [Epimorphics API](https://foodstandardsagency.atlassian.net/wiki/spaces/RFB/pages/491126788/The+FSA+registration+reference+number+generator)) and the registration date in `YYYY-MM-DD` format.
+* Gets metadata for the registration. Currently, this is the unique food business registration application reference (via an [Epimorphics API](https://foodstandardsagency.atlassian.net/wiki/spaces/RFB/pages/491126788/The+FSA+registration+reference+number+generator)) and the registration date in `YYYY-MM-DD` format.
 * Sends a combined response object back to the client
 * Performs a series of asynchronous post-response operations:
   * Sends the registration to the Tascomi API specified in the config database for that council
@@ -46,7 +46,7 @@ A successful `POST` request to the `/createNewRegistration` route performs the f
 
 ### `DELETE /api/registration/:fsa_rn`
 
-This route is primarily in place to allow easy actioning of GDPR deletion requests on individual registrations by the FSA registration number, or other required registration deletions. The `client-name` and `api-secret` headers are required to use this route. Note that the matching environment variables are the `ADMIN_*` variables, which are different to those for the `POST/createNewRegistration` route.
+This route is primarily in place to allow easy actioning of GDPR deletion requests on individual registrations by the FSA registration application reference, or other required registration deletions. The `client-name` and `api-secret` headers are required to use this route. Note that the matching environment variables are the `ADMIN_*` variables, which are different to those for the `POST/createNewRegistration` route.
 
 ### `GET /api/registration/:fsa_rn`
 

@@ -28,6 +28,36 @@ const establishConnectionToMongo = async collectionName => {
   }
 };
 
+const connectToConfigDb = async () => {
+  if (process.env.DOUBLE_MODE === "true") {
+    logEmitter.emit(
+      "doubleMode",
+      "configDb.connector",
+      "establishConnectionToMongo"
+    );
+    return lcConfigCollectionDouble;
+  } else {
+    if (configDB === undefined) {
+      client = await mongodb.MongoClient.connect(CONFIGDB_URL, {
+        useNewUrlParser: true
+      });
+      configDB = client.db("register_a_food_business_config");
+    }
+    return configDB;
+  }
+};
+
+const disconnectConfigDb = async () => {
+  if (client) {
+    client.close();
+  }
+};
+
+const ConfigVersionCollection = async database =>
+  await database.collection("configVersion");
+const LocalCouncilConfigDbCollection = async database =>
+  await database.collection("lcConfig");
+
 const getConfigVersion = async regDataVersion => {
   logEmitter.emit("functionCall", "configDb.connector", "getConfigVersion");
 
@@ -67,6 +97,18 @@ const getConfigVersion = async regDataVersion => {
 
     throw newError;
   }
+};
+
+const findCouncilById = async (collection, id) => {
+  return await collection.findOne({
+    _id: id
+  });
+};
+
+const findCouncilByUrl = async (collection, url) => {
+  return await collection.findOne({
+    local_council_url: url
+  });
 };
 
 const getAllLocalCouncilConfig = async () => {
@@ -125,8 +167,16 @@ const addDeletedId = async id => {
 };
 
 module.exports = {
+  mongodb,
+  establishConnectionToMongo,
+  connectToConfigDb,
+  disconnectConfigDb,
+  LocalCouncilConfigDbCollection,
+  ConfigVersionCollection,
   getAllLocalCouncilConfig,
   clearMongoConnection,
   addDeletedId,
-  getConfigVersion
+  getConfigVersion,
+  findCouncilByUrl,
+  findCouncilById
 };

@@ -9,7 +9,7 @@ jest.mock("../../db/db", () => ({
     findOne: jest.fn(),
     destroy: jest.fn()
   },
-  Metadata: {
+  Declaration: {
     create: jest.fn(),
     findOne: jest.fn(),
     destroy: jest.fn()
@@ -39,7 +39,7 @@ jest.mock("../../db/db", () => ({
 const {
   Activities,
   Establishment,
-  Metadata,
+  Declaration,
   Operator,
   Partner,
   Premise,
@@ -49,7 +49,7 @@ const {
 const {
   createActivities,
   createEstablishment,
-  createMetadata,
+  createDeclaration,
   createOperator,
   createPartner,
   createPremise,
@@ -57,13 +57,13 @@ const {
   getRegistrationById,
   getRegistrationByFsaRn,
   getEstablishmentByRegId,
-  getMetadataByRegId,
+  getDeclarationByRegId,
   getOperatorByEstablishmentId,
   getPremiseByEstablishmentId,
   getActivitiesByEstablishmentId,
   destroyRegistrationById,
   destroyEstablishmentByRegId,
-  destroyMetadataByRegId,
+  destroyDeclarationByRegId,
   destroyOperatorByEstablishmentId,
   destroyPremiseByEstablishmentId,
   destroyActivitiesByEstablishmentId
@@ -106,10 +106,13 @@ describe("RegistrationDb connector", () => {
       });
 
       it("Should call the create model with combined data", () => {
-        expect(Activities.create).toBeCalledWith({
-          establishmentId: "45",
-          some: "data"
-        });
+        expect(Activities.create).toBeCalledWith(
+          {
+            establishmentId: "45",
+            some: "data"
+          },
+          {}
+        );
       });
     });
   });
@@ -145,22 +148,25 @@ describe("RegistrationDb connector", () => {
       });
 
       it("Should call the create model with combined data", () => {
-        expect(Establishment.create).toBeCalledWith({
-          registrationId: "45",
-          some: "data"
-        });
+        expect(Establishment.create).toBeCalledWith(
+          {
+            registrationId: "45",
+            some: "data"
+          },
+          {}
+        );
       });
     });
   });
 
-  describe("Function: createMetadata", () => {
-    describe("When Metadata.create fails", () => {
+  describe("Function: createDeclaration", () => {
+    describe("When Declaration.create fails", () => {
       beforeEach(async () => {
-        Metadata.create.mockImplementation(() => {
+        Declaration.create.mockImplementation(() => {
           throw new Error("Failed");
         });
         try {
-          await createMetadata({}, "45");
+          await createDeclaration({}, "45");
         } catch (err) {
           result = err;
         }
@@ -171,12 +177,12 @@ describe("RegistrationDb connector", () => {
       });
     });
 
-    describe("When Metadata.create succeeds", () => {
+    describe("When Declaration.create succeeds", () => {
       beforeEach(async () => {
-        Metadata.create.mockImplementation(() => {
+        Declaration.create.mockImplementation(() => {
           return new Promise(resolve => resolve("success"));
         });
-        result = await createMetadata({ some: "data" }, "45");
+        result = await createDeclaration({ some: "data" }, "45");
       });
 
       it("Should return the response", () => {
@@ -184,10 +190,13 @@ describe("RegistrationDb connector", () => {
       });
 
       it("Should call the create model with combined data", () => {
-        expect(Metadata.create).toBeCalledWith({
-          registrationId: "45",
-          some: "data"
-        });
+        expect(Declaration.create).toBeCalledWith(
+          {
+            registrationId: "45",
+            some: "data"
+          },
+          {}
+        );
       });
     });
   });
@@ -223,10 +232,13 @@ describe("RegistrationDb connector", () => {
       });
 
       it("Should call the create model with combined data", () => {
-        expect(Operator.create).toBeCalledWith({
-          establishmentId: "45",
-          some: "data"
-        });
+        expect(Operator.create).toBeCalledWith(
+          {
+            establishmentId: "45",
+            some: "data"
+          },
+          {}
+        );
       });
     });
   });
@@ -262,10 +274,13 @@ describe("RegistrationDb connector", () => {
       });
 
       it("Should call the create model with combined data", () => {
-        expect(Partner.create).toBeCalledWith({
-          operatorId: "45",
-          some: "data"
-        });
+        expect(Partner.create).toBeCalledWith(
+          {
+            operatorId: "45",
+            some: "data"
+          },
+          {}
+        );
       });
     });
   });
@@ -301,10 +316,13 @@ describe("RegistrationDb connector", () => {
       });
 
       it("Should call the create model with combined data", () => {
-        expect(Premise.create).toBeCalledWith({
-          establishmentId: "45",
-          some: "data"
-        });
+        expect(Premise.create).toBeCalledWith(
+          {
+            establishmentId: "45",
+            some: "data"
+          },
+          {}
+        );
       });
     });
   });
@@ -340,10 +358,13 @@ describe("RegistrationDb connector", () => {
       });
 
       it("Should call the create model with fsa rn and council", () => {
-        expect(Registration.create).toBeCalledWith({
-          fsa_rn: "fsa-rn",
-          council: "cardiff"
-        });
+        expect(Registration.create).toBeCalledWith(
+          {
+            fsa_rn: "fsa-rn",
+            council: "cardiff"
+          },
+          {}
+        );
       });
     });
   });
@@ -380,7 +401,8 @@ describe("RegistrationDb connector", () => {
 
       it("Should call the findOne model with query", () => {
         expect(Registration.findOne).toBeCalledWith({
-          where: { id: "45" }
+          where: { id: "45" },
+          transaction: null
         });
       });
     });
@@ -418,7 +440,8 @@ describe("RegistrationDb connector", () => {
 
       it("Should call the findOne model with query", () => {
         expect(Registration.findOne).toBeCalledWith({
-          where: { fsa_rn: "ASH-89K" }
+          where: { fsa_rn: "ASH-89K" },
+          transaction: null
         });
       });
     });
@@ -456,20 +479,21 @@ describe("RegistrationDb connector", () => {
 
       it("Should call the findOne model with query", () => {
         expect(Establishment.findOne).toBeCalledWith({
-          where: { registrationId: "45" }
+          where: { registrationId: "45" },
+          transaction: null
         });
       });
     });
   });
 
-  describe("Function: getMetadataByRegId", () => {
-    describe("When Metadata.findOne fails", () => {
+  describe("Function: getDeclarationByRegId", () => {
+    describe("When Declaration.findOne fails", () => {
       beforeEach(async () => {
-        Metadata.findOne.mockImplementation(() => {
+        Declaration.findOne.mockImplementation(() => {
           throw new Error("Failed");
         });
         try {
-          await getMetadataByRegId("45");
+          await getDeclarationByRegId("45");
         } catch (err) {
           result = err;
         }
@@ -480,12 +504,12 @@ describe("RegistrationDb connector", () => {
       });
     });
 
-    describe("When Metadata.findOne succeeds", () => {
+    describe("When Declaration.findOne succeeds", () => {
       beforeEach(async () => {
-        Metadata.findOne.mockImplementation(() => {
+        Declaration.findOne.mockImplementation(() => {
           return "success";
         });
-        result = await getMetadataByRegId("45");
+        result = await getDeclarationByRegId("45");
       });
 
       it("Should return the response", () => {
@@ -493,8 +517,9 @@ describe("RegistrationDb connector", () => {
       });
 
       it("Should call the findOne model with query", () => {
-        expect(Metadata.findOne).toBeCalledWith({
-          where: { registrationId: "45" }
+        expect(Declaration.findOne).toBeCalledWith({
+          where: { registrationId: "45" },
+          transaction: null
         });
       });
     });
@@ -532,7 +557,8 @@ describe("RegistrationDb connector", () => {
 
       it("Should call the findOne model with query", () => {
         expect(Operator.findOne).toBeCalledWith({
-          where: { establishmentId: "45" }
+          where: { establishmentId: "45" },
+          transaction: null
         });
       });
     });
@@ -570,7 +596,8 @@ describe("RegistrationDb connector", () => {
 
       it("Should call the findOne model with query", () => {
         expect(Premise.findOne).toBeCalledWith({
-          where: { establishmentId: "45" }
+          where: { establishmentId: "45" },
+          transaction: null
         });
       });
     });
@@ -608,7 +635,8 @@ describe("RegistrationDb connector", () => {
 
       it("Should call the findOne model with query", () => {
         expect(Activities.findOne).toBeCalledWith({
-          where: { establishmentId: "45" }
+          where: { establishmentId: "45" },
+          transaction: null
         });
       });
     });
@@ -690,14 +718,14 @@ describe("RegistrationDb connector", () => {
     });
   });
 
-  describe("Function: destroyMetadataByRegId", () => {
-    describe("When Metadata.destroy fails", () => {
+  describe("Function: destroyDeclarationByRegId", () => {
+    describe("When Declaration.destroy fails", () => {
       beforeEach(async () => {
-        Metadata.destroy.mockImplementation(() => {
+        Declaration.destroy.mockImplementation(() => {
           throw new Error("Failed");
         });
         try {
-          await destroyMetadataByRegId("45");
+          await destroyDeclarationByRegId("45");
         } catch (err) {
           result = err;
         }
@@ -708,12 +736,12 @@ describe("RegistrationDb connector", () => {
       });
     });
 
-    describe("When Metadata.destroy succeeds", () => {
+    describe("When Declaration.destroy succeeds", () => {
       beforeEach(async () => {
-        Metadata.destroy.mockImplementation(() => {
+        Declaration.destroy.mockImplementation(() => {
           return "success";
         });
-        result = await destroyMetadataByRegId("45");
+        result = await destroyDeclarationByRegId("45");
       });
 
       it("Should return the response", () => {
@@ -721,7 +749,7 @@ describe("RegistrationDb connector", () => {
       });
 
       it("Should call the destroy model with query", () => {
-        expect(Metadata.destroy).toBeCalledWith({
+        expect(Declaration.destroy).toBeCalledWith({
           where: { registrationId: "45" }
         });
       });

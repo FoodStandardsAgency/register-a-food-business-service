@@ -1,7 +1,7 @@
 const { NotifyClient } = require("notifications-node-client");
 const { notifyClientDouble } = require("./notify.double");
 const { NOTIFY_KEY } = require("../../config");
-const { logEmitter } = require("../../services/logging.service");
+const { logEmitter, ERROR } = require("../../services/logging.service");
 /**
  * Send a single email
  * @param {string} templateId The template Id for the relevant email in notify
@@ -19,7 +19,10 @@ const sendSingleEmail = async (
 
   let notifyClient;
 
-  if (process.env.DOUBLE_MODE === "true") {
+  if (
+    process.env.NOTIFY_DOUBLE_MODE === "true" ||
+    process.env.DOUBLE_MODE === "true"
+  ) {
     logEmitter.emit("doubleMode", "notify.connector", "sendSingleEmail");
     notifyClient = notifyClientDouble;
   } else {
@@ -80,6 +83,8 @@ const sendSingleEmail = async (
     logEmitter.emit("functionSuccess", "notify.connector", "sendSingleEmail");
     return responseBody;
   } catch (err) {
+    logEmitter.emit(ERROR, `Send email failed with error`);
+
     const newError = new Error("Notify error");
     newError.message = err.message;
     if (err.message === "secretOrPrivateKey must have a value") {

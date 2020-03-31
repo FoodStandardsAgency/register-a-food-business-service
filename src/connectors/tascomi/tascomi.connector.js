@@ -4,6 +4,10 @@ const { doubleRequest } = require("./tascomi.double");
 const { logEmitter } = require("../../services/logging.service");
 const { statusEmitter } = require("../../services/statusEmitter.service");
 
+const TASCOMI_SKIPPING = "skipping";
+const TASCOMI_SUCCESS = true;
+const TASCOMI_FAIL = false;
+
 const sendRequest = async (url, method, body, public_key, private_key) => {
   const tascomiApiOptions = {
     url: url,
@@ -11,7 +15,10 @@ const sendRequest = async (url, method, body, public_key, private_key) => {
     form: body
   };
 
-  if (process.env.DOUBLE_MODE === "true") {
+  if (
+    process.env.TASCOMI_DOUBLE_MODE === "true" ||
+    process.env.DOUBLE_MODE === "true"
+  ) {
     logEmitter.emit("doubleMode", "tascomi.connector", "sendRequest");
     return doubleRequest(tascomiApiOptions);
   } else {
@@ -66,9 +73,8 @@ const createFoodBusinessRegistration = async (
       fsa_rn: postRegistrationMetadata["fsa-rn"],
       fsa_council_id: postRegistrationMetadata.hygiene_council_code,
       premise_name: establishmentDetails.establishment_trading_name,
-      premise_building_number: premiseDetails.establishment_address_line_1,
-      premise_street_name: premiseDetails.establishment_address_line_2,
-      premise_dependent_locality: premiseDetails.establishment_address_line_3,
+      premise_building_number: premiseDetails.establishment_first_line,
+      premise_street_name: premiseDetails.establishment_street,
       premise_town: premiseDetails.establishment_town,
       premise_postcode: premiseDetails.establishment_postcode,
       premise_primary_number: establishmentDetails.establishment_primary_number,
@@ -80,8 +86,8 @@ const createFoodBusinessRegistration = async (
       owner_surname: operatorDetails.operator_last_name,
       operator_type: operatorDetails.operator_type,
       operator_company_name: operatorDetails.operator_company_name,
-      operator_company_house_number:
-        operatorDetails.operator_company_house_number,
+      operator_companies_house_number:
+        operatorDetails.operator_companies_house_number,
       operator_charity_name: operatorDetails.operator_charity_name,
       operator_charity_number: operatorDetails.operator_charity_number,
       contact_representative_number:
@@ -90,9 +96,8 @@ const createFoodBusinessRegistration = async (
         operatorDetails.contact_representative_email,
       contact_representative_name: operatorDetails.contact_representative_name,
       contact_representative_role: operatorDetails.contact_representative_role,
-      owner_house_name_or_number: operatorDetails.operator_address_line_1,
-      owner_street_name: operatorDetails.operator_address_line_2,
-      owner_dependent_locality: operatorDetails.operator_address_line_3,
+      owner_house_name_or_number: operatorDetails.operator_first_line,
+      owner_street_name: operatorDetails.operator_street,
       owner_town: operatorDetails.operator_town,
       owner_postcode: operatorDetails.operator_postcode,
       owner_telephone: operatorDetails.operator_primary_number,
@@ -262,6 +267,7 @@ const createReferenceNumber = async (id, auth) => {
       "tascomi.connector",
       "createReferenceNumber"
     );
+
     return response;
   } catch (err) {
     statusEmitter.emit("incrementCount", "tascomiCreateRefnumberCallsFailed");
@@ -276,11 +282,19 @@ const createReferenceNumber = async (id, auth) => {
       "createReferenceNumber",
       err
     );
+
     if (err.statusCode === 401) {
       err.name = "tascomiAuth";
     }
+
     throw err;
   }
 };
 
-module.exports = { createFoodBusinessRegistration, createReferenceNumber };
+module.exports = {
+  createFoodBusinessRegistration,
+  createReferenceNumber,
+  TASCOMI_SKIPPING,
+  TASCOMI_SUCCESS,
+  TASCOMI_FAIL
+};

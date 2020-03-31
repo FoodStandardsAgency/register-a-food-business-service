@@ -1,6 +1,6 @@
 {
   "name": "register-a-food-business-service",
-  "version": "8.3.1",
+  "version": "8.4.0",
   "description": "",
   "main": "src/app.js",
   "engines": {
@@ -8,8 +8,10 @@
     "npm": "5.6.0"
   },
   "scripts": {
+    "debug:local": "export $(grep -v '^#' .env | xargs -d '\n') && node --inspect src/app.js",
     "test": "jest ./src --coverage",
     "test:unit:ci": "export TEST_TYPE=unit && jest ./src --coverage",
+    "test:raw": "export TEST_TYPE=unit && jest",
     "test:watch": "export TEST_TYPE=unit && jest ./src --watch",
     "test:integration": "export TEST_TYPE=integration && jest tests/integration/*.js",
     "test:contract": "jest tests/contract/*.js",
@@ -18,6 +20,7 @@
     "test:securityall": "snyk wizard",
     "test:security": "snyk wizard --severity-threshold=medium",
     "lint": "eslint ./src",
+    "lint:fix": "eslint --fix ./src ",
     "format:verify": "prettier --list-different '{src,tests}/**/*.js'",
     "format": "prettier --write '{src,tests}/**/*.js'",
     "start": "node src/app.js",
@@ -72,6 +75,7 @@
     "eslint-plugin-prettier": "2.6.1",
     "jest": "24.8.0",
     "jest-junit": "5.1.0",
+    "jest-transform-stealthy-require": "1.0.0",
     "jsdoc": "3.6.3",
     "prettier": "1.12.1",
     "snyk": "1.198.0"

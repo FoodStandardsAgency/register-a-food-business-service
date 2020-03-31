@@ -51,15 +51,11 @@ describe("Pdf Service: ", () => {
             opening_day_sunday: true
           }
         },
-        metadata: {
+        declaration: {
           declaration1: "Declaration",
           declaration2: "Declaration",
           declaration3: "Declaration"
         }
-      };
-      const mockPostRegistrationData = {
-        "fsa-rn": "DYRKYP-NPLKN7-YFDF6V",
-        reg_submission_date: "2018-11-05"
       };
 
       describe("When given single council", () => {
@@ -76,7 +72,6 @@ describe("Pdf Service: ", () => {
         beforeEach(() => {
           result = transformDataForPdf(
             mockRegistraionData,
-            mockPostRegistrationData,
             mockLcContactConfig
           );
         });
@@ -118,7 +113,6 @@ describe("Pdf Service: ", () => {
         beforeEach(() => {
           result = transformDataForPdf(
             mockRegistraionData,
-            mockPostRegistrationData,
             mockLcContactConfig
           );
         });
@@ -195,15 +189,11 @@ describe("Pdf Service: ", () => {
             opening_day_sunday: true
           }
         },
-        metadata: {
+        declaration: {
           declaration1: "Declaration",
           declaration2: "Declaration",
           declaration3: "Declaration"
         }
-      };
-      const mockPostRegistrationData = {
-        "fsa-rn": "DYRKYP-NPLKN7-YFDF6V",
-        reg_submission_date: "2018-11-05"
       };
 
       describe("When given single council", () => {
@@ -220,7 +210,6 @@ describe("Pdf Service: ", () => {
         beforeEach(() => {
           result = transformDataForPdf(
             mockRegistraionData,
-            mockPostRegistrationData,
             mockLcContactConfig
           );
         });
@@ -263,7 +252,6 @@ describe("Pdf Service: ", () => {
         beforeEach(() => {
           result = transformDataForPdf(
             mockRegistraionData,
-            mockPostRegistrationData,
             mockLcContactConfig
           );
         });

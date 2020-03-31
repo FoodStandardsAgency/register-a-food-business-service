@@ -2,24 +2,26 @@ const moment = require("moment");
 const fetch = require("node-fetch");
 const HttpsProxyAgent = require("https-proxy-agent");
 const promiseRetry = require("promise-retry");
-
+const { isEmpty } = require("lodash");
+const { INFO } = require("../../services/logging.service");
 const {
+  // managedTransaction,
   createRegistration,
   createEstablishment,
   createOperator,
   createActivities,
   createPremise,
   createPartner,
-  createMetadata,
+  createDeclaration,
   getRegistrationByFsaRn,
   getEstablishmentByRegId,
-  getMetadataByRegId,
+  getDeclarationByRegId,
   getOperatorByEstablishmentId,
   getPremiseByEstablishmentId,
   getActivitiesByEstablishmentId,
   destroyRegistrationById,
   destroyEstablishmentByRegId,
-  destroyMetadataByRegId,
+  destroyDeclarationByRegId,
   destroyOperatorByEstablishmentId,
   destroyPremiseByEstablishmentId,
   destroyActivitiesByEstablishmentId
@@ -32,7 +34,8 @@ const {
 
 const {
   getAllLocalCouncilConfig,
-  addDeletedId
+  addDeletedId,
+  mongodb
 } = require("../../connectors/configDb/configDb.connector");
 
 const {
@@ -45,46 +48,71 @@ const { statusEmitter } = require("../../services/statusEmitter.service");
 const saveRegistration = async (registration, fsa_rn, council) => {
   logEmitter.emit("functionCall", "registration.service", "saveRegistration");
 
-  try {
-    const reg = await createRegistration(fsa_rn, council);
-    const establishment = await createEstablishment(
+  const transaction = async transaction => {
+    let reg;
+    let operator;
+    let activities;
+    let premise;
+    let establishment;
+
+    let pgReg = await getRegistrationByFsaRn(fsa_rn, transaction);
+    if (!isEmpty(pgReg)) {
+      throw new Error(
+        `Registration with fsa id '${fsa_rn}' already exists in temp-store`
+      );
+    }
+
+    reg = await createRegistration(fsa_rn, council);
+
+    establishment = await createEstablishment(
       registration.establishment.establishment_details,
-      reg.id
+      reg.id,
+      transaction
     );
-    const operator = await createOperator(
+
+    operator = await createOperator(
       registration.establishment.operator,
-      establishment.id
+      establishment.id,
+      transaction
     );
-    const activities = await createActivities(
+
+    activities = await createActivities(
       registration.establishment.activities,
-      establishment.id
+      establishment.id,
+      transaction
     );
-    const premise = await createPremise(
+
+    premise = await createPremise(
       registration.establishment.premise,
-      establishment.id
+      establishment.id,
+      transaction
     );
-    const partnerIds = [];
-    for (const partnerIndex in registration.establishment.operator.partners) {
-      const partner = await createPartner(
+    let partnerIds = [];
+    let partner;
+    let partnerIndex;
+
+    for (partnerIndex in registration.establishment.operator.partners) {
+      partner = await createPartner(
         registration.establishment.operator.partners[partnerIndex],
-        operator.id
+        operator.id,
+        transaction
       );
       partnerIds.push(partner.id);
     }
 
-    const metadata = await createMetadata(registration.metadata, reg.id);
-    await updateStatusInCache(fsa_rn, "registration", true);
+    const declaration = await createDeclaration(
+      registration.declaration,
+      reg.id,
+      transaction
+    );
+
     statusEmitter.emit("incrementCount", "storeRegistrationsInDbSucceeded");
     statusEmitter.emit(
       "setStatus",
       "mostRecentStoreRegistrationInDbSucceeded",
       true
     );
-    logEmitter.emit(
-      "functionSuccess",
-      "registration.service",
-      "saveRegistration"
-    );
+
     return {
       regId: reg.id,
       establishmentId: establishment.id,
@@ -92,10 +120,28 @@ const saveRegistration = async (registration, fsa_rn, council) => {
       activitiesId: activities.id,
       premiseId: premise.id,
       partnerIds,
-      metadataId: metadata.id
+      declarationId: declaration.id
     };
+  };
+
+  try {
+    //execute the transaction
+    let tempStoreSaved = await transaction();
+
+    logEmitter.emit(
+      "functionSuccess",
+      "registration.service",
+      "saveRegistration"
+    );
+    logEmitter.emit(
+      INFO,
+      `Saved ${tempStoreSaved.id} fsaId: ${fsa_rn} in temp store `
+    );
+
+    await updateStatusInCache(fsa_rn, "registration", true);
+
+    return tempStoreSaved;
   } catch (err) {
-    await updateStatusInCache(fsa_rn, "registration", false);
     statusEmitter.emit("incrementCount", "storeRegistrationsInDbFailed");
     statusEmitter.emit(
       "setStatus",
@@ -108,6 +154,7 @@ const saveRegistration = async (registration, fsa_rn, council) => {
       "saveRegistration",
       err
     );
+    await updateStatusInCache(fsa_rn, "registration", false);
     throw err;
   }
 };
@@ -123,7 +170,7 @@ const getFullRegistrationByFsaRn = async fsa_rn => {
     return `No registration found for fsa_rn: ${fsa_rn}`;
   }
   const establishment = await getEstablishmentByRegId(registration.id);
-  const metadata = await getMetadataByRegId(registration.id);
+  const declaration = await getDeclarationByRegId(registration.id);
   const operator = await getOperatorByEstablishmentId(establishment.id);
   const activities = await getActivitiesByEstablishmentId(establishment.id);
   const premise = await getPremiseByEstablishmentId(establishment.id);
@@ -138,7 +185,7 @@ const getFullRegistrationByFsaRn = async fsa_rn => {
     operator,
     activities,
     premise,
-    metadata
+    declaration
   };
 };
 
@@ -153,7 +200,7 @@ const deleteRegistrationByFsaRn = async fsa_rn => {
     return `No registration found for fsa_rn: ${fsa_rn}`;
   }
   const establishment = await getEstablishmentByRegId(registration.id);
-  await destroyMetadataByRegId(registration.id);
+  await destroyDeclarationByRegId(registration.id);
   await destroyOperatorByEstablishmentId(establishment.id);
   await destroyActivitiesByEstablishmentId(establishment.id);
   await destroyPremiseByEstablishmentId(establishment.id);
@@ -168,71 +215,83 @@ const deleteRegistrationByFsaRn = async fsa_rn => {
   return "Registration succesfully deleted";
 };
 
-const sendTascomiRegistration = async (
-  registration,
-  postRegistrationMetadata,
-  localCouncil
-) => {
+const sendTascomiRegistration = async (registration, localCouncil) => {
+  // hack to reduce repair work needed
+  let postRegistrationMetadata = registration;
+
   logEmitter.emit(
     "functionCall",
     "registration.service",
     "sendTascomiRegistration"
   );
-  try {
-    const auth = await getLcAuth(localCouncil);
-    const reg = await promiseRetry({ retries: 3 }, (retry, number) => {
-      logEmitter.emit(
-        "functionCall",
-        "registration.service",
-        `createdFoodBusinessRegistration attempt ${number}`
-      );
-      return createFoodBusinessRegistration(
-        registration,
-        postRegistrationMetadata,
-        auth
-      ).catch(retry);
-    });
 
-    const response = await promiseRetry({ retries: 3 }, (retry, number) => {
-      logEmitter.emit(
-        "functionCall",
-        "registration.service",
-        `createdReferenceNumber attempt ${number}`
-      );
-      return createReferenceNumber(JSON.parse(reg).id, auth).catch(retry);
-    });
+  if (!localCouncil.auth) {
+    //no auth so cannot return a value
+    return null;
+  }
 
-    if (JSON.parse(response).id === 0) {
-      const err = new Error("createReferenceNumber failed");
-      err.name = "tascomiRefNumber";
-      throw err;
-    }
-    updateStatusInCache(postRegistrationMetadata["fsa-rn"], "tascomi", true);
-
+  const auth = localCouncil.auth;
+  const reg = await promiseRetry({ retries: 3 }, (retry, number) => {
     logEmitter.emit(
-      "functionSuccess",
+      "functionCall",
       "registration.service",
-      "sendTascomiRegistration"
+      `createdFoodBusinessRegistration attempt ${number}`
     );
-    return response;
-  } catch (err) {
-    updateStatusInCache(postRegistrationMetadata["fsa-rn"], "tascomi", false);
-    logEmitter.emit(
-      "functionFail",
-      "registrationService",
-      "sendTascomiRegistration",
-      err
-    );
+    return createFoodBusinessRegistration(
+      registration,
+      postRegistrationMetadata,
+      auth
+    ).catch(retry);
+  });
+
+  let regParsed = JSON.parse(reg);
+  let referenceIdInput = regParsed.id ? regParsed.id : null;
+
+  if (referenceIdInput === null) {
+    const err = new Error("createFoodBusinessRegistration failed");
+    err.name = "tascomiRefNumber";
     throw err;
   }
+
+  const response = await promiseRetry({ retries: 3 }, (retry, number) => {
+    logEmitter.emit(
+      "functionCall",
+      "registration.service",
+      `createdReferenceNumber attempt ${number}`
+    );
+    return createReferenceNumber(referenceIdInput, auth).catch(retry);
+  });
+
+  if (JSON.parse(response).id === 0) {
+    const err = new Error("createReferenceNumber failed");
+    err.name = "tascomiRefNumber";
+    throw err;
+  }
+
+  logEmitter.emit(
+    "functionSuccess",
+    "registration.service",
+    "sendTascomiRegistration"
+  );
+
+  return response;
 };
 
 const getRegistrationMetaData = async councilCode => {
   logEmitter.emit(
     "functionCall",
     "registration.service",
-    "getRegistrationMetadata"
+    "getRegistrationDeclaration"
   );
+
+  if (process.env.NODE_ENV === "local") {
+    let oId = mongodb.ObjectId();
+
+    return {
+      "fsa-rn": oId.toString(),
+      reg_submission_date: moment().format("YYYY-MM-DD")
+    };
+  }
 
   const typeCode = process.env.NODE_ENV === "production" ? "001" : "000";
   const reg_submission_date = moment().format("YYYY-MM-DD");
@@ -256,7 +315,7 @@ const getRegistrationMetaData = async councilCode => {
     logEmitter.emit(
       "functionSuccess",
       "registration.service",
-      "getRegistrationMetadata"
+      "getRegistrationDeclaration"
     );
     return {
       "fsa-rn": fsa_rn ? fsa_rn["fsa-rn"] : undefined,
