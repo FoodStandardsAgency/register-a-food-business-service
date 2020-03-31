@@ -339,6 +339,126 @@ const getRegistrationMetaData = async councilCode => {
   }
 };
 
+const getLcContactConfigFromArray = async (
+  localCouncilUrl,
+  allCouncils = []
+) => {
+  logEmitter.emit("functionCall", "registration.service", "getLcContactConfig");
+
+  if (localCouncilUrl) {
+    const allLcConfigData = allCouncils;
+
+    const urlLcConfig = allLcConfigData.find(
+      localCouncil => localCouncil.local_council_url === localCouncilUrl
+    );
+
+    if (urlLcConfig) {
+      if (urlLcConfig.separate_standards_council) {
+        const standardsLcConfig = allLcConfigData.find(
+          localCouncil =>
+            localCouncil._id === urlLcConfig.separate_standards_council
+        );
+
+        if (standardsLcConfig) {
+          const separateCouncils = {
+            hygiene: {
+              code: urlLcConfig._id,
+              local_council: urlLcConfig.local_council,
+              local_council_notify_emails:
+                urlLcConfig.local_council_notify_emails,
+              local_council_email: urlLcConfig.local_council_email,
+              country: urlLcConfig.country
+            },
+            standards: {
+              code: standardsLcConfig._id,
+              local_council: standardsLcConfig.local_council,
+              local_council_notify_emails:
+                standardsLcConfig.local_council_notify_emails,
+              local_council_email: standardsLcConfig.local_council_email
+            }
+          };
+
+          if (urlLcConfig.local_council_phone_number) {
+            separateCouncils.hygiene.local_council_phone_number =
+              urlLcConfig.local_council_phone_number;
+          }
+          if (standardsLcConfig.local_council_phone_number) {
+            separateCouncils.standards.local_council_phone_number =
+              standardsLcConfig.local_council_phone_number;
+          }
+
+          logEmitter.emit(
+            "functionSuccess",
+            "registration.service",
+            "getLcContactConfig"
+          );
+
+          return separateCouncils;
+        } else {
+          const newError = new Error();
+          newError.name = "localCouncilNotFound";
+          newError.message = `A separate standards council config with the code "${
+            urlLcConfig.separate_standards_council
+          }" was expected for "${localCouncilUrl}" but does not exist`;
+          logEmitter.emit(
+            "functionFail",
+            "registration.service",
+            "getLcContactConfig",
+            newError
+          );
+          throw newError;
+        }
+      } else {
+        const hygieneAndStandardsCouncil = {
+          hygieneAndStandards: {
+            code: urlLcConfig._id,
+            local_council: urlLcConfig.local_council,
+            local_council_notify_emails:
+              urlLcConfig.local_council_notify_emails,
+            local_council_email: urlLcConfig.local_council_email,
+            country: urlLcConfig.country
+          }
+        };
+
+        if (urlLcConfig.local_council_phone_number) {
+          hygieneAndStandardsCouncil.hygieneAndStandards.local_council_phone_number =
+            urlLcConfig.local_council_phone_number;
+        }
+
+        logEmitter.emit(
+          "functionSuccess",
+          "registration.service",
+          "getLcContactConfig"
+        );
+
+        return hygieneAndStandardsCouncil;
+      }
+    } else {
+      const newError = new Error();
+      newError.name = "localCouncilNotFound";
+      newError.message = `Config for "${localCouncilUrl}" not found`;
+      logEmitter.emit(
+        "functionFail",
+        "registration.service",
+        "getLcContactConfig",
+        newError
+      );
+      throw newError;
+    }
+  } else {
+    const newError = new Error();
+    newError.name = "localCouncilNotFound";
+    newError.message = "Local council URL is undefined";
+    logEmitter.emit(
+      "functionFail",
+      "registration.service",
+      "getLcContactConfig",
+      newError
+    );
+    throw newError;
+  }
+};
+
 const getLcContactConfig = async localCouncilUrl => {
   logEmitter.emit("functionCall", "registration.service", "getLcContactConfig");
 
@@ -502,5 +622,6 @@ module.exports = {
   sendTascomiRegistration,
   getRegistrationMetaData,
   getLcContactConfig,
+  getLcContactConfigFromArray,
   getLcAuth
 };
