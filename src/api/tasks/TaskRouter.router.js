@@ -22,10 +22,17 @@ const TaskRouter = () => {
 
   router.get("/bulk/createtascomiregistration", async (req, res) => {
     let dryrun = !!req.query.dryrun;
+    let throttle = req.query && req.query.throttle ? req.query.throttle : 500;
     try {
-      await sendAllOutstandingRegistrationsToTascomiAction(req, res, dryrun);
+      await sendAllOutstandingRegistrationsToTascomiAction(
+        req,
+        res,
+        dryrun,
+        throttle
+      );
     } catch (e) {
-      await fail(406, res, e.message || e);
+      await fail(406, res, e.message);
+      throw e;
     }
   });
 
@@ -34,17 +41,26 @@ const TaskRouter = () => {
     try {
       await sendRegistrationToTascomiAction(fsaId, req, res);
     } catch (e) {
-      await fail(406, res, e.message || e);
+      await fail(406, res, e.message);
+      throw e;
     }
   });
 
   // SEND EMAILS AND STUFF
   router.get("/bulk/sendnotification", async (req, res) => {
     let dryrun = !!req.query.dryrun;
+    let throttle = req.query && req.query.throttle ? req.query.throttle : 500;
+
     try {
-      await sendAllNotificationsForRegistrationsAction(req, res, dryrun);
+      await sendAllNotificationsForRegistrationsAction(
+        req,
+        res,
+        dryrun,
+        throttle
+      );
     } catch (e) {
-      await fail(406, res, e.message || e);
+      await fail(406, res, e.message);
+      throw e;
     }
   });
 
@@ -53,7 +69,8 @@ const TaskRouter = () => {
     try {
       await sendNotificationsForRegistrationAction(fsaId, req, res);
     } catch (e) {
-      await fail(406, res, e.message || e);
+      await fail(406, res, e.message);
+      throw e;
     }
   });
 
@@ -63,16 +80,25 @@ const TaskRouter = () => {
     try {
       await saveRegistrationToTempStoreAction(fsaId, req, res);
     } catch (e) {
-      await fail(406, res, e.message || e);
+      await fail(406, res, e.message);
+      throw e;
     }
   });
 
   router.get("/bulk/savetotempstore", async (req, res) => {
     let dryrun = !!req.query.dryrun;
+    let throttle = req.query && req.query.throttle ? req.query.throttle : 500;
+
     try {
-      await saveAllOutstandingRegistrationsToTempStoreAction(req, res, dryrun);
+      await saveAllOutstandingRegistrationsToTempStoreAction(
+        req,
+        res,
+        dryrun,
+        throttle
+      );
     } catch (e) {
-      await fail(406, res, e.message || e);
+      await fail(406, res, e.message);
+      throw e;
     }
   });
 
