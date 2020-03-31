@@ -363,7 +363,8 @@ const getLcContactConfig = async localCouncilUrl => {
               local_council: urlLcConfig.local_council,
               local_council_notify_emails:
                 urlLcConfig.local_council_notify_emails,
-              local_council_email: urlLcConfig.local_council_email
+              local_council_email: urlLcConfig.local_council_email,
+              country: urlLcConfig.country
             },
             standards: {
               code: standardsLcConfig._id,
@@ -411,7 +412,8 @@ const getLcContactConfig = async localCouncilUrl => {
             local_council: urlLcConfig.local_council,
             local_council_notify_emails:
               urlLcConfig.local_council_notify_emails,
-            local_council_email: urlLcConfig.local_council_email
+            local_council_email: urlLcConfig.local_council_email,
+            country: urlLcConfig.country
           }
         };
 

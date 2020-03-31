@@ -64,6 +64,14 @@ const sendSingleEmail = async (
       }
     });
 
+    if (allNotifyPersonalisationData.country == "england") {
+      allNotifyPersonalisationData["england"] = "yes";
+    } else if (allNotifyPersonalisationData.country == "wales") {
+      allNotifyPersonalisationData["wales"] = "yes";
+    } else if (allNotifyPersonalisationData.country == "northern-ireland") {
+      allNotifyPersonalisationData["northern-ireland"] = "yes";
+    }
+
     const notifyArguments = [
       templateId,
       recipientEmail,
