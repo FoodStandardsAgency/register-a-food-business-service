@@ -38,7 +38,7 @@ describe("/api/tasks route: ", () => {
     it("Should call sendAllOutstandingRegistrationsToTascomiAction", () => {
       expect(
         sendAllOutstandingRegistrationsToTascomiAction
-      ).toHaveBeenLastCalledWith(req, res, false);
+      ).toHaveBeenLastCalledWith(req, res, false, 500);
     });
 
     it("Should call sendAllOutstandingRegistrationsToTascomiAction with dryrun true", () => {
@@ -55,7 +55,7 @@ describe("/api/tasks route: ", () => {
       handler(req, res);
       expect(
         sendAllOutstandingRegistrationsToTascomiAction
-      ).toHaveBeenLastCalledWith(req, res, true);
+      ).toHaveBeenLastCalledWith(req, res, true, 500);
     });
   });
 
@@ -75,7 +75,7 @@ describe("/api/tasks route: ", () => {
     it("Should call sendAllNotificationsForRegistrationsAction", () => {
       expect(
         sendAllNotificationsForRegistrationsAction
-      ).toHaveBeenLastCalledWith(req, res, false);
+      ).toHaveBeenLastCalledWith(req, res, false, 500);
     });
 
     it("Should call sendAllNotificationsForRegistrationsAction with dryrun true", () => {
@@ -83,7 +83,7 @@ describe("/api/tasks route: ", () => {
       sendAllNotificationsForRegistrationsAction.mockImplementation(() => {});
       handler = router.get.mock.calls[2][1];
 
-      req = { query: { dryrun: true } };
+      req = { query: { dryrun: true, throttle: 3000 } };
       res = {
         send: jest.fn()
       };
@@ -91,7 +91,7 @@ describe("/api/tasks route: ", () => {
 
       expect(
         sendAllNotificationsForRegistrationsAction
-      ).toHaveBeenLastCalledWith(req, res, true);
+      ).toHaveBeenLastCalledWith(req, res, true, 3000);
     });
   });
 
@@ -113,7 +113,7 @@ describe("/api/tasks route: ", () => {
     it("Should call saveAllOutstandingRegistrationsToTempStoreAction", () => {
       expect(
         saveAllOutstandingRegistrationsToTempStoreAction
-      ).toHaveBeenLastCalledWith(req, res, false);
+      ).toHaveBeenLastCalledWith(req, res, false, 500);
     });
 
     it("Should call saveAllOutstandingRegistrationsToTempStoreAction with dryrun true", () => {
@@ -123,7 +123,7 @@ describe("/api/tasks route: ", () => {
       );
       handler = router.get.mock.calls[5][1];
 
-      req = { query: { dryrun: true } };
+      req = { query: { dryrun: true, throttle: 3000 } };
       res = {
         send: jest.fn()
       };
@@ -131,7 +131,7 @@ describe("/api/tasks route: ", () => {
 
       expect(
         saveAllOutstandingRegistrationsToTempStoreAction
-      ).toHaveBeenLastCalledWith(req, res, true);
+      ).toHaveBeenLastCalledWith(req, res, true, 3000);
     });
   });
 

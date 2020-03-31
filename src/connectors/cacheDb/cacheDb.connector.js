@@ -188,12 +188,9 @@ const findOutstandingTascomiRegistrationsFsaIds = async (
   limit = 100
 ) => {
   return await cachedRegistrations
-    .find(
-      {
-        $or: [{ "status.tascomi.complete": { $eq: false } }]
-      },
-      { _id: 1, "fsa-rn": 1 }
-    )
+    .find({
+      $or: [{ "status.tascomi.complete": { $eq: false } }]
+    })
     .sort({ reg_submission_date: 1 })
     .limit(limit);
 };
