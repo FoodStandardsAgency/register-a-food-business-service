@@ -154,12 +154,7 @@ const findAllOutstandingSavesToTempStore = async (
   limit = 100
 ) => {
   return await cachedRegistrations
-    .find({
-      $or: [
-        { "status.registration.complete": { $eq: false } },
-        { "status.registration": { $exists: false } }
-      ]
-    })
+    .find({ "status.registration.complete": { $ne: true } })
     .sort({ reg_submission_date: 1 })
     .limit(limit);
 };
@@ -189,7 +184,10 @@ const findOutstandingTascomiRegistrationsFsaIds = async (
 ) => {
   return await cachedRegistrations
     .find({
-      $or: [{ "status.tascomi.complete": { $eq: false } }]
+      $and: [
+        { "status.tascomi": { $exists: true } },
+        { "status.tascomi.complete": { $ne: true } }
+      ]
     })
     .sort({ reg_submission_date: 1 })
     .limit(limit);
