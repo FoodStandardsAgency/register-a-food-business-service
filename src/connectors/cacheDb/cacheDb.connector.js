@@ -246,6 +246,8 @@ const updateNotificationOnSent = (
   status.notifications[index].type = type;
   status.notifications[index].time = date;
   status.notifications[index].sent = sent;
+
+  return status;
 };
 
 /**

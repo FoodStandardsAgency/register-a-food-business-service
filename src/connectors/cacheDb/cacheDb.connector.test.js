@@ -163,8 +163,7 @@ describe("Connector: cacheDb", () => {
       describe("When success", () => {
         let result;
         let testStatus = {
-          status: {
-            notifications: [
+          "notifications": [
               {
                 type: "LC",
                 address: "fsatestemail.valid@gmail.com",
@@ -172,8 +171,8 @@ describe("Connector: cacheDb", () => {
                 sent: undefined
               }
             ]
-          }
         };
+
         let testEmailsToSend = [
           {
             type: "LC",
@@ -181,19 +180,6 @@ describe("Connector: cacheDb", () => {
             templateId: "testtempate234315431asdfasf"
           }
         ];
-
-        beforeEach(async () => {
-          process.env.DOUBLE_MODE = false;
-          clearMongoConnection();
-          mongodb.MongoClient.connect.mockImplementation(async () => ({
-            db: () => ({
-              collection: () => ({
-                findOne: () => testStatus,
-                updateOne: () => {}
-              })
-            })
-          }));
-        });
 
         it("check it creates notification rows correctly", () => {
           result = updateNotificationOnSent(
@@ -205,11 +191,15 @@ describe("Connector: cacheDb", () => {
             "fakedate"
           );
 
-          expect(result).toBe({
-            address: "fsatestemail.valid@gmail.com",
-            type: "LC",
-            sent: true,
-            date: "fakedate"
+          expect(result).toStrictEqual({
+            "notifications": [
+              {
+                address: "fsatestemail.valid@gmail.com",
+                type: "LC",
+                sent: true,
+                time: "fakedate"
+              }
+            ]
           });
 
           result = updateNotificationOnSent(
@@ -221,51 +211,16 @@ describe("Connector: cacheDb", () => {
             "fakedate"
           );
 
-          expect(result).toBe({
-            address: "fsatestemail.valid@gmail.com",
-            type: "LC",
-            sent: false,
-            date: "fakedate"
+          expect(result).toStrictEqual({
+            "notifications": [
+              {
+                address: "fsatestemail.valid@gmail.com",
+                type: "LC",
+                sent: false,
+                time: "fakedate"
+              }
+            ]
           });
-        });
-      });
-
-      describe("When Failure", () => {
-        let result;
-        beforeEach(async () => {
-          process.env.DOUBLE_MODE = false;
-          clearMongoConnection();
-          mongodb.MongoClient.connect.mockImplementation(async () => ({
-            db: () => ({
-              collection: () => ({
-                findOne: () => ({
-                  status: {
-                    notifications: [
-                      {
-                        type: "LC",
-                        address: "example@example.com",
-                        time: undefined,
-                        sent: undefined
-                      }
-                    ]
-                  }
-                }),
-                updateOne: () => {
-                  throw new Error("Example mongo error");
-                }
-              })
-            })
-          }));
-
-          try {
-            await updateNotificationOnSent("123", "LC", "example@example.com");
-          } catch (err) {
-            result = err;
-          }
-        });
-
-        it("Shouldn't throw an error", () => {
-          expect(result).toBe(undefined);
         });
       });
     });
