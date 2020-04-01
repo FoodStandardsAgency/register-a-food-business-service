@@ -237,6 +237,7 @@ const saveAllOutstandingRegistrationsToTempStoreAction = async (
   let registrations = await findAllOutstandingSavesToTempStore(
     registrationsCollection
   );
+  registrations = await registrations.toArray();
   let allLcConfigData = await getAllLocalCouncilConfig();
   let registration;
 
