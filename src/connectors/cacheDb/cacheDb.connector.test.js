@@ -159,41 +159,74 @@ describe("Connector: cacheDb", () => {
       });
     });
 
-    describe("Function: updateNotificationOnCompleted", () => {
+    describe("Function: updateNotificationOnSent", () => {
       describe("When success", () => {
         let result;
+        let testStatus = {
+          status: {
+            notifications: [
+              {
+                type: "LC",
+                address: "fsatestemail.valid@gmail.com",
+                time: undefined,
+                sent: undefined
+              }
+            ]
+          }
+        };
+        let testEmailsToSend = [
+          {
+            type: "LC",
+            address: "fsatestemail.valid@gmail.com",
+            templateId: "testtempate234315431asdfasf"
+          }
+        ];
+
         beforeEach(async () => {
           process.env.DOUBLE_MODE = false;
           clearMongoConnection();
           mongodb.MongoClient.connect.mockImplementation(async () => ({
             db: () => ({
               collection: () => ({
-                findOne: () => ({
-                  status: {
-                    notifications: [
-                      {
-                        type: "LC",
-                        address: "example@example.com",
-                        time: undefined,
-                        sent: undefined
-                      }
-                    ]
-                  }
-                }),
+                findOne: () => testStatus,
                 updateOne: () => {}
               })
             })
           }));
-
-          try {
-            await updateNotificationOnSent("123", "LC", "example@example.com");
-          } catch (err) {
-            result = err;
-          }
         });
 
-        it("should have called this", () => {
-          expect(result).toBe(undefined);
+        it("check it creates notification rows correctly", () => {
+          result = updateNotificationOnSent(
+            testStatus,
+            "FAKE-FSAID-12345",
+            testEmailsToSend,
+            0,
+            true,
+            "fakedate"
+          );
+
+          expect(result).toBe({
+            address: "fsatestemail.valid@gmail.com",
+            type: "LC",
+            sent: true,
+            date: "fakedate"
+          });
+
+          result = updateNotificationOnSent(
+            testStatus,
+            "FAKE-FSAID-12345",
+            testEmailsToSend,
+            0,
+            false,
+            "fakedate"
+          );
+
+          expect(result).toBe({
+            address: "fsatestemail.valid@gmail.com",
+            type: "LC",
+            sent: false,
+            date: "fakedate"
+          });
         });
       });
 

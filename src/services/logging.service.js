@@ -1,7 +1,5 @@
-import {warn} from "../../../var/npm/rafbcs-node_modules/winston";
-
 const EventEmitter = require("events");
-const { info, error, debug } = require("winston");
+const { info, error, debug, warn } = require("winston");
 
 class LogEmitter extends EventEmitter {}
 
@@ -39,7 +37,6 @@ logEmitter.on(INFO, message => {
 logEmitter.on(WARN, message => {
   warn(message);
 });
-
 
 logEmitter.on(DEBUG, message => {
   debug(message);

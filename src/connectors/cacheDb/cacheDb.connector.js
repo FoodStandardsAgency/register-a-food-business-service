@@ -3,7 +3,7 @@ const { CACHEDB_URL } = require("../../config");
 const { cachedRegistrationsDouble } = require("./cacheDb.double");
 const { logEmitter } = require("../../services/logging.service");
 const { statusEmitter } = require("../../services/statusEmitter.service");
-const {_} = require("lodash");
+
 let client = undefined;
 let cacheDB = undefined;
 
@@ -230,20 +230,21 @@ const updateStatus = async (cachedRegistrations, fsa_rn, newStatus) => {
  * @param emailsToSend
  * @param index The index of the email - we need this to make sure we update the right item if the same email address has been used multiple times.
  * @param sent
+ * @param date
  */
 const updateNotificationOnSent = (
   status,
   fsa_rn,
   emailsToSend,
   index,
-  sent
+  sent,
+  date = null
 ) => {
-
-  let {type,  address} = emailsToSend[index];
-
+  let { type, address } = emailsToSend[index];
+  date = date === null ? getDate() : date;
   status.notifications[index].address = address;
   status.notifications[index].type = type;
-  status.notifications[index].time = getDate();
+  status.notifications[index].time = date;
   status.notifications[index].sent = sent;
 };
 

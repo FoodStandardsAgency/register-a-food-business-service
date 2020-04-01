@@ -87,10 +87,16 @@ const sendSingleEmail = async (
     const notifyResponse = await notifyClient.sendEmail(...notifyArguments);
     const responseBody = notifyResponse.body;
     logEmitter.emit("functionSuccess", "notify.connector", "sendSingleEmail");
-    logEmitter.emit(INFO, `Sent email successfully for fsaID ${fsaId} for type ${type} index: ${index}`);
+    logEmitter.emit(
+      INFO,
+      `Sent email successfully for fsaID ${fsaId} for type ${type} index: ${index}`
+    );
     return responseBody;
   } catch (err) {
-    logEmitter.emit(ERROR, `Send email failed with error for fsaID ${fsaId} for type ${type} index: ${index}`);
+    logEmitter.emit(
+      ERROR,
+      `Send email failed with error for fsaID ${fsaId} for type ${type} index: ${index}`
+    );
 
     const newError = new Error(`Notify error for FSAId: ${fsaId}`);
     newError.message = err.message;

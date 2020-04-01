@@ -128,24 +128,33 @@ const sendEmails = async (
   logEmitter.emit("functionCall", "registration.service", "sendEmails");
   logEmitter.emit(INFO, `Started sendEmails for FSAid: ${fsaId}`);
 
-
   let success = true;
   let lastSentStatus;
   let cachedRegistrations = await establishConnectionToMongo();
   let status = await getStatus(cachedRegistrations, fsaId);
 
   try {
-    if(emailsToSend.length === 0){
+    if (emailsToSend.length === 0) {
       //no emails to send - we dont expect this to ever happen
-      logEmitter.emit(WARN, `There were no entries in the emailsToSend for FSAid ${fsaId}`);
+      logEmitter.emit(
+        WARN,
+        `There were no entries in the emailsToSend for FSAid ${fsaId}`
+      );
 
       //it worked on basis that there was nothing to send
       return true;
     }
 
     //we need to check the status immediately to identify that it is what we expect on the length of emailsToSend - shouldnt happen
-    if(!(status.notification.length === 0 || (status.notification.length === emailsToSend.length))){
-      throw new Error(`The notifications array and emails to send do not match and could indicate corruption - fsaId ${fsaId}`);
+    if (
+      !(
+        status.notification.length === 0 ||
+        status.notification.length === emailsToSend.length
+      )
+    ) {
+      throw new Error(
+        `The notifications array and emails to send do not match and could indicate corruption - fsaId ${fsaId}`
+      );
     }
 
     const data = transformDataForNotify(registration, lcContactConfig);
@@ -156,6 +165,17 @@ const sendEmails = async (
       let fileToSend = undefined;
       if (emailsToSend[index].type === "LC") {
         fileToSend = pdfFile;
+      }
+
+      if (status.notifications[index].sent === true) {
+        logEmitter.emit(
+          INFO,
+          `Skipping email send (already sent) - type: ${
+            emailsToSend[index].type
+          } index:${index} for FSAId ${fsaId}`
+        );
+
+        continue;
       }
 
       lastSentStatus = await sendSingleEmail(
@@ -176,43 +196,49 @@ const sendEmails = async (
         lastSentStatus
       );
 
-      logEmitter.emit(INFO, `Attempted email sent with sendStatus: ${lastSentStatus ? 'sent' : 'failed'} type: ${emailsToSend[index].type} index:${index} for FSAId ${fsaId}`);
-
+      logEmitter.emit(
+        INFO,
+        `Attempted email sent with sendStatus: ${
+          lastSentStatus ? "sent" : "failed"
+        } type: ${emailsToSend[index].type} index:${index} for FSAId ${fsaId}`
+      );
     }
   } catch (err) {
     success = false;
 
-    logEmitter.emit(ERROR, `There was an error sending emails for FSAId ${fsaId}`);
+    logEmitter.emit(
+      ERROR,
+      `There was an error sending emails for FSAId ${fsaId}`
+    );
     logEmitter.emit(ERROR, `Email error FSAId ${fsaId}: ${err.toString()}`);
   }
 
-  try{
-    let cachedRegistrations = establishConnectionToMongo();
+  try {
     await updateStatus(cachedRegistrations, fsaId, status);
 
     statusEmitter.emit("incrementCount", "updateNotificationOnSentSucceeded");
     statusEmitter.emit(
-        "setStatus",
-        "mostRecentUpdateNotificationOnSentSucceeded",
-        true
+      "setStatus",
+      "mostRecentUpdateNotificationOnSentSucceeded",
+      true
     );
     logEmitter.emit(
-        "functionSuccess",
-        "cacheDb.connector",
-        "updateNotificationOnSent"
+      "functionSuccess",
+      "cacheDb.connector",
+      "updateNotificationOnSent"
     );
   } catch (err) {
     statusEmitter.emit("incrementCount", "updateNotificationOnSentFailed");
     statusEmitter.emit(
-        "setStatus",
-        "mostRecentUpdateNotificationOnSentSucceeded",
-        false
+      "setStatus",
+      "mostRecentUpdateNotificationOnSentSucceeded",
+      false
     );
     logEmitter.emit(
-        "functionFail",
-        "cacheDb.connector",
-        "updateNotificationOnSent",
-        err
+      "functionFail",
+      "cacheDb.connector",
+      "updateNotificationOnSent",
+      err
     );
   }
 
