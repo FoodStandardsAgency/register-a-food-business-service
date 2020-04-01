@@ -12,10 +12,9 @@ const {
   establishConnectionToMongo,
   getStatus,
   updateStatus,
-  addNotificationToStatus,
   updateNotificationOnSent
 } = require("../connectors/cacheDb/cacheDb.connector");
-
+const { has } = require("lodash");
 /**
  * Function that converts the data into format for Notify and creates a new object
  *
@@ -148,8 +147,8 @@ const sendEmails = async (
     //we need to check the status immediately to identify that it is what we expect on the length of emailsToSend - shouldnt happen
     if (
       !(
-        status.notification.length === 0 ||
-        status.notification.length === emailsToSend.length
+        status.notifications.length === 0 ||
+        status.notifications.length === emailsToSend.length
       )
     ) {
       throw new Error(
@@ -178,15 +177,16 @@ const sendEmails = async (
         continue;
       }
 
-      lastSentStatus = await sendSingleEmail(
-        emailsToSend[index].templateId,
-        emailsToSend[index].address,
-        data,
-        fileToSend,
-        fsaId,
-        emailsToSend[index].type,
-        index
-      );
+      lastSentStatus =
+        (await sendSingleEmail(
+          emailsToSend[index].templateId,
+          emailsToSend[index].address,
+          data,
+          fileToSend,
+          fsaId,
+          emailsToSend[index].type,
+          index
+        )) !== null;
 
       updateNotificationOnSent(
         status,
@@ -280,9 +280,83 @@ const sendNotifications = async (
     configData
   );
 
-  await addNotificationToStatus(fsaId, emailsToSend);
+  await initialiseNotificationsStatusIfNotSet(fsaId, emailsToSend);
 
   await sendEmails(emailsToSend, registration, fsaId, lcContactConfig);
+};
+
+const initialiseNotificationsStatus = emailsToSend => {
+  let notifications = [];
+
+  for (let index in emailsToSend) {
+    notifications.push({
+      time: undefined,
+      sent: false,
+      type: emailsToSend[index].type,
+      address: emailsToSend[index].address
+    });
+  }
+
+  return notifications;
+};
+
+/**
+ * Add an object to the notifications field containing the status for each email to be sent, initialises with false
+ * @param fsaId
+ * @param {object} emailsToSend An object containing all of the emails to be sent
+ */
+const initialiseNotificationsStatusIfNotSet = async (fsaId, emailsToSend) => {
+  logEmitter.emit(
+    "functionCall",
+    "cacheDb.connector",
+    "addNotificationToStatus"
+  );
+  try {
+    let cachedRegistrations = await establishConnectionToMongo();
+    let status = await getStatus(cachedRegistrations, fsaId);
+
+    if (has(status, "notifications")) {
+      logEmitter.emit(
+        INFO,
+        `Not Initialising notifications status for FSAId ${fsaId}`
+      );
+      return;
+    }
+
+    status.notifications = initialiseNotificationsStatus(emailsToSend);
+    logEmitter.emit(
+      INFO,
+      `Initialising notifications status for FSAId ${fsaId}: ${
+        emailsToSend.length
+      } emails to send`
+    );
+    await updateStatus(cachedRegistrations, fsaId, status);
+
+    statusEmitter.emit("incrementCount", "addNotificationToStatusSucceeded");
+    statusEmitter.emit(
+      "setStatus",
+      "mostRecentAddNotificationToStatusSucceeded",
+      true
+    );
+    logEmitter.emit(
+      "functionSuccess",
+      "cacheDb.connector",
+      "addNotificationToStatus"
+    );
+  } catch (err) {
+    statusEmitter.emit("incrementCount", "addNotificationToStatusFailed");
+    statusEmitter.emit(
+      "setStatus",
+      "mostRecentAddNotificationToStatusSucceeded",
+      false
+    );
+    logEmitter.emit(
+      "functionFail",
+      "cacheDb.connector",
+      "addNotificationToStatus",
+      err
+    );
+  }
 };
 
 const generateEmailsToSend = (registration, lcContactConfig, configData) => {

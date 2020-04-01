@@ -6,8 +6,7 @@ const {
   cacheRegistration,
   clearMongoConnection,
   updateStatusInCache,
-  updateNotificationOnSent,
-  addNotificationToStatus
+  updateNotificationOnSent
 } = require("./cacheDb.connector");
 
 describe("Connector: cacheDb", () => {
@@ -278,76 +277,6 @@ describe("Connector: cacheDb", () => {
 
       it("Shouldn't throw an error", () => {
         expect(result).toBe(undefined);
-      });
-    });
-
-    describe("Function: addNotificationToCompleted", () => {
-      describe("When success", () => {
-        let result;
-        beforeEach(async () => {
-          process.env.DOUBLE_MODE = false;
-          clearMongoConnection();
-          mongodb.MongoClient.connect.mockImplementation(async () => ({
-            db: () => ({
-              collection: () => ({
-                findOne: () => ({
-                  completed: []
-                }),
-                updateOne: () => {}
-              })
-            })
-          }));
-
-          try {
-            await addNotificationToStatus("123", [
-              {
-                type: "LC",
-                address: "example@example.com"
-              }
-            ]);
-          } catch (err) {
-            result = err;
-          }
-        });
-
-        it("should have called this", () => {
-          expect(result).toBe(undefined);
-        });
-      });
-
-      describe("When Failure", () => {
-        let result;
-        beforeEach(async () => {
-          process.env.DOUBLE_MODE = false;
-          clearMongoConnection();
-          mongodb.MongoClient.connect.mockImplementation(async () => ({
-            db: () => ({
-              collection: () => ({
-                findOne: () => ({
-                  completed: []
-                }),
-                updateOne: () => {
-                  throw new Error("Example mongo error");
-                }
-              })
-            })
-          }));
-
-          try {
-            await addNotificationToStatus("123", [
-              {
-                type: "LC",
-                address: "example@example.com"
-              }
-            ]);
-          } catch (err) {
-            result = err;
-          }
-        });
-
-        it("Shouldn't throw an error", () => {
-          expect(result).toBe(undefined);
-        });
       });
     });
   });

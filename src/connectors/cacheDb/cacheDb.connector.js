@@ -250,60 +250,6 @@ const updateNotificationOnSent = (
   return status;
 };
 
-/**
- * Add an object to the notifications field containing the status for each email to be sent, initialises with false
- * @param {string} fsa_rn The FSA-RN for the registration to have completed notifications for
- * @param {object} emailsToSend An object containing all of the emails to be sent
- */
-const addNotificationToStatus = async (fsa_rn, emailsToSend) => {
-  logEmitter.emit(
-    "functionCall",
-    "cacheDb.connector",
-    "addNotificationToStatus"
-  );
-  try {
-    const cachedRegistrations = await establishConnectionToMongo();
-    const status = await getStatus(cachedRegistrations, fsa_rn);
-
-    status.notifications = [];
-    for (let index in emailsToSend) {
-      status.notifications.push({
-        time: undefined,
-        sent: false,
-        type: emailsToSend[index].type,
-        address: emailsToSend[index].address
-      });
-    }
-
-    await updateStatus(cachedRegistrations, fsa_rn, status);
-
-    statusEmitter.emit("incrementCount", "addNotificationToStatusSucceeded");
-    statusEmitter.emit(
-      "setStatus",
-      "mostRecentAddNotificationToStatusSucceeded",
-      true
-    );
-    logEmitter.emit(
-      "functionSuccess",
-      "cacheDb.connector",
-      "addNotificationToStatus"
-    );
-  } catch (err) {
-    statusEmitter.emit("incrementCount", "addNotificationToStatusFailed");
-    statusEmitter.emit(
-      "setStatus",
-      "mostRecentAddNotificationToStatusSucceeded",
-      false
-    );
-    logEmitter.emit(
-      "functionFail",
-      "cacheDb.connector",
-      "addNotificationToStatus",
-      err
-    );
-  }
-};
-
 const clearMongoConnection = () => {
   client = undefined;
   cacheDB = undefined;
@@ -316,7 +262,6 @@ module.exports = {
   cacheRegistration,
   clearMongoConnection,
   updateStatusInCache,
-  addNotificationToStatus,
   updateNotificationOnSent,
   establishConnectionToMongo,
   findOneById,
