@@ -1,19 +1,25 @@
 const { NotifyClient } = require("notifications-node-client");
 const { notifyClientDouble } = require("./notify.double");
 const { NOTIFY_KEY } = require("../../config");
-const { logEmitter, ERROR } = require("../../services/logging.service");
+const { logEmitter, ERROR, INFO } = require("../../services/logging.service");
 /**
  * Send a single email
  * @param {string} templateId The template Id for the relevant email in notify
  * @param {string} recipientEmail The email address for notifaction to be sent to
  * @param {object} flattenedData The data for the template properties
  * @param {object} pdfFile The pdf file to be sent with email
+ * @param fsaId
+ * @param type
+ * @param index
  */
 const sendSingleEmail = async (
   templateId,
   recipientEmail,
   flattenedData,
-  pdfFile
+  pdfFile,
+  fsaId,
+  type,
+  index
 ) => {
   logEmitter.emit("functionCall", "notify.connector", "sendSingleEmail");
 
@@ -81,11 +87,12 @@ const sendSingleEmail = async (
     const notifyResponse = await notifyClient.sendEmail(...notifyArguments);
     const responseBody = notifyResponse.body;
     logEmitter.emit("functionSuccess", "notify.connector", "sendSingleEmail");
+    logEmitter.emit(INFO, `Sent email successfully for fsaID ${fsaId} for type ${type} index: ${index}`);
     return responseBody;
   } catch (err) {
-    logEmitter.emit(ERROR, `Send email failed with error`);
+    logEmitter.emit(ERROR, `Send email failed with error for fsaID ${fsaId} for type ${type} index: ${index}`);
 
-    const newError = new Error("Notify error");
+    const newError = new Error(`Notify error for FSAId: ${fsaId}`);
     newError.message = err.message;
     if (err.message === "secretOrPrivateKey must have a value") {
       newError.name = "notifyMissingKey";

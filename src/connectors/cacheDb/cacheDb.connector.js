@@ -3,7 +3,7 @@ const { CACHEDB_URL } = require("../../config");
 const { cachedRegistrationsDouble } = require("./cacheDb.double");
 const { logEmitter } = require("../../services/logging.service");
 const { statusEmitter } = require("../../services/statusEmitter.service");
-
+const {_} = require("lodash");
 let client = undefined;
 let cacheDB = undefined;
 
@@ -225,58 +225,26 @@ const updateStatus = async (cachedRegistrations, fsa_rn, newStatus) => {
 
 /**
  * Updates a specific notification when sent, finding the notification status from the type and address and updating the time and result fields
+ * @param status
  * @param {string} fsa_rn The FSA-RN number for the registration to be updated
- * @param {string} notificationType The type of notification to be sent
- * @param {string} notificationAddress The address of the notification to be sent
+ * @param emailsToSend
+ * @param index The index of the email - we need this to make sure we update the right item if the same email address has been used multiple times.
+ * @param sent
  */
-const updateNotificationOnSent = async (
+const updateNotificationOnSent = (
+  status,
   fsa_rn,
-  notificationType,
-  notificationAddress
+  emailsToSend,
+  index,
+  sent
 ) => {
-  logEmitter.emit(
-    "functionCall",
-    "cacheDb.connector",
-    "updateNotificationOnSent"
-  );
-  try {
-    const cachedRegistrations = await establishConnectionToMongo();
-    const status = await getStatus(cachedRegistrations, fsa_rn);
 
-    const index = status.notifications.findIndex(
-      ({ type, address }) =>
-        type === notificationType && address === notificationAddress
-    );
-    status.notifications[index].time = getDate();
-    status.notifications[index].sent = true;
+  let {type,  address} = emailsToSend[index];
 
-    await updateStatus(cachedRegistrations, fsa_rn, status);
-
-    statusEmitter.emit("incrementCount", "updateNotificationOnSentSucceeded");
-    statusEmitter.emit(
-      "setStatus",
-      "mostRecentUpdateNotificationOnSentSucceeded",
-      true
-    );
-    logEmitter.emit(
-      "functionSuccess",
-      "cacheDb.connector",
-      "updateNotificationOnSent"
-    );
-  } catch (err) {
-    statusEmitter.emit("incrementCount", "updateNotificationOnSentFailed");
-    statusEmitter.emit(
-      "setStatus",
-      "mostRecentUpdateNotificationOnSentSucceeded",
-      false
-    );
-    logEmitter.emit(
-      "functionFail",
-      "cacheDb.connector",
-      "updateNotificationOnSent",
-      err
-    );
-  }
+  status.notifications[index].address = address;
+  status.notifications[index].type = type;
+  status.notifications[index].time = getDate();
+  status.notifications[index].sent = sent;
 };
 
 /**
@@ -351,5 +319,7 @@ module.exports = {
   findOneById,
   CachedRegistrationsCollection,
   connectToBeCacheDb,
-  disconnectCacheDb
+  disconnectCacheDb,
+  getStatus,
+  updateStatus
 };
