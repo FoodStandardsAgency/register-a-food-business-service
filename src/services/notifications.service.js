@@ -4,15 +4,17 @@
  */
 
 const moment = require("moment");
-const { logEmitter } = require("./logging.service");
+const { logEmitter, WARN, ERROR, INFO } = require("./logging.service");
 const { statusEmitter } = require("./statusEmitter.service");
 const { sendSingleEmail } = require("../connectors/notify/notify.connector");
 const { pdfGenerator, transformDataForPdf } = require("./pdf.service");
 const {
-  addNotificationToStatus,
+  establishConnectionToMongo,
+  getStatus,
+  updateStatus,
   updateNotificationOnSent
 } = require("../connectors/cacheDb/cacheDb.connector");
-
+const { has } = require("lodash");
 /**
  * Function that converts the data into format for Notify and creates a new object
  *
@@ -123,44 +125,121 @@ const sendEmails = async (
   lcContactConfig
 ) => {
   logEmitter.emit("functionCall", "registration.service", "sendEmails");
-  let newError;
+  logEmitter.emit(INFO, `Started sendEmails for FSAid: ${fsaId}`);
+
   let success = true;
+  let lastSentStatus;
+  let cachedRegistrations = await establishConnectionToMongo();
+  let status = await getStatus(cachedRegistrations, fsaId);
 
   try {
-    const data = transformDataForNotify(registration, lcContactConfig);
+    if (emailsToSend.length === 0) {
+      //no emails to send - we dont expect this to ever happen
+      logEmitter.emit(
+        WARN,
+        `There were no entries in the emailsToSend for FSAid ${fsaId}`
+      );
 
+      //it worked on basis that there was nothing to send
+      return true;
+    }
+
+    //we need to check the status immediately to identify that it is what we expect on the length of emailsToSend - shouldnt happen
+    if (
+      !(
+        status.notifications.length === 0 ||
+        status.notifications.length === emailsToSend.length
+      )
+    ) {
+      throw new Error(
+        `The notifications array and emails to send do not match and could indicate corruption - fsaId ${fsaId}`
+      );
+    }
+
+    const data = transformDataForNotify(registration, lcContactConfig);
     const dataForPDF = transformDataForPdf(registration, lcContactConfig);
     const pdfFile = await pdfGenerator(dataForPDF);
+
     for (let index in emailsToSend) {
       let fileToSend = undefined;
       if (emailsToSend[index].type === "LC") {
         fileToSend = pdfFile;
       }
 
-      if (
-        await sendSingleEmail(
+      if (status.notifications[index].sent === true) {
+        logEmitter.emit(
+          INFO,
+          `Skipping email send (already sent) - type: ${
+            emailsToSend[index].type
+          } index:${index} for FSAId ${fsaId}`
+        );
+
+        continue;
+      }
+
+      lastSentStatus =
+        (await sendSingleEmail(
           emailsToSend[index].templateId,
           emailsToSend[index].address,
           data,
-          fileToSend
-        )
-      ) {
-        await updateNotificationOnSent(
+          fileToSend,
           fsaId,
           emailsToSend[index].type,
-          emailsToSend[index].address
-        );
-      } else {
-        success = false;
-      }
-    }
-    if (!success) {
-      newError = new Error("sendSingleEmail error");
-      newError.message = "An email has failed to send";
+          index
+        )) !== null;
+
+      updateNotificationOnSent(
+        status,
+        fsaId,
+        emailsToSend,
+        index,
+        lastSentStatus
+      );
+
+      logEmitter.emit(
+        INFO,
+        `Attempted email sent with sendStatus: ${
+          lastSentStatus ? "sent" : "failed"
+        } type: ${emailsToSend[index].type} index:${index} for FSAId ${fsaId}`
+      );
     }
   } catch (err) {
     success = false;
-    logEmitter.emit("functionFail", "registration.service", "sendEmails", err);
+
+    logEmitter.emit(
+      ERROR,
+      `There was an error sending emails for FSAId ${fsaId}`
+    );
+    logEmitter.emit(ERROR, `Email error FSAId ${fsaId}: ${err.toString()}`);
+  }
+
+  try {
+    await updateStatus(cachedRegistrations, fsaId, status);
+
+    statusEmitter.emit("incrementCount", "updateNotificationOnSentSucceeded");
+    statusEmitter.emit(
+      "setStatus",
+      "mostRecentUpdateNotificationOnSentSucceeded",
+      true
+    );
+    logEmitter.emit(
+      "functionSuccess",
+      "cacheDb.connector",
+      "updateNotificationOnSent"
+    );
+  } catch (err) {
+    statusEmitter.emit("incrementCount", "updateNotificationOnSentFailed");
+    statusEmitter.emit(
+      "setStatus",
+      "mostRecentUpdateNotificationOnSentSucceeded",
+      false
+    );
+    logEmitter.emit(
+      "functionFail",
+      "cacheDb.connector",
+      "updateNotificationOnSent",
+      err
+    );
   }
 
   if (success) {
@@ -178,14 +257,6 @@ const sendEmails = async (
       "mostRecentEmailNotificationSucceeded",
       false
     );
-    if (newError) {
-      logEmitter.emit(
-        "functionFail",
-        "registration.service",
-        "sendEmails",
-        newError
-      );
-    }
   }
 };
 
@@ -203,6 +274,92 @@ const sendNotifications = async (
   registration,
   configData
 ) => {
+  let emailsToSend = generateEmailsToSend(
+    registration,
+    lcContactConfig,
+    configData
+  );
+
+  await initialiseNotificationsStatusIfNotSet(fsaId, emailsToSend);
+
+  await sendEmails(emailsToSend, registration, fsaId, lcContactConfig);
+};
+
+const initialiseNotificationsStatus = emailsToSend => {
+  let notifications = [];
+
+  for (let index in emailsToSend) {
+    notifications.push({
+      time: undefined,
+      sent: false,
+      type: emailsToSend[index].type,
+      address: emailsToSend[index].address
+    });
+  }
+
+  return notifications;
+};
+
+/**
+ * Add an object to the notifications field containing the status for each email to be sent, initialises with false
+ * @param fsaId
+ * @param {object} emailsToSend An object containing all of the emails to be sent
+ */
+const initialiseNotificationsStatusIfNotSet = async (fsaId, emailsToSend) => {
+  logEmitter.emit(
+    "functionCall",
+    "cacheDb.connector",
+    "addNotificationToStatus"
+  );
+  try {
+    let cachedRegistrations = await establishConnectionToMongo();
+    let status = await getStatus(cachedRegistrations, fsaId);
+
+    if (has(status, "notifications")) {
+      logEmitter.emit(
+        INFO,
+        `Not Initialising notifications status for FSAId ${fsaId}`
+      );
+      return;
+    }
+
+    status.notifications = initialiseNotificationsStatus(emailsToSend);
+    logEmitter.emit(
+      INFO,
+      `Initialising notifications status for FSAId ${fsaId}: ${
+        emailsToSend.length
+      } emails to send`
+    );
+    await updateStatus(cachedRegistrations, fsaId, status);
+
+    statusEmitter.emit("incrementCount", "addNotificationToStatusSucceeded");
+    statusEmitter.emit(
+      "setStatus",
+      "mostRecentAddNotificationToStatusSucceeded",
+      true
+    );
+    logEmitter.emit(
+      "functionSuccess",
+      "cacheDb.connector",
+      "addNotificationToStatus"
+    );
+  } catch (err) {
+    statusEmitter.emit("incrementCount", "addNotificationToStatusFailed");
+    statusEmitter.emit(
+      "setStatus",
+      "mostRecentAddNotificationToStatusSucceeded",
+      false
+    );
+    logEmitter.emit(
+      "functionFail",
+      "cacheDb.connector",
+      "addNotificationToStatus",
+      err
+    );
+  }
+};
+
+const generateEmailsToSend = (registration, lcContactConfig, configData) => {
   let emailsToSend = [];
 
   for (let typeOfCouncil in lcContactConfig) {
@@ -228,7 +385,7 @@ const sendNotifications = async (
     templateId: configData.notify_template_keys.fbo_submission_complete
   });
 
-  if (registration.declaration.feedback1) {
+  if (registration.declaration && registration.declaration.feedback1) {
     emailsToSend.push({
       type: "FBO_FB",
       address: fboEmailAddress,
@@ -242,9 +399,7 @@ const sendNotifications = async (
     });
   }
 
-  await addNotificationToStatus(fsaId, emailsToSend);
-
-  await sendEmails(emailsToSend, registration, fsaId, lcContactConfig);
+  return emailsToSend;
 };
 
 /**
@@ -276,4 +431,8 @@ const getMainPartnershipContactName = partners => {
   return mainPartnershipContact.partner_name;
 };
 
-module.exports = { transformDataForNotify, sendNotifications };
+module.exports = {
+  transformDataForNotify,
+  sendNotifications,
+  generateEmailsToSend
+};
