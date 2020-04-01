@@ -163,14 +163,14 @@ describe("Connector: cacheDb", () => {
       describe("When success", () => {
         let result;
         let testStatus = {
-          "notifications": [
-              {
-                type: "LC",
-                address: "fsatestemail.valid@gmail.com",
-                time: undefined,
-                sent: undefined
-              }
-            ]
+          notifications: [
+            {
+              type: "LC",
+              address: "fsatestemail.valid@gmail.com",
+              time: undefined,
+              sent: undefined
+            }
+          ]
         };
 
         let testEmailsToSend = [
@@ -192,7 +192,7 @@ describe("Connector: cacheDb", () => {
           );
 
           expect(result).toStrictEqual({
-            "notifications": [
+            notifications: [
               {
                 address: "fsatestemail.valid@gmail.com",
                 type: "LC",
@@ -212,7 +212,7 @@ describe("Connector: cacheDb", () => {
           );
 
           expect(result).toStrictEqual({
-            "notifications": [
+            notifications: [
               {
                 address: "fsatestemail.valid@gmail.com",
                 type: "LC",

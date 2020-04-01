@@ -274,8 +274,11 @@ const sendNotifications = async (
   registration,
   configData
 ) => {
-
-  let emailsToSend = generateEmailsToSend(registration, lcContactConfig, configData);
+  let emailsToSend = generateEmailsToSend(
+    registration,
+    lcContactConfig,
+    configData
+  );
 
   await addNotificationToStatus(fsaId, emailsToSend);
 
@@ -287,7 +290,7 @@ const generateEmailsToSend = (registration, lcContactConfig, configData) => {
 
   for (let typeOfCouncil in lcContactConfig) {
     const lcNotificationEmailAddresses =
-        lcContactConfig[typeOfCouncil].local_council_notify_emails;
+      lcContactConfig[typeOfCouncil].local_council_notify_emails;
 
     for (let recipientEmailAddress in lcNotificationEmailAddresses) {
       emailsToSend.push({
@@ -299,8 +302,8 @@ const generateEmailsToSend = (registration, lcContactConfig, configData) => {
   }
 
   const fboEmailAddress =
-      registration.establishment.operator.operator_email ||
-      registration.establishment.operator.contact_representative_email;
+    registration.establishment.operator.operator_email ||
+    registration.establishment.operator.contact_representative_email;
 
   emailsToSend.push({
     type: "FBO",
@@ -354,4 +357,8 @@ const getMainPartnershipContactName = partners => {
   return mainPartnershipContact.partner_name;
 };
 
-module.exports = { transformDataForNotify, sendNotifications, generateEmailsToSend };
+module.exports = {
+  transformDataForNotify,
+  sendNotifications,
+  generateEmailsToSend
+};

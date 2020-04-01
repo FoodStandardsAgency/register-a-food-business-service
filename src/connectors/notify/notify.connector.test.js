@@ -31,7 +31,15 @@ describe("Function: sendSingleEmail", () => {
     }
   };
 
-  const args = [testTemplateId, testRecipient, testFlattenedData, testPdfFile, 'FAKEFSAID-2343','FAKETYPE', 0];
+  const args = [
+    testTemplateId,
+    testRecipient,
+    testFlattenedData,
+    testPdfFile,
+    "FAKEFSAID-2343",
+    "FAKETYPE",
+    0
+  ];
 
   describe("given the request is successful", () => {
     beforeEach(async () => {

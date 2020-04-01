@@ -12,16 +12,10 @@ jest.mock("./logging.service", () => ({
 
 const moment = require("moment");
 const today = moment().format("DD MMM YYYY");
-const { pdfGenerator } = require("./pdf.service");
-const { sendSingleEmail } = require("../connectors/notify/notify.connector");
-const {
-  addNotificationToStatus
-} = require("../connectors/cacheDb/cacheDb.connector.js");
 
 const {
   generateEmailsToSend,
-  transformDataForNotify,
-  sendNotifications
+  transformDataForNotify
 } = require("./notifications.service");
 
 const exampleDeclaration = {
@@ -122,21 +116,21 @@ const testLcContactConfigCombined = {
 };
 
 const testConfigData = {
-  "_id" : "9.9.9",
-  "notify_template_keys" : {
-    "fbo_submission_complete" : "integration-test",
-    "lc_new_registration" : "integration-test",
-    "fbo_feedback" : "integration-test",
-    "fd_feedback" : "integration-test"
+  _id: "9.9.9",
+  notify_template_keys: {
+    fbo_submission_complete: "integration-test",
+    lc_new_registration: "integration-test",
+    fbo_feedback: "integration-test",
+    fd_feedback: "integration-test"
   }
 };
 
 describe(`generateEmailsToSend`, () => {
-  it(`Test operator_email is matched to FBO`,()=>{
+  it(`Test operator_email is matched to FBO`, () => {
     let regData = {
       establishment: {
         operator: {
-          operator_email: 'testop'
+          operator_email: "testop"
         }
       }
     };
@@ -144,14 +138,16 @@ describe(`generateEmailsToSend`, () => {
 
     let result = generateEmailsToSend(regData, lcConfig, testConfigData);
 
-    expect(result).toStrictEqual( [{"address": "testop", "templateId": "integration-test", "type": "FBO"}]);
+    expect(result).toStrictEqual([
+      { address: "testop", templateId: "integration-test", type: "FBO" }
+    ]);
   });
 
-  it(`Test contact_representative_email is matched to FBO`,()=>{
+  it(`Test contact_representative_email is matched to FBO`, () => {
     let regData = {
       establishment: {
         operator: {
-          contact_representative_email: 'testrep'
+          contact_representative_email: "testrep"
         }
       }
     };
@@ -159,78 +155,99 @@ describe(`generateEmailsToSend`, () => {
 
     let result = generateEmailsToSend(regData, lcConfig, testConfigData);
 
-    expect(result).toStrictEqual( [{"address": "testrep", "templateId": "integration-test", "type": "FBO"}]);
+    expect(result).toStrictEqual([
+      { address: "testrep", templateId: "integration-test", type: "FBO" }
+    ]);
   });
 
-  it(`Test lc councils are collated`,()=>{
+  it(`Test lc councils are collated`, () => {
     let regData = {
       establishment: {
         operator: {
-          contact_representative_email: 'testrep'
+          contact_representative_email: "testrep"
         }
       }
     };
     let lcConfig = {
       fakeCouncilOne: {
         local_council_notify_emails: [
-            'fake_notify_1@test.com',
-            'fake_notify_2@test.com',
+          "fake_notify_1@test.com",
+          "fake_notify_2@test.com"
         ]
       },
       fakeCouncilTwo: {
         local_council_notify_emails: [
-          'fake_notify_3@test.com',
-          'fake_notify_4@test.com',
+          "fake_notify_3@test.com",
+          "fake_notify_4@test.com"
         ]
-      },
+      }
     };
 
     let result = generateEmailsToSend(regData, lcConfig, testConfigData);
 
-    expect(result).toStrictEqual([ { type: 'LC',
-      address: 'fake_notify_1@test.com',
-      templateId: 'integration-test' },
-      { type: 'LC',
-        address: 'fake_notify_2@test.com',
-        templateId: 'integration-test' },
-      { type: 'LC',
-        address: 'fake_notify_3@test.com',
-        templateId: 'integration-test' },
-      { type: 'LC',
-        address: 'fake_notify_4@test.com',
-        templateId: 'integration-test' },
-      { type: 'FBO',
-        address: 'testrep',
-        templateId: 'integration-test' } ]);
+    expect(result).toStrictEqual([
+      {
+        type: "LC",
+        address: "fake_notify_1@test.com",
+        templateId: "integration-test"
+      },
+      {
+        type: "LC",
+        address: "fake_notify_2@test.com",
+        templateId: "integration-test"
+      },
+      {
+        type: "LC",
+        address: "fake_notify_3@test.com",
+        templateId: "integration-test"
+      },
+      {
+        type: "LC",
+        address: "fake_notify_4@test.com",
+        templateId: "integration-test"
+      },
+      {
+        type: "FBO",
+        address: "testrep",
+        templateId: "integration-test"
+      }
+    ]);
   });
 
-  it(`Test declaration emails`,()=>{
+  it(`Test declaration emails`, () => {
     let regData = {
       establishment: {
         operator: {
-          contact_representative_email: 'testrep'
+          contact_representative_email: "testrep"
         }
       },
-      declaration:{
-        feedback1:{'test':'test'}
+      declaration: {
+        feedback1: { test: "test" }
       }
     };
     let lcConfig = {};
 
     let result = generateEmailsToSend(regData, lcConfig, testConfigData);
 
-    expect(result).toStrictEqual( [ { type: 'FBO',
-      address: 'testrep',
-      templateId: 'integration-test' },
-      { type: 'FBO_FB',
-        address: 'testrep',
-        templateId: 'integration-test' },
-      { type: 'FD_FB',
+    expect(result).toStrictEqual([
+      {
+        type: "FBO",
+        address: "testrep",
+        templateId: "integration-test"
+      },
+      {
+        type: "FBO_FB",
+        address: "testrep",
+        templateId: "integration-test"
+      },
+      {
+        type: "FD_FB",
         address: undefined,
-        templateId: 'integration-test' } ]);
+        templateId: "integration-test"
+      }
+    ]);
   });
 });
-
 
 describe("Function: transformDataForNotify", () => {
   let result;
@@ -463,4 +480,3 @@ describe("Function: transformDataForNotify", () => {
     });
   });
 });
-
