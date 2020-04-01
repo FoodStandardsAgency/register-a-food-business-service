@@ -19,6 +19,7 @@ const {
 } = require("../connectors/cacheDb/cacheDb.connector.js");
 
 const {
+  generateEmailsToSend,
   transformDataForNotify,
   sendNotifications
 } = require("./notifications.service");
@@ -119,6 +120,117 @@ const testLcContactConfigCombined = {
     local_council_email: "both@example.com"
   }
 };
+
+const testConfigData = {
+  "_id" : "9.9.9",
+  "notify_template_keys" : {
+    "fbo_submission_complete" : "integration-test",
+    "lc_new_registration" : "integration-test",
+    "fbo_feedback" : "integration-test",
+    "fd_feedback" : "integration-test"
+  }
+};
+
+describe(`generateEmailsToSend`, () => {
+  it(`Test operator_email is matched to FBO`,()=>{
+    let regData = {
+      establishment: {
+        operator: {
+          operator_email: 'testop'
+        }
+      }
+    };
+    let lcConfig = {};
+
+    let result = generateEmailsToSend(regData, lcConfig, testConfigData);
+
+    expect(result).toStrictEqual( [{"address": "testop", "templateId": "integration-test", "type": "FBO"}]);
+  });
+
+  it(`Test contact_representative_email is matched to FBO`,()=>{
+    let regData = {
+      establishment: {
+        operator: {
+          contact_representative_email: 'testrep'
+        }
+      }
+    };
+    let lcConfig = {};
+
+    let result = generateEmailsToSend(regData, lcConfig, testConfigData);
+
+    expect(result).toStrictEqual( [{"address": "testrep", "templateId": "integration-test", "type": "FBO"}]);
+  });
+
+  it(`Test lc councils are collated`,()=>{
+    let regData = {
+      establishment: {
+        operator: {
+          contact_representative_email: 'testrep'
+        }
+      }
+    };
+    let lcConfig = {
+      fakeCouncilOne: {
+        local_council_notify_emails: [
+            'fake_notify_1@test.com',
+            'fake_notify_2@test.com',
+        ]
+      },
+      fakeCouncilTwo: {
+        local_council_notify_emails: [
+          'fake_notify_3@test.com',
+          'fake_notify_4@test.com',
+        ]
+      },
+    };
+
+    let result = generateEmailsToSend(regData, lcConfig, testConfigData);
+
+    expect(result).toStrictEqual([ { type: 'LC',
+      address: 'fake_notify_1@test.com',
+      templateId: 'integration-test' },
+      { type: 'LC',
+        address: 'fake_notify_2@test.com',
+        templateId: 'integration-test' },
+      { type: 'LC',
+        address: 'fake_notify_3@test.com',
+        templateId: 'integration-test' },
+      { type: 'LC',
+        address: 'fake_notify_4@test.com',
+        templateId: 'integration-test' },
+      { type: 'FBO',
+        address: 'testrep',
+        templateId: 'integration-test' } ]);
+  });
+
+  it(`Test declaration emails`,()=>{
+    let regData = {
+      establishment: {
+        operator: {
+          contact_representative_email: 'testrep'
+        }
+      },
+      declaration:{
+        feedback1:{'test':'test'}
+      }
+    };
+    let lcConfig = {};
+
+    let result = generateEmailsToSend(regData, lcConfig, testConfigData);
+
+    expect(result).toStrictEqual( [ { type: 'FBO',
+      address: 'testrep',
+      templateId: 'integration-test' },
+      { type: 'FBO_FB',
+        address: 'testrep',
+        templateId: 'integration-test' },
+      { type: 'FD_FB',
+        address: undefined,
+        templateId: 'integration-test' } ]);
+  });
+});
+
 
 describe("Function: transformDataForNotify", () => {
   let result;
@@ -352,299 +464,3 @@ describe("Function: transformDataForNotify", () => {
   });
 });
 
-describe("Function: sendEmailOfType: ", () => {
-  beforeEach(() => {
-    jest.clearAllMocks();
-  });
-
-  const mockRegistrationData = {
-    "fsa-rn": "DYRKYP-NPLKN7-YFDF6V",
-    reg_submission_date: "2018-11-05",
-    establishment: {
-      establishment_details: {
-        establishment_trading_name: "Itsu",
-        establishment_primary_number: "329857245",
-        establishment_secondary_number: "84345245",
-        establishment_email: "django@email.com",
-        establishment_opening_date: "2018-06-07"
-      },
-      operator: {
-        operator_first_name: "Fred",
-        operator_last_name: "Bloggs",
-        operator_postcode: "SW12 9RQ",
-        operator_address_line_1: "335",
-        operator_address_line_2: "Some St.",
-        operator_address_line_3: "Locality",
-        operator_town: "London",
-        operator_primary_number: "9827235",
-        operator_email: "operator@email.com",
-        operator_type: "Sole trader",
-        partners: [
-          {
-            partner_name: "Tom",
-            partner_is_primary_contact: true
-          },
-          {
-            partner_name: "Fred",
-            partner_is_primary_contact: false
-          }
-        ]
-      },
-      premise: {
-        establishment_postcode: "SW12 9RQ",
-        establishment_address_line_1: "123",
-        establishment_address_line_2: "Street",
-        establishment_address_line_3: "Locality",
-        establishment_town: "London",
-        establishment_type: "Place"
-      },
-      activities: {
-        customer_type: "End consumer",
-        business_type: "Livestock farm",
-        import_export_activities: "None",
-        opening_day_monday: true,
-        opening_day_tuesday: true,
-        opening_day_wednesday: true,
-        opening_day_thursday: true,
-        opening_day_friday: true,
-        opening_day_saturday: true,
-        opening_day_sunday: true
-      }
-    },
-    declaration: {
-      declaration1: "Declaration",
-      declaration2: "Declaration",
-      declaration3: "Declaration"
-    }
-  };
-
-  const mockLcContactConfig = {
-    hygieneAndStandards: {
-      code: 8015,
-      local_council: "City of Cardiff Council",
-      local_council_notify_emails: ["fsatestemail.valid@gmail.com"],
-      local_council_email: "fsatestemail.valid@gmail.com",
-      local_council_phone_number: "0300 123 6696"
-    }
-  };
-
-  const testNotifyTemplateKeys = {
-    lc_new_registration: "lc-123",
-    fbo_submission_complete: "fbo-456",
-    fbo_feedback: "fbo-feed123",
-    fd_feedback: "fd-feed567"
-  };
-
-  const configData = {
-    notify_template_keys: testNotifyTemplateKeys,
-    future_delivery_email: "fsatestemail.valid@gmail.com"
-  };
-
-  describe("When the connector responds successfully", () => {
-    const testPdfFile = "example base64 string";
-
-    beforeEach(async () => {
-      pdfGenerator.mockImplementation(() => testPdfFile);
-      sendSingleEmail.mockImplementation(() => ({
-        id: "123-456"
-      }));
-      addNotificationToStatus.mockImplementation();
-      await sendNotifications(
-        mockRegistrationData["fsa-rn"],
-        mockLcContactConfig,
-        mockRegistrationData,
-        configData
-      );
-    });
-
-    it("should have called the connector with the correct arguments for the LC", () => {
-      expect(sendSingleEmail.mock.calls[0][0]).toBe("lc-123");
-      expect(sendSingleEmail.mock.calls[0][1]).toBe(
-        "fsatestemail.valid@gmail.com"
-      );
-      expect(sendSingleEmail.mock.calls[0][3]).toBe(testPdfFile);
-    });
-
-    it("should transform data correctly", () => {
-      expect(sendSingleEmail.mock.calls[0][2].operator_email).toBeDefined();
-    });
-
-    it("should have called the connector with the correct arguments for the FBO", () => {
-      expect(sendSingleEmail.mock.calls[1][0]).toBe("fbo-456");
-      expect(sendSingleEmail.mock.calls[1][1]).toBe("operator@email.com");
-      expect(sendSingleEmail.mock.calls[1][3]).toBe(undefined);
-    });
-  });
-
-  describe("*When the connector responds successfully with feedback", () => {
-    const testPdfFile = "example base64 string";
-
-    const mockRegistrationData = {
-      "fsa-rn": "DYRKYP-NPLKN7-YFDF6V",
-      reg_submission_date: "2018-11-05",
-      establishment: {
-        establishment_details: {
-          establishment_trading_name: "Itsu",
-          establishment_primary_number: "329857245",
-          establishment_secondary_number: "84345245",
-          establishment_email: "django@email.com",
-          establishment_opening_date: "2018-06-07"
-        },
-        operator: {
-          operator_first_name: "Fred",
-          operator_last_name: "Bloggs",
-          operator_postcode: "SW12 9RQ",
-          operator_address_line_1: "335",
-          operator_address_line_2: "Some St.",
-          operator_address_line_3: "Locality",
-          operator_town: "London",
-          operator_primary_number: "9827235",
-          operator_email: "operator@email.com",
-          operator_type: "Sole trader",
-          partners: [
-            {
-              partner_name: "Tom",
-              partner_is_primary_contact: true
-            },
-            {
-              partner_name: "Fred",
-              partner_is_primary_contact: false
-            }
-          ]
-        },
-        premise: {
-          establishment_postcode: "SW12 9RQ",
-          establishment_address_line_1: "123",
-          establishment_address_line_2: "Street",
-          establishment_address_line_3: "Locality",
-          establishment_town: "London",
-          establishment_type: "Place"
-        },
-        activities: {
-          customer_type: "End consumer",
-          business_type: "Livestock farm",
-          import_export_activities: "None",
-          opening_day_monday: true,
-          opening_day_tuesday: true,
-          opening_day_wednesday: true,
-          opening_day_thursday: true,
-          opening_day_friday: true,
-          opening_day_saturday: true,
-          opening_day_sunday: true
-        }
-      },
-      declaration: {
-        declaration1: "Declaration",
-        declaration2: "Declaration",
-        declaration3: "Declaration",
-        feedback1: "Feedback"
-      }
-    };
-
-    beforeEach(async () => {
-      pdfGenerator.mockImplementation(() => testPdfFile);
-      sendSingleEmail.mockImplementation(() => ({
-        id: "123-456"
-      }));
-      await sendNotifications(
-        mockRegistrationData["fsa_rn"],
-        mockLcContactConfig,
-        mockRegistrationData,
-        configData
-      );
-    });
-
-    it("should have called the connector with the correct arguments for the FBO-FB", () => {
-      expect(sendSingleEmail.mock.calls[2][0]).toBe(
-        testNotifyTemplateKeys.fbo_feedback
-      );
-      expect(sendSingleEmail.mock.calls[2][1]).toBe("operator@email.com");
-      expect(sendSingleEmail.mock.calls[2][3]).toBe(undefined);
-    });
-
-    it("should have called the connector with the correct arguments for the FD-FB", () => {
-      expect(sendSingleEmail.mock.calls[3][0]).toBe(
-        testNotifyTemplateKeys.fd_feedback
-      );
-      expect(sendSingleEmail.mock.calls[3][1]).toBe(
-        configData.future_delivery_email
-      );
-      expect(sendSingleEmail.mock.calls[3][3]).toBe(undefined);
-    });
-  });
-
-  describe("When the connector throws an error", () => {
-    beforeEach(async () => {
-      sendSingleEmail.mockImplementation(() => {
-        throw new Error("Notify error");
-      });
-      await sendNotifications(
-        mockRegistrationData["fsa_rn"],
-        mockLcContactConfig,
-        mockRegistrationData,
-        configData
-      );
-    });
-
-    it("should call the correct log emitter", () => {
-      const newError = new Error("Notify error");
-      expect(mockEmit).toHaveBeenCalledWith(
-        "functionFail",
-        "registration.service",
-        "sendEmails",
-        newError
-      );
-    });
-  });
-
-  describe("When the connector returns null", () => {
-    beforeEach(async () => {
-      sendSingleEmail.mockImplementation(() => {
-        return null;
-      });
-      await sendNotifications(
-        mockRegistrationData["fsa_rn"],
-        mockLcContactConfig,
-        mockRegistrationData,
-        configData
-      );
-    });
-
-    it("should call the correct log emitter", () => {
-      const newError = new Error("sendSingleEmail error");
-      newError.message = "An email has failed to send";
-      expect(mockEmit).toHaveBeenCalledWith(
-        "functionFail",
-        "registration.service",
-        "sendEmails",
-        newError
-      );
-    });
-  });
-
-  describe("When there is a contact_representative_email and no operator email", () => {
-    beforeEach(async () => {
-      const newMockRegistrationData = JSON.parse(
-        JSON.stringify(mockRegistrationData)
-      );
-      delete newMockRegistrationData.establishment.operator.operator_email;
-      newMockRegistrationData.establishment.operator.contact_representative_email =
-        "contact@email.com";
-      const testPdfFile = "example base64 string";
-      pdfGenerator.mockImplementation(() => testPdfFile);
-      sendSingleEmail.mockImplementation(() => ({
-        id: "123-456"
-      }));
-      await sendNotifications(
-        newMockRegistrationData["fsa_rn"],
-        mockLcContactConfig,
-        newMockRegistrationData,
-        configData
-      );
-    });
-
-    it("should call the connector with the correct email address", () => {
-      expect(sendSingleEmail.mock.calls[1][1]).toBe("contact@email.com");
-    });
-  });
-});
