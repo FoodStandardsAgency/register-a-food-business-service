@@ -159,19 +159,26 @@ const findAllOutstandingSavesToTempStore = async (
     .limit(limit);
 };
 
-const findAllOutstandingNotificationsRegistrations = async (
+const findAllBlankRegistrations = async (cachedRegistrations, limit = 100) => {
+  return await cachedRegistrations
+    .find({
+      "status.notifications": {
+        $elemMatch: { sent: { $ne: true } }
+      }
+    })
+    .sort({ reg_submission_date: 1 })
+    .limit(limit);
+};
+
+const findAllFailedNotificationsRegistrations = async (
   cachedRegistrations,
   limit = 100
 ) => {
   return await cachedRegistrations
     .find({
       $or: [
-        {
-          "status.notifications": {
-            $elemMatch: { sent: { $ne: true } }
-          }
-        },
-        { "status.notifications": { $exists: false } }
+        { "status.notifications": { $exists: false } },
+        { "status.notifications": null }
       ]
     })
     .sort({ reg_submission_date: 1 })
@@ -255,7 +262,8 @@ const clearMongoConnection = () => {
 
 module.exports = {
   findAllOutstandingSavesToTempStore,
-  findAllOutstandingNotificationsRegistrations,
+  findAllFailedNotificationsRegistrations,
+  findAllBlankRegistrations,
   findOutstandingTascomiRegistrationsFsaIds,
   cacheRegistration,
   clearMongoConnection,

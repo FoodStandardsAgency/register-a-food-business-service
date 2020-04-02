@@ -14,7 +14,7 @@ const {
   updateStatus,
   updateNotificationOnSent
 } = require("../connectors/cacheDb/cacheDb.connector");
-const { has } = require("lodash");
+const { has, isArrayLikeObject } = require("lodash");
 /**
  * Function that converts the data into format for Notify and creates a new object
  *
@@ -315,12 +315,25 @@ const initialiseNotificationsStatusIfNotSet = async (fsaId, emailsToSend) => {
     let cachedRegistrations = await establishConnectionToMongo();
     let status = await getStatus(cachedRegistrations, fsaId);
 
-    if (has(status, "notifications")) {
-      logEmitter.emit(
-        INFO,
-        `Not Initialising notifications status for FSAId ${fsaId}`
-      );
-      return;
+    if (
+      has(status, "notifications") &&
+      isArrayLikeObject(status.notifications)
+    ) {
+      if (status.notifications.length === emailsToSend.length) {
+        logEmitter.emit(
+          INFO,
+          `Not initialising notifications hash - its the same length as emailsToSend - FSAId ${fsaId}`
+        );
+        return;
+      } else {
+        logEmitter.emit(
+          INFO,
+          `Reintialising notifications status for FSAId ${fsaId} - 
+            the length doesnt match emails to send (${
+              status.notifications.length
+            }) (${emailsToSend.length}) `
+        );
+      }
     }
 
     status.notifications = initialiseNotificationsStatus(emailsToSend);
