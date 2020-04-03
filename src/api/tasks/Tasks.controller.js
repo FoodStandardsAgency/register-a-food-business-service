@@ -209,7 +209,7 @@ const sendNotificationsForRegistrationAction = async (fsaId, req, res) => {
 
   let configVersion = registration.registration_data_version
     ? registration.registration_data_version
-    : "1.6.0";
+    : "1.7.0";
   let config = await getConfig(configDb, configVersion);
   if (isEmpty(config)) {
     let message = `Could not find config ${fsaId} version : ${configVersion}`;
