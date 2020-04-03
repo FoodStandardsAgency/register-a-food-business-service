@@ -198,6 +198,13 @@ const sendSingleEmail = async (
         newError.name = "notifyInvalidTemplate";
       }
       if (err.error.errors[0].error === "BadRequestError") {
+        if (
+          process.env.NODE_ENV !== "production" &&
+          err.error.errors[0].message.includes("using a team-only API key")
+        ) {
+          // Where API doesn't send email in staging due to non-whitelisted address, mark as sent anyway
+          return true;
+        }
         newError.name = "notifyMissingPersonalisation";
       }
     }
