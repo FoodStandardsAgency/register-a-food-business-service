@@ -187,7 +187,8 @@ const sendEmails = async (
           emailsToSend[index].type,
           index
         )) !== null;
-
+      success = success && (lastSentStatus === true);
+        
       updateNotificationOnSent(
         status,
         fsaId,
