@@ -1,7 +1,7 @@
 const {
   NOTIFY_TEMPLATE_ID_TEST,
   NOTIFY_TEMPLATE_ID_FBO,
-  NOTIFY_TEMPLATE_ID_LC
+  NOTIFY_TEMPLATE_ID_LC,
 } = require("../../config");
 
 const notifyClientDouble = {
@@ -41,10 +41,10 @@ const notifyClientDouble = {
   getTemplateById: () => ({
     body: {
       personalisation: {
-        establishment_trading_name: {}
-      }
-    }
-  })
+        establishment_trading_name: {},
+      },
+    },
+  }),
 };
 
 module.exports = { notifyClientDouble };

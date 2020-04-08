@@ -1,19 +1,19 @@
 jest.mock("express", () => ({
   Router: jest.fn(() => ({
-    use: jest.fn()
-  }))
+    use: jest.fn(),
+  })),
 }));
 
 jest.mock("./tasks/TaskRouter.router", () => ({
-  TaskRouter: jest.fn()
+  TaskRouter: jest.fn(),
 }));
 
 jest.mock("./registration/registration.router", () => ({
-  registrationRouter: jest.fn()
+  registrationRouter: jest.fn(),
 }));
 
 jest.mock("./status/status.router", () => ({
-  statusRouter: jest.fn()
+  statusRouter: jest.fn(),
 }));
 
 const { routers } = require("./routers");

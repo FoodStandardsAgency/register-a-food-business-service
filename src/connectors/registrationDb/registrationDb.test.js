@@ -2,38 +2,38 @@ jest.mock("../../db/db", () => ({
   Activities: {
     create: jest.fn(),
     findOne: jest.fn(),
-    destroy: jest.fn()
+    destroy: jest.fn(),
   },
   Establishment: {
     create: jest.fn(),
     findOne: jest.fn(),
-    destroy: jest.fn()
+    destroy: jest.fn(),
   },
   Declaration: {
     create: jest.fn(),
     findOne: jest.fn(),
-    destroy: jest.fn()
+    destroy: jest.fn(),
   },
   Operator: {
     create: jest.fn(),
     findOne: jest.fn(),
-    destroy: jest.fn()
+    destroy: jest.fn(),
   },
   Partner: {
     create: jest.fn(),
     findOne: jest.fn(),
-    destroy: jest.fn()
+    destroy: jest.fn(),
   },
   Premise: {
     create: jest.fn(),
     findOne: jest.fn(),
-    destroy: jest.fn()
+    destroy: jest.fn(),
   },
   Registration: {
     create: jest.fn(),
     findOne: jest.fn(),
-    destroy: jest.fn()
-  }
+    destroy: jest.fn(),
+  },
 }));
 
 const {
@@ -43,7 +43,7 @@ const {
   Operator,
   Partner,
   Premise,
-  Registration
+  Registration,
 } = require("../../db/db");
 
 const {
@@ -66,7 +66,7 @@ const {
   destroyDeclarationByRegId,
   destroyOperatorByEstablishmentId,
   destroyPremiseByEstablishmentId,
-  destroyActivitiesByEstablishmentId
+  destroyActivitiesByEstablishmentId,
 } = require("./registrationDb");
 
 describe("RegistrationDb connector", () => {
@@ -96,7 +96,7 @@ describe("RegistrationDb connector", () => {
     describe("When Activities.create succeeds", () => {
       beforeEach(async () => {
         Activities.create.mockImplementation(() => {
-          return new Promise(resolve => resolve("success"));
+          return new Promise((resolve) => resolve("success"));
         });
         result = await createActivities({ some: "data" }, "45");
       });
@@ -109,7 +109,7 @@ describe("RegistrationDb connector", () => {
         expect(Activities.create).toBeCalledWith(
           {
             establishmentId: "45",
-            some: "data"
+            some: "data",
           },
           {}
         );
@@ -138,7 +138,7 @@ describe("RegistrationDb connector", () => {
     describe("When Establishment.create succeeds", () => {
       beforeEach(async () => {
         Establishment.create.mockImplementation(() => {
-          return new Promise(resolve => resolve("success"));
+          return new Promise((resolve) => resolve("success"));
         });
         result = await createEstablishment({ some: "data" }, "45");
       });
@@ -151,7 +151,7 @@ describe("RegistrationDb connector", () => {
         expect(Establishment.create).toBeCalledWith(
           {
             registrationId: "45",
-            some: "data"
+            some: "data",
           },
           {}
         );
@@ -180,7 +180,7 @@ describe("RegistrationDb connector", () => {
     describe("When Declaration.create succeeds", () => {
       beforeEach(async () => {
         Declaration.create.mockImplementation(() => {
-          return new Promise(resolve => resolve("success"));
+          return new Promise((resolve) => resolve("success"));
         });
         result = await createDeclaration({ some: "data" }, "45");
       });
@@ -193,7 +193,7 @@ describe("RegistrationDb connector", () => {
         expect(Declaration.create).toBeCalledWith(
           {
             registrationId: "45",
-            some: "data"
+            some: "data",
           },
           {}
         );
@@ -222,7 +222,7 @@ describe("RegistrationDb connector", () => {
     describe("When Operator.create succeeds", () => {
       beforeEach(async () => {
         Operator.create.mockImplementation(() => {
-          return new Promise(resolve => resolve("success"));
+          return new Promise((resolve) => resolve("success"));
         });
         result = await createOperator({ some: "data" }, "45");
       });
@@ -235,7 +235,7 @@ describe("RegistrationDb connector", () => {
         expect(Operator.create).toBeCalledWith(
           {
             establishmentId: "45",
-            some: "data"
+            some: "data",
           },
           {}
         );
@@ -264,7 +264,7 @@ describe("RegistrationDb connector", () => {
     describe("When Partner.create succeeds", () => {
       beforeEach(async () => {
         Partner.create.mockImplementation(() => {
-          return new Promise(resolve => resolve("success"));
+          return new Promise((resolve) => resolve("success"));
         });
         result = await createPartner({ some: "data" }, "45");
       });
@@ -277,7 +277,7 @@ describe("RegistrationDb connector", () => {
         expect(Partner.create).toBeCalledWith(
           {
             operatorId: "45",
-            some: "data"
+            some: "data",
           },
           {}
         );
@@ -306,7 +306,7 @@ describe("RegistrationDb connector", () => {
     describe("When Premise.create succeeds", () => {
       beforeEach(async () => {
         Premise.create.mockImplementation(() => {
-          return new Promise(resolve => resolve("success"));
+          return new Promise((resolve) => resolve("success"));
         });
         result = await createPremise({ some: "data" }, "45");
       });
@@ -319,7 +319,7 @@ describe("RegistrationDb connector", () => {
         expect(Premise.create).toBeCalledWith(
           {
             establishmentId: "45",
-            some: "data"
+            some: "data",
           },
           {}
         );
@@ -348,7 +348,7 @@ describe("RegistrationDb connector", () => {
     describe("When Registration.create succeeds", () => {
       beforeEach(async () => {
         Registration.create.mockImplementation(() => {
-          return new Promise(resolve => resolve("success"));
+          return new Promise((resolve) => resolve("success"));
         });
         result = await createRegistration("fsa-rn", "cardiff");
       });
@@ -361,7 +361,7 @@ describe("RegistrationDb connector", () => {
         expect(Registration.create).toBeCalledWith(
           {
             fsa_rn: "fsa-rn",
-            council: "cardiff"
+            council: "cardiff",
           },
           {}
         );
@@ -402,7 +402,7 @@ describe("RegistrationDb connector", () => {
       it("Should call the findOne model with query", () => {
         expect(Registration.findOne).toBeCalledWith({
           where: { id: "45" },
-          transaction: null
+          transaction: null,
         });
       });
     });
@@ -441,7 +441,7 @@ describe("RegistrationDb connector", () => {
       it("Should call the findOne model with query", () => {
         expect(Registration.findOne).toBeCalledWith({
           where: { fsa_rn: "ASH-89K" },
-          transaction: null
+          transaction: null,
         });
       });
     });
@@ -480,7 +480,7 @@ describe("RegistrationDb connector", () => {
       it("Should call the findOne model with query", () => {
         expect(Establishment.findOne).toBeCalledWith({
           where: { registrationId: "45" },
-          transaction: null
+          transaction: null,
         });
       });
     });
@@ -519,7 +519,7 @@ describe("RegistrationDb connector", () => {
       it("Should call the findOne model with query", () => {
         expect(Declaration.findOne).toBeCalledWith({
           where: { registrationId: "45" },
-          transaction: null
+          transaction: null,
         });
       });
     });
@@ -558,7 +558,7 @@ describe("RegistrationDb connector", () => {
       it("Should call the findOne model with query", () => {
         expect(Operator.findOne).toBeCalledWith({
           where: { establishmentId: "45" },
-          transaction: null
+          transaction: null,
         });
       });
     });
@@ -597,7 +597,7 @@ describe("RegistrationDb connector", () => {
       it("Should call the findOne model with query", () => {
         expect(Premise.findOne).toBeCalledWith({
           where: { establishmentId: "45" },
-          transaction: null
+          transaction: null,
         });
       });
     });
@@ -636,7 +636,7 @@ describe("RegistrationDb connector", () => {
       it("Should call the findOne model with query", () => {
         expect(Activities.findOne).toBeCalledWith({
           where: { establishmentId: "45" },
-          transaction: null
+          transaction: null,
         });
       });
     });
@@ -674,7 +674,7 @@ describe("RegistrationDb connector", () => {
 
       it("Should call the destroy model with query", () => {
         expect(Registration.destroy).toBeCalledWith({
-          where: { id: "45" }
+          where: { id: "45" },
         });
       });
     });
@@ -712,7 +712,7 @@ describe("RegistrationDb connector", () => {
 
       it("Should call the destroy model with query", () => {
         expect(Establishment.destroy).toBeCalledWith({
-          where: { registrationId: "45" }
+          where: { registrationId: "45" },
         });
       });
     });
@@ -750,7 +750,7 @@ describe("RegistrationDb connector", () => {
 
       it("Should call the destroy model with query", () => {
         expect(Declaration.destroy).toBeCalledWith({
-          where: { registrationId: "45" }
+          where: { registrationId: "45" },
         });
       });
     });
@@ -788,7 +788,7 @@ describe("RegistrationDb connector", () => {
 
       it("Should call the destroy model with query", () => {
         expect(Operator.destroy).toBeCalledWith({
-          where: { establishmentId: "45" }
+          where: { establishmentId: "45" },
         });
       });
     });
@@ -826,7 +826,7 @@ describe("RegistrationDb connector", () => {
 
       it("Should call the destroy model with query", () => {
         expect(Premise.destroy).toBeCalledWith({
-          where: { establishmentId: "45" }
+          where: { establishmentId: "45" },
         });
       });
     });
@@ -864,7 +864,7 @@ describe("RegistrationDb connector", () => {
 
       it("Should call the destroy model with query", () => {
         expect(Activities.destroy).toBeCalledWith({
-          where: { establishmentId: "45" }
+          where: { establishmentId: "45" },
         });
       });
     });

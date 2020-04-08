@@ -1,6 +1,6 @@
 require("dotenv").config();
 const {
-  cacheRegistration
+  cacheRegistration,
 } = require("../../src/connectors/cacheDb/cacheDb.connector");
 
 let doubleResult;
@@ -11,15 +11,15 @@ describe("cacheDb contract: cacheRegistration", () => {
     process.env.DOUBLE_MODE = true;
     doubleResult = await cacheRegistration({
       registration: {
-        data: "data"
-      }
+        data: "data",
+      },
     });
 
     process.env.DOUBLE_MODE = false;
     realResult = await cacheRegistration({
       registration: {
-        data: "data"
-      }
+        data: "data",
+      },
     });
   });
 

@@ -5,7 +5,7 @@ module.exports = (sequelize, DataTypes) => {
       id: {
         type: DataTypes.INTEGER,
         primaryKey: true,
-        autoIncrement: true
+        autoIncrement: true,
       },
       operator_type: { type: DataTypes.STRING },
       operator_company_name: { type: DataTypes.STRING },
@@ -26,11 +26,11 @@ module.exports = (sequelize, DataTypes) => {
       contact_representative_name: { type: DataTypes.STRING },
       contact_representative_role: { type: DataTypes.STRING },
       contact_representative_number: { type: DataTypes.STRING },
-      contact_representative_email: { type: DataTypes.STRING }
+      contact_representative_email: { type: DataTypes.STRING },
     },
     {}
   );
-  Operator.associate = function(models) {
+  Operator.associate = function (models) {
     Operator.belongsTo(models.establishment);
   };
   return Operator;

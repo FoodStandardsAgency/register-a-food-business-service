@@ -6,7 +6,7 @@ const {
   Operator,
   Premise,
   Registration,
-  Partner
+  Partner,
 } = require("../../db/db");
 
 const db = require("../../db/models");
@@ -14,7 +14,7 @@ const db = require("../../db/models");
 const { logEmitter } = require("../../services/logging.service");
 
 const managedTransaction = async (callback = () => {}) => async () =>
-  await db.sequelize.transaction(async t => callback(t));
+  await db.sequelize.transaction(async (t) => callback(t));
 
 const modelCreate = async (data, model, modelName, transaction = null) => {
   try {
@@ -113,7 +113,7 @@ const modelFindOne = async (query, model, functionName, transaction = null) => {
   }
 };
 
-const getRegistrationById = async id => {
+const getRegistrationById = async (id) => {
   return modelFindOne(
     { where: { id: id } },
     Registration,
@@ -130,7 +130,7 @@ const getRegistrationByFsaRn = async (fsa_rn, transaction) => {
   );
 };
 
-const getEstablishmentByRegId = async id => {
+const getEstablishmentByRegId = async (id) => {
   return modelFindOne(
     { where: { registrationId: id } },
     Establishment,
@@ -138,7 +138,7 @@ const getEstablishmentByRegId = async id => {
   );
 };
 
-const getDeclarationByRegId = async id => {
+const getDeclarationByRegId = async (id) => {
   return modelFindOne(
     { where: { registrationId: id } },
     Declaration,
@@ -146,7 +146,7 @@ const getDeclarationByRegId = async id => {
   );
 };
 
-const getOperatorByEstablishmentId = async id => {
+const getOperatorByEstablishmentId = async (id) => {
   return modelFindOne(
     { where: { establishmentId: id } },
     Operator,
@@ -154,7 +154,7 @@ const getOperatorByEstablishmentId = async id => {
   );
 };
 
-const getPremiseByEstablishmentId = async id => {
+const getPremiseByEstablishmentId = async (id) => {
   return modelFindOne(
     { where: { establishmentId: id } },
     Premise,
@@ -162,7 +162,7 @@ const getPremiseByEstablishmentId = async id => {
   );
 };
 
-const getActivitiesByEstablishmentId = async id => {
+const getActivitiesByEstablishmentId = async (id) => {
   return modelFindOne(
     { where: { establishmentId: id } },
     Activities,
@@ -191,7 +191,7 @@ const modelDestroy = async (query, model, functionName) => {
   }
 };
 
-const destroyRegistrationById = async id => {
+const destroyRegistrationById = async (id) => {
   return modelDestroy(
     { where: { id: id } },
     Registration,
@@ -199,7 +199,7 @@ const destroyRegistrationById = async id => {
   );
 };
 
-const destroyEstablishmentByRegId = async id => {
+const destroyEstablishmentByRegId = async (id) => {
   return modelDestroy(
     { where: { registrationId: id } },
     Establishment,
@@ -207,7 +207,7 @@ const destroyEstablishmentByRegId = async id => {
   );
 };
 
-const destroyDeclarationByRegId = async id => {
+const destroyDeclarationByRegId = async (id) => {
   return modelDestroy(
     { where: { registrationId: id } },
     Declaration,
@@ -215,7 +215,7 @@ const destroyDeclarationByRegId = async id => {
   );
 };
 
-const destroyOperatorByEstablishmentId = async id => {
+const destroyOperatorByEstablishmentId = async (id) => {
   return modelDestroy(
     { where: { establishmentId: id } },
     Operator,
@@ -223,7 +223,7 @@ const destroyOperatorByEstablishmentId = async id => {
   );
 };
 
-const destroyPremiseByEstablishmentId = async id => {
+const destroyPremiseByEstablishmentId = async (id) => {
   return modelDestroy(
     { where: { establishmentId: id } },
     Premise,
@@ -231,7 +231,7 @@ const destroyPremiseByEstablishmentId = async id => {
   );
 };
 
-const destroyActivitiesByEstablishmentId = async id => {
+const destroyActivitiesByEstablishmentId = async (id) => {
   return modelDestroy(
     { where: { establishmentId: id } },
     Activities,
@@ -260,5 +260,5 @@ module.exports = {
   destroyDeclarationByRegId,
   destroyOperatorByEstablishmentId,
   destroyPremiseByEstablishmentId,
-  destroyActivitiesByEstablishmentId
+  destroyActivitiesByEstablishmentId,
 };

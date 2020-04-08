@@ -12,7 +12,7 @@ const {
   establishConnectionToMongo,
   getStatus,
   updateStatus,
-  updateNotificationOnSent
+  updateNotificationOnSent,
 } = require("../connectors/cacheDb/cacheDb.connector");
 const { has, isArrayLikeObject } = require("lodash");
 /**
@@ -86,7 +86,7 @@ const transformDataForNotify = (registration, lcContactConfig) => {
     registrationClone.establishment.activities,
     registrationClone.declaration,
     {
-      reg_submission_date: registrationClone.reg_submission_date
+      reg_submission_date: registrationClone.reg_submission_date,
     },
     lcInfo
   );
@@ -99,7 +99,7 @@ const transformDataForNotify = (registration, lcContactConfig) => {
   if (Array.isArray(partners)) {
     const partnershipDetails = {
       partner_names: transformPartnersForNotify(partners),
-      main_contact: getMainPartnershipContactName(partners)
+      main_contact: getMainPartnershipContactName(partners),
     };
     Object.assign(flattenedData, { ...partnershipDetails });
   }
@@ -169,9 +169,7 @@ const sendEmails = async (
       if (status.notifications[index].sent === true) {
         logEmitter.emit(
           INFO,
-          `Skipping email send (already sent) - type: ${
-            emailsToSend[index].type
-          } index:${index} for FSAId ${fsaId}`
+          `Skipping email send (already sent) - type: ${emailsToSend[index].type} index:${index} for FSAId ${fsaId}`
         );
 
         continue;
@@ -286,7 +284,7 @@ const sendNotifications = async (
   await sendEmails(emailsToSend, registration, fsaId, lcContactConfig);
 };
 
-const initialiseNotificationsStatus = emailsToSend => {
+const initialiseNotificationsStatus = (emailsToSend) => {
   let notifications = [];
 
   for (let index in emailsToSend) {
@@ -294,7 +292,7 @@ const initialiseNotificationsStatus = emailsToSend => {
       time: undefined,
       sent: false,
       type: emailsToSend[index].type,
-      address: emailsToSend[index].address
+      address: emailsToSend[index].address,
     });
   }
 
@@ -330,9 +328,7 @@ const initialiseNotificationsStatusIfNotSet = async (fsaId, emailsToSend) => {
         logEmitter.emit(
           INFO,
           `Reintialising notifications status for FSAId ${fsaId} - 
-            the length doesnt match emails to send (${
-              status.notifications.length
-            }) (${emailsToSend.length}) `
+            the length doesnt match emails to send (${status.notifications.length}) (${emailsToSend.length}) `
         );
       }
     }
@@ -340,9 +336,7 @@ const initialiseNotificationsStatusIfNotSet = async (fsaId, emailsToSend) => {
     status.notifications = initialiseNotificationsStatus(emailsToSend);
     logEmitter.emit(
       INFO,
-      `Initialising notifications status for FSAId ${fsaId}: ${
-        emailsToSend.length
-      } emails to send`
+      `Initialising notifications status for FSAId ${fsaId}: ${emailsToSend.length} emails to send`
     );
     await updateStatus(cachedRegistrations, fsaId, status);
 
@@ -384,7 +378,7 @@ const generateEmailsToSend = (registration, lcContactConfig, configData) => {
       emailsToSend.push({
         type: "LC",
         address: lcNotificationEmailAddresses[recipientEmailAddress],
-        templateId: configData.notify_template_keys.lc_new_registration
+        templateId: configData.notify_template_keys.lc_new_registration,
       });
     }
   }
@@ -396,20 +390,20 @@ const generateEmailsToSend = (registration, lcContactConfig, configData) => {
   emailsToSend.push({
     type: "FBO",
     address: fboEmailAddress,
-    templateId: configData.notify_template_keys.fbo_submission_complete
+    templateId: configData.notify_template_keys.fbo_submission_complete,
   });
 
   if (registration.declaration && registration.declaration.feedback1) {
     emailsToSend.push({
       type: "FBO_FB",
       address: fboEmailAddress,
-      templateId: configData.notify_template_keys.fbo_feedback
+      templateId: configData.notify_template_keys.fbo_feedback,
     });
 
     emailsToSend.push({
       type: "FD_FB",
       address: configData.future_delivery_email,
-      templateId: configData.notify_template_keys.fd_feedback
+      templateId: configData.notify_template_keys.fd_feedback,
     });
   }
 
@@ -423,7 +417,7 @@ const generateEmailsToSend = (registration, lcContactConfig, configData) => {
  *
  * @returns Comma-separated partner names
  */
-const transformPartnersForNotify = partners => {
+const transformPartnersForNotify = (partners) => {
   const partnerNames = [];
   for (let partner in partners) {
     partnerNames.push(partners[partner].partner_name);
@@ -438,8 +432,8 @@ const transformPartnersForNotify = partners => {
  *
  * @returns Name of main partnership contact
  */
-const getMainPartnershipContactName = partners => {
-  const mainPartnershipContact = partners.find(partner => {
+const getMainPartnershipContactName = (partners) => {
+  const mainPartnershipContact = partners.find((partner) => {
     return partner.partner_is_primary_contact === true;
   });
   return mainPartnershipContact.partner_name;
@@ -448,5 +442,5 @@ const getMainPartnershipContactName = partners => {
 module.exports = {
   transformDataForNotify,
   sendNotifications,
-  generateEmailsToSend
+  generateEmailsToSend,
 };

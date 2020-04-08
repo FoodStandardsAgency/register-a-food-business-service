@@ -26,7 +26,7 @@ const sendStatusEmail = async (templateId, recipientEmail, flattenedData) => {
     );
 
     const templateFieldsWithoutSuffix = requiredTemplateFields.map(
-      fieldName => {
+      (fieldName) => {
         const trimmedFieldName = fieldName.trim();
         return trimmedFieldName.endsWith("_exists")
           ? trimmedFieldName.slice(0, -7)
@@ -40,7 +40,7 @@ const sendStatusEmail = async (templateId, recipientEmail, flattenedData) => {
 
     const allNotifyPersonalisationData = { ...flattenedData };
 
-    templateFieldsWithoutDuplicates.forEach(fieldName => {
+    templateFieldsWithoutDuplicates.forEach((fieldName) => {
       if (allNotifyPersonalisationData[fieldName]) {
         allNotifyPersonalisationData[`${fieldName}_exists`] = "yes";
       } else {
@@ -60,7 +60,7 @@ const sendStatusEmail = async (templateId, recipientEmail, flattenedData) => {
     const notifyArguments = [
       templateId,
       recipientEmail,
-      { personalisation: allNotifyPersonalisationData }
+      { personalisation: allNotifyPersonalisationData },
     ];
 
     const notifyResponse = await notifyClient.sendEmail(...notifyArguments);
@@ -137,7 +137,7 @@ const sendSingleEmail = async (
     );
 
     const templateFieldsWithoutSuffix = requiredTemplateFields.map(
-      fieldName => {
+      (fieldName) => {
         const trimmedFieldName = fieldName.trim();
         return trimmedFieldName.endsWith("_exists")
           ? trimmedFieldName.slice(0, -7)
@@ -151,7 +151,7 @@ const sendSingleEmail = async (
 
     const allNotifyPersonalisationData = { ...flattenedData };
 
-    templateFieldsWithoutDuplicates.forEach(fieldName => {
+    templateFieldsWithoutDuplicates.forEach((fieldName) => {
       if (allNotifyPersonalisationData[fieldName]) {
         allNotifyPersonalisationData[`${fieldName}_exists`] = "yes";
       } else {
@@ -171,7 +171,7 @@ const sendSingleEmail = async (
     const notifyArguments = [
       templateId,
       recipientEmail,
-      { personalisation: allNotifyPersonalisationData }
+      { personalisation: allNotifyPersonalisationData },
     ];
 
     const notifyResponse = await notifyClient.sendEmail(...notifyArguments);

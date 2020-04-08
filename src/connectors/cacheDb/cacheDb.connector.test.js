@@ -6,7 +6,7 @@ const {
   cacheRegistration,
   clearMongoConnection,
   updateStatusInCache,
-  updateNotificationOnSent
+  updateNotificationOnSent,
 } = require("./cacheDb.connector");
 
 describe("Connector: cacheDb", () => {
@@ -24,9 +24,9 @@ describe("Connector: cacheDb", () => {
         mongodb.MongoClient.connect.mockImplementation(async () => ({
           db: () => ({
             collection: () => ({
-              insertOne: () => ({ insertedId: "764" })
-            })
-          })
+              insertOne: () => ({ insertedId: "764" }),
+            }),
+          }),
         }));
         response = await cacheRegistration({ reg: "data" });
       });
@@ -45,9 +45,9 @@ describe("Connector: cacheDb", () => {
             collection: () => ({
               insertOne: () => {
                 throw new Error("Example mongo error");
-              }
-            })
-          })
+              },
+            }),
+          }),
         }));
         try {
           response = await cacheRegistration({ reg: "data" });
@@ -68,9 +68,9 @@ describe("Connector: cacheDb", () => {
         mongodb.MongoClient.connect.mockImplementation(async () => ({
           db: () => ({
             collection: () => ({
-              insertOne: () => ({ insertedId: "1000" })
-            })
-          })
+              insertOne: () => ({ insertedId: "1000" }),
+            }),
+          }),
         }));
 
         response = await cacheRegistration({ reg: "data" });
@@ -78,9 +78,9 @@ describe("Connector: cacheDb", () => {
         mongodb.MongoClient.connect.mockImplementation(async () => ({
           db: () => ({
             collection: () => ({
-              insertOne: () => ({ insertedId: "2000" })
-            })
-          })
+              insertOne: () => ({ insertedId: "2000" }),
+            }),
+          }),
         }));
 
         response = await cacheRegistration({ reg: "data" });
@@ -113,9 +113,9 @@ describe("Connector: cacheDb", () => {
           db: () => ({
             collection: () => ({
               findOne: () => ({ status: { register: undefined } }),
-              updateOne: () => {}
-            })
-          })
+              updateOne: () => {},
+            }),
+          }),
         }));
 
         try {
@@ -141,9 +141,9 @@ describe("Connector: cacheDb", () => {
               findOne: () => ({ status: { register: undefined } }),
               updateOne: () => {
                 throw new Error("Example mongo error");
-              }
-            })
-          })
+              },
+            }),
+          }),
         }));
 
         try {
@@ -167,17 +167,17 @@ describe("Connector: cacheDb", () => {
               type: "LC",
               address: "fsatestemail.valid@gmail.com",
               time: undefined,
-              sent: undefined
-            }
-          ]
+              sent: undefined,
+            },
+          ],
         };
 
         let testEmailsToSend = [
           {
             type: "LC",
             address: "fsatestemail.valid@gmail.com",
-            templateId: "testtempate234315431asdfasf"
-          }
+            templateId: "testtempate234315431asdfasf",
+          },
         ];
 
         it("check it creates notification rows correctly", () => {
@@ -196,9 +196,9 @@ describe("Connector: cacheDb", () => {
                 address: "fsatestemail.valid@gmail.com",
                 type: "LC",
                 sent: true,
-                time: "fakedate"
-              }
-            ]
+                time: "fakedate",
+              },
+            ],
           });
 
           result = updateNotificationOnSent(
@@ -216,9 +216,9 @@ describe("Connector: cacheDb", () => {
                 address: "fsatestemail.valid@gmail.com",
                 type: "LC",
                 sent: false,
-                time: "fakedate"
-              }
-            ]
+                time: "fakedate",
+              },
+            ],
           });
         });
       });
@@ -235,9 +235,9 @@ describe("Connector: cacheDb", () => {
           db: () => ({
             collection: () => ({
               findOne: () => ({ completed: { register: undefined } }),
-              updateOne: () => {}
-            })
-          })
+              updateOne: () => {},
+            }),
+          }),
         }));
 
         try {
@@ -263,9 +263,9 @@ describe("Connector: cacheDb", () => {
               findOne: () => ({ completed: { register: undefined } }),
               updateOne: () => {
                 throw new Error("Example mongo error");
-              }
-            })
-          })
+              },
+            }),
+          }),
         }));
 
         try {

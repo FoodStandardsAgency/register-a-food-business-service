@@ -3,21 +3,21 @@ jest.mock("./tascomi.double");
 jest.mock("../../services/statusEmitter.service");
 jest.mock("@slice-and-dice/fsa-rof", () => ({
   tascomiAuth: {
-    generateSyncHash: jest.fn()
-  }
+    generateSyncHash: jest.fn(),
+  },
 }));
 
 const { tascomiAuth } = require("@slice-and-dice/fsa-rof");
 tascomiAuth.generateSyncHash.mockImplementation(() => ({
   auth: "some auth",
-  hash: "a hash"
+  hash: "a hash",
 }));
 const request = require("request-promise-native");
 const { doubleRequest } = require("./tascomi.double");
 
 const {
   createFoodBusinessRegistration,
-  createReferenceNumber
+  createReferenceNumber,
 } = require("./tascomi.connector");
 
 const registration = {
@@ -27,7 +27,7 @@ const registration = {
       establishment_primary_number: "329857245",
       establishment_secondary_number: "84345245",
       establishment_email: "django@uk.ibm.com",
-      establishment_opening_date: "2018-06-07"
+      establishment_opening_date: "2018-06-07",
     },
     operator: {
       operator_first_name: "Fred",
@@ -39,7 +39,7 @@ const registration = {
       operator_town: "London",
       operator_primary_number: "9827235",
       operator_email: "operator@email.com",
-      operator_type: "Sole trader"
+      operator_type: "Sole trader",
     },
     premise: {
       establishment_postcode: "SW12 9RQ",
@@ -47,7 +47,7 @@ const registration = {
       establishment_address_line_2: "Street",
       establishment_address_line_3: "Locality",
       establishment_town: "London",
-      establishment_type: "somewhere"
+      establishment_type: "somewhere",
     },
     activities: {
       customer_type: "End consumer",
@@ -58,14 +58,14 @@ const registration = {
       opening_hours_thurday: "0930 - 1900",
       opening_hours_friday: "9:30 to 19:00",
       opening_hours_saturday: "09:30 to 19:00",
-      opening_hours_sunday: "From 9:30 to 19:00"
-    }
+      opening_hours_sunday: "From 9:30 to 19:00",
+    },
   },
   declaration: {
     declaration1: "Declaration",
     declaration2: "Declaration",
-    declaration3: "Declaration"
-  }
+    declaration3: "Declaration",
+  },
 };
 
 const partnership_registration = {
@@ -75,7 +75,7 @@ const partnership_registration = {
       establishment_primary_number: "329857245",
       establishment_secondary_number: "84345245",
       establishment_email: "django@uk.ibm.com",
-      establishment_opening_date: "2018-06-07"
+      establishment_opening_date: "2018-06-07",
     },
     operator: {
       operator_first_name: "Fred",
@@ -91,13 +91,13 @@ const partnership_registration = {
       partners: [
         {
           partner_name: "Fred",
-          partner_is_primary_contact: true
+          partner_is_primary_contact: true,
         },
         {
           partner_name: "Joe",
-          partner_is_primary_contact: false
-        }
-      ]
+          partner_is_primary_contact: false,
+        },
+      ],
     },
     premise: {
       establishment_postcode: "SW12 9RQ",
@@ -105,7 +105,7 @@ const partnership_registration = {
       establishment_address_line_2: "Street",
       establishment_address_line_3: "Locality",
       establishment_town: "London",
-      establishment_type: "somewhere"
+      establishment_type: "somewhere",
     },
     activities: {
       customer_type: "End consumer",
@@ -116,26 +116,26 @@ const partnership_registration = {
       opening_hours_thurday: "0930 - 1900",
       opening_hours_friday: "9:30 to 19:00",
       opening_hours_saturday: "09:30 to 19:00",
-      opening_hours_sunday: "From 9:30 to 19:00"
-    }
+      opening_hours_sunday: "From 9:30 to 19:00",
+    },
   },
   declaration: {
     declaration1: "Declaration",
     declaration2: "Declaration",
-    declaration3: "Declaration"
-  }
+    declaration3: "Declaration",
+  },
 };
 
 const postRegistrationMetadata = {
   reg_submission_date: 1,
   "fsa-rn": "AA1AAA-AA11AA-A1AAA1",
-  hygiene_council_code: 1234
+  hygiene_council_code: 1234,
 };
 
 const auth = {
   url: "url",
   public_key: "key",
-  private_key: "key"
+  private_key: "key",
 };
 
 describe("Function: createFoodBusinessRegistration", () => {
@@ -562,7 +562,7 @@ describe("Function: createReferenceNumber", () => {
 
     it("Should call request with request data", () => {
       expect(request.mock.calls[0][0].form).toEqual({
-        online_reference: "0000035"
+        online_reference: "0000035",
       });
     });
   });

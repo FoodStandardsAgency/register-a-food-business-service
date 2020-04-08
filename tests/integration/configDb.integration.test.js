@@ -1,6 +1,6 @@
 require("dotenv").config();
 const {
-  getAllLocalCouncilConfig
+  getAllLocalCouncilConfig,
 } = require("../../src/connectors/configDb/configDb.connector");
 const mockLocalCouncilConfig = require("../../src/connectors/configDb/mockLocalCouncilConfig.json");
 

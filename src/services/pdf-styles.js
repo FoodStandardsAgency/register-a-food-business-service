@@ -2,45 +2,45 @@ const path = require("path");
 
 const styles = {
   marginStyle: {
-    margin: [0, 100]
+    margin: [0, 100],
   },
   header: {
-    bold: true
+    bold: true,
   },
   bigger: {
     fontSize: 19,
-    bold: true
+    bold: true,
   },
   h1: {
     color: "black",
     fontSize: 40,
-    bold: true
+    bold: true,
   },
   h2: {
     fontSize: 15,
     color: "black",
-    bold: true
+    bold: true,
   },
   h3: {
     fontSize: 15,
-    color: "#7e8688"
+    color: "#7e8688",
   },
   h4: {
     fontSize: 15,
     color: "black",
-    lineHeight: "1.2"
+    lineHeight: "1.2",
   },
   p: {
     color: "black",
     margin: [20, 0, 40, 0],
-    fontSize: 12
+    fontSize: 12,
   },
   code: {
     color: "white",
     fontSize: 32,
     bold: true,
-    alignment: "center"
-  }
+    alignment: "center",
+  },
 };
 
 const createTitle = (title, size) => {
@@ -50,9 +50,9 @@ const createTitle = (title, size) => {
     columns: [
       {
         width: "*",
-        text: title
-      }
-    ]
+        text: title,
+      },
+    ],
   });
   return titleArray;
 };
@@ -64,20 +64,20 @@ const createSingleLine = (key, value) => {
     columns: [
       {
         width: "*",
-        text: key
+        text: key,
       },
       {
         width: "*",
         style: "header",
-        text: value
-      }
-    ]
+        text: value,
+      },
+    ],
   });
   singleLine = singleLine.concat(createGreyLine());
   return singleLine;
 };
 
-const createNewSpace = x => {
+const createNewSpace = (x) => {
   let newLine = "";
   for (let i = 1; i <= x; i++) {
     newLine = newLine.concat("\n");
@@ -96,9 +96,9 @@ const createGreyLine = () => {
         y: 1,
         w: 505,
         h: 1,
-        color: "#808080"
-      }
-    ]
+        color: "#808080",
+      },
+    ],
   });
   greyLineArray.push(createNewSpace(1));
   return greyLineArray;
@@ -118,31 +118,31 @@ const createFsaRnBox = (fsarnNumber, lcInfo) => {
         h: 125,
         r: 4,
         color: "#28a197",
-        alignment: "center"
-      }
-    ]
+        alignment: "center",
+      },
+    ],
   });
   fsaRnBox.push({
     text: [
       {
         text: "The unique food business registration application reference is",
         color: "white",
-        fontSize: 16
-      }
+        fontSize: 16,
+      },
     ],
     absolutePosition: { x: 30, y: yPositionText },
-    alignment: "center"
+    alignment: "center",
   });
   fsaRnBox.push({
     text: fsarnNumber,
     absolutePosition: { x: 30, y: yPositionNumber },
-    style: "code"
+    style: "code",
   });
   fsaRnBox.push(createNewSpace(2));
   return fsaRnBox;
 };
 
-const createLcContactSection = lcInfo => {
+const createLcContactSection = (lcInfo) => {
   const lcContactSection = [];
   if (lcInfo.local_council) {
     lcContactSection.push(createTitle(lcInfo.local_council, "h2"));
@@ -160,15 +160,15 @@ const createLcContactSection = lcInfo => {
   return lcContactSection;
 };
 
-const docDefinitionGenerator = content => {
+const docDefinitionGenerator = (content) => {
   const docDefinition = {
     pageSize: "A4",
     content,
     styles,
     defaultStyle: {
       columnGap: 20,
-      fontSize: 6
-    }
+      fontSize: 6,
+    },
   };
   return docDefinition;
 };
@@ -193,8 +193,8 @@ const fontDescriptors = {
       "..",
       "/services",
       "/fonts/Roboto-MediumItalic.ttf"
-    )
-  }
+    ),
+  },
 };
 
 module.exports = {
@@ -205,5 +205,5 @@ module.exports = {
   createSingleLine,
   createNewSpace,
   createFsaRnBox,
-  createLcContactSection
+  createLcContactSection,
 };

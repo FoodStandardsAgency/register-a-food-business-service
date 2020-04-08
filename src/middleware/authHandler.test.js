@@ -2,12 +2,12 @@ jest.mock("../config", () => ({
   FRONT_END_NAME: "name",
   FRONT_END_SECRET: "secret",
   ADMIN_NAME: "admin",
-  ADMIN_SECRET: "admin secret"
+  ADMIN_SECRET: "admin secret",
 }));
 jest.mock("../../src/services/statusEmitter.service");
 const {
   createRegistrationAuth,
-  viewDeleteRegistrationAuth
+  viewDeleteRegistrationAuth,
 } = require("./authHandler");
 const next = jest.fn();
 
@@ -20,8 +20,8 @@ describe("Middleware: createRegistrationAuth", () => {
     const req = {
       headers: {
         "client-name": "name",
-        "api-secret": "secret"
-      }
+        "api-secret": "secret",
+      },
     };
     const res = "res";
 
@@ -34,8 +34,8 @@ describe("Middleware: createRegistrationAuth", () => {
   describe("When not given a secret", () => {
     const req = {
       headers: {
-        "client-name": "name"
-      }
+        "client-name": "name",
+      },
     };
     const res = "res";
 
@@ -51,8 +51,8 @@ describe("Middleware: createRegistrationAuth", () => {
   describe("When not given a client", () => {
     const req = {
       headers: {
-        "api-secret": "secret"
-      }
+        "api-secret": "secret",
+      },
     };
     const res = "res";
 
@@ -69,8 +69,8 @@ describe("Middleware: createRegistrationAuth", () => {
     const req = {
       headers: {
         "api-secret": "secret",
-        "client-name": "badName"
-      }
+        "client-name": "badName",
+      },
     };
     const res = "res";
 
@@ -87,8 +87,8 @@ describe("Middleware: createRegistrationAuth", () => {
     const req = {
       headers: {
         "api-secret": "badSecret",
-        "client-name": "name"
-      }
+        "client-name": "name",
+      },
     };
     const res = "res";
 
@@ -107,8 +107,8 @@ describe("Middleware: viewDeleteRegistrationAuth", () => {
     const req = {
       headers: {
         "client-name": "admin",
-        "api-secret": "admin secret"
-      }
+        "api-secret": "admin secret",
+      },
     };
     const res = "res";
 
@@ -121,8 +121,8 @@ describe("Middleware: viewDeleteRegistrationAuth", () => {
   describe("When not given a secret", () => {
     const req = {
       headers: {
-        "client-name": "name"
-      }
+        "client-name": "name",
+      },
     };
     const res = "res";
 
@@ -138,8 +138,8 @@ describe("Middleware: viewDeleteRegistrationAuth", () => {
   describe("When not given a client", () => {
     const req = {
       headers: {
-        "api-secret": "secret"
-      }
+        "api-secret": "secret",
+      },
     };
     const res = "res";
 
@@ -156,8 +156,8 @@ describe("Middleware: viewDeleteRegistrationAuth", () => {
     const req = {
       headers: {
         "api-secret": "admin secret",
-        "client-name": "badName"
-      }
+        "client-name": "badName",
+      },
     };
     const res = "res";
 
@@ -174,8 +174,8 @@ describe("Middleware: viewDeleteRegistrationAuth", () => {
     const req = {
       headers: {
         "api-secret": "badSecret",
-        "client-name": "admin"
-      }
+        "client-name": "admin",
+      },
     };
     const res = "res";
 

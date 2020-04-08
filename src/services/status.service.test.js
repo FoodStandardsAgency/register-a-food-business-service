@@ -1,19 +1,19 @@
 jest.mock("../connectors/status/status-db.connector");
 jest.mock("../connectors/notify/notify.connector");
 jest.mock("../config", () => ({
-  NOTIFY_STATUS_TEMPLATE: "e6692529-52a3-45cb-96b7-0c8cfe282167"
+  NOTIFY_STATUS_TEMPLATE: "e6692529-52a3-45cb-96b7-0c8cfe282167",
 }));
 
 const {
   getStatus,
   setStatus,
-  incrementStatusCount
+  incrementStatusCount,
 } = require("./status.service");
 
 const {
   getStoredStatus,
   updateStoredStatus,
-  getEmailDistribution
+  getEmailDistribution,
 } = require("../connectors/status/status-db.connector");
 
 const { sendStatusEmail } = require("../connectors/notify/notify.connector");
@@ -24,7 +24,7 @@ describe("Function: status.service getStatus()", () => {
   describe("given a statusName is provided", () => {
     beforeEach(async () => {
       getStoredStatus.mockImplementation(() => ({
-        registrationsStarted: 0
+        registrationsStarted: 0,
       }));
       result = await getStatus("registrationsStarted");
     });
@@ -37,7 +37,7 @@ describe("Function: status.service getStatus()", () => {
   describe("given a statusName is provided that does not exist", () => {
     beforeEach(async () => {
       getStoredStatus.mockImplementation(() => ({
-        exampleValid: "status value"
+        exampleValid: "status value",
       }));
       result = await getStatus("notValid");
     });
@@ -51,7 +51,7 @@ describe("Function: status.service getStatus()", () => {
     beforeEach(async () => {
       getStoredStatus.mockImplementation(() => ({
         registrationsStarted: 0,
-        submissionsSucceeded: 0
+        submissionsSucceeded: 0,
       }));
       result = await getStatus();
     });
@@ -59,7 +59,7 @@ describe("Function: status.service getStatus()", () => {
     it("should return the entire status object", () => {
       expect(result).toEqual({
         registrationsStarted: 0,
-        submissionsSucceeded: 0
+        submissionsSucceeded: 0,
       });
     });
   });
@@ -117,7 +117,7 @@ describe("Function: status.service setStatus()", () => {
     beforeEach(async () => {
       jest.clearAllMocks();
       getStoredStatus.mockImplementation(() => ({
-        mostRecentSubmitSucceeded: true
+        mostRecentSubmitSucceeded: true,
       }));
       updateStoredStatus.mockImplementation(() => false);
       getEmailDistribution.mockImplementation(() => ["test@test.com"]);
@@ -144,7 +144,7 @@ describe("Function: status.service setStatus()", () => {
     beforeEach(async () => {
       jest.clearAllMocks();
       getStoredStatus.mockImplementation(() => ({
-        mostRecentSubmitSucceeded: false
+        mostRecentSubmitSucceeded: false,
       }));
       updateStoredStatus.mockImplementation(() => false);
       getEmailDistribution.mockImplementation(() => ["test@test.com"]);
@@ -166,7 +166,7 @@ describe("Function: status.service setStatus()", () => {
     beforeEach(async () => {
       jest.clearAllMocks();
       getStoredStatus.mockImplementation(() => ({
-        mostRecentSubmitSucceeded: true
+        mostRecentSubmitSucceeded: true,
       }));
       updateStoredStatus.mockImplementation(() => false);
       getEmailDistribution.mockImplementation(() => []);
@@ -188,12 +188,12 @@ describe("Function: status.service setStatus()", () => {
     beforeEach(async () => {
       jest.clearAllMocks();
       getStoredStatus.mockImplementation(() => ({
-        mostRecentSubmitSucceeded: false
+        mostRecentSubmitSucceeded: false,
       }));
       updateStoredStatus.mockImplementation(() => true);
       getEmailDistribution.mockImplementation(() => [
         "test@test.com",
-        "test2@test.com"
+        "test2@test.com",
       ]);
       sendStatusEmail.mockImplementation(() => false);
       result = await setStatus("mostRecentSubmitSucceeded", true);
@@ -221,7 +221,7 @@ describe("status.service incrementStatusCount()", () => {
   describe("given existing status value is an integer", () => {
     beforeEach(async () => {
       getStoredStatus.mockImplementation(() => ({
-        submissionsSucceeded: 0
+        submissionsSucceeded: 0,
       }));
       updateStoredStatus.mockImplementation(() => 1);
       result = await incrementStatusCount("submissionsSucceeded");
@@ -235,7 +235,7 @@ describe("status.service incrementStatusCount()", () => {
   describe("given existing status value is not an integer", () => {
     beforeEach(async () => {
       getStoredStatus.mockImplementation(() => ({
-        mostRecentSubmitSucceeded: true
+        mostRecentSubmitSucceeded: true,
       }));
 
       try {

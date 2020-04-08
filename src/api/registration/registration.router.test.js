@@ -2,15 +2,15 @@ jest.mock("express", () => ({
   Router: jest.fn(() => ({
     post: jest.fn(),
     get: jest.fn(),
-    delete: jest.fn()
-  }))
+    delete: jest.fn(),
+  })),
 }));
 jest.mock("./registration.controller", () => ({
   createNewRegistration: jest.fn((a, b, c, sendResponse) => {
     sendResponse();
   }),
   getRegistration: jest.fn(),
-  deleteRegistration: jest.fn()
+  deleteRegistration: jest.fn(),
 }));
 jest.mock("../../services/statusEmitter.service");
 const registrationController = require("./registration.controller");
@@ -36,11 +36,11 @@ describe("registration router", () => {
           {
             body: {
               registration: "reg",
-              local_council_url: "example-council-url"
+              local_council_url: "example-council-url",
             },
             headers: {
-              "registration-data-version": "1.2.0"
-            }
+              "registration-data-version": "1.2.0",
+            },
           },
           { send, status }
         );
@@ -58,18 +58,18 @@ describe("registration router", () => {
           throw new Error("reg error");
         });
         status.mockImplementation(() => ({
-          send: jest.fn()
+          send: jest.fn(),
         }));
         next = jest.fn();
         await handler(
           {
             body: {
               registration: "reg",
-              local_council_url: "example-council-url"
+              local_council_url: "example-council-url",
             },
             headers: {
-              "registration-data-version": "1.2.0"
-            }
+              "registration-data-version": "1.2.0",
+            },
           },
           { send, status },
           next

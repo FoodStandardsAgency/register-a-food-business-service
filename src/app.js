@@ -11,7 +11,7 @@ const app = express();
 const port = process.env.PORT || 4000;
 
 const limiter = rateLimit({
-  max: process.env.RATE_LIMIT // limit each IP to x requests per minute
+  max: process.env.RATE_LIMIT, // limit each IP to x requests per minute
 });
 
 app.use(limiter);

@@ -7,7 +7,7 @@ const {
   getAllLocalCouncilConfig,
   getConfigVersion,
   clearMongoConnection,
-  addDeletedId
+  addDeletedId,
 } = require("./configDb.connector");
 const mockLocalCouncilConfig = require("./mockLocalCouncilConfig.json");
 const { lcConfigCollectionDouble } = require("./configDb.double");
@@ -15,14 +15,14 @@ const mockConfigVersion = {
   _id: "1.2.0",
   notify_template_keys: {
     fbo_submission_complete: "123",
-    lc_new_registration: "456"
+    lc_new_registration: "456",
   },
   path: {
     "/index": {
       on: true,
-      switches: {}
-    }
-  }
+      switches: {},
+    },
+  },
 };
 
 let result;
@@ -35,9 +35,9 @@ describe("Function: getConfigVersion", () => {
       mongodb.MongoClient.connect.mockImplementation(() => ({
         db: () => ({
           collection: () => ({
-            findOne: jest.fn(() => mockConfigVersion)
-          })
-        })
+            findOne: jest.fn(() => mockConfigVersion),
+          }),
+        }),
       }));
       result = await getConfigVersion("1.2.0");
     });
@@ -99,9 +99,9 @@ describe("Function: getLocalCouncilDetails", () => {
       mongodb.MongoClient.connect.mockImplementation(() => ({
         db: () => ({
           collection: () => ({
-            find: () => ({ toArray: () => mockLocalCouncilConfig })
-          })
-        })
+            find: () => ({ toArray: () => mockLocalCouncilConfig }),
+          }),
+        }),
       }));
     });
 
@@ -117,7 +117,7 @@ describe("Function: getLocalCouncilDetails", () => {
       process.env.DOUBLE_MODE = true;
       clearMongoConnection();
       lcConfigCollectionDouble.find.mockImplementation(() => ({
-        toArray: () => mockLocalCouncilConfig
+        toArray: () => mockLocalCouncilConfig,
       }));
     });
 
@@ -136,9 +136,9 @@ describe("Function: getLocalCouncilDetails", () => {
       mongodb.MongoClient.connect.mockImplementation(() => ({
         db: () => ({
           collection: () => ({
-            find: () => ({ toArray: () => mockLocalCouncilConfig })
-          })
-        })
+            find: () => ({ toArray: () => mockLocalCouncilConfig }),
+          }),
+        }),
       }));
     });
 
@@ -179,9 +179,9 @@ describe("Function: getLocalCouncilDetails", () => {
       mongodb.MongoClient.connect.mockImplementation(() => ({
         db: () => ({
           collection: () => ({
-            find: () => ({ toArray: () => mockLocalCouncilConfig })
-          })
-        })
+            find: () => ({ toArray: () => mockLocalCouncilConfig }),
+          }),
+        }),
       }));
     });
 
@@ -203,9 +203,9 @@ describe("Function: addDeletedId", () => {
     mongodb.MongoClient.connect.mockImplementation(() => ({
       db: () => ({
         collection: () => ({
-          insertOne: jest.fn(() => "inserted")
-        })
-      })
+          insertOne: jest.fn(() => "inserted"),
+        }),
+      }),
     }));
 
     response = await addDeletedId();

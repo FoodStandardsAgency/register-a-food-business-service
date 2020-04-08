@@ -1,8 +1,8 @@
 jest.mock("express", () => ({
   Router: jest.fn(() => ({
     post: jest.fn(),
-    get: jest.fn()
-  }))
+    get: jest.fn(),
+  })),
 }));
 jest.mock("../../services/status.service");
 
@@ -25,7 +25,7 @@ describe("/api/status route: ", () => {
       handler = router.get.mock.calls[0][1];
       req = {};
       res = {
-        send: jest.fn()
+        send: jest.fn(),
       };
       handler(req, res);
     });
@@ -44,7 +44,7 @@ describe("/api/status route: ", () => {
       handler = router.get.mock.calls[1][1];
       req = {};
       res = {
-        send: jest.fn()
+        send: jest.fn(),
       };
       handler(req, res);
     });
@@ -62,11 +62,11 @@ describe("/api/status route: ", () => {
       handler = router.get.mock.calls[2][1];
       req = {
         params: {
-          statusName: "exampleStatus"
-        }
+          statusName: "exampleStatus",
+        },
       };
       res = {
-        send: jest.fn()
+        send: jest.fn(),
       };
       handler(req, res);
     });

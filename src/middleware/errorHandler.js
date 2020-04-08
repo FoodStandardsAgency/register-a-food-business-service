@@ -20,7 +20,7 @@ const errorDetails = require("./errors.json");
 const errorHandler = (err, req, res, next) => {
   logEmitter.emit(ERROR, `Application error: ${JSON.stringify(err)}`);
   if (err.name) {
-    const errorDetail = errorDetails.find(error => {
+    const errorDetail = errorDetails.find((error) => {
       return error.name === err.name;
     });
     if (errorDetail) {
@@ -32,47 +32,37 @@ const errorHandler = (err, req, res, next) => {
         errorDetail.name === "notifyInvalidTemplate" ||
         errorDetail.name === "notifyMissingPersonalisation"
       ) {
-        errorDetail.developerMessage = `${errorDetail.developerMessage} ${
-          err.message
-        }`;
+        errorDetail.developerMessage = `${errorDetail.developerMessage} ${err.message}`;
       }
 
       if (errorDetail.name === "fsaRnFetchError") {
-        errorDetail.developerMessage = `${errorDetail.developerMessage} ${
-          err.message
-        }`;
+        errorDetail.developerMessage = `${errorDetail.developerMessage} ${err.message}`;
       }
 
       if (errorDetail.name === "mongoConnectionError") {
-        errorDetail.developerMessage = `${errorDetail.developerMessage} ${
-          err.message
-        }`;
+        errorDetail.developerMessage = `${errorDetail.developerMessage} ${err.message}`;
       }
 
       if (errorDetail.name === "localCouncilNotFound") {
-        errorDetail.developerMessage = `${errorDetail.developerMessage} ${
-          err.message
-        }`;
+        errorDetail.developerMessage = `${errorDetail.developerMessage} ${err.message}`;
       }
 
       if (errorDetail.name === "missingRequiredHeader") {
-        errorDetail.developerMessage = `${errorDetail.developerMessage} ${
-          err.message
-        }`;
+        errorDetail.developerMessage = `${errorDetail.developerMessage} ${err.message}`;
       }
 
       res.status(errorDetail.statusCode);
       res.send({
         errorCode: errorDetail.code,
         developerMessage: errorDetail.developerMessage,
-        userMessages: errorDetail.userMessages
+        userMessages: errorDetail.userMessages,
       });
     } else {
       res.status(500);
       res.send({
         errorCode: "Unknown",
         developerMessage: "Unknown error found, debug and add to error cases",
-        userMessages: ""
+        userMessages: "",
       });
     }
   } else {
@@ -80,7 +70,7 @@ const errorHandler = (err, req, res, next) => {
     res.send({
       errorCode: "Unknown",
       developerMessage: "Unknown error found, debug and add to error cases",
-      userMessages: ""
+      userMessages: "",
     });
   }
 };

@@ -1,6 +1,6 @@
 require("dotenv").config();
 const {
-  cacheRegistration
+  cacheRegistration,
 } = require("../../src/connectors/cacheDb/cacheDb.connector");
 
 describe("cacheDb integration: cacheRegistration", () => {

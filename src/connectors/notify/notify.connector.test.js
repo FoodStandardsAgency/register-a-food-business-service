@@ -16,7 +16,7 @@ describe("Function: sendSingleEmail", () => {
     example: "value",
     opening_day_monday: true,
     opening_day_tuesday: false,
-    country: ""
+    country: "",
   };
   const testFetchedTemplate = {
     body: {
@@ -26,9 +26,9 @@ describe("Function: sendSingleEmail", () => {
         example_exists: {},
         opening_day_monday_exists: {},
         opening_day_tuesday_exists: {},
-        country_exists: {}
-      }
-    }
+        country_exists: {},
+      },
+    },
   };
 
   const args = [
@@ -38,7 +38,7 @@ describe("Function: sendSingleEmail", () => {
     testPdfFile,
     "FAKEFSAID-2343",
     "FAKETYPE",
-    0
+    0,
   ];
 
   describe("given the request is successful", () => {
@@ -50,7 +50,7 @@ describe("Function: sendSingleEmail", () => {
           return { body: "This is a success message from the notify client" };
         }),
         getTemplateById: jest.fn(() => testFetchedTemplate),
-        prepareUpload: jest.fn()
+        prepareUpload: jest.fn(),
       };
       NotifyClient.mockImplementation(() => mockNotifyClient);
     });
@@ -73,12 +73,14 @@ describe("Function: sendSingleEmail", () => {
           opening_day_tuesday: "",
           opening_day_tuesday_exists: "no",
           country: "",
-          country_exists: "no"
+          country_exists: "no",
         };
         expect(mockNotifyClient.sendEmail).toHaveBeenLastCalledWith(
           testTemplateId,
           testRecipient,
-          { personalisation: expectedFlattenedDataWithExists }
+          {
+            personalisation: expectedFlattenedDataWithExists,
+          }
         );
       });
     });
@@ -87,7 +89,7 @@ describe("Function: sendSingleEmail", () => {
       const countries = ["england", "wales", "northern-ireland"];
       it.each(countries)(
         "should set personalisation to match the country",
-        country => {
+        (country) => {
           testFlattenedData.country = country;
           return sendSingleEmail(...args).then(() => {
             const expectedFlattenedDataWithExists = {
@@ -100,13 +102,15 @@ describe("Function: sendSingleEmail", () => {
               opening_day_tuesday: "",
               opening_day_tuesday_exists: "no",
               country: country,
-              country_exists: "yes"
+              country_exists: "yes",
             };
             expectedFlattenedDataWithExists[`${country}`] = "yes";
             expect(mockNotifyClient.sendEmail).toHaveBeenLastCalledWith(
               testTemplateId,
               testRecipient,
-              { personalisation: expectedFlattenedDataWithExists }
+              {
+                personalisation: expectedFlattenedDataWithExists,
+              }
             );
           });
         }
@@ -143,15 +147,15 @@ describe("Function: sendSingleEmail", () => {
               error.error = {
                 errors: [
                   {
-                    error: "ValidationError"
-                  }
-                ]
+                    error: "ValidationError",
+                  },
+                ],
               };
               error.message = "notify error";
               throw error;
             }),
             prepareUpload: jest.fn(),
-            getTemplateById: jest.fn(() => testFetchedTemplate)
+            getTemplateById: jest.fn(() => testFetchedTemplate),
           };
           NotifyClient.mockImplementation(() => mockNotifyClient);
           result = await sendSingleEmail(...args);
@@ -170,15 +174,15 @@ describe("Function: sendSingleEmail", () => {
               error.error = {
                 errors: [
                   {
-                    error: "BadRequestError"
-                  }
-                ]
+                    error: "BadRequestError",
+                  },
+                ],
               };
               error.message = "notify error";
               throw error;
             }),
             prepareUpload: jest.fn(),
-            getTemplateById: jest.fn(() => testFetchedTemplate)
+            getTemplateById: jest.fn(() => testFetchedTemplate),
           };
           NotifyClient.mockImplementation(() => mockNotifyClient);
           result = await sendSingleEmail(...args);
@@ -197,15 +201,15 @@ describe("Function: sendSingleEmail", () => {
               error.error = {
                 errors: [
                   {
-                    error: "BadRequestError"
-                  }
-                ]
+                    error: "BadRequestError",
+                  },
+                ],
               };
               error.message = "secretOrPrivateKey must have a value";
               throw error;
             }),
             prepareUpload: jest.fn(),
-            getTemplateById: jest.fn(() => testFetchedTemplate)
+            getTemplateById: jest.fn(() => testFetchedTemplate),
           };
           NotifyClient.mockImplementation(() => mockNotifyClient);
           result = await sendSingleEmail(...args);
@@ -222,7 +226,7 @@ describe("Function: sendSingleEmail", () => {
         jest.clearAllMocks();
         NotifyClient.mockImplementation(() => ({}));
         notifyClientDouble.sendEmail.mockImplementation(async () => ({
-          body: "Double response"
+          body: "Double response",
         }));
         notifyClientDouble.prepareUpload.mockImplementation(() => {});
         notifyClientDouble.getTemplateById.mockImplementation(
@@ -244,7 +248,7 @@ describe("Function: sendSingleEmail", () => {
             return { body: "This is a success message from the notify client" };
           }),
           getTemplateById: jest.fn(() => testFetchedTemplate),
-          prepareUpload: jest.fn()
+          prepareUpload: jest.fn(),
         };
         NotifyClient.mockImplementation(() => mockNotifyClient);
         args[3] = false;

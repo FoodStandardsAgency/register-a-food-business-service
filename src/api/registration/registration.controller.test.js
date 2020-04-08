@@ -1,5 +1,5 @@
 jest.mock("../../services/validation.service", () => ({
-  validate: jest.fn()
+  validate: jest.fn(),
 }));
 
 jest.mock("./registration.service", () => ({
@@ -9,16 +9,16 @@ jest.mock("./registration.service", () => ({
   sendTascomiRegistration: jest.fn(),
   getRegistrationMetaData: jest.fn(),
   getLcContactConfig: jest.fn(),
-  getLcAuth: jest.fn()
+  getLcAuth: jest.fn(),
 }));
 
 jest.mock("../../services/notifications.service", () => ({
-  sendNotifications: jest.fn()
+  sendNotifications: jest.fn(),
 }));
 
 jest.mock("../../connectors/cacheDb/cacheDb.connector", () => ({
   cacheRegistration: jest.fn(),
-  updateCompletedInCache: jest.fn()
+  updateCompletedInCache: jest.fn(),
 }));
 
 jest.mock("../../connectors/configDb/configDb.connector", () => ({
@@ -26,7 +26,7 @@ jest.mock("../../connectors/configDb/configDb.connector", () => ({
   findCouncilByUrl: jest.fn(),
   findCouncilById: jest.fn(),
   connectToConfigDb: jest.fn(),
-  LocalCouncilConfigDbCollection: jest.fn()
+  LocalCouncilConfigDbCollection: jest.fn(),
 }));
 
 const {
@@ -34,23 +34,23 @@ const {
   deleteRegistrationByFsaRn,
   getRegistrationMetaData,
   getLcContactConfig,
-  getLcAuth
+  getLcAuth,
 } = require("./registration.service");
 
 const { validate } = require("../../services/validation.service");
 
 const {
-  cacheRegistration
+  cacheRegistration,
 } = require("../../connectors/cacheDb/cacheDb.connector");
 
 const {
   createNewRegistration,
   getRegistration,
-  deleteRegistration
+  deleteRegistration,
 } = require("./registration.controller");
 const {
   getConfigVersion,
-  findCouncilByUrl
+  findCouncilByUrl,
 } = require("../../connectors/configDb/configDb.connector");
 
 const exampleLCUrl = "http://example-council-url";
@@ -62,7 +62,7 @@ const exampleCouncil = {
   local_council_notify_emails: ["example@example.com"],
   local_council_phone_number: "01234 567890",
   local_council_url: exampleLCUrl,
-  country: "test"
+  country: "test",
 };
 
 describe("registration controller", () => {
@@ -72,8 +72,8 @@ describe("registration controller", () => {
       code: 1234,
       local_council: "Example council name",
       local_council_notify_emails: ["example@example.com"],
-      local_council_email: "example@example.com"
-    }
+      local_council_email: "example@example.com",
+    },
   };
 
   const exampleMultiLcConfig = {
@@ -81,31 +81,31 @@ describe("registration controller", () => {
       code: 5678,
       local_council: "Example council name",
       local_council_notify_emails: ["example@example.com"],
-      local_council_email: "example@example.com"
+      local_council_email: "example@example.com",
     },
     standards: {
       code: 2345,
       local_council: "Another council name",
       local_council_notify_emails: [
         "another@example.com",
-        "alsothisone@example.com"
+        "alsothisone@example.com",
       ],
-      local_council_email: "another@example.com"
-    }
+      local_council_email: "another@example.com",
+    },
   };
 
   const postRegistrationMetadata = {
     reg_submission_date: 1,
-    "fsa-rn": "AA1AAA-AA11AA-A1AAA1"
+    "fsa-rn": "AA1AAA-AA11AA-A1AAA1",
   };
 
   const testRegistration = {
-    establishment: { operator: { operator_email: "operator@example.com" } }
+    establishment: { operator: { operator_email: "operator@example.com" } },
   };
   const testLocalCouncilUrl = "http://example-council-url";
   const testRegDataVersion = "1.2.0";
   const testConfigVersion = {
-    notify_template_keys: { key1: "abc", key2: "xyz" }
+    notify_template_keys: { key1: "abc", key2: "xyz" },
   };
   const mockSendResponse = jest.fn();
   describe("Function: createNewRegistration", () => {
@@ -121,7 +121,7 @@ describe("registration controller", () => {
             return {
               url: "https://notactualtascomiurl/01/test/123",
               public_key: "5353535535351",
-              private_key: "123435353453"
+              private_key: "123435353453",
             };
           });
           validate.mockImplementation(() => {
@@ -166,7 +166,7 @@ describe("registration controller", () => {
             {},
             {
               "fsa-rn": postRegistrationMetadata["fsa-rn"],
-              reg_submission_date: postRegistrationMetadata.reg_submission_date
+              reg_submission_date: postRegistrationMetadata.reg_submission_date,
             },
             testRegistration,
             exampleLcConfig,
@@ -174,14 +174,14 @@ describe("registration controller", () => {
             {
               status: {
                 registration: null,
-                notifications: null
-              }
+                notifications: null,
+              },
             },
             {
               local_council_url: exampleLCUrl,
               hygiene_council_code: 1234,
               registration_data_version: "1.2.0",
-              source_council_id: exampleCouncil.id
+              source_council_id: exampleCouncil.id,
             }
           );
           expect(cacheRegistration).toHaveBeenLastCalledWith(expectedToCache);

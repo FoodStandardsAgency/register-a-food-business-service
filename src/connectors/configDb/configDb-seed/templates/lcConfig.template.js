@@ -29,9 +29,9 @@ const localCouncilTemplate = (seedData, env) => ({
           private_key:
             env === "production"
               ? seedData.SEED_TASCOMI_PRIVATE_KEY_LC
-              : seedData.SEED_TASCOMI_PRIVATE_KEY_DEV
+              : seedData.SEED_TASCOMI_PRIVATE_KEY_DEV,
         }
-      : null
+      : null,
 });
 
 module.exports = localCouncilTemplate;

@@ -3,7 +3,7 @@ const storedStatus = require("../../__mocks__/storedStatusMock.json");
 const emails = [{ email: "test@test.com" }];
 
 const statusCollectionDouble = {
-  findOne: query => {
+  findOne: (query) => {
     if (query._id === "backEndStatus") {
       return storedStatus;
     } else {
@@ -23,11 +23,11 @@ const statusCollectionDouble = {
         return {
           toArray: () => {
             return emails;
-          }
+          },
         };
-      }
+      },
     };
-  }
+  },
 };
 
 module.exports = { statusCollectionDouble };

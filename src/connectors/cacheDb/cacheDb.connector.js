@@ -18,7 +18,7 @@ const establishConnectionToMongo = async () => {
   } else {
     if (cacheDB === undefined) {
       client = await mongodb.MongoClient.connect(CACHEDB_URL, {
-        useNewUrlParser: true
+        useNewUrlParser: true,
       });
       cacheDB = client.db("register_a_food_business_cache");
     }
@@ -38,7 +38,7 @@ const connectToBeCacheDb = async () => {
   } else {
     if (client === undefined) {
       client = await mongodb.MongoClient.connect(CACHEDB_URL, {
-        useNewUrlParser: true
+        useNewUrlParser: true,
       });
     }
 
@@ -52,17 +52,17 @@ const disconnectCacheDb = async () => {
   }
 };
 
-const CachedRegistrationsCollection = async client =>
+const CachedRegistrationsCollection = async (client) =>
   await client.collection("cachedRegistrations");
 
 const getDate = () => {
   return new Date().toLocaleString("en-GB", {
     hour12: false,
-    timeZone: "Europe/London"
+    timeZone: "Europe/London",
   });
 };
 
-const cacheRegistration = async registration => {
+const cacheRegistration = async (registration) => {
   logEmitter.emit("functionCall", "cacheDb.connector", "cacheRegistration");
   try {
     const cachedRegistrations = await establishConnectionToMongo();
@@ -117,7 +117,7 @@ const updateStatusInCache = async (fsa_rn, property, value) => {
 
     status[property] = {
       time: getDate(),
-      complete: value
+      complete: value,
     };
 
     await updateStatus(cachedRegistrations, fsa_rn, status);
@@ -163,8 +163,8 @@ const findAllBlankRegistrations = async (cachedRegistrations, limit = 100) => {
   return await cachedRegistrations
     .find({
       "status.notifications": {
-        $elemMatch: { sent: { $ne: true } }
-      }
+        $elemMatch: { sent: { $ne: true } },
+      },
     })
     .sort({ reg_submission_date: 1 })
     .limit(limit);
@@ -178,8 +178,8 @@ const findAllFailedNotificationsRegistrations = async (
     .find({
       $or: [
         { "status.notifications": { $exists: false } },
-        { "status.notifications": null }
-      ]
+        { "status.notifications": null },
+      ],
     })
     .sort({ reg_submission_date: 1 })
     .limit(limit);
@@ -193,8 +193,8 @@ const findOutstandingTascomiRegistrationsFsaIds = async (
     .find({
       $and: [
         { "status.tascomi": { $exists: true } },
-        { "status.tascomi.complete": { $ne: true } }
-      ]
+        { "status.tascomi.complete": { $ne: true } },
+      ],
     })
     .sort({ reg_submission_date: 1 })
     .limit(limit);
@@ -202,14 +202,14 @@ const findOutstandingTascomiRegistrationsFsaIds = async (
 
 const findOneById = async (cachedRegistrations, fsa_rn) => {
   const cachedRegistration = await cachedRegistrations.findOne({
-    "fsa-rn": fsa_rn
+    "fsa-rn": fsa_rn,
   });
   return Object.assign({}, cachedRegistration);
 };
 
 const getStatus = async (cachedRegistrations, fsa_rn) => {
   const cachedRegistration = await cachedRegistrations.findOne({
-    "fsa-rn": fsa_rn
+    "fsa-rn": fsa_rn,
   });
   return Object.assign({}, cachedRegistration.status);
 };
@@ -219,7 +219,7 @@ const updateStatus = async (cachedRegistrations, fsa_rn, newStatus) => {
     await cachedRegistrations.updateOne(
       { "fsa-rn": fsa_rn },
       {
-        $set: { status: newStatus }
+        $set: { status: newStatus },
       }
     );
     logEmitter.emit("functionSuccess", "cacheDb.connector", "updateStatus");
@@ -275,5 +275,5 @@ module.exports = {
   connectToBeCacheDb,
   disconnectCacheDb,
   getStatus,
-  updateStatus
+  updateStatus,
 };

@@ -9,7 +9,7 @@ const {
   saveRegistrationToTempStoreAction,
   sendAllOutstandingRegistrationsToTascomiAction,
   sendAllNotificationsForRegistrationsAction,
-  saveAllOutstandingRegistrationsToTempStoreAction
+  saveAllOutstandingRegistrationsToTempStoreAction,
 } = require("./Tasks.controller");
 
 // const { viewDeleteRegistrationAuth } = require("../../middleware/authHandler");

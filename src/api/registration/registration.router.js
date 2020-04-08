@@ -2,7 +2,7 @@ const { Router } = require("express");
 const registrationController = require("./registration.controller");
 const {
   createRegistrationAuth,
-  viewDeleteRegistrationAuth
+  viewDeleteRegistrationAuth,
 } = require("../../middleware/authHandler");
 const { logEmitter } = require("../../services/logging.service");
 const { statusEmitter } = require("../../services/statusEmitter.service");
@@ -19,7 +19,7 @@ const registrationRouter = () => {
         "registration.router",
         "createNewRegistration"
       );
-      const sendResponse = response => {
+      const sendResponse = (response) => {
         statusEmitter.emit("incrementCount", "userRegistrationsSucceeded");
         statusEmitter.emit(
           "setStatus",

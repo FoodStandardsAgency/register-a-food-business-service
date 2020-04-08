@@ -12,7 +12,7 @@ const sendRequest = async (url, method, body, public_key, private_key) => {
   const tascomiApiOptions = {
     url: url,
     method: method,
-    form: body
+    form: body,
   };
 
   if (
@@ -29,7 +29,7 @@ const sendRequest = async (url, method, body, public_key, private_key) => {
     );
     tascomiApiOptions.headers = {
       "X-Public": auth.public_key,
-      "X-Hash": auth.hash
+      "X-Hash": auth.hash,
     };
     return request(tascomiApiOptions);
   }
@@ -64,8 +64,8 @@ const createFoodBusinessRegistration = async (
       registration.establishment.activities
     );
     const partnerDetails = registration.establishment.operator.partners
-      ? registration.establishment.operator.partners.map(partner => ({
-          ...partner
+      ? registration.establishment.operator.partners.map((partner) => ({
+          ...partner,
         }))
       : [];
 
@@ -122,13 +122,13 @@ const createFoodBusinessRegistration = async (
       premise_typical_trading_times_saturday_opening_times:
         activitiesDetails.opening_hours_saturday,
       premise_typical_trading_times_sunday_opening_times:
-        activitiesDetails.opening_hours_sunday
+        activitiesDetails.opening_hours_sunday,
     };
-    partnerDetails.forEach(partner => {
+    partnerDetails.forEach((partner) => {
       requestData.partners.push({
         partner_name: partner.partner_name,
         partner_is_primary_contact:
-          partner.partner_is_primary_contact === true ? "t" : "f"
+          partner.partner_is_primary_contact === true ? "t" : "f",
       });
     });
     if (activitiesDetails.opening_day_monday === true) {
@@ -243,7 +243,7 @@ const createReferenceNumber = async (id, auth) => {
     const url = `${auth.url}/online_food_business_registrations/${id}`;
     const online_reference = id.padStart(7, "0");
     const requestData = {
-      online_reference
+      online_reference,
     };
     const response = await sendRequest(
       url,
@@ -296,5 +296,5 @@ module.exports = {
   createReferenceNumber,
   TASCOMI_SKIPPING,
   TASCOMI_SUCCESS,
-  TASCOMI_FAIL
+  TASCOMI_FAIL,
 };

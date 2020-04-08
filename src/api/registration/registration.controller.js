@@ -3,17 +3,17 @@ const {
   getFullRegistrationByFsaRn,
   deleteRegistrationByFsaRn,
   getRegistrationMetaData,
-  getLcContactConfig
+  getLcContactConfig,
 } = require("./registration.service");
 
 const {
-  cacheRegistration
+  cacheRegistration,
 } = require("../../connectors/cacheDb/cacheDb.connector");
 
 const {
   findCouncilByUrl,
   connectToConfigDb,
-  LocalCouncilConfigDbCollection
+  LocalCouncilConfigDbCollection,
 } = require("../../connectors/configDb/configDb.connector");
 
 const { logEmitter } = require("../../services/logging.service");
@@ -67,7 +67,7 @@ const createNewRegistration = async (
 
   const status = {
     registration: null,
-    notifications: null
+    notifications: null,
   };
   if (sourceCouncil.auth) {
     status.tascomi = {};
@@ -78,19 +78,19 @@ const createNewRegistration = async (
     {},
     {
       "fsa-rn": postRegistrationMetadata["fsa-rn"],
-      reg_submission_date: postRegistrationMetadata.reg_submission_date
+      reg_submission_date: postRegistrationMetadata.reg_submission_date,
     },
     registration,
     lcContactConfig,
     {
-      status: status
+      status: status,
     },
     {
       hygiene_council_code: hygieneCouncilCode,
       local_council_url: localCouncilUrl,
       //the council id resolved from the localCouncilUrl
       source_council_id: sourceCouncil.id,
-      registration_data_version: regDataVersion
+      registration_data_version: regDataVersion,
     },
     postRegistrationMetadata
   );
@@ -98,7 +98,7 @@ const createNewRegistration = async (
   await cacheRegistration(completeCacheRecord);
 
   const combinedResponse = Object.assign({}, postRegistrationMetadata, {
-    lc_config: lcContactConfig
+    lc_config: lcContactConfig,
   });
 
   sendResponse(combinedResponse);
@@ -110,13 +110,13 @@ const createNewRegistration = async (
   );
 };
 
-const getRegistration = async fsa_rn => {
+const getRegistration = async (fsa_rn) => {
   const response = await getFullRegistrationByFsaRn(fsa_rn);
 
   return response;
 };
 
-const deleteRegistration = async fsa_rn => {
+const deleteRegistration = async (fsa_rn) => {
   const response = await deleteRegistrationByFsaRn(fsa_rn);
 
   return response;

@@ -1,11 +1,11 @@
 require("dotenv").config();
 const {
   createFoodBusinessRegistration,
-  createReferenceNumber
+  createReferenceNumber,
 } = require("../../src/connectors/tascomi/tascomi.connector");
 
 const auth = {
-  url: "url"
+  url: "url",
 };
 
 // This needs to be mocked as jest fails if something else imports request-promise
@@ -47,7 +47,7 @@ describe("Tascomi integration: createFoodBusinessRegistration", () => {
             establishment_primary_number: "329857245",
             establishment_secondary_number: "84345245",
             establishment_email: "django@uk.ibm.com",
-            establishment_opening_date: "2018-06-07"
+            establishment_opening_date: "2018-06-07",
           },
           operator: {
             operator_first_name: "Fred",
@@ -60,7 +60,7 @@ describe("Tascomi integration: createFoodBusinessRegistration", () => {
             operator_primary_number: "9827235",
             operator_email: "operator@email.com",
             operator_type: "Sole trader",
-            partners: []
+            partners: [],
           },
           premise: {
             establishment_postcode: "SW12 9RQ",
@@ -68,7 +68,7 @@ describe("Tascomi integration: createFoodBusinessRegistration", () => {
             establishment_address_line_2: "Street",
             establishment_address_line_3: "Locality",
             establishment_town: "London",
-            establishment_type: "somewhere"
+            establishment_type: "somewhere",
           },
           activities: {
             customer_type: "End consumer",
@@ -87,20 +87,20 @@ describe("Tascomi integration: createFoodBusinessRegistration", () => {
             opening_hours_thurday: "0930 - 1900",
             opening_hours_friday: "9:30 to 19:00",
             opening_hours_saturday: "09:30 to 19:00",
-            opening_hours_sunday: "From 9:30 to 19:00"
-          }
+            opening_hours_sunday: "From 9:30 to 19:00",
+          },
         },
         declaration: {
           declaration1: "Declaration",
           declaration2: "Declaration",
-          declaration3: "Declaration"
-        }
+          declaration3: "Declaration",
+        },
       };
       const result = await createFoodBusinessRegistration(
         registration,
         {
           "fsa-rn": "23589-DHF375",
-          hygiene_council_code: 8015
+          hygiene_council_code: 8015,
         },
         auth
       );

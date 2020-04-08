@@ -2,7 +2,7 @@ const {
   ADMIN_NAME,
   ADMIN_SECRET,
   FRONT_END_NAME,
-  FRONT_END_SECRET
+  FRONT_END_SECRET,
 } = require("../config");
 const { logEmitter } = require("../../src/services/logging.service");
 const { statusEmitter } = require("../../src/services/statusEmitter.service");
@@ -75,7 +75,7 @@ const authHandler = (req, res, secrets) => {
 
 const createRegistrationAuth = (req, res, next) => {
   const secrets = {
-    [FRONT_END_NAME]: FRONT_END_SECRET
+    [FRONT_END_NAME]: FRONT_END_SECRET,
   };
   authHandler(req, res, secrets);
   next();
@@ -83,7 +83,7 @@ const createRegistrationAuth = (req, res, next) => {
 
 const viewDeleteRegistrationAuth = (req, res, next) => {
   const secrets = {
-    [ADMIN_NAME]: ADMIN_SECRET
+    [ADMIN_NAME]: ADMIN_SECRET,
   };
   authHandler(req, res, secrets);
   next();

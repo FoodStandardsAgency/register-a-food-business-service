@@ -5,14 +5,14 @@ module.exports = (sequelize, DataTypes) => {
       id: {
         type: DataTypes.INTEGER,
         primaryKey: true,
-        autoIncrement: true
+        autoIncrement: true,
       },
       partner_name: { type: DataTypes.STRING },
-      partner_is_primary_contact: { type: DataTypes.BOOLEAN }
+      partner_is_primary_contact: { type: DataTypes.BOOLEAN },
     },
     {}
   );
-  Partner.associate = function(models) {
+  Partner.associate = function (models) {
     Partner.belongsTo(models.operator);
   };
   return Partner;

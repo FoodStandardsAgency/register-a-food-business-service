@@ -1,6 +1,6 @@
 require("dotenv").config();
 const {
-  sendSingleEmail
+  sendSingleEmail,
 } = require("../../src/connectors/notify/notify.connector");
 
 const { NOTIFY_TEMPLATE_ID_TEST } = require("../../src/config");
@@ -8,7 +8,7 @@ const invalidTemplateId = "1a1aaa-11aa-11a1-111a-Z11111a11a19";
 const validRecipientEmail = "fsatestemail.valid@gmail.com";
 const invalidRecipientEmail = "not-in-an-email-format";
 const testFlattenedData = {
-  establishment_trading_name: "example"
+  establishment_trading_name: "example",
 };
 
 describe("Notify contract: sendSingleEmail", () => {
@@ -16,7 +16,7 @@ describe("Notify contract: sendSingleEmail", () => {
     const notifyArguments = [
       NOTIFY_TEMPLATE_ID_TEST,
       validRecipientEmail,
-      testFlattenedData
+      testFlattenedData,
     ];
 
     it("Should both return an ID showing a successful email send (but not necessarily that it has arrived - this will not be tested)", async () => {
@@ -33,7 +33,7 @@ describe("Notify contract: sendSingleEmail", () => {
     const notifyArguments = [
       NOTIFY_TEMPLATE_ID_TEST,
       invalidRecipientEmail,
-      testFlattenedData
+      testFlattenedData,
     ];
 
     it("Should both reject", async () => {
@@ -48,7 +48,7 @@ describe("Notify contract: sendSingleEmail", () => {
     const notifyArguments = [
       invalidTemplateId,
       validRecipientEmail,
-      testFlattenedData
+      testFlattenedData,
     ];
 
     it("Should both reject", async () => {
@@ -63,7 +63,7 @@ describe("Notify contract: sendSingleEmail", () => {
     const notifyArguments = [
       NOTIFY_TEMPLATE_ID_TEST,
       validRecipientEmail,
-      { this_should_include_estabishment_trading_name: "not there" }
+      { this_should_include_estabishment_trading_name: "not there" },
     ];
 
     it("Should both reject", async () => {

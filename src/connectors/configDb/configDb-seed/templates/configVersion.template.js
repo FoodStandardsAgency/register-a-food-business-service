@@ -1,183 +1,183 @@
-const configVersionTemplate = seedData => ({
+const configVersionTemplate = (seedData) => ({
   _id: seedData.SEED_CONFIG_VERSION_NUMBER,
   notify_template_keys: {
     fbo_submission_complete: seedData.SEED_NOTIFY_TEMPLATE_FBO,
-    lc_new_registration: seedData.SEED_NOTIFY_TEMPLATE_LC
+    lc_new_registration: seedData.SEED_NOTIFY_TEMPLATE_LC,
   },
   path: {
     "/index": {
       on: true,
-      switches: {}
+      switches: {},
     },
     "/registration-role": {
       on: true,
       switches: {
         "Sole trader": {
           "/operator-name": true,
-          "/operator-contact-details": true
+          "/operator-contact-details": true,
         },
         Partnership: {
           "/partner-name": true,
           "/main-partnership-contact": true,
-          "/operator-contact-details": true
+          "/operator-contact-details": true,
         },
         Representative: {
-          "/operator-type": true
-        }
-      }
+          "/operator-type": true,
+        },
+      },
     },
     "/operator-type": {
       on: false,
       switches: {
         "A person": {
           "/operator-name": true,
-          "/operator-contact-details": true
+          "/operator-contact-details": true,
         },
         "A company": {
           "/operator-company-details": true,
-          "/contact-representative": true
+          "/contact-representative": true,
         },
         "A charity": {
           "/operator-charity-details": true,
-          "/contact-representative": true
-        }
-      }
+          "/contact-representative": true,
+        },
+      },
     },
     "/operator-company-details": {
       on: false,
-      switches: {}
+      switches: {},
     },
     "/operator-charity-details": {
       on: false,
-      switches: {}
+      switches: {},
     },
     "/operator-name": {
       on: false,
-      switches: {}
+      switches: {},
     },
     "/partner-name": {
       on: false,
-      switches: {}
+      switches: {},
     },
     "/main-partnership-contact": {
       on: false,
-      switches: {}
+      switches: {},
     },
     "/operator-address": {
       on: true,
-      switches: {}
+      switches: {},
     },
     "/operator-address-select": {
       on: true,
-      switches: {}
+      switches: {},
     },
     "/operator-address-manual": {
       on: false,
       switches: {
         operator_address_line_1: {
-          "/operator-address-manual": true
-        }
-      }
+          "/operator-address-manual": true,
+        },
+      },
     },
     "/operator-contact-details": {
       on: false,
-      switches: {}
+      switches: {},
     },
     "/contact-representative": {
       on: false,
-      switches: {}
+      switches: {},
     },
     "/establishment-trading-name": {
       on: true,
-      switches: {}
+      switches: {},
     },
     "/establishment-address-type": {
       on: true,
-      switches: {}
+      switches: {},
     },
     "/establishment-address": {
       on: true,
-      switches: {}
+      switches: {},
     },
     "/establishment-address-select": {
       on: true,
-      switches: {}
+      switches: {},
     },
     "/establishment-address-manual": {
       on: false,
       switches: {
         establishment_address_line_1: {
-          "/establishment-address-manual": true
-        }
-      }
+          "/establishment-address-manual": true,
+        },
+      },
     },
     "/establishment-contact-details": {
       on: true,
-      switches: {}
+      switches: {},
     },
     "/establishment-opening-status": {
       on: true,
       switches: {
         "Establishment is already trading": {
-          "/establishment-opening-date-retroactive": true
+          "/establishment-opening-date-retroactive": true,
         },
         "Establishment is not trading yet": {
-          "/establishment-opening-date-proactive": true
-        }
-      }
+          "/establishment-opening-date-proactive": true,
+        },
+      },
     },
     "/establishment-opening-date-proactive": {
       on: false,
-      switches: {}
+      switches: {},
     },
     "/establishment-opening-date-retroactive": {
       on: false,
-      switches: {}
+      switches: {},
     },
     "/opening-days-start": {
       on: true,
       switches: {
         "Some days": {
-          "/opening-days-some": true
+          "/opening-days-some": true,
         },
         "Irregular days": {
-          "/opening-days-irregular": true
-        }
-      }
+          "/opening-days-irregular": true,
+        },
+      },
     },
     "/opening-days-some": {
       on: false,
-      switches: {}
+      switches: {},
     },
     "/opening-days-irregular": {
       on: false,
-      switches: {}
+      switches: {},
     },
     "/customer-type": {
       on: true,
-      switches: {}
+      switches: {},
     },
     "/business-type": {
       on: true,
-      switches: {}
+      switches: {},
     },
     "/business-import-export": {
       on: true,
-      switches: {}
+      switches: {},
     },
     "/business-other-details": {
       on: true,
-      switches: {}
+      switches: {},
     },
     "/registration-summary": {
       on: true,
-      switches: {}
+      switches: {},
     },
     "/declaration": {
       on: true,
-      switches: {}
-    }
-  }
+      switches: {},
+    },
+  },
 });
 
 module.exports = configVersionTemplate;

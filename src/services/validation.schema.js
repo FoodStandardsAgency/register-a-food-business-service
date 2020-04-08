@@ -25,7 +25,7 @@ const {
   validatePartnerIsPrimaryContact,
   validatePartnerName,
   validateOpeningHours,
-  validateWaterSupply
+  validateWaterSupply,
 } = require("@slice-and-dice/register-a-food-business-validation");
 
 const schema = {
@@ -40,31 +40,31 @@ const schema = {
             properties: {
               establishment_trading_name: {
                 type: "string",
-                validation: validateEstablishmentTradingName
+                validation: validateEstablishmentTradingName,
               },
               establishment_primary_number: {
                 type: "string",
-                validation: validatePhoneNumber
+                validation: validatePhoneNumber,
               },
               establishment_secondary_number: {
                 type: "string",
-                validation: validatePhoneNumberOptional
+                validation: validatePhoneNumberOptional,
               },
               establishment_email: {
                 type: "string",
-                validation: validateEmail
+                validation: validateEmail,
               },
               establishment_opening_date: {
                 type: "string",
-                validation: validateDate
-              }
+                validation: validateDate,
+              },
             },
             required: [
               "establishment_trading_name",
               "establishment_primary_number",
               "establishment_email",
-              "establishment_opening_date"
-            ]
+              "establishment_opening_date",
+            ],
           },
           operator: {
             type: "object",
@@ -77,89 +77,89 @@ const schema = {
                   properties: {
                     partner_name: {
                       type: "string",
-                      validation: validatePartnerName
+                      validation: validatePartnerName,
                     },
                     partner_is_primary_contact: {
                       type: "boolean",
-                      validation: validatePartnerIsPrimaryContact
-                    }
-                  }
-                }
+                      validation: validatePartnerIsPrimaryContact,
+                    },
+                  },
+                },
               },
               operator_first_name: {
                 type: "string",
-                validation: validateName
+                validation: validateName,
               },
               operator_last_name: {
                 type: "string",
-                validation: validateName
+                validation: validateName,
               },
               operator_postcode: {
                 type: "string",
-                validation: validatePostCode
+                validation: validatePostCode,
               },
               operator_address_line_1: {
                 type: "string",
-                validation: validateMandatoryString
+                validation: validateMandatoryString,
               },
               operator_address_line_2: {
                 type: "string",
-                validation: validateOptionalString
+                validation: validateOptionalString,
               },
               operator_address_line_3: {
                 type: "string",
-                validation: validateOptionalString
+                validation: validateOptionalString,
               },
               operator_town: {
                 type: "string",
-                validation: validateMandatoryString
+                validation: validateMandatoryString,
               },
               operator_primary_number: {
                 type: "string",
-                validation: validatePhoneNumber
+                validation: validatePhoneNumber,
               },
               operator_secondary_number: {
                 type: "string",
-                validation: validatePhoneNumberOptional
+                validation: validatePhoneNumberOptional,
               },
               operator_email: {
                 type: "string",
-                validation: validateEmail
+                validation: validateEmail,
               },
               contact_representative_number: {
                 type: "string",
-                validation: validatePhoneNumber
+                validation: validatePhoneNumber,
               },
               contact_representative_email: {
                 type: "string",
-                validation: validateEmail
+                validation: validateEmail,
               },
               operator_type: {
                 type: "string",
-                validation: validateRadioButtons
+                validation: validateRadioButtons,
               },
               operator_company_name: {
                 type: "string",
-                validation: validateCompanyName
+                validation: validateCompanyName,
               },
               operator_companies_house_number: {
                 type: "string",
-                validation: validateCompaniesHouseNumber
+                validation: validateCompaniesHouseNumber,
               },
               operator_charity_name: {
                 type: "string",
-                validation: validateCharityName
+                validation: validateCharityName,
               },
               operator_charity_number: {
                 type: "string",
-                validation: validateCharityNumber
-              }
+                validation: validateCharityNumber,
+              },
             },
             required: [
               "operator_type",
               "operator_postcode",
               "operator_address_line_1",
-              "operator_town"
+              "operator_town",
             ],
             allOf: [
               {
@@ -167,151 +167,151 @@ const schema = {
                   {
                     required: [
                       "operator_company_name",
-                      "operator_companies_house_number"
-                    ]
+                      "operator_companies_house_number",
+                    ],
                   },
                   { required: ["operator_charity_name"] },
                   { required: ["operator_first_name", "operator_last_name"] },
-                  { required: ["partners"] }
-                ]
+                  { required: ["partners"] },
+                ],
               },
               {
                 oneOf: [
                   {
-                    required: ["operator_primary_number", "operator_email"]
+                    required: ["operator_primary_number", "operator_email"],
                   },
                   {
                     required: [
                       "contact_representative_email",
-                      "contact_representative_number"
-                    ]
-                  }
-                ]
-              }
-            ]
+                      "contact_representative_number",
+                    ],
+                  },
+                ],
+              },
+            ],
           },
           premise: {
             type: "object",
             properties: {
               establishment_postcode: {
                 type: "string",
-                validation: validatePostCode
+                validation: validatePostCode,
               },
               establishment_address_line_1: {
                 type: "string",
-                validation: validateMandatoryString
+                validation: validateMandatoryString,
               },
               establishment_address_line_2: {
                 type: "string",
-                validation: validateOptionalString
+                validation: validateOptionalString,
               },
               establishment_address_line_3: {
                 type: "string",
-                validation: validateOptionalString
+                validation: validateOptionalString,
               },
               establishment_town: {
                 type: "string",
-                validation: validateMandatoryString
+                validation: validateMandatoryString,
               },
               establishment_type: {
                 type: "string",
-                validation: validateRadioButtons
-              }
+                validation: validateRadioButtons,
+              },
             },
             required: [
               "establishment_postcode",
               "establishment_address_line_1",
               "establishment_type",
-              "establishment_town"
-            ]
+              "establishment_town",
+            ],
           },
           activities: {
             type: "object",
             properties: {
               customer_type: {
                 type: "string",
-                validation: validateCustomerType
+                validation: validateCustomerType,
               },
               business_type: {
                 type: "string",
-                validation: validateBusinessType
+                validation: validateBusinessType,
               },
               business_type_search_term: {
                 type: "string",
-                validation: validateFirstLine
+                validation: validateFirstLine,
               },
               import_export_activities: {
                 type: "string",
-                validation: validateImportExportActivities
+                validation: validateImportExportActivities,
               },
               water_supply: {
                 type: "string",
-                validation: validateWaterSupply
+                validation: validateWaterSupply,
               },
               business_other_details: {
                 type: "string",
-                validation: validateBusinessOtherDetails
+                validation: validateBusinessOtherDetails,
               },
               opening_days_irregular: {
                 type: "string",
-                validation: validateOpeningDaysIrregular
+                validation: validateOpeningDaysIrregular,
               },
               opening_day_monday: {
                 type: "boolean",
-                validation: validateOpeningDay
+                validation: validateOpeningDay,
               },
               opening_day_tuesday: {
                 type: "boolean",
-                validation: validateOpeningDay
+                validation: validateOpeningDay,
               },
               opening_day_wednesday: {
                 type: "boolean",
-                validation: validateOpeningDay
+                validation: validateOpeningDay,
               },
               opening_day_thursday: {
                 type: "boolean",
-                validation: validateOpeningDay
+                validation: validateOpeningDay,
               },
               opening_day_friday: {
                 type: "boolean",
-                validation: validateOpeningDay
+                validation: validateOpeningDay,
               },
               opening_day_saturday: {
                 type: "boolean",
-                validation: validateOpeningDay
+                validation: validateOpeningDay,
               },
               opening_day_sunday: {
                 type: "boolean",
-                validation: validateOpeningDay
+                validation: validateOpeningDay,
               },
               opening_hours_monday: {
                 type: "string",
-                validation: validateOpeningHours
+                validation: validateOpeningHours,
               },
               opening_hours_tuesday: {
                 type: "string",
-                validation: validateOpeningHours
+                validation: validateOpeningHours,
               },
               opening_hours_wednesday: {
                 type: "string",
-                validation: validateOpeningHours
+                validation: validateOpeningHours,
               },
               opening_hours_thursday: {
                 type: "string",
-                validation: validateOpeningHours
+                validation: validateOpeningHours,
               },
               opening_hours_friday: {
                 type: "string",
-                validation: validateOpeningHours
+                validation: validateOpeningHours,
               },
               opening_hours_saturday: {
                 type: "string",
-                validation: validateOpeningHours
+                validation: validateOpeningHours,
               },
               opening_hours_sunday: {
                 type: "string",
-                validation: validateOpeningHours
-              }
+                validation: validateOpeningHours,
+              },
             },
             required: [
               "customer_type",
@@ -324,11 +324,16 @@ const schema = {
               "opening_day_thursday",
               "opening_day_friday",
               "opening_day_saturday",
-              "opening_day_sunday"
-            ]
-          }
+              "opening_day_sunday",
+            ],
+          },
         },
-        required: ["establishment_details", "operator", "premise", "activities"]
+        required: [
+          "establishment_details",
+          "operator",
+          "premise",
+          "activities",
+        ],
       },
       declaration: {
         type: "object",
@@ -336,14 +341,14 @@ const schema = {
           declaration1: { type: "string", validation: validateDeclaration },
           declaration2: { type: "string", validation: validateDeclaration },
           declaration3: { type: "string", validation: validateDeclaration },
-          feedback1: { type: "string", validation: validateDeclaration }
+          feedback1: { type: "string", validation: validateDeclaration },
         },
-        required: ["declaration1", "declaration2", "declaration3"]
-      }
+        required: ["declaration1", "declaration2", "declaration3"],
+      },
     },
-    required: ["establishment", "declaration"]
+    required: ["establishment", "declaration"],
   },
-  local_council_url: { type: "string" }
+  local_council_url: { type: "string" },
 };
 
 module.exports = schema;

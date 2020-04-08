@@ -6,13 +6,13 @@
 const {
   getStoredStatus,
   updateStoredStatus,
-  getEmailDistribution
+  getEmailDistribution,
 } = require("../connectors/status/status-db.connector");
 
 const { logEmitter } = require("./logging.service");
 const {
   NOTIFY_STATUS_TEMPLATE,
-  ENVIRONMENT_DESCRIPTION
+  ENVIRONMENT_DESCRIPTION,
 } = require("../config");
 const { sendStatusEmail } = require("../connectors/notify/notify.connector");
 
@@ -23,7 +23,7 @@ const { sendStatusEmail } = require("../connectors/notify/notify.connector");
  *
  * @returns {object} All status values for the specified field name
  */
-const getStatus = async statusName => {
+const getStatus = async (statusName) => {
   logEmitter.emit("functionCall", "status.service", "getStatus");
 
   const status = await getStoredStatus();
@@ -65,12 +65,12 @@ const setStatus = async (statusName, newStatus) => {
       status_value: statusText,
       time: new Date().toLocaleString("en-GB", {
         hour12: false,
-        timeZone: "Europe/London"
-      })
+        timeZone: "Europe/London",
+      }),
     };
 
     const emailList = await getEmailDistribution();
-    emailList.forEach(emailAddress => {
+    emailList.forEach((emailAddress) => {
       try {
         sendStatusEmail(NOTIFY_STATUS_TEMPLATE, emailAddress, data);
       } catch (err) {
@@ -93,7 +93,7 @@ const setStatus = async (statusName, newStatus) => {
  * @returns {integer} The new status value
  */
 
-const incrementStatusCount = async statusName => {
+const incrementStatusCount = async (statusName) => {
   logEmitter.emit("functionCall", "status.service", "incrementStatusCount");
 
   const status = await getStoredStatus();
@@ -131,7 +131,7 @@ const incrementStatusCount = async statusName => {
  *
  * @returns {string} The formatted status name
  */
-const getUserFriendlyStatusName = statusName => {
+const getUserFriendlyStatusName = (statusName) => {
   return statusName
     .replace("Succeeded", "") // Replace first instance of 'Succeeded' with empty string
     .replace("mostRecent", "") // Replace first instance of 'mostRecent' with empty string

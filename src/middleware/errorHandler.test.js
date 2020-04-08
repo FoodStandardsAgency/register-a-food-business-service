@@ -2,7 +2,7 @@ const { errorHandler } = require("./errorHandler");
 
 const res = {
   status: jest.fn(),
-  send: jest.fn()
+  send: jest.fn(),
 };
 
 describe("Middleware: errorHandler", () => {
@@ -12,7 +12,7 @@ describe("Middleware: errorHandler", () => {
   describe("When given an error", () => {
     it("should find the error in errorDetails", () => {
       const error = {
-        name: "tascomiAuth"
+        name: "tascomiAuth",
       };
       errorHandler(error, "request", res);
       expect(res.status).toBeCalledWith(500);
@@ -21,7 +21,7 @@ describe("Middleware: errorHandler", () => {
 
     it("should handle not finding error in errorDetails", () => {
       const error = {
-        name: "randomUnknownError"
+        name: "randomUnknownError",
       };
       errorHandler(error, "request", res);
       expect(res.status).toBeCalledWith(500);
@@ -36,17 +36,17 @@ describe("Middleware: errorHandler", () => {
         validationErrors: [
           {
             property: "email",
-            message: "invalid"
-          }
-        ]
+            message: "invalid",
+          },
+        ],
       };
       errorHandler(error, "request", res);
       expect(res.status).toBeCalledWith(400);
       expect(res.send.mock.calls[0][0].userMessages).toEqual([
         {
           property: "email",
-          message: "invalid"
-        }
+          message: "invalid",
+        },
       ]);
     });
   });
@@ -55,7 +55,7 @@ describe("Middleware: errorHandler", () => {
     it("should append developer mesage with raw error", () => {
       const error = {
         name: "notifyInvalidTemplate",
-        message: "raw error message"
+        message: "raw error message",
       };
       errorHandler(error, "request", res);
       expect(res.status).toBeCalledWith(500);
@@ -69,7 +69,7 @@ describe("Middleware: errorHandler", () => {
     it("should append developer mesage with raw error", () => {
       const error = {
         name: "mongoConnectionError",
-        message: "raw error message"
+        message: "raw error message",
       };
       errorHandler(error, "request", res);
       expect(res.status).toBeCalledWith(500);
@@ -83,7 +83,7 @@ describe("Middleware: errorHandler", () => {
     it("should append developer mesage with raw error", () => {
       const error = {
         name: "fsaRnFetchError",
-        message: "unable to verify the first certificate"
+        message: "unable to verify the first certificate",
       };
       errorHandler(error, "request", res);
       expect(res.status).toBeCalledWith(500);
@@ -97,7 +97,7 @@ describe("Middleware: errorHandler", () => {
     it("should append developer mesage with the URL", () => {
       const error = {
         name: "localCouncilNotFound",
-        message: "some-invalid-local-council"
+        message: "some-invalid-local-council",
       };
       errorHandler(error, "request", res);
       expect(res.status).toBeCalledWith(400);
@@ -111,7 +111,7 @@ describe("Middleware: errorHandler", () => {
     it("should append developer mesage with raw error", () => {
       const error = {
         name: "missingRequiredHeader",
-        message: "missing registration-data-version header"
+        message: "missing registration-data-version header",
       };
       errorHandler(error, "request", res);
       expect(res.status).toBeCalledWith(400);
@@ -124,7 +124,7 @@ describe("Middleware: errorHandler", () => {
   describe("When given an unknown error", () => {
     it("should return 500 error", () => {
       const error = {
-        message: "Unknown error"
+        message: "Unknown error",
       };
       errorHandler(error, "request", res);
       expect(res.status).toBeCalledWith(500);

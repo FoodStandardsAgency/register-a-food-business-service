@@ -19,21 +19,21 @@ jest.mock("../../connectors/registrationDb/registrationDb", () => ({
   destroyOperatorByEstablishmentId: jest.fn(),
   destroyPremiseByEstablishmentId: jest.fn(),
   destroyActivitiesByEstablishmentId: jest.fn(),
-  managedTransaction: jest.fn()
+  managedTransaction: jest.fn(),
 }));
 
 jest.mock("../../connectors/notify/notify.connector", () => ({
-  sendSingleEmail: jest.fn()
+  sendSingleEmail: jest.fn(),
 }));
 
 jest.mock("../../connectors/tascomi/tascomi.connector", () => ({
   createFoodBusinessRegistration: jest.fn(),
-  createReferenceNumber: jest.fn()
+  createReferenceNumber: jest.fn(),
 }));
 
 jest.mock("../../connectors/configDb/configDb.connector", () => ({
   getAllLocalCouncilConfig: jest.fn(),
-  addDeletedId: jest.fn()
+  addDeletedId: jest.fn(),
 }));
 
 jest.mock("../../services/statusEmitter.service");
@@ -45,16 +45,16 @@ jest.mock("node-fetch");
 jest.mock("../../services/pdf.service");
 
 jest.mock("../../connectors/cacheDb/cacheDb.connector", () => ({
-  updateStatusInCache: jest.fn()
+  updateStatusInCache: jest.fn(),
 }));
 
 const {
   createFoodBusinessRegistration,
-  createReferenceNumber
+  createReferenceNumber,
 } = require("../../connectors/tascomi/tascomi.connector");
 
 const {
-  getAllLocalCouncilConfig
+  getAllLocalCouncilConfig,
 } = require("../../connectors/configDb/configDb.connector");
 
 const mockLocalCouncilConfig = require("../../connectors/configDb/mockLocalCouncilConfig.json");
@@ -81,7 +81,7 @@ const {
   destroyDeclarationByRegId,
   destroyOperatorByEstablishmentId,
   destroyPremiseByEstablishmentId,
-  destroyActivitiesByEstablishmentId
+  destroyActivitiesByEstablishmentId,
 } = require("../../connectors/registrationDb/registrationDb");
 
 const {
@@ -91,11 +91,11 @@ const {
   sendTascomiRegistration,
   getRegistrationMetaData,
   getLcContactConfig,
-  getLcAuth
+  getLcAuth,
 } = require("./registration.service");
 
 const {
-  updateStatusInCache
+  updateStatusInCache,
 } = require("../../connectors/cacheDb/cacheDb.connector");
 
 let result;
@@ -131,15 +131,15 @@ describe("Function: saveRegistration: ", () => {
       activitiesId: "562",
       partnerIds: ["145", "145"],
       premiseId: "495",
-      declarationId: "901"
+      declarationId: "901",
     }));
     updateStatusInCache.mockImplementation(() => {});
     result = await saveRegistration(
       {
         establishment: {
           establishment_details: {},
-          operator: { partners: ["John", "Doe"] }
-        }
+          operator: { partners: ["John", "Doe"] },
+        },
       },
       123
     );
@@ -153,7 +153,7 @@ describe("Function: saveRegistration: ", () => {
       activitiesId: "562",
       partnerIds: ["145", "145"],
       premiseId: "495",
-      declarationId: "901"
+      declarationId: "901",
     });
   });
 
@@ -177,8 +177,8 @@ describe("Function: saveRegistration: ", () => {
         result = await saveRegistration(
           {
             establishment: {
-              establishment_details: {}
-            }
+              establishment_details: {},
+            },
           },
           123
         );
@@ -234,7 +234,7 @@ describe("Function: getFullRegistrationByFsaRn: ", () => {
         operator: "operator",
         activities: "activities",
         premise: "premise",
-        declaration: "declaration"
+        declaration: "declaration",
       });
     });
   });
@@ -258,7 +258,7 @@ describe("Function: deleteRegistrationByFsaRn: ", () => {
   describe("When getRegistrationByFsaRn is successul", () => {
     beforeEach(async () => {
       getRegistrationByFsaRn.mockImplementation(() => ({
-        id: 1
+        id: 1,
       }));
       destroyRegistrationById.mockImplementation(() => {
         return "";
@@ -305,22 +305,22 @@ describe("Function: sendTascomiRegistration: ", () => {
   let exampleCouncilAuthKey = {
     url: "url",
     public_key: "key",
-    private_key: "key"
+    private_key: "key",
   };
   let exampleLocalCouncil = {
     local_council_url: "cardiff",
-    auth: exampleCouncilAuthKey
+    auth: exampleCouncilAuthKey,
   };
   describe("When calls are successful", () => {
     beforeEach(async () => {
       jest.clearAllMocks();
       createFoodBusinessRegistration.mockImplementation(
-        () => new Promise(resolve => resolve('{ "id": "123"}'))
+        () => new Promise((resolve) => resolve('{ "id": "123"}'))
       );
       updateStatusInCache.mockImplementation(() => {});
       createReferenceNumber.mockImplementation(
         () =>
-          new Promise(resolve =>
+          new Promise((resolve) =>
             resolve('{ "id": "123", "online_reference": "0000123"}')
           )
       );
@@ -360,10 +360,10 @@ describe("Function: sendTascomiRegistration: ", () => {
     beforeEach(async () => {
       jest.clearAllMocks();
       createFoodBusinessRegistration.mockImplementation(
-        () => new Promise(resolve => resolve('{ "id": "123"}'))
+        () => new Promise((resolve) => resolve('{ "id": "123"}'))
       );
       createReferenceNumber.mockImplementation(
-        () => new Promise(reject => reject('{ "id": 0 }'))
+        () => new Promise((reject) => reject('{ "id": 0 }'))
       );
       updateStatusInCache.mockImplementation(() => {});
       getAllLocalCouncilConfig.mockImplementation(() => [
@@ -372,9 +372,9 @@ describe("Function: sendTascomiRegistration: ", () => {
           auth: {
             url: "url",
             public_key: "key",
-            private_key: "key"
-          }
-        }
+            private_key: "key",
+          },
+        },
       ]);
       try {
         await sendTascomiRegistration({ fsa_rn: "test" }, exampleLocalCouncil);
@@ -405,7 +405,7 @@ describe("Function: getRegistrationMetaData: ", () => {
       process.env.NODE_ENV = "not production";
       fetch.mockImplementation(() => ({
         status: 200,
-        json: () => ({ "fsa-rn": "12345", reg_submission_date: "18/03/2018" })
+        json: () => ({ "fsa-rn": "12345", reg_submission_date: "18/03/2018" }),
       }));
       result = await getRegistrationMetaData(1234);
     });
@@ -428,7 +428,7 @@ describe("Function: getRegistrationMetaData: ", () => {
       process.env.NODE_ENV = "production";
       fetch.mockImplementation(() => ({
         status: 200,
-        json: () => ({ "fsa-rn": "12345", reg_submission_date: "18/03/2018" })
+        json: () => ({ "fsa-rn": "12345", reg_submission_date: "18/03/2018" }),
       }));
       result = await getRegistrationMetaData(1234);
     });
@@ -450,7 +450,7 @@ describe("Function: getRegistrationMetaData: ", () => {
     beforeEach(async () => {
       fetch.mockImplementation(() => ({
         status: 100,
-        json: () => ({ "fsa-rn": undefined })
+        json: () => ({ "fsa-rn": undefined }),
       }));
       result = await getRegistrationMetaData();
     });
@@ -632,7 +632,7 @@ describe("Function: getLcAuth: ", () => {
       expect(result).toEqual({
         url: "url",
         public_key: "key",
-        private_key: "key"
+        private_key: "key",
       });
     });
   });

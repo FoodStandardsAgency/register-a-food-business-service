@@ -9,7 +9,7 @@ let configDB = undefined;
 
 let allLcConfigData;
 
-const establishConnectionToMongo = async collectionName => {
+const establishConnectionToMongo = async (collectionName) => {
   if (process.env.DOUBLE_MODE === "true") {
     logEmitter.emit(
       "doubleMode",
@@ -20,7 +20,7 @@ const establishConnectionToMongo = async collectionName => {
   } else {
     if (configDB === undefined) {
       client = await mongodb.MongoClient.connect(CONFIGDB_URL, {
-        useNewUrlParser: true
+        useNewUrlParser: true,
       });
       configDB = client.db("register_a_food_business_config");
     }
@@ -39,7 +39,7 @@ const connectToConfigDb = async () => {
   } else {
     if (configDB === undefined) {
       client = await mongodb.MongoClient.connect(CONFIGDB_URL, {
-        useNewUrlParser: true
+        useNewUrlParser: true,
       });
       configDB = client.db("register_a_food_business_config");
     }
@@ -53,12 +53,12 @@ const disconnectConfigDb = async () => {
   }
 };
 
-const ConfigVersionCollection = async database =>
+const ConfigVersionCollection = async (database) =>
   await database.collection("configVersion");
-const LocalCouncilConfigDbCollection = async database =>
+const LocalCouncilConfigDbCollection = async (database) =>
   await database.collection("lcConfig");
 
-const getConfigVersion = async regDataVersion => {
+const getConfigVersion = async (regDataVersion) => {
   logEmitter.emit("functionCall", "configDb.connector", "getConfigVersion");
 
   try {
@@ -66,7 +66,7 @@ const getConfigVersion = async regDataVersion => {
       "configVersion"
     );
     const configVersionData = await configVersionCollection.findOne({
-      _id: regDataVersion
+      _id: regDataVersion,
     });
     statusEmitter.emit("incrementCount", "getConfigFromDbSucceeded");
     statusEmitter.emit("setStatus", "mostRecentGetConfigFromDbSucceeded", true);
@@ -101,13 +101,13 @@ const getConfigVersion = async regDataVersion => {
 
 const findCouncilById = async (collection, id) => {
   return await collection.findOne({
-    _id: id
+    _id: id,
   });
 };
 
 const findCouncilByUrl = async (collection, url) => {
   return await collection.findOne({
-    local_council_url: url
+    local_council_url: url,
   });
 };
 
@@ -160,7 +160,7 @@ const clearMongoConnection = () => {
   configDB = undefined;
 };
 
-const addDeletedId = async id => {
+const addDeletedId = async (id) => {
   const deletedIdsCollection = await establishConnectionToMongo("deletedIds");
 
   return deletedIdsCollection.insertOne({ id: id });
@@ -178,5 +178,5 @@ module.exports = {
   addDeletedId,
   getConfigVersion,
   findCouncilByUrl,
-  findCouncilById
+  findCouncilById,
 };

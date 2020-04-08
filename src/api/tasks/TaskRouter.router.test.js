@@ -1,8 +1,8 @@
 jest.mock("express", () => ({
   Router: jest.fn(() => ({
     post: jest.fn(),
-    get: jest.fn()
-  }))
+    get: jest.fn(),
+  })),
 }));
 jest.mock("./Tasks.controller");
 
@@ -13,7 +13,7 @@ const {
   saveRegistrationToTempStoreAction,
   sendAllOutstandingRegistrationsToTascomiAction,
   sendAllNotificationsForRegistrationsAction,
-  saveAllOutstandingRegistrationsToTempStoreAction
+  saveAllOutstandingRegistrationsToTempStoreAction,
 } = require("./Tasks.controller");
 
 describe("/api/tasks route: ", () => {
@@ -30,7 +30,7 @@ describe("/api/tasks route: ", () => {
 
       req = { query: {} };
       res = {
-        send: jest.fn()
+        send: jest.fn(),
       };
       handler(req, res);
     });
@@ -50,7 +50,7 @@ describe("/api/tasks route: ", () => {
 
       req = { query: { dryrun: true } };
       res = {
-        send: jest.fn()
+        send: jest.fn(),
       };
       handler(req, res);
       expect(
@@ -67,7 +67,7 @@ describe("/api/tasks route: ", () => {
 
       req = { query: {} };
       res = {
-        send: jest.fn()
+        send: jest.fn(),
       };
       handler(req, res);
     });
@@ -85,7 +85,7 @@ describe("/api/tasks route: ", () => {
 
       req = { query: { dryrun: true, throttle: 3000 } };
       res = {
-        send: jest.fn()
+        send: jest.fn(),
       };
       handler(req, res);
 
@@ -105,7 +105,7 @@ describe("/api/tasks route: ", () => {
 
       req = { query: {} };
       res = {
-        send: jest.fn()
+        send: jest.fn(),
       };
       handler(req, res);
     });
@@ -125,7 +125,7 @@ describe("/api/tasks route: ", () => {
 
       req = { query: { dryrun: true, throttle: 3000 } };
       res = {
-        send: jest.fn()
+        send: jest.fn(),
       };
       handler(req, res);
 
@@ -143,7 +143,7 @@ describe("/api/tasks route: ", () => {
       handler = router.get.mock.calls[1][1];
       req = { params: { fsaId } };
       res = {
-        send: jest.fn()
+        send: jest.fn(),
       };
       handler(req, res);
     });
@@ -165,7 +165,7 @@ describe("/api/tasks route: ", () => {
       handler = router.get.mock.calls[3][1];
       req = { params: { fsaId } };
       res = {
-        send: jest.fn()
+        send: jest.fn(),
       };
       handler(req, res);
     });
@@ -187,7 +187,7 @@ describe("/api/tasks route: ", () => {
       handler = router.get.mock.calls[4][1];
       req = { params: { fsaId } };
       res = {
-        send: jest.fn()
+        send: jest.fn(),
       };
       handler(req, res);
     });

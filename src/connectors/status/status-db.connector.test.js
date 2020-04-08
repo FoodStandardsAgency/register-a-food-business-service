@@ -6,7 +6,7 @@ const {
   getStoredStatus,
   updateStoredStatus,
   getEmailDistribution,
-  clearMongoConnection
+  clearMongoConnection,
 } = require("./status-db.connector");
 const storedStatusMock = require("../../__mocks__/storedStatusMock.json");
 const mongodb = require("mongodb");
@@ -14,7 +14,7 @@ const { statusCollectionDouble } = require("./status-db.double");
 const testArray = ["test@test.com"];
 const testEmailDistributionObject = {
   _id: "emailDistribution",
-  emailAddresses: testArray
+  emailAddresses: testArray,
 };
 
 describe("Function: getStoredStatus", () => {
@@ -24,9 +24,9 @@ describe("Function: getStoredStatus", () => {
       mongodb.MongoClient.connect.mockImplementation(() => ({
         db: () => ({
           collection: () => ({
-            findOne: () => storedStatusMock
-          })
-        })
+            findOne: () => storedStatusMock,
+          }),
+        }),
       }));
       result = await getStoredStatus();
     });
@@ -63,11 +63,11 @@ describe("Function: getStoredStatus", () => {
       mongodb.MongoClient.connect.mockImplementation(() => ({
         db: () => ({
           collection: () => ({
-            findOne: () => storedStatusMock
-          })
+            findOne: () => storedStatusMock,
+          }),
         }),
         topology: null,
-        close: () => closeConnection()
+        close: () => closeConnection(),
       }));
       result1 = await getStoredStatus();
       result2 = await getStoredStatus();
@@ -90,13 +90,13 @@ describe("Function: getStoredStatus", () => {
       mongodb.MongoClient.connect.mockImplementation(() => ({
         db: () => ({
           collection: () => ({
-            findOne: () => storedStatusMock
-          })
+            findOne: () => storedStatusMock,
+          }),
         }),
         topology: {
-          isConnected: () => false
+          isConnected: () => false,
         },
-        close: () => closeConnection()
+        close: () => closeConnection(),
       }));
       result1 = await getStoredStatus();
       result2 = await getStoredStatus();
@@ -132,13 +132,13 @@ describe("Function: getStoredStatus", () => {
       mongodb.MongoClient.connect.mockImplementation(() => ({
         db: () => ({
           collection: () => ({
-            findOne: () => storedStatusMock
-          })
+            findOne: () => storedStatusMock,
+          }),
         }),
         topology: {
-          isConnected: () => true
+          isConnected: () => true,
         },
-        close: () => closeConnection()
+        close: () => closeConnection(),
       }));
       result1 = await getStoredStatus();
       result2 = await getStoredStatus();
@@ -163,9 +163,9 @@ describe("Function: updateStoredStatus", () => {
       db: () => ({
         collection: () => ({
           findOne: () => storedStatusMock,
-          updateOne: (id, set) => set.$set.submissionsSucceeded
-        })
-      })
+          updateOne: (id, set) => set.$set.submissionsSucceeded,
+        }),
+      }),
     }));
     result = await updateStoredStatus("submissionsSucceeded", 3);
   });
@@ -202,9 +202,9 @@ describe("Function: getEmailDistribution", () => {
       mongodb.MongoClient.connect.mockImplementation(() => ({
         db: () => ({
           collection: () => ({
-            findOne: () => testEmailDistributionObject
-          })
-        })
+            findOne: () => testEmailDistributionObject,
+          }),
+        }),
       }));
       result = await getEmailDistribution();
     });

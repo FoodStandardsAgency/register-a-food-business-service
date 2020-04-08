@@ -4,44 +4,44 @@ jest.mock("./validation.schema", () => ({
     properties: {
       operator_first_name: {
         type: "string",
-        validation: input => input === "true"
+        validation: (input) => input === "true",
       },
       operator_last_name: {
         type: "string",
-        validation: input => input === "true"
+        validation: (input) => input === "true",
       },
       operator_primary_number: {
         type: "string",
-        validation: input => input === "true"
+        validation: (input) => input === "true",
       },
       operator_company_name: {
         type: "string",
-        validation: input => input === "true"
+        validation: (input) => input === "true",
       },
       operator_companies_house_number: {
         type: "string",
-        validation: input => input === "true"
+        validation: (input) => input === "true",
       },
       operator_charity_name: {
         type: "string",
-        validation: input => input === "true"
+        validation: (input) => input === "true",
       },
       operator_charity_number: {
         type: "string",
-        validation: input => input === "true"
+        validation: (input) => input === "true",
       },
       establishment_primary_number: {
         type: "string",
-        validation: input => input === "true"
-      }
-    }
-  }
+        validation: (input) => input === "true",
+      },
+    },
+  },
 }));
 
 jest.mock("./logging.service", () => ({
   logEmitter: {
-    emit: jest.fn()
-  }
+    emit: jest.fn(),
+  },
 }));
 
 const { validate } = require("./validation.service");
@@ -58,7 +58,7 @@ describe("Function: validate", () => {
         operator_companies_house_number: "true",
         operator_charity_name: "true",
         operator_charity_number: "true",
-        establishment_primary_number: "true"
+        establishment_primary_number: "true",
       };
 
       // Act
@@ -80,7 +80,7 @@ describe("Function: validate", () => {
         operator_companies_house_number: "false",
         operator_charity_name: "false",
         operator_charity_number: "false",
-        establishment_primary_number: "false"
+        establishment_primary_number: "false",
       };
 
       // Act
@@ -113,7 +113,7 @@ describe("Function: validate", () => {
         operator_company_name: "true",
         operator_companies_house_number: "true",
         operator_charity_name: "true",
-        operator_charity_number: "true"
+        operator_charity_number: "true",
       };
 
       // Act

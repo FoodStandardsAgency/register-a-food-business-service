@@ -1,6 +1,6 @@
 jest.mock("winston", () => ({
   info: jest.fn(),
-  error: jest.fn()
+  error: jest.fn(),
 }));
 const { info, error } = require("winston");
 const { logEmitter } = require("./logging.service");
@@ -23,7 +23,7 @@ describe("logEmitter", () => {
   describe("on functionFail event", () => {
     it("should call winston error", () => {
       logEmitter.emit("functionFail", "module", "function", {
-        message: "error"
+        message: "error",
       });
       expect(error).toBeCalled();
     });

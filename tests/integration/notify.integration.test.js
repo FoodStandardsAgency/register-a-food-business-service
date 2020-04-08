@@ -1,6 +1,6 @@
 require("dotenv").config();
 const {
-  sendSingleEmail
+  sendSingleEmail,
 } = require("../../src/connectors/notify/notify.connector");
 
 const validTemplateId = "integration-test";
@@ -8,7 +8,7 @@ const invalidTemplateId = "1a1aaa-11aa-11a1-111a-Z11111a11a19";
 const validRecipientEmail = "fsatestemail.valid@gmail.com";
 const invalidRecipientEmail = "not-in-an-email-format";
 const testFlattenedData = {
-  establishment_trading_name: "example"
+  establishment_trading_name: "example",
 };
 
 describe("Notify integration: sendSingleEmail", () => {
@@ -20,7 +20,7 @@ describe("Notify integration: sendSingleEmail", () => {
     const notifyArguments = [
       validTemplateId,
       validRecipientEmail,
-      testFlattenedData
+      testFlattenedData,
     ];
 
     it("Should return an ID showing a successful email send", async () => {
@@ -33,7 +33,7 @@ describe("Notify integration: sendSingleEmail", () => {
     const notifyArguments = [
       validTemplateId,
       invalidRecipientEmail,
-      testFlattenedData
+      testFlattenedData,
     ];
 
     it("Should return null", async () => {
@@ -46,7 +46,7 @@ describe("Notify integration: sendSingleEmail", () => {
     const notifyArguments = [
       invalidTemplateId,
       validRecipientEmail,
-      testFlattenedData
+      testFlattenedData,
     ];
 
     it("Should return null", async () => {
@@ -59,7 +59,7 @@ describe("Notify integration: sendSingleEmail", () => {
     const notifyArguments = [
       validTemplateId,
       validRecipientEmail,
-      { this_should_include_estabishment_trading_name: "not there" }
+      { this_should_include_estabishment_trading_name: "not there" },
     ];
 
     it("Should return null", async () => {

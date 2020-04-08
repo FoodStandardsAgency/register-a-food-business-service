@@ -37,7 +37,7 @@ const establishConnectionToMongo = async () => {
           client.close();
         }
         client = await mongodb.MongoClient.connect(CONFIGDB_URL, {
-          useNewUrlParser: true
+          useNewUrlParser: true,
         });
       } catch (err) {
         logEmitter.emit(
@@ -75,7 +75,7 @@ const getEmailDistribution = async () => {
   try {
     await establishConnectionToMongo();
     let emailList = await statusCollection.findOne({
-      _id: "emailDistribution"
+      _id: "emailDistribution",
     });
 
     logEmitter.emit(
@@ -110,7 +110,7 @@ const getStoredStatus = async () => {
   try {
     await establishConnectionToMongo();
     const storedStatus = await statusCollection.findOne({
-      _id: "backEndStatus"
+      _id: "backEndStatus",
     });
     logEmitter.emit(
       "functionSuccess",
@@ -181,5 +181,5 @@ module.exports = {
   getStoredStatus,
   clearMongoConnection,
   updateStoredStatus,
-  getEmailDistribution
+  getEmailDistribution,
 };

@@ -5,7 +5,7 @@ const {
   createGreyLine,
   createNewSpace,
   createFsaRnBox,
-  createLcContactSection
+  createLcContactSection,
 } = require("./pdf-styles");
 
 describe("Function: createTitle", () => {
@@ -91,7 +91,7 @@ describe("Function: createFsaRnBox", () => {
   describe("When given single local council", () => {
     beforeEach(() => {
       result = createFsaRnBox("123456", {
-        local_council: "cardiff"
+        local_council: "cardiff",
       });
     });
 
@@ -112,7 +112,7 @@ describe("Function: createFsaRnBox", () => {
     beforeEach(() => {
       result = createFsaRnBox("123456", {
         local_council_hygeine: "west-dorset",
-        local_council_standards: "dorset"
+        local_council_standards: "dorset",
       });
     });
 
@@ -146,7 +146,7 @@ describe("Function: createLcContactSection", () => {
   describe("When given seperate hygeine and standards councils", () => {
     const lcInfo = {
       local_council_hygeine: "City of Cardiff Council",
-      local_council_standards: "Standards Council"
+      local_council_standards: "Standards Council",
     };
     beforeEach(() => {
       result = createLcContactSection(lcInfo);

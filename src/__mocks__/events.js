@@ -1,3 +1,3 @@
 module.exports = {
-  on: jest.fn()
+  on: jest.fn(),
 };
