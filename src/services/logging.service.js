@@ -1,5 +1,46 @@
 const EventEmitter = require("events");
-const { info, error, debug, warn } = require("winston");
+const { createLogger, format, transports } = require('winston');
+
+const logger = createLogger({
+  level: 'info',
+  format: format.combine(
+      format.timestamp({
+        format: 'YYYY-MM-DD HH:mm:ss'
+      }),
+      format.errors({ stack: true }),
+      format.splat(),
+      format.json()
+  ),
+  defaultMeta: { service: 'rafbs' },
+  transports: [
+    new transports.Console({
+      format: format.combine(
+          format.colorize(),
+          format.simple()
+      )
+    }),
+
+    //
+    // - Write to all logs with level `info` and below to `quick-start-combined.log`.
+    // - Write all logs error (and below) to `quick-start-error.log`.
+    //
+    new transports.File({ filename: 'error.log', level: 'error' }),
+    new transports.File({ filename: 'combined.log' })
+  ]
+});
+
+//
+// If we're not in production then **ALSO** log to the `console`
+// with the colorized simple format.
+//
+if (process.env.NODE_ENV !== 'production') {
+  logger.add(new transports.Console({
+    format: format.combine(
+        format.colorize(),
+        format.simple()
+    )
+  }));
+}
 
 class LogEmitter extends EventEmitter {}
 
@@ -15,35 +56,35 @@ const DOUBLE_MODE = "doubleMode";
 const logEmitter = new LogEmitter();
 
 logEmitter.on(FUNCTION_CALL, (module, functionName) => {
-  info(`${module}: ${functionName} called`);
+  logger.info(`${module}: ${functionName} called`);
 });
 
 logEmitter.on(FUNCTION_SUCCESS, (module, functionName) => {
-  info(`${module}: ${functionName} successful`);
+  logger.info(`${module}: ${functionName} successful`);
 });
 
 logEmitter.on(FUNCTION_FAIL, (module, functionName, err) => {
-  error(`${module}: ${functionName} failed with: ${err.message}`);
+  logger.error(`${module}: ${functionName} failed with: ${err.message}`);
 });
 
 logEmitter.on(DOUBLE_MODE, (module, functionName) => {
-  info(`${module}: ${functionName}: running in double mode`);
+  logger.info(`${module}: ${functionName}: running in double mode`);
 });
 
 logEmitter.on(INFO, message => {
-  info(message);
+  logger.info(message);
 });
 
 logEmitter.on(WARN, message => {
-  warn(message);
+  logger.warn(message);
 });
 
 logEmitter.on(DEBUG, message => {
-  debug(message);
+  logger.debug(message);
 });
 
 logEmitter.on(ERROR, message => {
-  error(message);
+  logger.error(message);
 });
 
 module.exports = {

@@ -1,8 +1,8 @@
 const express = require("express");
-const winston = require("winston");
 const bodyParser = require("body-parser");
 const helmet = require("helmet");
 const rateLimit = require("express-rate-limit");
+const { logEmitter, INFO } = require("./services/logging.service");
 
 const { routers } = require("./api/routers");
 const { errorHandler } = require("./middleware/errorHandler");
@@ -21,5 +21,5 @@ app.use("/", routers());
 app.use(errorHandler);
 
 app.listen(port, () => {
-  winston.info(`App Started listening on port ${port}`);
+  logEmitter.emit(INFO, `App Started listening on port ${port}`);
 });
