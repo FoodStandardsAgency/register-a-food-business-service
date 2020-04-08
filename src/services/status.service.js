@@ -14,7 +14,7 @@ const {
   NOTIFY_STATUS_TEMPLATE,
   ENVIRONMENT_DESCRIPTION
 } = require("../config");
-const { sendSingleEmail } = require("../connectors/notify/notify.connector");
+const { sendStatusEmail } = require("../connectors/notify/notify.connector");
 
 /**
  * Function that returns the status
@@ -72,7 +72,7 @@ const setStatus = async (statusName, newStatus) => {
     const emailList = await getEmailDistribution();
     emailList.forEach(emailAddress => {
       try {
-        sendSingleEmail(NOTIFY_STATUS_TEMPLATE, emailAddress, data);
+        sendStatusEmail(NOTIFY_STATUS_TEMPLATE, emailAddress, data);
       } catch (err) {
         logEmitter.emit("functionFail", "status.service", "setStatus", err);
         throw err;

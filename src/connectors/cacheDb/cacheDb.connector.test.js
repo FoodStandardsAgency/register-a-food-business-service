@@ -6,8 +6,7 @@ const {
   cacheRegistration,
   clearMongoConnection,
   updateStatusInCache,
-  updateNotificationOnSent,
-  addNotificationToStatus
+  updateNotificationOnSent
 } = require("./cacheDb.connector");
 
 describe("Connector: cacheDb", () => {
@@ -159,80 +158,68 @@ describe("Connector: cacheDb", () => {
       });
     });
 
-    describe("Function: updateNotificationOnCompleted", () => {
+    describe("Function: updateNotificationOnSent", () => {
       describe("When success", () => {
         let result;
-        beforeEach(async () => {
-          process.env.DOUBLE_MODE = false;
-          clearMongoConnection();
-          mongodb.MongoClient.connect.mockImplementation(async () => ({
-            db: () => ({
-              collection: () => ({
-                findOne: () => ({
-                  status: {
-                    notifications: [
-                      {
-                        type: "LC",
-                        address: "example@example.com",
-                        time: undefined,
-                        sent: undefined
-                      }
-                    ]
-                  }
-                }),
-                updateOne: () => {}
-              })
-            })
-          }));
+        let testStatus = {
+          notifications: [
+            {
+              type: "LC",
+              address: "fsatestemail.valid@gmail.com",
+              time: undefined,
+              sent: undefined
+            }
+          ]
+        };
 
-          try {
-            await updateNotificationOnSent("123", "LC", "example@example.com");
-          } catch (err) {
-            result = err;
+        let testEmailsToSend = [
+          {
+            type: "LC",
+            address: "fsatestemail.valid@gmail.com",
+            templateId: "testtempate234315431asdfasf"
           }
-        });
+        ];
 
-        it("should have called this", () => {
-          expect(result).toBe(undefined);
-        });
-      });
+        it("check it creates notification rows correctly", () => {
+          result = updateNotificationOnSent(
+            testStatus,
+            "FAKE-FSAID-12345",
+            testEmailsToSend,
+            0,
+            true,
+            "fakedate"
+          );
 
-      describe("When Failure", () => {
-        let result;
-        beforeEach(async () => {
-          process.env.DOUBLE_MODE = false;
-          clearMongoConnection();
-          mongodb.MongoClient.connect.mockImplementation(async () => ({
-            db: () => ({
-              collection: () => ({
-                findOne: () => ({
-                  status: {
-                    notifications: [
-                      {
-                        type: "LC",
-                        address: "example@example.com",
-                        time: undefined,
-                        sent: undefined
-                      }
-                    ]
-                  }
-                }),
-                updateOne: () => {
-                  throw new Error("Example mongo error");
-                }
-              })
-            })
-          }));
+          expect(result).toStrictEqual({
+            notifications: [
+              {
+                address: "fsatestemail.valid@gmail.com",
+                type: "LC",
+                sent: true,
+                time: "fakedate"
+              }
+            ]
+          });
 
-          try {
-            await updateNotificationOnSent("123", "LC", "example@example.com");
-          } catch (err) {
-            result = err;
-          }
-        });
+          result = updateNotificationOnSent(
+            testStatus,
+            "FAKE-FSAID-12345",
+            testEmailsToSend,
+            0,
+            false,
+            "fakedate"
+          );
 
-        it("Shouldn't throw an error", () => {
-          expect(result).toBe(undefined);
+          expect(result).toStrictEqual({
+            notifications: [
+              {
+                address: "fsatestemail.valid@gmail.com",
+                type: "LC",
+                sent: false,
+                time: "fakedate"
+              }
+            ]
+          });
         });
       });
     });
@@ -290,76 +277,6 @@ describe("Connector: cacheDb", () => {
 
       it("Shouldn't throw an error", () => {
         expect(result).toBe(undefined);
-      });
-    });
-
-    describe("Function: addNotificationToCompleted", () => {
-      describe("When success", () => {
-        let result;
-        beforeEach(async () => {
-          process.env.DOUBLE_MODE = false;
-          clearMongoConnection();
-          mongodb.MongoClient.connect.mockImplementation(async () => ({
-            db: () => ({
-              collection: () => ({
-                findOne: () => ({
-                  completed: []
-                }),
-                updateOne: () => {}
-              })
-            })
-          }));
-
-          try {
-            await addNotificationToStatus("123", [
-              {
-                type: "LC",
-                address: "example@example.com"
-              }
-            ]);
-          } catch (err) {
-            result = err;
-          }
-        });
-
-        it("should have called this", () => {
-          expect(result).toBe(undefined);
-        });
-      });
-
-      describe("When Failure", () => {
-        let result;
-        beforeEach(async () => {
-          process.env.DOUBLE_MODE = false;
-          clearMongoConnection();
-          mongodb.MongoClient.connect.mockImplementation(async () => ({
-            db: () => ({
-              collection: () => ({
-                findOne: () => ({
-                  completed: []
-                }),
-                updateOne: () => {
-                  throw new Error("Example mongo error");
-                }
-              })
-            })
-          }));
-
-          try {
-            await addNotificationToStatus("123", [
-              {
-                type: "LC",
-                address: "example@example.com"
-              }
-            ]);
-          } catch (err) {
-            result = err;
-          }
-        });
-
-        it("Shouldn't throw an error", () => {
-          expect(result).toBe(undefined);
-        });
       });
     });
   });

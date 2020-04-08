@@ -1,9 +1,10 @@
 const EventEmitter = require("events");
-const { info, error, debug } = require("winston");
+const { info, error, debug, warn } = require("winston");
 
 class LogEmitter extends EventEmitter {}
 
 const DEBUG = "debug";
+const WARN = "warning";
 const ERROR = "error";
 const INFO = "info";
 const FUNCTION_CALL = "functionCall";
@@ -31,6 +32,10 @@ logEmitter.on(DOUBLE_MODE, (module, functionName) => {
 
 logEmitter.on(INFO, message => {
   info(message);
+});
+
+logEmitter.on(WARN, message => {
+  warn(message);
 });
 
 logEmitter.on(DEBUG, message => {

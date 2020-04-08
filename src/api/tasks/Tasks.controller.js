@@ -18,7 +18,8 @@ const {
   updateStatusInCache,
   findAllOutstandingSavesToTempStore,
   findOutstandingTascomiRegistrationsFsaIds,
-  findAllOutstandingNotificationsRegistrations
+  findAllBlankRegistrations,
+  findAllFailedNotificationsRegistrations
 } = require("../../connectors/cacheDb/cacheDb.connector");
 
 const {
@@ -138,10 +139,22 @@ const sendAllNotificationsForRegistrationsAction = async (
   let configDb = await connectToConfigDb();
   let idsAttempted = [];
   let registrationsCollection = await CachedRegistrationsCollection(beCacheDb);
-  let registrations = await findAllOutstandingNotificationsRegistrations(
+
+  //we have to do these 2 look ups as a workaround for azure cosmos shortcoming
+  let registrations = await findAllFailedNotificationsRegistrations(
     registrationsCollection
   );
   registrations = await registrations.toArray();
+
+  let blankRegistrations = await findAllBlankRegistrations(
+    registrationsCollection
+  );
+  blankRegistrations = await blankRegistrations.toArray();
+
+  for (let i = 0; i < blankRegistrations.length; i++) {
+    registrations.push(blankRegistrations[i]);
+  }
+
   let allLcConfigData = await getAllLocalCouncilConfig();
   let registration;
 
@@ -196,7 +209,7 @@ const sendNotificationsForRegistrationAction = async (fsaId, req, res) => {
 
   let configVersion = registration.registration_data_version
     ? registration.registration_data_version
-    : "1.6.0";
+    : "1.7.0";
   let config = await getConfig(configDb, configVersion);
   if (isEmpty(config)) {
     let message = `Could not find config ${fsaId} version : ${configVersion}`;
@@ -237,6 +250,7 @@ const saveAllOutstandingRegistrationsToTempStoreAction = async (
   let registrations = await findAllOutstandingSavesToTempStore(
     registrationsCollection
   );
+  registrations = await registrations.toArray();
   let allLcConfigData = await getAllLocalCouncilConfig();
   let registration;
 
@@ -319,7 +333,7 @@ const multiSendNotifications = async (
 
   let configVersion = registration.registration_data_version
     ? registration.registration_data_version
-    : "1.6.0";
+    : "1.7.0";
   let config = await getConfig(configDb, configVersion);
 
   if (isEmpty(config)) {
