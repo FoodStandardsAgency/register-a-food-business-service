@@ -104,7 +104,7 @@ describe("Pdf Service: ", () => {
             local_council_notify_emails: ["fsatestemail.valid@gmail.com"],
             local_council_email: "fsatestemail.valid@gmail.com",
             local_council_phone_number: "0300 123 6696",
-            country:"wales"
+            country: "wales"
           },
           standards: {
             code: 8015,

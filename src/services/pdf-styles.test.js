@@ -161,37 +161,37 @@ describe("Function: createLcContactSection", () => {
 
 describe("Function: createGuidanceLinksSections", () => {
   let result;
-  describe("When lcInfo.country is england", () =>{
-    const lcInfo = { country: "england"};
-    beforeEach(() =>{
+  describe("When lcInfo.country is england", () => {
+    const lcInfo = { country: "england" };
+    beforeEach(() => {
       result = createGuidanceLinksSection(lcInfo);
     });
 
     it("Should return an array of length 8", () => {
       expect(result.length).toBe(12);
-    })
-  })
-  describe("When lcInfo.country is wales", () =>{
-    const lcInfo = { country: "wales"};
-    beforeEach(() =>{
+    });
+  });
+  describe("When lcInfo.country is wales", () => {
+    const lcInfo = { country: "wales" };
+    beforeEach(() => {
       result = createGuidanceLinksSection(lcInfo);
     });
 
     it("Should return an array of length 24", () => {
       expect(result.length).toBe(24);
-    })
-  })
-  describe("When lcInfo.country is northern-ireland", () =>{
-    const lcInfo = { country: "northern-ireland"};
-    beforeEach(() =>{
+    });
+  });
+  describe("When lcInfo.country is northern-ireland", () => {
+    const lcInfo = { country: "northern-ireland" };
+    beforeEach(() => {
       result = createGuidanceLinksSection(lcInfo);
     });
 
     it("Should return an array of length 14", () => {
       expect(result.length).toBe(14);
-    })
-  })
-})
+    });
+  });
+});
 
 describe("Function: docDefinitionGenerator", () => {
   let docDefinition;
