@@ -178,7 +178,7 @@ describe("Function: createGuidanceLinksSections", () => {
     });
 
     it("Should return an array of length 24", () => {
-      expect(result.length).toBe(24);
+      expect(result.length).toBe(26);
     });
   });
   describe("When lcInfo.country is northern-ireland", () => {
