@@ -176,18 +176,10 @@ const createGuidanceLinksSection = lcInfo => {
   );
   guidanceLinksSectiionNoSpaces.push(
     createTitle(
-      "How to achieve a high food hygiene rating (FHRS sHow to achieve a high food hygiene rating (FHRS score) : https://www.food.gov.uk/business-guidance/food-hygiene-ratings-for-businesses",
+      "How to achieve a high food hygiene rating (FHRS score) : https://www.food.gov.uk/business-guidance/food-hygiene-ratings-for-businesses",
       "h4"
     )
   );
-  if (lcInfo.country == "northern-ireland") {
-    guidanceLinksSectiionNoSpaces.push(
-      createTitle(
-        "Safe Catering: https://www.food.gov.uk/business-guidance/safe-catering",
-        "h4"
-      )
-    );
-  }
   guidanceLinksSectiionNoSpaces.push(
     createTitle(
       "Information on the food safety management system safer food, better business: https://www.food.gov.uk/business-guidance/safer-food-better-business",
@@ -214,7 +206,7 @@ const createGuidanceLinksSection = lcInfo => {
         "h4"
       )
     );
-    guidanceLinksSectiionNoSpaces.push(createTitle("Cymru"));
+    guidanceLinksSectiionNoSpaces.push(createTitle("Cymru", "h2"));
     guidanceLinksSectiionNoSpaces.push(
       createTitle(
         "I gael cyngor cyffredinol ar hylendid bwyd a sut i redeg busnes bwyd diogel: https://www.food.gov.uk/cy/canllawiau-ar-gyfer-busnesau",
@@ -246,6 +238,12 @@ const createGuidanceLinksSection = lcInfo => {
       )
     );
   } else if (lcInfo.country == "northern-ireland") {
+    guidanceLinksSectiionNoSpaces.push(
+      createTitle(
+        "Safe Catering: https://www.food.gov.uk/business-guidance/safe-catering",
+        "h4"
+      )
+    );
     guidanceLinksSectiionNoSpaces.push(
       createTitle("Business support: https://www.nibusinessinfo.co.uk/", "h4")
     );
