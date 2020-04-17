@@ -167,70 +167,82 @@ const createGuidanceLinksSection = lcInfo => {
   );
   if (lcInfo.country == "wales") {
     guidanceLinksSectiionNoSpaces.push(createTitle("English", "h2"));
-  };
+  }
   guidanceLinksSectiionNoSpaces.push(
     createTitle(
-      "Guidance on food hygiene and how to run a safe food business: https://www.food.gov.uk/business-guidance", "h4"
+      "Guidance on food hygiene and how to run a safe food business: https://www.food.gov.uk/business-guidance",
+      "h4"
     )
   );
   guidanceLinksSectiionNoSpaces.push(
     createTitle(
-      "How to achieve a high food hygiene rating (FHRS sHow to achieve a high food hygiene rating (FHRS score) : https://www.food.gov.uk/business-guidance/food-hygiene-ratings-for-businesses", "h4"
+      "How to achieve a high food hygiene rating (FHRS sHow to achieve a high food hygiene rating (FHRS score) : https://www.food.gov.uk/business-guidance/food-hygiene-ratings-for-businesses",
+      "h4"
     )
   );
   if (lcInfo.country == "northern-ireland") {
     guidanceLinksSectiionNoSpaces.push(
       createTitle(
-        "Safe Catering: https://www.food.gov.uk/business-guidance/safe-catering", "h4"
+        "Safe Catering: https://www.food.gov.uk/business-guidance/safe-catering",
+        "h4"
       )
     );
   }
   guidanceLinksSectiionNoSpaces.push(
     createTitle(
-      "Information on the food safety management system safer food, better business: https://www.food.gov.uk/business-guidance/safer-food-better-business", "h4"
+      "Information on the food safety management system safer food, better business: https://www.food.gov.uk/business-guidance/safer-food-better-business",
+      "h4"
     )
   );
   guidanceLinksSectiionNoSpaces.push(
     createTitle(
-      "Food labelling and allergens guidance: https://www.food.gov.uk/business-guidance/industry-specific-advice/labelling-and-allergenss", "h4"
+      "Food labelling and allergens guidance: https://www.food.gov.uk/business-guidance/industry-specific-advice/labelling-and-allergenss",
+      "h4"
     )
   );
   if (lcInfo.country == "england") {
     guidanceLinksSectiionNoSpaces.push(
       createTitle(
-        "Business support & helpline: https://www.gov.uk/business-support-helpline", "h4"
+        "Business support & helpline: https://www.gov.uk/business-support-helpline",
+        "h4"
       )
     );
   } else if (lcInfo.country == "wales") {
     guidanceLinksSectiionNoSpaces.push(
       createTitle(
-        "Business support: https://www.businesswales.gov.wales/starting-up", "h4"
+        "Business support: https://www.businesswales.gov.wales/starting-up",
+        "h4"
       )
     );
     guidanceLinksSectiionNoSpaces.push(createTitle("Cymru"));
     guidanceLinksSectiionNoSpaces.push(
       createTitle(
-        "I gael cyngor cyffredinol ar hylendid bwyd a sut i redeg busnes bwyd diogel: https://www.food.gov.uk/cy/canllawiau-ar-gyfer-busnesau", "h4"
+        "I gael cyngor cyffredinol ar hylendid bwyd a sut i redeg busnes bwyd diogel: https://www.food.gov.uk/cy/canllawiau-ar-gyfer-busnesau",
+        "h4"
       )
     );
     guidanceLinksSectiionNoSpaces.push(
       createTitle(
-        "I gael gwybodaeth am sut i gael sgôr uchel o dan y Cynllun Sgorio Hylendid Bwyd: https://www.food.gov.uk/cy/business-guidance/sgoriau-hylendid-bwyd-ar-gyfer-busnesau", "h4"
+        "I gael gwybodaeth am sut i gael sgôr uchel o dan y Cynllun Sgorio Hylendid Bwyd: https://www.food.gov.uk/cy/business-guidance/sgoriau-hylendid-bwyd-ar-gyfer-busnesau",
+        "h4"
       )
     );
     guidanceLinksSectiionNoSpaces.push(
       createTitle(
-        "I gael gwybodaeth am y system rheoli diogelwch bwyd, Bwyd mwy Diogel, Busnes Gwell: https://www.food.gov.uk/cy/business-guidance/bwyd-mwy-diogel-busnes-gwell", "h4"
+        "I gael gwybodaeth am y system rheoli diogelwch bwyd, Bwyd mwy Diogel, Busnes Gwell: https://www.food.gov.uk/cy/business-guidance/bwyd-mwy-diogel-busnes-gwell",
+        "h4"
       )
     );
     guidanceLinksSectiionNoSpaces.push(
       createTitle(
-        " I gael canllawiau ar labelu bwyd ac alergenau: https://www.food.gov.uk/cy/canllawiau-ar-gyfer-busnesau/cyngor-penodol-ar-gyfer-y-diwydiant/labelu-ac-alergenau", "h4"
+        " I gael canllawiau ar labelu bwyd ac alergenau: https://www.food.gov.uk/cy/canllawiau-ar-gyfer-busnesau/cyngor-penodol-ar-gyfer-y-diwydiant/labelu-ac-alergenau",
+        "h4"
       )
     );
     guidanceLinksSectiionNoSpaces.push(
       createTitle(
-        "I gael cyngor busnes cyffredinol: https://businesswales.gov.wales/starting-up/cy", "h4"
+        "I gael cyngor busnes cyffredinol: https://businesswales.gov.wales/starting-up/cy",
+        "h4"
       )
     );
   } else if (lcInfo.country == "northern-ireland") {
