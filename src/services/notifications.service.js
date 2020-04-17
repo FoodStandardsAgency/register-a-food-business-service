@@ -34,6 +34,8 @@ const transformDataForNotify = (registration, lcContactConfig) => {
 
     lcInfo.country = lcContactConfig.hygieneAndStandards.country;
 
+    lcInfo.auth = lcContactConfig.hygieneAndStandards.auth;
+
     if (lcContactConfig.hygieneAndStandards.local_council_phone_number) {
       lcInfo.local_council_phone_number =
         lcContactConfig.hygieneAndStandards.local_council_phone_number;
@@ -45,6 +47,8 @@ const transformDataForNotify = (registration, lcContactConfig) => {
       lcContactConfig.hygiene.local_council_email;
 
     lcInfo.country = lcContactConfig.hygiene.country;
+
+    lcInfo.auth_hygiene = lcContactConfig.hygiene.auth;
 
     if (lcContactConfig.hygiene.local_council_phone_number) {
       lcInfo.local_council_phone_number_hygiene =
@@ -59,6 +63,8 @@ const transformDataForNotify = (registration, lcContactConfig) => {
       lcInfo.local_council_phone_number_standards =
         lcContactConfig.standards.local_council_phone_number;
     }
+
+    lcInfo.auth_standards = lcContactConfig.standards.auth;
   }
   const registrationClone = JSON.parse(JSON.stringify(registration));
 
