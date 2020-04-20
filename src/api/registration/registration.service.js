@@ -483,7 +483,7 @@ const getLcContactConfig = async (localCouncilUrl) => {
                 urlLcConfig.local_council_notify_emails,
               local_council_email: urlLcConfig.local_council_email,
               country: urlLcConfig.country,
-              auth: urlLcConfig.auth ? urlLcConfig.auth : ""
+              auth: urlLcConfig.auth
             },
             standards: {
               code: standardsLcConfig._id,
@@ -491,7 +491,7 @@ const getLcContactConfig = async (localCouncilUrl) => {
               local_council_notify_emails:
                 standardsLcConfig.local_council_notify_emails,
               local_council_email: standardsLcConfig.local_council_email,
-              auth: standardsLcConfig.auth ? standardsLcConfig.auth : ""
+              auth: standardsLcConfig.auth
             }
           };
 
@@ -532,7 +532,7 @@ const getLcContactConfig = async (localCouncilUrl) => {
               urlLcConfig.local_council_notify_emails,
             local_council_email: urlLcConfig.local_council_email,
             country: urlLcConfig.country,
-            auth: urlLcConfig.auth ? urlLcConfig.auth : ""
+            auth: urlLcConfig.auth
           }
         };
 
