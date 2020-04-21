@@ -57,8 +57,6 @@ const sendStatusEmail = async (templateId, recipientEmail, flattenedData) => {
       allNotifyPersonalisationData["northern-ireland"] = "yes";
     }
 
-    allNotifyPersonalisationData["auth_exists"] = "yes";
-
     const notifyArguments = [
       templateId,
       recipientEmail,
@@ -169,6 +167,8 @@ const sendSingleEmail = async (
     } else if (allNotifyPersonalisationData.country == "northern-ireland") {
       allNotifyPersonalisationData["northern-ireland"] = "yes";
     }
+
+    allNotifyPersonalisationData["auth_exists"] = "yes";
 
     const notifyArguments = [
       templateId,
