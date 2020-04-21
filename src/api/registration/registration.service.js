@@ -494,7 +494,7 @@ const getLcContactConfig = async (localCouncilUrl) => {
               local_council_notify_emails:
                 standardsLcConfig.local_council_notify_emails,
               local_council_email: standardsLcConfig.local_council_email,
-              hasAuth: standardsLcConfig.auth ? true : false 
+              hasAuth: standardsLcConfig.auth ? true : false
             }
           };
 
