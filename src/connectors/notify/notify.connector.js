@@ -168,8 +168,6 @@ const sendSingleEmail = async (
       allNotifyPersonalisationData["northern-ireland"] = "yes";
     }
 
-    allNotifyPersonalisationData["auth_exists"] = "yes";
-
     const notifyArguments = [
       templateId,
       recipientEmail,

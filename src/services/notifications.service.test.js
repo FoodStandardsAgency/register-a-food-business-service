@@ -93,7 +93,9 @@ const testLcContactConfigCombinedWithPhoneNumber = {
   hygieneAndStandards: {
     local_council: "Hygiene and standards council name",
     local_council_email: "both@example.com",
-    local_council_phone_number: "123456789"
+    local_council_phone_number: "123456789",
+    country: "wales",
+    hasAuth: true
   }
 };
 
@@ -302,7 +304,9 @@ describe("Function: transformDataForNotify", () => {
           local_council: "Hygiene and standards council name",
           local_council_email: "both@example.com",
           local_council_phone_number: "123456789",
-          reg_submission_date: "01 Dec 2018"
+          reg_submission_date: "01 Dec 2018",
+          country: "wales",
+          hasAuth: true
         };
 
         expect(result).toEqual(expectedFormat);
@@ -416,7 +420,9 @@ describe("Function: transformDataForNotify", () => {
           local_council: "Hygiene and standards council name",
           local_council_email: "both@example.com",
           local_council_phone_number: "123456789",
-          reg_submission_date: today
+          reg_submission_date: today,
+          country: "wales",
+          hasAuth: true
         };
 
         expect(result).toEqual(expectedFormat);
