@@ -26,7 +26,8 @@ describe("Function: sendSingleEmail", () => {
         example_exists: {},
         opening_day_monday_exists: {},
         opening_day_tuesday_exists: {},
-        country_exists: {}
+        country_exists: {},
+        auth_exists: {}
       }
     }
   };
@@ -73,7 +74,8 @@ describe("Function: sendSingleEmail", () => {
           opening_day_tuesday: "",
           opening_day_tuesday_exists: "no",
           country: "",
-          country_exists: "no"
+          country_exists: "no",
+          auth_exists: "yes"
         };
         expect(mockNotifyClient.sendEmail).toHaveBeenLastCalledWith(
           testTemplateId,
@@ -102,7 +104,8 @@ describe("Function: sendSingleEmail", () => {
               opening_day_tuesday: "",
               opening_day_tuesday_exists: "no",
               country: country,
-              country_exists: "yes"
+              country_exists: "yes",
+              auth_exists: "yes"
             };
             expectedFlattenedDataWithExists[`${country}`] = "yes";
             expect(mockNotifyClient.sendEmail).toHaveBeenLastCalledWith(
