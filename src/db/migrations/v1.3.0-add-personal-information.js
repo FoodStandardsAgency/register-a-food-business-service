@@ -86,7 +86,7 @@ module.exports = {
       )
     ]);
   },
-  down: queryInterface => {
+  down: (queryInterface) => {
     return Promise.all([
       queryInterface.removeColumn(
         "establishments",

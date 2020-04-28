@@ -315,12 +315,12 @@ describe("Function: sendTascomiRegistration: ", () => {
     beforeEach(async () => {
       jest.clearAllMocks();
       createFoodBusinessRegistration.mockImplementation(
-        () => new Promise(resolve => resolve('{ "id": "123"}'))
+        () => new Promise((resolve) => resolve('{ "id": "123"}'))
       );
       updateStatusInCache.mockImplementation(() => {});
       createReferenceNumber.mockImplementation(
         () =>
-          new Promise(resolve =>
+          new Promise((resolve) =>
             resolve('{ "id": "123", "online_reference": "0000123"}')
           )
       );
@@ -360,10 +360,10 @@ describe("Function: sendTascomiRegistration: ", () => {
     beforeEach(async () => {
       jest.clearAllMocks();
       createFoodBusinessRegistration.mockImplementation(
-        () => new Promise(resolve => resolve('{ "id": "123"}'))
+        () => new Promise((resolve) => resolve('{ "id": "123"}'))
       );
       createReferenceNumber.mockImplementation(
-        () => new Promise(reject => reject('{ "id": 0 }'))
+        () => new Promise((reject) => reject('{ "id": 0 }'))
       );
       updateStatusInCache.mockImplementation(() => {});
       getAllLocalCouncilConfig.mockImplementation(() => [
@@ -488,7 +488,7 @@ describe("Function: getLcContactConfig: ", () => {
           result = await getLcContactConfig("mid-and-east-antrim");
         });
         it("should return an object with a hygieneAndStandards key only", () => {
-          expect(Object.keys(result).length).toBe(1);
+          expect(Object.keys(result)).toHaveLength(1);
           expect(result.hygieneAndStandards).toBeDefined();
         });
 
@@ -523,7 +523,7 @@ describe("Function: getLcContactConfig: ", () => {
         });
 
         it("should return an object with a hygiene key and a standards key", () => {
-          expect(Object.keys(result).length).toBe(2);
+          expect(Object.keys(result)).toHaveLength(2);
           expect(result.hygiene).toBeDefined();
           expect(result.standards).toBeDefined();
         });
@@ -547,7 +547,7 @@ describe("Function: getLcContactConfig: ", () => {
         });
 
         it("should return an object with a hygiene key and a standards key", () => {
-          expect(Object.keys(result).length).toBe(2);
+          expect(Object.keys(result)).toHaveLength(2);
           expect(result.hygiene).toBeDefined();
           expect(result.standards).toBeDefined();
         });

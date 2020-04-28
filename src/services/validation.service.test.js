@@ -4,35 +4,35 @@ jest.mock("./validation.schema", () => ({
     properties: {
       operator_first_name: {
         type: "string",
-        validation: input => input === "true"
+        validation: (input) => input === "true"
       },
       operator_last_name: {
         type: "string",
-        validation: input => input === "true"
+        validation: (input) => input === "true"
       },
       operator_primary_number: {
         type: "string",
-        validation: input => input === "true"
+        validation: (input) => input === "true"
       },
       operator_company_name: {
         type: "string",
-        validation: input => input === "true"
+        validation: (input) => input === "true"
       },
       operator_companies_house_number: {
         type: "string",
-        validation: input => input === "true"
+        validation: (input) => input === "true"
       },
       operator_charity_name: {
         type: "string",
-        validation: input => input === "true"
+        validation: (input) => input === "true"
       },
       operator_charity_number: {
         type: "string",
-        validation: input => input === "true"
+        validation: (input) => input === "true"
       },
       establishment_primary_number: {
         type: "string",
-        validation: input => input === "true"
+        validation: (input) => input === "true"
       }
     }
   }
@@ -87,7 +87,7 @@ describe("Function: validate", () => {
       const response = validate(registration);
 
       // Assert
-      expect(response.length).toBe(8);
+      expect(response).toHaveLength(8);
       expect(response[0].property).toBe("instance.operator_first_name");
       expect(response[1].property).toBe("instance.operator_last_name");
       expect(response[2].property).toBe("instance.operator_primary_number");
@@ -120,7 +120,7 @@ describe("Function: validate", () => {
       const response = validate(establishment);
 
       // Assert
-      expect(response.length).toBe(0);
+      expect(response).toHaveLength(0);
     });
   });
 });

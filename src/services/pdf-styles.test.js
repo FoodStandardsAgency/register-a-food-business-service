@@ -139,7 +139,7 @@ describe("Function: createLcContactSection", () => {
     });
 
     it("Should return an array of length 1", () => {
-      expect(result.length).toBe(1);
+      expect(result).toHaveLength(1);
     });
   });
 

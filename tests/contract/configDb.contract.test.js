@@ -48,8 +48,10 @@ describe("configDb contract: getAllLocalCouncilConfig", () => {
   });
 
   it("Should both contain two example sets of council data that are unlikely to change", async () => {
-    const westDorsetDouble = doubleResult.find(council => council._id === 4221);
-    const westDorsetReal = realResult.find(council => council._id === 4221);
+    const westDorsetDouble = doubleResult.find(
+      (council) => council._id === 4221
+    );
+    const westDorsetReal = realResult.find((council) => council._id === 4221);
     expect(westDorsetDouble.local_council).toEqual(
       westDorsetReal.local_council
     );
@@ -58,10 +60,10 @@ describe("configDb contract: getAllLocalCouncilConfig", () => {
     );
 
     const dorsetCountyDouble = doubleResult.find(
-      council => council._id === westDorsetDouble.separate_standards_council
+      (council) => council._id === westDorsetDouble.separate_standards_council
     );
     const dorsetCountyReal = realResult.find(
-      council => council._id === westDorsetReal.separate_standards_council
+      (council) => council._id === westDorsetReal.separate_standards_council
     );
     expect(dorsetCountyDouble.local_council).toEqual(
       dorsetCountyReal.local_council

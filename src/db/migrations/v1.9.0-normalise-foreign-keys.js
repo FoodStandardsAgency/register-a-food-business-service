@@ -97,8 +97,8 @@ const recreateActivitiesForeignKey = (queryInterface, t, setting) =>
   });
 
 module.exports = {
-  up: queryInterface => {
-    return queryInterface.sequelize.transaction(t => {
+  up: (queryInterface) => {
+    return queryInterface.sequelize.transaction((t) => {
       return Promise.all([
         dropEstablishmentsForeignKey(queryInterface, t).then(() =>
           recreateEstablishmentsForeignKey(queryInterface, t, "cascade")
@@ -118,8 +118,8 @@ module.exports = {
       ]);
     });
   },
-  down: queryInterface => {
-    return queryInterface.sequelize.transaction(t => {
+  down: (queryInterface) => {
+    return queryInterface.sequelize.transaction((t) => {
       return Promise.all([
         dropEstablishmentsForeignKey(queryInterface, t).then(() =>
           recreateEstablishmentsForeignKey(queryInterface, t, "set null")

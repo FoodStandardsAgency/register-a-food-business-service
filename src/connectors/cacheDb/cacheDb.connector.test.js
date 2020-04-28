@@ -103,7 +103,7 @@ describe("Connector: cacheDb", () => {
     });
   });
 
-  describe("Function: updateCompletedInCache", () => {
+  describe("Function: updateCompletedInCache1", () => {
     describe("When success", () => {
       let result;
       beforeEach(async () => {
@@ -225,7 +225,7 @@ describe("Connector: cacheDb", () => {
     });
   });
 
-  describe("Function: updateCompletedInCache", () => {
+  describe("Function: updateCompletedInCache2", () => {
     describe("When success", () => {
       let result;
       beforeEach(async () => {
