@@ -5,7 +5,7 @@ module.exports = {
       queryInterface.addColumn("metadata", "feedback1", Sequelize.STRING)
     ]);
   },
-  down: queryInterface => {
+  down: (queryInterface) => {
     return Promise.all([queryInterface.removeColumn("metadata", "feedback1")]);
   }
 };

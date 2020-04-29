@@ -1,4 +1,4 @@
-const doubleRequest = options => {
+const doubleRequest = (options) => {
   const target = options.url.split("/").pop();
   if (target === "online_food_business_registrations") {
     const response = Object.assign(options.form, { id: "25" });

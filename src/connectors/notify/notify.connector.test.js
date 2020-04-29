@@ -78,7 +78,9 @@ describe("Function: sendSingleEmail", () => {
         expect(mockNotifyClient.sendEmail).toHaveBeenLastCalledWith(
           testTemplateId,
           testRecipient,
-          { personalisation: expectedFlattenedDataWithExists }
+          {
+            personalisation: expectedFlattenedDataWithExists
+          }
         );
       });
     });
@@ -87,7 +89,7 @@ describe("Function: sendSingleEmail", () => {
       const countries = ["england", "wales", "northern-ireland"];
       it.each(countries)(
         "should set personalisation to match the country",
-        country => {
+        (country) => {
           testFlattenedData.country = country;
           return sendSingleEmail(...args).then(() => {
             const expectedFlattenedDataWithExists = {
@@ -106,7 +108,9 @@ describe("Function: sendSingleEmail", () => {
             expect(mockNotifyClient.sendEmail).toHaveBeenLastCalledWith(
               testTemplateId,
               testRecipient,
-              { personalisation: expectedFlattenedDataWithExists }
+              {
+                personalisation: expectedFlattenedDataWithExists
+              }
             );
           });
         }

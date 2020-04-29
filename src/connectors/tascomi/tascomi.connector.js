@@ -64,7 +64,7 @@ const createFoodBusinessRegistration = async (
       registration.establishment.activities
     );
     const partnerDetails = registration.establishment.operator.partners
-      ? registration.establishment.operator.partners.map(partner => ({
+      ? registration.establishment.operator.partners.map((partner) => ({
           ...partner
         }))
       : [];
@@ -124,7 +124,7 @@ const createFoodBusinessRegistration = async (
       premise_typical_trading_times_sunday_opening_times:
         activitiesDetails.opening_hours_sunday
     };
-    partnerDetails.forEach(partner => {
+    partnerDetails.forEach((partner) => {
       requestData.partners.push({
         partner_name: partner.partner_name,
         partner_is_primary_contact:

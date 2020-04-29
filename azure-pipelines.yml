@@ -7,6 +7,9 @@ pool:
   vmImage: 'Ubuntu 16.04'
 
 steps:
+- task: NodeTool@0
+  inputs:
+    versionSpec: '12.16'
 
 - script: echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > .npmrc
   displayName: Create .npmrc

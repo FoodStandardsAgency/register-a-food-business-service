@@ -52,7 +52,7 @@ const disconnectCacheDb = async () => {
   }
 };
 
-const CachedRegistrationsCollection = async client =>
+const CachedRegistrationsCollection = async (client) =>
   await client.collection("cachedRegistrations");
 
 const getDate = () => {
@@ -62,7 +62,7 @@ const getDate = () => {
   });
 };
 
-const cacheRegistration = async registration => {
+const cacheRegistration = async (registration) => {
   logEmitter.emit("functionCall", "cacheDb.connector", "cacheRegistration");
   try {
     const cachedRegistrations = await establishConnectionToMongo();
