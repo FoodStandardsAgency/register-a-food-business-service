@@ -89,7 +89,7 @@ const createNewRegistration = async (
       hygiene_council_code: hygieneCouncilCode,
       local_council_url: localCouncilUrl,
       //the council id resolved from the localCouncilUrl
-      source_council_id: sourceCouncil.id,
+      source_council_id: sourceCouncil._id,
       registration_data_version: regDataVersion
     },
     postRegistrationMetadata
@@ -110,13 +110,13 @@ const createNewRegistration = async (
   );
 };
 
-const getRegistration = async (fsa_rn) => {
+const getRegistration = async fsa_rn => {
   const response = await getFullRegistrationByFsaRn(fsa_rn);
 
   return response;
 };
 
-const deleteRegistration = async (fsa_rn) => {
+const deleteRegistration = async fsa_rn => {
   const response = await deleteRegistrationByFsaRn(fsa_rn);
 
   return response;
