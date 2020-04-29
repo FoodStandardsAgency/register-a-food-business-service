@@ -9,7 +9,10 @@ RUN mkdir -p /usr/src/app
 WORKDIR /usr/src/app
 COPY . /usr/src/app
 
+RUN chmod u+x /home/node/docker_init.sh
+
 ENV PATH="//usr/local/bin:${PATH}"
 
+ENTRYPOINT ["/usr/src/app/docker_init.sh"]
+
 EXPOSE 4000
-USER node
