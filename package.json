@@ -141,10 +141,12 @@
     "verbose": true,
     "ignore": [
       "node_modules",
-      ".next"
+      "tests",
+      "scripts",
+      "features",
+      "docs"
     ],
     "watch": [
-      "pages",
       "src"
     ],
     "ext": "js json"
