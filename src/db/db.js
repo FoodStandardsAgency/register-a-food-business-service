@@ -1,21 +1,27 @@
 const { info } = require("winston");
 const db = require("./models");
 
-db.sequelize
-  .authenticate()
-  .then(() => {
+const connectToDb = async () => {
+  try {
+    await db.sequelize.authenticate();
     info("Connection to postgres db has been established successfully.");
-  })
-  .catch(err => {
-    info("Unable to connect to the database:", err);
-  });
+  } catch (err) {
+    info(`Unable to connect to the database: ${err}`);
+  }
+};
 
+const closeConnection = async () => {
+  return await db.sequelize.close();
+};
 module.exports = {
   Activities: db.activities,
   Establishment: db.establishment,
-  Metadata: db.metadata,
+  Declaration: db.declaration,
   Operator: db.operator,
   Premise: db.premise,
   Registration: db.registration,
-  Partner: db.partner
+  Partner: db.partner,
+  Council: db.council,
+  connectToDb,
+  closeConnection
 };

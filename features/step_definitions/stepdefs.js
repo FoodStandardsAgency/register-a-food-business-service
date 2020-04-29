@@ -10,6 +10,11 @@ const {
 
 setDefaultTimeout(60 * 1000);
 
+let apiUrl = "https://test-register-a-food-business-service.azurewebsites.net";
+if(process.env.NODE_ENV === 'local'){
+  apiUrl = process.env.API_URL ? process.env.API_URL : apiUrl;
+}
+
 const sendRequest = async body => {
   const headers = {
     "Content-Type": "application/json",
@@ -18,7 +23,7 @@ const sendRequest = async body => {
     "registration-data-version": "1.2.1"
   };
   const res = await fetch(
-    "https://test-register-a-food-business-service.azurewebsites.net/api/registration/createNewRegistration",
+    `${apiUrl}/api/registration/createNewRegistration`,
     {
       method: "POST",
       headers,
@@ -35,7 +40,7 @@ const getRequest = async id => {
     "client-name": ADMIN_NAME
   };
   const res = await fetch(
-    `http://test-register-a-food-business-service.azurewebsites.net/api/registration/${id}`,
+    `${apiUrl}/api/registration/${id}`,
     {
       headers
     }
@@ -59,8 +64,9 @@ Given("I have a new registration with all valid required fields", function() {
           operator_first_name: "Fred",
           operator_last_name: "Bloggs",
           operator_postcode: "SW12 9RQ",
-          operator_first_line: "335",
-          operator_street: "Some St.",
+          operator_address_line_1: "335",
+          operator_address_line_2: "Some St.",
+          operator_address_line_3: "Locality",
           operator_town: "London",
           operator_primary_number: "9827235",
           operator_email: "fsatestemail.valid@gmail.com",
@@ -68,8 +74,9 @@ Given("I have a new registration with all valid required fields", function() {
         },
         premise: {
           establishment_postcode: "SW12 9RQ",
-          establishment_first_line: "123",
-          establishment_street: "Street",
+          establishment_address_line_1: "123",
+          establishment_address_line_2: "Street",
+          establishment_address_line_3: "Locality",
           establishment_town: "London",
           establishment_type: "domestic"
         },
@@ -89,7 +96,7 @@ Given("I have a new registration with all valid required fields", function() {
           water_supply: "Public"
         }
       },
-      metadata: {
+      declaration: {
         declaration1: "Declaration",
         declaration2: "Declaration",
         declaration3: "Declaration"
@@ -116,8 +123,9 @@ Given(
             operator_first_name: "Fred",
             operator_last_name: "Bloggs",
             operator_postcode: "SW12 9RQ",
-            operator_first_line: "335",
-            operator_street: "Some St.",
+            operator_address_line_1: "335",
+            operator_address_line_2: "Some St.",
+            operator_address_line_3: "Locality",
             operator_town: "London",
             operator_primary_number: "9827235",
             operator_email: "fsatestemail.valid@gmail.com",
@@ -125,8 +133,9 @@ Given(
           },
           premise: {
             establishment_postcode: "SW12 9RQ",
-            establishment_first_line: "123",
-            establishment_street: "Street",
+            establishment_address_line_1: "123",
+            establishment_address_line_2: "Street",
+            establishment_address_line_3: "Locailty",
             establishment_town: "London",
             establishment_type: "domestic"
           },
@@ -137,7 +146,7 @@ Given(
             water_supply: "Public"
           }
         },
-        metadata: {
+        declaration: {
           declaration1: "Declaration",
           declaration2: "Declaration",
           declaration3: "Declaration"
@@ -163,10 +172,10 @@ When("I submit my multiple fields to the backend", async function() {
     operator_type: "${this.operator_type}",
     operator_primary_number: "${this.operator_primary_number}", 
     operator_postcode: "${this.operator_postcode}", 
-    operator_first_line: "${this.operator_first_line}", 
+    operator_address_line_1: "${this.operator_address_line_1}", 
     establishment_trading_name: "${this.establishment_trading_name}", 
     establishment_postcode: "${this.establishment_postcode}", 
-    establishment_first_line: "${this.establishment_first_line}",
+    establishment_address_line_1: "${this.establishment_address_line_1}",
     establishment_primary_number: "${this.establishment_primary_number}", 
     establishment_email: "${this.establishment_email}", 
     establishment_type: "${this.establishment_type}", 

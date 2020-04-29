@@ -27,6 +27,34 @@ const establishConnectionToMongo = async () => {
   }
 };
 
+const connectToBeCacheDb = async () => {
+  if (process.env.DOUBLE_MODE === "true") {
+    logEmitter.emit(
+      "doubleMode",
+      "cacheDb.connector",
+      "getAllLocalCouncilConfig"
+    );
+    return cachedRegistrationsDouble;
+  } else {
+    if (client === undefined) {
+      client = await mongodb.MongoClient.connect(CACHEDB_URL, {
+        useNewUrlParser: true
+      });
+    }
+
+    return await client.db("register_a_food_business_cache");
+  }
+};
+
+const disconnectCacheDb = async () => {
+  if (client) {
+    client.close();
+  }
+};
+
+const CachedRegistrationsCollection = async client =>
+  await client.collection("cachedRegistrations");
+
 const getDate = () => {
   return new Date().toLocaleString("en-GB", {
     hour12: false,
@@ -121,6 +149,64 @@ const updateStatusInCache = async (fsa_rn, property, value) => {
   }
 };
 
+const findAllOutstandingSavesToTempStore = async (
+  cachedRegistrations,
+  limit = 100
+) => {
+  return await cachedRegistrations
+    .find({ "status.registration.complete": { $ne: true } })
+    .sort({ reg_submission_date: 1 })
+    .limit(limit);
+};
+
+const findAllBlankRegistrations = async (cachedRegistrations, limit = 100) => {
+  return await cachedRegistrations
+    .find({
+      "status.notifications": {
+        $elemMatch: { sent: { $ne: true } }
+      }
+    })
+    .sort({ reg_submission_date: 1 })
+    .limit(limit);
+};
+
+const findAllFailedNotificationsRegistrations = async (
+  cachedRegistrations,
+  limit = 100
+) => {
+  return await cachedRegistrations
+    .find({
+      $or: [
+        { "status.notifications": { $exists: false } },
+        { "status.notifications": null }
+      ]
+    })
+    .sort({ reg_submission_date: 1 })
+    .limit(limit);
+};
+
+const findOutstandingTascomiRegistrationsFsaIds = async (
+  cachedRegistrations,
+  limit = 100
+) => {
+  return await cachedRegistrations
+    .find({
+      $and: [
+        { "status.tascomi": { $exists: true } },
+        { "status.tascomi.complete": { $ne: true } }
+      ]
+    })
+    .sort({ reg_submission_date: 1 })
+    .limit(limit);
+};
+
+const findOneById = async (cachedRegistrations, fsa_rn) => {
+  const cachedRegistration = await cachedRegistrations.findOne({
+    "fsa-rn": fsa_rn
+  });
+  return Object.assign({}, cachedRegistration);
+};
+
 const getStatus = async (cachedRegistrations, fsa_rn) => {
   const cachedRegistration = await cachedRegistrations.findOne({
     "fsa-rn": fsa_rn
@@ -129,122 +215,44 @@ const getStatus = async (cachedRegistrations, fsa_rn) => {
 };
 
 const updateStatus = async (cachedRegistrations, fsa_rn, newStatus) => {
-  await cachedRegistrations.updateOne(
-    { "fsa-rn": fsa_rn },
-    {
-      $set: { status: newStatus }
-    }
-  );
+  try {
+    await cachedRegistrations.updateOne(
+      { "fsa-rn": fsa_rn },
+      {
+        $set: { status: newStatus }
+      }
+    );
+    logEmitter.emit("functionSuccess", "cacheDb.connector", "updateStatus");
+  } catch (err) {
+    logEmitter.emit("functionFail", "cacheDb.connector", "updateStatus", err);
+  }
 };
 
 /**
  * Updates a specific notification when sent, finding the notification status from the type and address and updating the time and result fields
+ * @param status
  * @param {string} fsa_rn The FSA-RN number for the registration to be updated
- * @param {string} notificationType The type of notification to be sent
- * @param {string} notificationAddress The address of the notification to be sent
+ * @param emailsToSend
+ * @param index The index of the email - we need this to make sure we update the right item if the same email address has been used multiple times.
+ * @param sent
+ * @param date
  */
-const updateNotificationOnSent = async (
+const updateNotificationOnSent = (
+  status,
   fsa_rn,
-  notificationType,
-  notificationAddress
+  emailsToSend,
+  index,
+  sent,
+  date = null
 ) => {
-  logEmitter.emit(
-    "functionCall",
-    "cacheDb.connector",
-    "updateNotificationOnSent"
-  );
-  try {
-    const cachedRegistrations = await establishConnectionToMongo();
-    const status = await getStatus(cachedRegistrations, fsa_rn);
+  let { type, address } = emailsToSend[index];
+  date = date === null ? getDate() : date;
+  status.notifications[index].address = address;
+  status.notifications[index].type = type;
+  status.notifications[index].time = date;
+  status.notifications[index].sent = sent;
 
-    const index = status.notifications.findIndex(
-      ({ type, address }) =>
-        type === notificationType && address === notificationAddress
-    );
-    status.notifications[index].time = getDate();
-    status.notifications[index].sent = true;
-
-    await updateStatus(cachedRegistrations, fsa_rn, status);
-
-    statusEmitter.emit("incrementCount", "updateNotificationOnSentSucceeded");
-    statusEmitter.emit(
-      "setStatus",
-      "mostRecentUpdateNotificationOnSentSucceeded",
-      true
-    );
-    logEmitter.emit(
-      "functionSuccess",
-      "cacheDb.connector",
-      "updateNotificationOnSent"
-    );
-  } catch (err) {
-    statusEmitter.emit("incrementCount", "updateNotificationOnSentFailed");
-    statusEmitter.emit(
-      "setStatus",
-      "mostRecentUpdateNotificationOnSentSucceeded",
-      false
-    );
-    logEmitter.emit(
-      "functionFail",
-      "cacheDb.connector",
-      "updateNotificationOnSent",
-      err
-    );
-  }
-};
-
-/**
- * Add an object to the notifications field containing the status for each email to be sent, initialises with false
- * @param {string} fsa_rn The FSA-RN for the registration to have completed notifications for
- * @param {object} emailsToSend An object containing all of the emails to be sent
- */
-const addNotificationToStatus = async (fsa_rn, emailsToSend) => {
-  logEmitter.emit(
-    "functionCall",
-    "cacheDb.connector",
-    "addNotificationToStatus"
-  );
-  try {
-    const cachedRegistrations = await establishConnectionToMongo();
-    const status = await getStatus(cachedRegistrations, fsa_rn);
-
-    status.notifications = [];
-    for (let index in emailsToSend) {
-      status.notifications.push({
-        time: undefined,
-        sent: false,
-        type: emailsToSend[index].type,
-        address: emailsToSend[index].address
-      });
-    }
-
-    await updateStatus(cachedRegistrations, fsa_rn, status);
-
-    statusEmitter.emit("incrementCount", "addNotificationToStatusSucceeded");
-    statusEmitter.emit(
-      "setStatus",
-      "mostRecentAddNotificationToStatusSucceeded",
-      true
-    );
-    logEmitter.emit(
-      "functionSuccess",
-      "cacheDb.connector",
-      "addNotificationToStatus"
-    );
-  } catch (err) {
-    statusEmitter.emit("incrementCount", "addNotificationToStatusFailed");
-    statusEmitter.emit(
-      "setStatus",
-      "mostRecentAddNotificationToStatusSucceeded",
-      false
-    );
-    logEmitter.emit(
-      "functionFail",
-      "cacheDb.connector",
-      "addNotificationToStatus",
-      err
-    );
-  }
+  return status;
 };
 
 const clearMongoConnection = () => {
@@ -253,9 +261,19 @@ const clearMongoConnection = () => {
 };
 
 module.exports = {
+  findAllOutstandingSavesToTempStore,
+  findAllFailedNotificationsRegistrations,
+  findAllBlankRegistrations,
+  findOutstandingTascomiRegistrationsFsaIds,
   cacheRegistration,
   clearMongoConnection,
   updateStatusInCache,
-  addNotificationToStatus,
-  updateNotificationOnSent
+  updateNotificationOnSent,
+  establishConnectionToMongo,
+  findOneById,
+  CachedRegistrationsCollection,
+  connectToBeCacheDb,
+  disconnectCacheDb,
+  getStatus,
+  updateStatus
 };

@@ -22,8 +22,9 @@ describe("Pdf Service: ", () => {
             operator_first_name: "Fred",
             operator_last_name: "Bloggs",
             operator_postcode: "SW12 9RQ",
-            operator_first_line: "335",
-            operator_street: "Some St.",
+            operator_address_line_1: "335",
+            operator_address_line_2: "Some St.",
+            operator_address_line_3: "Locality",
             operator_town: "London",
             operator_primary_number: "9827235",
             operator_email: "operator@email.com",
@@ -31,8 +32,9 @@ describe("Pdf Service: ", () => {
           },
           premise: {
             establishment_postcode: "SW12 9RQ",
-            establishment_first_line: "123",
-            establishment_street: "Street",
+            establishment_address_line_1: "123",
+            establishment_address_line_2: "Street",
+            establishment_address_line_3: "Locality",
             establishment_town: "London",
             establishment_type: "Place"
           },
@@ -49,15 +51,11 @@ describe("Pdf Service: ", () => {
             opening_day_sunday: true
           }
         },
-        metadata: {
+        declaration: {
           declaration1: "Declaration",
           declaration2: "Declaration",
           declaration3: "Declaration"
         }
-      };
-      const mockPostRegistrationData = {
-        "fsa-rn": "DYRKYP-NPLKN7-YFDF6V",
-        reg_submission_date: "2018-11-05"
       };
 
       describe("When given single council", () => {
@@ -74,7 +72,6 @@ describe("Pdf Service: ", () => {
         beforeEach(() => {
           result = transformDataForPdf(
             mockRegistraionData,
-            mockPostRegistrationData,
             mockLcContactConfig
           );
         });
@@ -116,7 +113,6 @@ describe("Pdf Service: ", () => {
         beforeEach(() => {
           result = transformDataForPdf(
             mockRegistraionData,
-            mockPostRegistrationData,
             mockLcContactConfig
           );
         });
@@ -153,8 +149,9 @@ describe("Pdf Service: ", () => {
           },
           operator: {
             operator_postcode: "SW12 9RQ",
-            operator_first_line: "335",
-            operator_street: "Some St.",
+            operator_address_line_1: "335",
+            operator_address_line_2: "Some St.",
+            operator_address_line_3: "Locality",
             operator_town: "London",
             operator_primary_number: "9827235",
             operator_email: "operator@email.com",
@@ -172,8 +169,9 @@ describe("Pdf Service: ", () => {
           },
           premise: {
             establishment_postcode: "SW12 9RQ",
-            establishment_first_line: "123",
-            establishment_street: "Street",
+            establishment_address_line_1: "123",
+            establishment_address_line_2: "Street",
+            establishment_address_line_3: "Locality",
             establishment_town: "London",
             establishment_type: "Place"
           },
@@ -191,15 +189,11 @@ describe("Pdf Service: ", () => {
             opening_day_sunday: true
           }
         },
-        metadata: {
+        declaration: {
           declaration1: "Declaration",
           declaration2: "Declaration",
           declaration3: "Declaration"
         }
-      };
-      const mockPostRegistrationData = {
-        "fsa-rn": "DYRKYP-NPLKN7-YFDF6V",
-        reg_submission_date: "2018-11-05"
       };
 
       describe("When given single council", () => {
@@ -216,7 +210,6 @@ describe("Pdf Service: ", () => {
         beforeEach(() => {
           result = transformDataForPdf(
             mockRegistraionData,
-            mockPostRegistrationData,
             mockLcContactConfig
           );
         });
@@ -259,7 +252,6 @@ describe("Pdf Service: ", () => {
         beforeEach(() => {
           result = transformDataForPdf(
             mockRegistraionData,
-            mockPostRegistrationData,
             mockLcContactConfig
           );
         });
@@ -293,8 +285,9 @@ describe("Pdf Service: ", () => {
           operator_first_name: "Fred",
           operator_last_name: "Bloggs",
           operator_postcode: "SW12 9RQ",
-          operator_first_line: "335",
-          operator_street: "Some St.",
+          operator_address_line_1: "335",
+          operator_address_line_2: "Some St.",
+          operator_address_line_3: "Locality",
           operator_town: "London",
           operator_primary_number: "9827235",
           operator_email: "operator@email.com",
@@ -307,8 +300,9 @@ describe("Pdf Service: ", () => {
           establishment_email: "django@email.com",
           establishment_opening_date: "2018-06-07",
           establishment_postcode: "SW12 9RQ",
-          establishment_first_line: "123",
-          establishment_street: "Street",
+          establishment_address_line_1: "123",
+          establishment_address_line_2: "Street",
+          establishment_address_line_3: "Locality",
           establishment_town: "London",
           establishment_type: "Place"
         },
@@ -349,8 +343,9 @@ describe("Pdf Service: ", () => {
       const mockPdfData = {
         operator: {
           operator_postcode: "SW12 9RQ",
-          operator_first_line: "335",
-          operator_street: "Some St.",
+          operator_address_line_1: "335",
+          operator_address_line_2: "Some St.",
+          operator_address_line_3: "Locality",
           operator_town: "London",
           operator_primary_number: "9827235",
           operator_email: "operator@email.com",
@@ -367,8 +362,9 @@ describe("Pdf Service: ", () => {
           establishment_email: "django@email.com",
           establishment_opening_date: "2018-06-07",
           establishment_postcode: "SW12 9RQ",
-          establishment_first_line: "123",
-          establishment_street: "Street",
+          establishment_address_line_1: "123",
+          establishment_address_line_2: "Street",
+          establishment_address_line_3: "Locality",
           establishment_town: "London",
           establishment_type: "Place"
         },

@@ -1,4 +1,9 @@
+const { requestPromise } = require('jest-transform-stealthy-require/dist/presets');
 module.exports = {
+  transform: {
+    ...requestPromise.transform
+  },
+  transformIgnorePatterns: [requestPromise.transformIgnorePattern],
   verbose: true,
   testEnvironment: "node",
   reporters: [

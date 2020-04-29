@@ -18,7 +18,7 @@ jest.mock("./validation.schema", () => ({
         type: "string",
         validation: input => input === "true"
       },
-      operator_company_house_number: {
+      operator_companies_house_number: {
         type: "string",
         validation: input => input === "true"
       },
@@ -55,7 +55,7 @@ describe("Function: validate", () => {
         operator_last_name: "true",
         operator_primary_number: "true",
         operator_company_name: "true",
-        operator_company_house_number: "true",
+        operator_companies_house_number: "true",
         operator_charity_name: "true",
         operator_charity_number: "true",
         establishment_primary_number: "true"
@@ -77,7 +77,7 @@ describe("Function: validate", () => {
         operator_last_name: "false",
         operator_primary_number: "false",
         operator_company_name: "false",
-        operator_company_house_number: "false",
+        operator_companies_house_number: "false",
         operator_charity_name: "false",
         operator_charity_number: "false",
         establishment_primary_number: "false"
@@ -93,7 +93,7 @@ describe("Function: validate", () => {
       expect(response[2].property).toBe("instance.operator_primary_number");
       expect(response[3].property).toBe("instance.operator_company_name");
       expect(response[4].property).toBe(
-        "instance.operator_company_house_number"
+        "instance.operator_companies_house_number"
       );
       expect(response[5].property).toBe("instance.operator_charity_name");
       expect(response[6].property).toBe("instance.operator_charity_number");
@@ -111,7 +111,7 @@ describe("Function: validate", () => {
         operator_last_name: undefined,
         operator_primary_number: "true",
         operator_company_name: "true",
-        operator_company_house_number: "true",
+        operator_companies_house_number: "true",
         operator_charity_name: "true",
         operator_charity_number: "true"
       };

@@ -4,36 +4,35 @@
  */
 
 const moment = require("moment");
-const { logEmitter } = require("./logging.service");
+const { logEmitter, WARN, ERROR, INFO } = require("./logging.service");
 const { statusEmitter } = require("./statusEmitter.service");
 const { sendSingleEmail } = require("../connectors/notify/notify.connector");
 const { pdfGenerator, transformDataForPdf } = require("./pdf.service");
 const {
-  addNotificationToStatus,
+  establishConnectionToMongo,
+  getStatus,
+  updateStatus,
   updateNotificationOnSent
 } = require("../connectors/cacheDb/cacheDb.connector");
-
+const { has, isArrayLikeObject } = require("lodash");
 /**
  * Function that converts the data into format for Notify and creates a new object
  *
- * @param {object} registration The object containing all the answers the user has submitted during the sesion
- * @param {object} postRegistrationMetaData The object containing all the metadata from the submission e.g. fsa-rn number, submission time
+ * @param {object} registration The cached registration
  * @param {object} lcContactConfig The object containing the local council information
  *
  * @returns {object} Object containing key-value pairs of the data needed to populate corresponding keys in notify template
  */
 
-const transformDataForNotify = (
-  registration,
-  postRegistrationMetadata,
-  lcContactConfig
-) => {
+const transformDataForNotify = (registration, lcContactConfig) => {
   const lcInfo = {};
-  if (Object.keys(lcContactConfig).length === 1) {
+  if (lcContactConfig.hygieneAndStandards) {
     lcInfo.local_council = lcContactConfig.hygieneAndStandards.local_council;
 
     lcInfo.local_council_email =
       lcContactConfig.hygieneAndStandards.local_council_email;
+
+    lcInfo.country = lcContactConfig.hygieneAndStandards.country;
 
     if (lcContactConfig.hygieneAndStandards.local_council_phone_number) {
       lcInfo.local_council_phone_number =
@@ -44,6 +43,8 @@ const transformDataForNotify = (
 
     lcInfo.local_council_email_hygiene =
       lcContactConfig.hygiene.local_council_email;
+
+    lcInfo.country = lcContactConfig.hygiene.country;
 
     if (lcContactConfig.hygiene.local_council_phone_number) {
       lcInfo.local_council_phone_number_hygiene =
@@ -63,30 +64,37 @@ const transformDataForNotify = (
 
   const partners = registrationClone.establishment.operator.partners;
   delete registrationClone.establishment.operator.partners;
+  delete registrationClone.establishment.operator.operator_first_line;
+  delete registrationClone.establishment.operator.operator_street;
+  delete registrationClone.establishment.premise.establishment_first_line;
+  delete registrationClone.establishment.premise.establishment_street;
 
   registrationClone.establishment.establishment_details.establishment_opening_date = moment(
     registrationClone.establishment.establishment_details
       .establishment_opening_date
   ).format("DD MMM YYYY");
 
-  const postRegistrationMetadataClone = JSON.parse(
-    JSON.stringify(postRegistrationMetadata)
-  );
-
-  postRegistrationMetadataClone.reg_submission_date = moment(
-    postRegistrationMetadataClone.reg_submission_date
+  registrationClone.reg_submission_date = moment(
+    registrationClone.reg_submission_date
   ).format("DD MMM YYYY");
 
-  const flattenedData = Object.assign(
+  let flattenedData = Object.assign(
     {},
     registrationClone.establishment.premise,
     registrationClone.establishment.establishment_details,
     registrationClone.establishment.operator,
     registrationClone.establishment.activities,
-    registrationClone.metadata,
-    postRegistrationMetadataClone,
+    registrationClone.declaration,
+    {
+      reg_submission_date: registrationClone.reg_submission_date
+    },
     lcInfo
   );
+
+  delete registrationClone.establishment;
+  delete registrationClone.declaration;
+
+  flattenedData = Object.assign({}, flattenedData, registrationClone);
 
   if (Array.isArray(partners)) {
     const partnershipDetails = {
@@ -104,7 +112,7 @@ const transformDataForNotify = (
  *
  * @param {object} emailsToSend The object containing all emails to be sent. Should include, type, address and template.
  * @param {object} registration The object containing all the answers the user has submitted during the sesion
- * @param {object} postRegistrationMetaData The object containing the metadata from the submission i.e. fsa-rn number and submission date
+ * @param fsaId
  * @param {object} lcContactConfig The object containing the local council information
  *
  * @returns {object} Object that returns email sent status and recipients email address
@@ -113,25 +121,43 @@ const transformDataForNotify = (
 const sendEmails = async (
   emailsToSend,
   registration,
-  postRegistrationMetadata,
+  fsaId,
   lcContactConfig
 ) => {
   logEmitter.emit("functionCall", "registration.service", "sendEmails");
+  logEmitter.emit(INFO, `Started sendEmails for FSAid: ${fsaId}`);
 
-  let newError;
   let success = true;
-  try {
-    const data = transformDataForNotify(
-      registration,
-      postRegistrationMetadata,
-      lcContactConfig
-    );
+  let lastSentStatus;
+  let cachedRegistrations = await establishConnectionToMongo();
+  let status = await getStatus(cachedRegistrations, fsaId);
 
-    const dataForPDF = transformDataForPdf(
-      registration,
-      postRegistrationMetadata,
-      lcContactConfig
-    );
+  try {
+    if (emailsToSend.length === 0) {
+      //no emails to send - we dont expect this to ever happen
+      logEmitter.emit(
+        WARN,
+        `There were no entries in the emailsToSend for FSAid ${fsaId}`
+      );
+
+      //it worked on basis that there was nothing to send
+      return true;
+    }
+
+    //we need to check the status immediately to identify that it is what we expect on the length of emailsToSend - shouldnt happen
+    if (
+      !(
+        status.notifications.length === 0 ||
+        status.notifications.length === emailsToSend.length
+      )
+    ) {
+      throw new Error(
+        `The notifications array and emails to send do not match and could indicate corruption - fsaId ${fsaId}`
+      );
+    }
+
+    const data = transformDataForNotify(registration, lcContactConfig);
+    const dataForPDF = transformDataForPdf(registration, lcContactConfig);
     const pdfFile = await pdfGenerator(dataForPDF);
 
     for (let index in emailsToSend) {
@@ -140,30 +166,81 @@ const sendEmails = async (
         fileToSend = pdfFile;
       }
 
-      if (
-        await sendSingleEmail(
+      if (status.notifications[index].sent === true) {
+        logEmitter.emit(
+          INFO,
+          `Skipping email send (already sent) - type: ${
+            emailsToSend[index].type
+          } index:${index} for FSAId ${fsaId}`
+        );
+
+        continue;
+      }
+
+      lastSentStatus =
+        (await sendSingleEmail(
           emailsToSend[index].templateId,
           emailsToSend[index].address,
           data,
-          fileToSend
-        )
-      ) {
-        await updateNotificationOnSent(
-          postRegistrationMetadata["fsa-rn"],
+          fileToSend,
+          fsaId,
           emailsToSend[index].type,
-          emailsToSend[index].address
-        );
-      } else {
-        success = false;
-      }
-    }
-    if (!success) {
-      newError = new Error("sendSingleEmail error");
-      newError.message = "An email has failed to send";
+          index
+        )) !== null;
+      success = success && lastSentStatus === true;
+
+      updateNotificationOnSent(
+        status,
+        fsaId,
+        emailsToSend,
+        index,
+        lastSentStatus
+      );
+
+      logEmitter.emit(
+        INFO,
+        `Attempted email sent with sendStatus: ${
+          lastSentStatus ? "sent" : "failed"
+        } type: ${emailsToSend[index].type} index:${index} for FSAId ${fsaId}`
+      );
     }
   } catch (err) {
     success = false;
-    logEmitter.emit("functionFail", "registration.service", "sendEmails", err);
+
+    logEmitter.emit(
+      ERROR,
+      `There was an error sending emails for FSAId ${fsaId}`
+    );
+    logEmitter.emit(ERROR, `Email error FSAId ${fsaId}: ${err.toString()}`);
+  }
+
+  try {
+    await updateStatus(cachedRegistrations, fsaId, status);
+
+    statusEmitter.emit("incrementCount", "updateNotificationOnSentSucceeded");
+    statusEmitter.emit(
+      "setStatus",
+      "mostRecentUpdateNotificationOnSentSucceeded",
+      true
+    );
+    logEmitter.emit(
+      "functionSuccess",
+      "cacheDb.connector",
+      "updateNotificationOnSent"
+    );
+  } catch (err) {
+    statusEmitter.emit("incrementCount", "updateNotificationOnSentFailed");
+    statusEmitter.emit(
+      "setStatus",
+      "mostRecentUpdateNotificationOnSentSucceeded",
+      false
+    );
+    logEmitter.emit(
+      "functionFail",
+      "cacheDb.connector",
+      "updateNotificationOnSent",
+      err
+    );
   }
 
   if (success) {
@@ -181,31 +258,122 @@ const sendEmails = async (
       "mostRecentEmailNotificationSucceeded",
       false
     );
-    if (newError) {
-      logEmitter.emit(
-        "functionFail",
-        "registration.service",
-        "sendEmails",
-        newError
-      );
-    }
   }
 };
 
 /**
  * Function that calls the sendSingleEmail function with the relevant parameters in the right order
  *
+ * @param fsaId
  * @param {object} lcContactConfig The object containing the local council information
  * @param {object} registration The object containing all the answers the user has submitted during the sesion
- * @param {object} postRegistrationMetaData The object containing the metadata from the submission i.e. fsa-rn number and submission date
  * @param {object} configData Object containing notify_template_keys and future_delivery_email
  */
 const sendNotifications = async (
+  fsaId,
   lcContactConfig,
   registration,
-  postRegistrationMetadata,
   configData
 ) => {
+  let emailsToSend = generateEmailsToSend(
+    registration,
+    lcContactConfig,
+    configData
+  );
+
+  await initialiseNotificationsStatusIfNotSet(fsaId, emailsToSend);
+
+  await sendEmails(emailsToSend, registration, fsaId, lcContactConfig);
+};
+
+const initialiseNotificationsStatus = emailsToSend => {
+  let notifications = [];
+
+  for (let index in emailsToSend) {
+    notifications.push({
+      time: undefined,
+      sent: false,
+      type: emailsToSend[index].type,
+      address: emailsToSend[index].address
+    });
+  }
+
+  return notifications;
+};
+
+/**
+ * Add an object to the notifications field containing the status for each email to be sent, initialises with false
+ * @param fsaId
+ * @param {object} emailsToSend An object containing all of the emails to be sent
+ */
+const initialiseNotificationsStatusIfNotSet = async (fsaId, emailsToSend) => {
+  logEmitter.emit(
+    "functionCall",
+    "cacheDb.connector",
+    "addNotificationToStatus"
+  );
+  try {
+    let cachedRegistrations = await establishConnectionToMongo();
+    let status = await getStatus(cachedRegistrations, fsaId);
+
+    if (
+      has(status, "notifications") &&
+      isArrayLikeObject(status.notifications)
+    ) {
+      if (status.notifications.length === emailsToSend.length) {
+        logEmitter.emit(
+          INFO,
+          `Not initialising notifications hash - its the same length as emailsToSend - FSAId ${fsaId}`
+        );
+        return;
+      } else {
+        logEmitter.emit(
+          INFO,
+          `Reintialising notifications status for FSAId ${fsaId} - 
+            the length doesnt match emails to send (${
+              status.notifications.length
+            }) (${emailsToSend.length}) `
+        );
+      }
+    }
+
+    status.notifications = initialiseNotificationsStatus(emailsToSend);
+    logEmitter.emit(
+      INFO,
+      `Initialising notifications status for FSAId ${fsaId}: ${
+        emailsToSend.length
+      } emails to send`
+    );
+    await updateStatus(cachedRegistrations, fsaId, status);
+
+    statusEmitter.emit("incrementCount", "addNotificationToStatusSucceeded");
+    statusEmitter.emit(
+      "setStatus",
+      "mostRecentAddNotificationToStatusSucceeded",
+      true
+    );
+    logEmitter.emit(
+      "functionSuccess",
+      "cacheDb.connector",
+      "addNotificationToStatus"
+    );
+  } catch (err) {
+    statusEmitter.emit("incrementCount", "addNotificationToStatusFailed");
+    statusEmitter.emit(
+      "setStatus",
+      "mostRecentAddNotificationToStatusSucceeded",
+      false
+    );
+    logEmitter.emit(
+      "functionFail",
+      "cacheDb.connector",
+      "addNotificationToStatus",
+      err
+    );
+  }
+};
+
+const generateEmailsToSend = (registration, lcContactConfig, configData) => {
   let emailsToSend = [];
 
   for (let typeOfCouncil in lcContactConfig) {
@@ -231,7 +399,7 @@ const sendNotifications = async (
     templateId: configData.notify_template_keys.fbo_submission_complete
   });
 
-  if (registration.metadata.feedback1) {
+  if (registration.declaration && registration.declaration.feedback1) {
     emailsToSend.push({
       type: "FBO_FB",
       address: fboEmailAddress,
@@ -245,17 +413,7 @@ const sendNotifications = async (
     });
   }
 
-  await addNotificationToStatus(
-    postRegistrationMetadata["fsa-rn"],
-    emailsToSend
-  );
-
-  await sendEmails(
-    emailsToSend,
-    registration,
-    postRegistrationMetadata,
-    lcContactConfig
-  );
+  return emailsToSend;
 };
 
 /**
@@ -287,4 +445,8 @@ const getMainPartnershipContactName = partners => {
   return mainPartnershipContact.partner_name;
 };
 
-module.exports = { transformDataForNotify, sendNotifications };
+module.exports = {
+  transformDataForNotify,
+  sendNotifications,
+  generateEmailsToSend
+};

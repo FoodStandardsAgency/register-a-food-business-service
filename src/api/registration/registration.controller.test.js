@@ -22,19 +22,20 @@ jest.mock("../../connectors/cacheDb/cacheDb.connector", () => ({
 }));
 
 jest.mock("../../connectors/configDb/configDb.connector", () => ({
-  getConfigVersion: jest.fn()
+  getConfigVersion: jest.fn(),
+  findCouncilByUrl: jest.fn(),
+  findCouncilById: jest.fn(),
+  connectToConfigDb: jest.fn(),
+  LocalCouncilConfigDbCollection: jest.fn()
 }));
 
 const {
-  saveRegistration,
   getFullRegistrationByFsaRn,
   deleteRegistrationByFsaRn,
   getRegistrationMetaData,
-  sendTascomiRegistration,
   getLcContactConfig,
   getLcAuth
 } = require("./registration.service");
-const { sendNotifications } = require("../../services/notifications.service");
 
 const { validate } = require("../../services/validation.service");
 
@@ -48,8 +49,21 @@ const {
   deleteRegistration
 } = require("./registration.controller");
 const {
-  getConfigVersion
+  getConfigVersion,
+  findCouncilByUrl
 } = require("../../connectors/configDb/configDb.connector");
+
+const exampleLCUrl = "http://example-council-url";
+
+const exampleCouncil = {
+  _id: 1,
+  local_council: "Example council name",
+  local_council_email: "example@example.com",
+  local_council_notify_emails: ["example@example.com"],
+  local_council_phone_number: "01234 567890",
+  local_council_url: exampleLCUrl,
+  country: "test"
+};
 
 describe("registration controller", () => {
   let result;
@@ -88,7 +102,7 @@ describe("registration controller", () => {
   const testRegistration = {
     establishment: { operator: { operator_email: "operator@example.com" } }
   };
-  const testLocalCouncilUrl = "example-council-url";
+  const testLocalCouncilUrl = "http://example-council-url";
   const testRegDataVersion = "1.2.0";
   const testConfigVersion = {
     notify_template_keys: { key1: "abc", key2: "xyz" }
@@ -97,6 +111,8 @@ describe("registration controller", () => {
   describe("Function: createNewRegistration", () => {
     beforeEach(() => {
       jest.clearAllMocks();
+
+      findCouncilByUrl.mockImplementation(() => exampleCouncil);
     });
     describe("when given valid data", () => {
       describe("when auth object exists", () => {
@@ -123,24 +139,6 @@ describe("registration controller", () => {
             mockSendResponse
           );
         });
-        it("should call sendResponse with the result of getRegistrationMetaData", () => {
-          expect(mockSendResponse.mock.calls[0][0].reg_submission_date).toBe(1);
-        });
-        it("should call sendTascomiRegistration with the registration and full postRegistrationMetadata", () => {
-          expect(sendTascomiRegistration.mock.calls[0][1]).toEqual({
-            reg_submission_date: 1,
-            "fsa-rn": "AA1AAA-AA11AA-A1AAA1",
-            hygiene_council_code: 1234
-          });
-        });
-
-        it("should call sendNotifications", () => {
-          expect(sendNotifications).toHaveBeenCalled();
-        });
-
-        it("should call saveRegistration", () => {
-          expect(saveRegistration).toHaveBeenCalled();
-        });
       });
       describe("when auth object does not exist", () => {
         beforeEach(async () => {
@@ -162,9 +160,6 @@ describe("registration controller", () => {
             mockSendResponse
           );
         });
-        it("should call sendResponse with the result of getRegistrationMetaData", () => {
-          expect(mockSendResponse.mock.calls[0][0].reg_submission_date).toBe(1);
-        });
         it("should call cache registration", () => {
           expect(cacheRegistration).toHaveBeenCalled();
           const expectedToCache = Object.assign(
@@ -175,23 +170,21 @@ describe("registration controller", () => {
             },
             testRegistration,
             exampleLcConfig,
+
             {
               status: {
-                registration: undefined,
-                notifications: undefined
+                registration: null,
+                notifications: null
               }
+            },
+            {
+              local_council_url: exampleLCUrl,
+              hygiene_council_code: 1234,
+              registration_data_version: "1.2.0",
+              source_council_id: exampleCouncil.id
             }
           );
           expect(cacheRegistration).toHaveBeenLastCalledWith(expectedToCache);
-        });
-        it("should not call sendTascomiRegistration", () => {
-          expect(sendTascomiRegistration.mock.calls.length).toBe(0);
-        });
-        it("should call sendNotifications", () => {
-          expect(sendNotifications).toHaveBeenCalled();
-        });
-        it("should call saveRegistration", () => {
-          expect(saveRegistration).toHaveBeenCalled();
         });
       });
     });

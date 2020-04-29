@@ -19,33 +19,33 @@ const {
 /**
  * Function that does data manipulation to return an object with data in the needed format
  *
- * @param {object} registrationData The object containing all the answers the user has submitted during the sesion
- * @param {object} postRegistrationData The object containing all the metadata from the submission e.g. fsa-rn number, submission time
+ * @param {object} registrationData The cached registration data
  * @param {object} lcContactConfig The object containing the local council information
  *
  * @returns {object} An object containing the set of data in the correct format for the pdf service
  */
 
-const transformDataForPdf = (
-  registrationData,
-  postRegistrationData,
-  lcContactConfig
-) => {
+const transformDataForPdf = (registrationData, lcContactConfig) => {
   const lcInfo = getLcNames(lcContactConfig);
 
   const operator = { ...registrationData.establishment.operator };
+  delete operator.operator_first_line;
+  delete operator.operator_street;
   const partners = registrationData.establishment.operator.partners;
   delete operator.partners;
+  const premise = { ...registrationData.establishment.premise };
+  delete premise.establishment_first_line;
+  delete premise.establishment_street;
 
   const pdfData = {
     operator,
     establishment: {
       ...registrationData.establishment.establishment_details,
-      ...registrationData.establishment.premise
+      ...premise
     },
     activities: { ...registrationData.establishment.activities },
-    declaration: { ...registrationData.metadata },
-    metaData: { ...postRegistrationData, lcInfo }
+    declaration: { ...registrationData.declaration },
+    metaData: { ...registrationData, lcInfo }
   };
 
   if (Array.isArray(partners)) {

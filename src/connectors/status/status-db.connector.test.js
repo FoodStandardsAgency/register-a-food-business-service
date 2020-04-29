@@ -1,3 +1,7 @@
+jest.mock("./status-db.double");
+
+jest.mock("mongodb");
+
 const {
   getStoredStatus,
   updateStoredStatus,
@@ -12,9 +16,6 @@ const testEmailDistributionObject = {
   _id: "emailDistribution",
   emailAddresses: testArray
 };
-jest.mock("./status-db.double");
-
-jest.mock("mongodb");
 
 describe("Function: getStoredStatus", () => {
   let result;

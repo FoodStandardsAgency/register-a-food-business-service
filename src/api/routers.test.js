@@ -4,6 +4,10 @@ jest.mock("express", () => ({
   }))
 }));
 
+jest.mock("./tasks/TaskRouter.router", () => ({
+  TaskRouter: jest.fn()
+}));
+
 jest.mock("./registration/registration.router", () => ({
   registrationRouter: jest.fn()
 }));
@@ -27,7 +31,8 @@ describe("Function: routers", () => {
 
   it("Should call router.use", () => {
     expect(result.use).toBeCalled();
-    expect(result.use.mock.calls[0][0]).toBe("/api/registration");
-    expect(result.use.mock.calls[1][0]).toBe("/api/status");
+    expect(result.use.mock.calls[0][0]).toBe("/api/tasks");
+    expect(result.use.mock.calls[1][0]).toBe("/api/registration");
+    expect(result.use.mock.calls[2][0]).toBe("/api/status");
   });
 });

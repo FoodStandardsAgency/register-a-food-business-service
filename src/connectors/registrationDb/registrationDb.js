@@ -1,25 +1,27 @@
-const promiseRetry = require("promise-retry");
+"use strict";
 const {
   Activities,
   Establishment,
-  Metadata,
+  Declaration,
   Operator,
   Premise,
   Registration,
   Partner
 } = require("../../db/db");
+
+const db = require("../../db/models");
+
 const { logEmitter } = require("../../services/logging.service");
 
-const modelCreate = async (data, model, modelName) => {
+const managedTransaction = async (callback = () => {}) => async () =>
+  await db.sequelize.transaction(async t => callback(t));
+
+const modelCreate = async (data, model, modelName, transaction = null) => {
   try {
-    const response = await promiseRetry({ retries: 3 }, (retry, number) => {
-      logEmitter.emit(
-        "functionCall",
-        "registration.connector.js",
-        `create${modelName} attempt ${number}`
-      );
-      return model.create(data).catch(retry);
-    });
+    let options = transaction === null ? {} : { transaction };
+
+    const response = model.create(data, options);
+
     logEmitter.emit(
       "functionSuccess",
       "registration.connector.js",
@@ -37,45 +39,63 @@ const modelCreate = async (data, model, modelName) => {
   }
 };
 
-const createActivities = async (activities, establishmentId) => {
+const createActivities = async (
+  activities,
+  establishmentId,
+  transaction = null
+) => {
   const data = Object.assign({}, activities, { establishmentId });
-  return modelCreate(data, Activities, "Activities");
+  return modelCreate(data, Activities, "Activities", transaction);
 };
 
-const createEstablishment = async (establishment, registrationId) => {
+const createEstablishment = async (
+  establishment,
+  registrationId,
+  transaction = null
+) => {
   const data = Object.assign({}, establishment, { registrationId });
-  return modelCreate(data, Establishment, "Establishment");
+  return modelCreate(data, Establishment, "Establishment", transaction);
 };
 
-const createMetadata = async (metadata, registrationId) => {
-  const data = Object.assign({}, metadata, { registrationId });
-  return modelCreate(data, Metadata, "Metadata");
+const createDeclaration = async (
+  declaration,
+  registrationId,
+  transaction = null
+) => {
+  const data = Object.assign({}, declaration, { registrationId });
+  return modelCreate(data, Declaration, "Declaration", transaction);
 };
 
-const createOperator = async (operator, establishmentId) => {
+const createOperator = async (
+  operator,
+  establishmentId,
+  transaction = null
+) => {
   const data = Object.assign({}, operator, { establishmentId });
-  return modelCreate(data, Operator, "Operator");
+  return modelCreate(data, Operator, "Operator", transaction);
 };
 
-const createPartner = async (partner, operatorId) => {
+const createPartner = async (partner, operatorId, transaction = null) => {
   const data = Object.assign({}, partner, { operatorId });
-  return modelCreate(data, Partner, "Partner");
+  return modelCreate(data, Partner, "Partner", transaction);
 };
 
-const createPremise = async (premise, establishmentId) => {
+const createPremise = async (premise, establishmentId, transaction = null) => {
   const data = Object.assign({}, premise, { establishmentId });
-  return modelCreate(data, Premise, "Premise");
+  return modelCreate(data, Premise, "Premise", transaction);
 };
 
-const createRegistration = async (fsa_rn, council) => {
+const createRegistration = async (fsa_rn, council, transaction = null) => {
   const data = { fsa_rn, council };
-  return modelCreate(data, Registration, "Registration");
+  return modelCreate(data, Registration, "Registration", transaction);
 };
 
-const modelFindOne = async (query, model, functionName) => {
+const modelFindOne = async (query, model, functionName, transaction = null) => {
   logEmitter.emit("functionCall", "registration.connector.js", functionName);
+
+  let t = Object.assign({}, query, { transaction });
   try {
-    const response = await model.findOne(query);
+    const response = await model.findOne(t);
     logEmitter.emit(
       "functionSuccess",
       "registration.connector.js",
@@ -101,11 +121,12 @@ const getRegistrationById = async id => {
   );
 };
 
-const getRegistrationByFsaRn = async fsa_rn => {
+const getRegistrationByFsaRn = async (fsa_rn, transaction) => {
   return modelFindOne(
     { where: { fsa_rn: fsa_rn } },
     Registration,
-    "getRegistrationByFsaRn"
+    "getRegistrationByFsaRn",
+    transaction
   );
 };
 
@@ -117,11 +138,11 @@ const getEstablishmentByRegId = async id => {
   );
 };
 
-const getMetadataByRegId = async id => {
+const getDeclarationByRegId = async id => {
   return modelFindOne(
     { where: { registrationId: id } },
-    Metadata,
-    "getMetadataByRegId"
+    Declaration,
+    "getDeclarationByRegId"
   );
 };
 
@@ -186,11 +207,11 @@ const destroyEstablishmentByRegId = async id => {
   );
 };
 
-const destroyMetadataByRegId = async id => {
+const destroyDeclarationByRegId = async id => {
   return modelDestroy(
     { where: { registrationId: id } },
-    Metadata,
-    "destroyMetadataByRegId"
+    Declaration,
+    "destroyDeclarationByRegId"
   );
 };
 
@@ -219,9 +240,10 @@ const destroyActivitiesByEstablishmentId = async id => {
 };
 
 module.exports = {
+  managedTransaction,
   createActivities,
   createEstablishment,
-  createMetadata,
+  createDeclaration,
   createOperator,
   createPremise,
   createPartner,
@@ -229,13 +251,13 @@ module.exports = {
   getRegistrationById,
   getRegistrationByFsaRn,
   getEstablishmentByRegId,
-  getMetadataByRegId,
+  getDeclarationByRegId,
   getOperatorByEstablishmentId,
   getPremiseByEstablishmentId,
   getActivitiesByEstablishmentId,
   destroyRegistrationById,
   destroyEstablishmentByRegId,
-  destroyMetadataByRegId,
+  destroyDeclarationByRegId,
   destroyOperatorByEstablishmentId,
   destroyPremiseByEstablishmentId,
   destroyActivitiesByEstablishmentId

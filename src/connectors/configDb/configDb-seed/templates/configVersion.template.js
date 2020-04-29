@@ -74,7 +74,7 @@ const configVersionTemplate = seedData => ({
     "/operator-address-manual": {
       on: false,
       switches: {
-        operator_first_line: {
+        operator_address_line_1: {
           "/operator-address-manual": true
         }
       }
@@ -106,7 +106,7 @@ const configVersionTemplate = seedData => ({
     "/establishment-address-manual": {
       on: false,
       switches: {
-        establishment_first_line: {
+        establishment_address_line_1: {
           "/establishment-address-manual": true
         }
       }

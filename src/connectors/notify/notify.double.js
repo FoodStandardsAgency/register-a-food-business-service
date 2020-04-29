@@ -12,7 +12,7 @@ const notifyClientDouble = {
         recipientEmail &&
         personalisation.personalisation.establishment_trading_name
       ) {
-        if (recipientEmail === "fsatestemail.valid@gmail.com") {
+        if (recipientEmail.includes("fsatestemail.valid@gmail.com")) {
           if (
             templateId === NOTIFY_TEMPLATE_ID_TEST ||
             templateId === NOTIFY_TEMPLATE_ID_FBO ||

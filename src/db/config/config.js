@@ -21,11 +21,18 @@ module.exports = {
       ssl: true
     }
   },
+  test: {
+    username: process.env.POSTGRES_USER,
+    password: process.env.POSTGRES_PASS,
+    database: process.env.POSTGRES_DB,
+    host: process.env.POSTGRES_HOST,
+    dialect: "postgres"
+  },
   local: {
-    username: "postgres",
-    password: process.env.PASS,
-    database: "postgres",
-    host: "temp-store",
+    username: process.env.POSTGRES_USER,
+    password: process.env.POSTGRES_PASS,
+    database: process.env.POSTGRES_DB,
+    host: process.env.POSTGRES_HOST,
     dialect: "postgres"
   }
 };
