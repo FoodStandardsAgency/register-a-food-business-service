@@ -108,9 +108,9 @@ const runSeed = async () => {
       throw new Error(err);
     }
   }
-/* eslint-disable */
+  /* eslint-disable */
   process.exit(0);
-/* eslint-enable */
+  /* eslint-enable */
 };
 
 runSeed();
