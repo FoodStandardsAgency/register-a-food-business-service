@@ -4,7 +4,7 @@
   "description": "",
   "main": "src/app.js",
   "engines": {
-    "node": ">=12.16"
+    "node": ">=12.9"
   },
   "scripts": {
     "start": "node ./src/app.js",
