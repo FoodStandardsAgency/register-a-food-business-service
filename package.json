@@ -7,7 +7,10 @@
     "node": ">=12.16"
   },
   "scripts": {
-    "debug:local": "export $(grep -v '^#' .env | xargs -d '\n') && nodemon --inspect src/app.js",
+    "start": "node ./src/app.js",
+    "local:start": "export $(grep -v '^#' .env | xargs -d '\n') && nodemon src/app.js",
+    "local:start:docker": "node src/db/check-connection.js && npm run migrate:local && nodemon src/app.js",
+    "local:debug": "export $(grep -v '^#' .env | xargs -d '\n') && nodemon --inspect src/app.js",
     "test": "jest ./src --coverage",
     "test:unit:ci": "export TEST_TYPE=unit && jest ./src --coverage",
     "test:raw": "export TEST_TYPE=unit && jest",
@@ -22,9 +25,6 @@
     "lint:fix": "eslint --fix ./src ",
     "format:verify": "prettier --list-different '{src,tests}/**/*.js'",
     "format": "prettier --write '{src,tests}/**/*.js'",
-    "start": "nodemon ./src/app.js",
-    "start:local": "export $(grep -v '^#' .env | xargs -d '\n') && nodemon src/app.js",
-    "start:docker": "node src/db/check-connection.js && npm run migrate:local && nodemon src/app.js",
     "seed:configdb": "node src/connectors/configDb/configDb-seed/runSeedScripts",
     "migrate": "sequelize db:migrate",
     "migrate:local": "export NODE_ENV=local && sequelize db:migrate",
