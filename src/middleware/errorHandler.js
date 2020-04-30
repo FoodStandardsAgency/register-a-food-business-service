@@ -14,11 +14,13 @@
 // 7 - notifyMissingPersonalisation
 // 8 - mongoConnectionError
 
-const { logEmitter, ERROR } = require("../services/logging.service");
+const winston = require("winston");
 const errorDetails = require("./errors.json");
 
 const errorHandler = (err, req, res) => {
-  logEmitter.emit(ERROR, `Application error: ${JSON.stringify(err)}`);
+  winston.error(`Application error handled...`);
+  winston.error(err);
+
   if (err.name) {
     const errorDetail = errorDetails.find((error) => {
       return error.name === err.name;
