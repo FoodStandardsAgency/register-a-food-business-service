@@ -31,7 +31,7 @@ module.exports = (sequelize, DataTypes) => {
     },
     {}
   );
-  Activities.associate = function (models) {
+  Activities.associate = function(models) {
     Activities.belongsTo(models.establishment);
   };
   return Activities;

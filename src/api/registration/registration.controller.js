@@ -110,13 +110,13 @@ const createNewRegistration = async (
   );
 };
 
-const getRegistration = async (fsa_rn) => {
+const getRegistration = async fsa_rn => {
   const response = await getFullRegistrationByFsaRn(fsa_rn);
 
   return response;
 };
 
-const deleteRegistration = async (fsa_rn) => {
+const deleteRegistration = async fsa_rn => {
   const response = await deleteRegistrationByFsaRn(fsa_rn);
 
   return response;

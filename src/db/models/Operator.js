@@ -30,7 +30,7 @@ module.exports = (sequelize, DataTypes) => {
     },
     {}
   );
-  Operator.associate = function (models) {
+  Operator.associate = function(models) {
     Operator.belongsTo(models.establishment);
   };
   return Operator;

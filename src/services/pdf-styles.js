@@ -77,7 +77,7 @@ const createSingleLine = (key, value) => {
   return singleLine;
 };
 
-const createNewSpace = (x) => {
+const createNewSpace = x => {
   let newLine = "";
   for (let i = 1; i <= x; i++) {
     newLine = newLine.concat("\n");
@@ -142,7 +142,7 @@ const createFsaRnBox = (fsarnNumber, lcInfo) => {
   return fsaRnBox;
 };
 
-const createLcContactSection = (lcInfo) => {
+const createLcContactSection = lcInfo => {
   const lcContactSection = [];
   if (lcInfo.local_council) {
     lcContactSection.push(createTitle(lcInfo.local_council, "h2"));

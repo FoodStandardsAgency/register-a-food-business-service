@@ -9,7 +9,7 @@ let configDB = undefined;
 
 let allLcConfigData;
 
-const establishConnectionToMongo = async (collectionName) => {
+const establishConnectionToMongo = async collectionName => {
   if (process.env.DOUBLE_MODE === "true") {
     logEmitter.emit(
       "doubleMode",
@@ -53,12 +53,12 @@ const disconnectConfigDb = async () => {
   }
 };
 
-const ConfigVersionCollection = async (database) =>
+const ConfigVersionCollection = async database =>
   await database.collection("configVersion");
-const LocalCouncilConfigDbCollection = async (database) =>
+const LocalCouncilConfigDbCollection = async database =>
   await database.collection("lcConfig");
 
-const getConfigVersion = async (regDataVersion) => {
+const getConfigVersion = async regDataVersion => {
   logEmitter.emit("functionCall", "configDb.connector", "getConfigVersion");
 
   try {
@@ -160,7 +160,7 @@ const clearMongoConnection = () => {
   configDB = undefined;
 };
 
-const addDeletedId = async (id) => {
+const addDeletedId = async id => {
   const deletedIdsCollection = await establishConnectionToMongo("deletedIds");
 
   return deletedIdsCollection.insertOne({ id: id });

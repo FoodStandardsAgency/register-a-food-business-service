@@ -30,19 +30,19 @@ logEmitter.on(DOUBLE_MODE, (module, functionName) => {
   info(`${module}: ${functionName}: running in double mode`);
 });
 
-logEmitter.on(INFO, (message) => {
+logEmitter.on(INFO, message => {
   info(message);
 });
 
-logEmitter.on(WARN, (message) => {
+logEmitter.on(WARN, message => {
   warn(message);
 });
 
-logEmitter.on(DEBUG, (message) => {
+logEmitter.on(DEBUG, message => {
   debug(message);
 });
 
-logEmitter.on(ERROR, (message) => {
+logEmitter.on(ERROR, message => {
   error(message);
 });
 
