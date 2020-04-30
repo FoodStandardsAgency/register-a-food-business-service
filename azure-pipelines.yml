@@ -9,7 +9,7 @@ pool:
 steps:
 - task: NodeTool@0
   inputs:
-    versionSpec: '12.16'
+    versionSpec: '12.9'
 
 - script: echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > .npmrc
   displayName: Create .npmrc
