@@ -51,14 +51,14 @@ const dropCouncilsForeignKey = async (queryInterface, transaction) => {
 
 module.exports = {
   up: (queryInterface, Sequelize) => {
-    return queryInterface.sequelize.transaction(async (transaction) => {
+    return queryInterface.sequelize.transaction(async transaction => {
       await createCouncil(queryInterface, Sequelize, transaction);
       await populateCouncils(transaction);
       return createCouncilsForeignKey(queryInterface, transaction);
     });
   },
-  down: (queryInterface) => {
-    return queryInterface.sequelize.transaction(async (transaction) => {
+  down: queryInterface => {
+    return queryInterface.sequelize.transaction(async transaction => {
       await dropCouncilsForeignKey(queryInterface, transaction);
       return queryInterface.dropTable("councils", { transaction: transaction });
     });

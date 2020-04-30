@@ -19,7 +19,7 @@ const registrationRouter = () => {
         "registration.router",
         "createNewRegistration"
       );
-      const sendResponse = (response) => {
+      const sendResponse = response => {
         statusEmitter.emit("incrementCount", "userRegistrationsSucceeded");
         statusEmitter.emit(
           "setStatus",
