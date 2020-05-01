@@ -17,7 +17,9 @@
 const winston = require("winston");
 const errorDetails = require("./errors.json");
 
-const errorHandler = (err, req, res) => {
+/* eslint-disable */
+const errorHandler = (err, req, res, next) => {
+  /* eslint-enable */
   winston.error(`Application error handled...`);
   winston.error(err);
 
@@ -52,14 +54,26 @@ const errorHandler = (err, req, res) => {
       if (errorDetail.name === "missingRequiredHeader") {
         errorDetail.developerMessage = `${errorDetail.developerMessage} ${err.message}`;
       }
-
-      res.status(errorDetail.statusCode);
-      res.send({
-        errorCode: errorDetail.code,
-        developerMessage: errorDetail.developerMessage,
-        userMessages: errorDetail.userMessages
-      });
+      if (res) {
+        res.status(errorDetail.statusCode);
+        res.send({
+          errorCode: errorDetail.code,
+          developerMessage: errorDetail.developerMessage,
+          userMessages: errorDetail.userMessages
+        });
+      }
     } else {
+      if (res) {
+        res.status(500);
+        res.send({
+          errorCode: "Unknown",
+          developerMessage: "Unknown error found, debug and add to error cases",
+          userMessages: ""
+        });
+      }
+    }
+  } else {
+    if (res) {
       res.status(500);
       res.send({
         errorCode: "Unknown",
@@ -67,13 +81,6 @@ const errorHandler = (err, req, res) => {
         userMessages: ""
       });
     }
-  } else {
-    res.status(500);
-    res.send({
-      errorCode: "Unknown",
-      developerMessage: "Unknown error found, debug and add to error cases",
-      userMessages: ""
-    });
   }
 };
 
