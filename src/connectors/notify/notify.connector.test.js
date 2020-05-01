@@ -89,7 +89,7 @@ describe("Function: sendSingleEmail", () => {
       const countries = ["england", "wales", "northern-ireland"];
       it.each(countries)(
         "should set personalisation to match the country",
-        country => {
+        (country) => {
           testFlattenedData.country = country;
           return sendSingleEmail(...args).then(() => {
             const expectedFlattenedDataWithExists = {

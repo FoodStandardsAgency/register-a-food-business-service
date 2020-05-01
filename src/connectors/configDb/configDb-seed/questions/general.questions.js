@@ -14,7 +14,7 @@ const envQuestions = [
     message:
       "Which environments do you want to deploy to? (Use the space bar to select and deselect)",
     choices: ["dev", "test", "staging", "production"],
-    validate: answer =>
+    validate: (answer) =>
       answer.length < 1 ? "You must choose at least one environment" : true
   }
 ];

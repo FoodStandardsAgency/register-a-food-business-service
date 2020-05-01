@@ -96,7 +96,7 @@ describe("RegistrationDb connector", () => {
     describe("When Activities.create succeeds", () => {
       beforeEach(async () => {
         Activities.create.mockImplementation(() => {
-          return new Promise(resolve => resolve("success"));
+          return new Promise((resolve) => resolve("success"));
         });
         result = await createActivities({ some: "data" }, "45");
       });
@@ -138,7 +138,7 @@ describe("RegistrationDb connector", () => {
     describe("When Establishment.create succeeds", () => {
       beforeEach(async () => {
         Establishment.create.mockImplementation(() => {
-          return new Promise(resolve => resolve("success"));
+          return new Promise((resolve) => resolve("success"));
         });
         result = await createEstablishment({ some: "data" }, "45");
       });
@@ -180,7 +180,7 @@ describe("RegistrationDb connector", () => {
     describe("When Declaration.create succeeds", () => {
       beforeEach(async () => {
         Declaration.create.mockImplementation(() => {
-          return new Promise(resolve => resolve("success"));
+          return new Promise((resolve) => resolve("success"));
         });
         result = await createDeclaration({ some: "data" }, "45");
       });
@@ -222,7 +222,7 @@ describe("RegistrationDb connector", () => {
     describe("When Operator.create succeeds", () => {
       beforeEach(async () => {
         Operator.create.mockImplementation(() => {
-          return new Promise(resolve => resolve("success"));
+          return new Promise((resolve) => resolve("success"));
         });
         result = await createOperator({ some: "data" }, "45");
       });
@@ -264,7 +264,7 @@ describe("RegistrationDb connector", () => {
     describe("When Partner.create succeeds", () => {
       beforeEach(async () => {
         Partner.create.mockImplementation(() => {
-          return new Promise(resolve => resolve("success"));
+          return new Promise((resolve) => resolve("success"));
         });
         result = await createPartner({ some: "data" }, "45");
       });
@@ -306,7 +306,7 @@ describe("RegistrationDb connector", () => {
     describe("When Premise.create succeeds", () => {
       beforeEach(async () => {
         Premise.create.mockImplementation(() => {
-          return new Promise(resolve => resolve("success"));
+          return new Promise((resolve) => resolve("success"));
         });
         result = await createPremise({ some: "data" }, "45");
       });
@@ -348,7 +348,7 @@ describe("RegistrationDb connector", () => {
     describe("When Registration.create succeeds", () => {
       beforeEach(async () => {
         Registration.create.mockImplementation(() => {
-          return new Promise(resolve => resolve("success"));
+          return new Promise((resolve) => resolve("success"));
         });
         result = await createRegistration("fsa-rn", "cardiff");
       });

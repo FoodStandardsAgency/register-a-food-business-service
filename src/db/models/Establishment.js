@@ -15,7 +15,7 @@ module.exports = (sequelize, DataTypes) => {
     },
     {}
   );
-  Establishment.associate = function(models) {
+  Establishment.associate = function (models) {
     Establishment.belongsTo(models.registration);
   };
   return Establishment;

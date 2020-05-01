@@ -163,14 +163,14 @@ const addOldColumns = async (queryInterface, Sequelize, transaction) => {
 
 module.exports = {
   up: (queryInterface, Sequelize) => {
-    return queryInterface.sequelize.transaction(async transaction => {
+    return queryInterface.sequelize.transaction(async (transaction) => {
       await addNewColumns(queryInterface, Sequelize, transaction);
       await copyData(queryInterface, transaction);
       return removeOldColumns(queryInterface, transaction);
     });
   },
   down: (queryInterface, Sequelize) => {
-    return queryInterface.sequelize.transaction(async transaction => {
+    return queryInterface.sequelize.transaction(async (transaction) => {
       await addOldColumns(queryInterface, Sequelize, transaction);
       await recopyData(queryInterface, transaction);
       return removeNewColumns(queryInterface, transaction);

@@ -12,7 +12,7 @@ module.exports = (sequelize, DataTypes) => {
     },
     {}
   );
-  Partner.associate = function(models) {
+  Partner.associate = function (models) {
     Partner.belongsTo(models.operator);
   };
   return Partner;

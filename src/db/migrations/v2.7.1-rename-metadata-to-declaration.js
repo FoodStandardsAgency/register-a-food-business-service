@@ -1,11 +1,11 @@
 "use strict";
 module.exports = {
-  up: queryInterface => {
+  up: (queryInterface) => {
     return Promise.all([
       queryInterface.renameTable("metadata", "declarations")
     ]);
   },
-  down: queryInterface => {
+  down: (queryInterface) => {
     return Promise.all([
       queryInterface.renameTable("declarations", "metadata")
     ]);

@@ -44,7 +44,7 @@ const { statusEmitter } = require("../../services/statusEmitter.service");
 const saveRegistration = async (registration, fsa_rn, council) => {
   logEmitter.emit("functionCall", "registration.service", "saveRegistration");
 
-  const transaction = async transaction => {
+  const transaction = async (transaction) => {
     let reg;
     let operator;
     let activities;
@@ -128,7 +128,7 @@ const saveRegistration = async (registration, fsa_rn, council) => {
   return transaction();
 };
 
-const getFullRegistrationByFsaRn = async fsa_rn => {
+const getFullRegistrationByFsaRn = async (fsa_rn) => {
   logEmitter.emit(
     "functionCall",
     "registration.service",
@@ -158,7 +158,7 @@ const getFullRegistrationByFsaRn = async fsa_rn => {
   };
 };
 
-const deleteRegistrationByFsaRn = async fsa_rn => {
+const deleteRegistrationByFsaRn = async (fsa_rn) => {
   logEmitter.emit(
     "functionCall",
     "registration.service",
@@ -238,7 +238,7 @@ const sendTascomiRegistration = async (registration, localCouncil) => {
   return response;
 };
 
-const getRegistrationMetaData = async councilCode => {
+const getRegistrationMetaData = async (councilCode) => {
   logEmitter.emit(
     "functionCall",
     "registration.service",
@@ -314,13 +314,13 @@ const getLcContactConfigFromArray = async (
     const allLcConfigData = allCouncils;
 
     const urlLcConfig = allLcConfigData.find(
-      localCouncil => localCouncil.local_council_url === localCouncilUrl
+      (localCouncil) => localCouncil.local_council_url === localCouncilUrl
     );
 
     if (urlLcConfig) {
       if (urlLcConfig.separate_standards_council) {
         const standardsLcConfig = allLcConfigData.find(
-          localCouncil =>
+          (localCouncil) =>
             localCouncil._id === urlLcConfig.separate_standards_council
         );
 
@@ -362,9 +362,7 @@ const getLcContactConfigFromArray = async (
         } else {
           const newError = new Error();
           newError.name = "localCouncilNotFound";
-          newError.message = `A separate standards council config with the code "${
-            urlLcConfig.separate_standards_council
-          }" was expected for "${localCouncilUrl}" but does not exist`;
+          newError.message = `A separate standards council config with the code "${urlLcConfig.separate_standards_council}" was expected for "${localCouncilUrl}" but does not exist`;
           logEmitter.emit(
             "functionFail",
             "registration.service",
@@ -424,20 +422,20 @@ const getLcContactConfigFromArray = async (
   }
 };
 
-const getLcContactConfig = async localCouncilUrl => {
+const getLcContactConfig = async (localCouncilUrl) => {
   logEmitter.emit("functionCall", "registration.service", "getLcContactConfig");
 
   if (localCouncilUrl) {
     const allLcConfigData = await getAllLocalCouncilConfig();
 
     const urlLcConfig = allLcConfigData.find(
-      localCouncil => localCouncil.local_council_url === localCouncilUrl
+      (localCouncil) => localCouncil.local_council_url === localCouncilUrl
     );
 
     if (urlLcConfig) {
       if (urlLcConfig.separate_standards_council) {
         const standardsLcConfig = allLcConfigData.find(
-          localCouncil =>
+          (localCouncil) =>
             localCouncil._id === urlLcConfig.separate_standards_council
         );
 
@@ -479,9 +477,7 @@ const getLcContactConfig = async localCouncilUrl => {
         } else {
           const newError = new Error();
           newError.name = "localCouncilNotFound";
-          newError.message = `A separate standards council config with the code "${
-            urlLcConfig.separate_standards_council
-          }" was expected for "${localCouncilUrl}" but does not exist`;
+          newError.message = `A separate standards council config with the code "${urlLcConfig.separate_standards_council}" was expected for "${localCouncilUrl}" but does not exist`;
           logEmitter.emit(
             "functionFail",
             "registration.service",
@@ -541,14 +537,14 @@ const getLcContactConfig = async localCouncilUrl => {
   }
 };
 
-const getLcAuth = async localCouncilUrl => {
+const getLcAuth = async (localCouncilUrl) => {
   logEmitter.emit("functionCall", "registration.service", "getLcAuth");
 
   if (localCouncilUrl) {
     const allLcConfigData = await getAllLocalCouncilConfig();
 
     const urlLcConfig = allLcConfigData.find(
-      localCouncil => localCouncil.local_council_url === localCouncilUrl
+      (localCouncil) => localCouncil.local_council_url === localCouncilUrl
     );
 
     if (urlLcConfig) {
