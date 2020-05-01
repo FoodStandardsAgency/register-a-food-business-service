@@ -157,14 +157,6 @@ describe("Function: saveRegistration: ", () => {
     });
   });
 
-  it("Should should call the updateStatusInCache with true", () => {
-    expect(updateStatusInCache).toHaveBeenLastCalledWith(
-      123,
-      "registration",
-      true
-    );
-  });
-
   // TODO JMB: add proper error case for this in handler.
   describe("Given one of the calls fails", () => {
     beforeEach(async () => {
@@ -189,13 +181,6 @@ describe("Function: saveRegistration: ", () => {
 
     it("Should throw an error", () => {
       expect(result.message).toBeDefined();
-    });
-    it("Should should call the updateStatusInCache with false", () => {
-      expect(updateStatusInCache).toHaveBeenLastCalledWith(
-        123,
-        "registration",
-        false
-      );
     });
   });
 });
@@ -315,12 +300,12 @@ describe("Function: sendTascomiRegistration: ", () => {
     beforeEach(async () => {
       jest.clearAllMocks();
       createFoodBusinessRegistration.mockImplementation(
-        () => new Promise((resolve) => resolve('{ "id": "123"}'))
+        () => new Promise(resolve => resolve('{ "id": "123"}'))
       );
       updateStatusInCache.mockImplementation(() => {});
       createReferenceNumber.mockImplementation(
         () =>
-          new Promise((resolve) =>
+          new Promise(resolve =>
             resolve('{ "id": "123", "online_reference": "0000123"}')
           )
       );
@@ -360,10 +345,10 @@ describe("Function: sendTascomiRegistration: ", () => {
     beforeEach(async () => {
       jest.clearAllMocks();
       createFoodBusinessRegistration.mockImplementation(
-        () => new Promise((resolve) => resolve('{ "id": "123"}'))
+        () => new Promise(resolve => resolve('{ "id": "123"}'))
       );
       createReferenceNumber.mockImplementation(
-        () => new Promise((reject) => reject('{ "id": 0 }'))
+        () => new Promise(reject => reject('{ "id": 0 }'))
       );
       updateStatusInCache.mockImplementation(() => {});
       getAllLocalCouncilConfig.mockImplementation(() => [
