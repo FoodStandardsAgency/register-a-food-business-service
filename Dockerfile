@@ -1,4 +1,4 @@
-FROM node:12.9.0
+FROM node:12.9.1
 
 ARG NPM_TOKEN
 ARG http_proxy
