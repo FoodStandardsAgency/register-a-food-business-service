@@ -20,7 +20,7 @@ const templates = {
   configVersion: configVersionTemplate
 };
 
-const establishConnectionToMongo = async configDbUrl => {
+const establishConnectionToMongo = async (configDbUrl) => {
   const client = await mongoClient.connect(configDbUrl, {
     useNewUrlParser: true
   });
@@ -46,7 +46,7 @@ const runSeed = async () => {
 
   // get the configDB urls for these environments, and confirm that they are correct
   const requiredEnvUrlQuestions = questions.general.envUrlQuestions.filter(
-    envQ => environmentsToSeed.environments.includes(envQ.env)
+    (envQ) => environmentsToSeed.environments.includes(envQ.env)
   );
   let environmentUrls;
   let environmentUrlsAreCorrect = { confirmation_env_urls: false };
@@ -61,8 +61,8 @@ const runSeed = async () => {
   // the user's choice of environment and collection and check that answers are correct
   const allCollectionQuestions = questions[collectionToSeed.collectionName];
   const requiredCollectionQuestions = allCollectionQuestions.filter(
-    collectionQ =>
-      environmentsToSeed.environments.some(envName =>
+    (collectionQ) =>
+      environmentsToSeed.environments.some((envName) =>
         collectionQ.env.includes(envName)
       )
   );

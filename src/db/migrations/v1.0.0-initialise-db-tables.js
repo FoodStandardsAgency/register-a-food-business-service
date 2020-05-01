@@ -148,7 +148,7 @@ module.exports = {
       })
     ]);
   },
-  down: queryInterface => {
+  down: (queryInterface) => {
     return Promise.all([
       queryInterface.dropTable("activities"),
       queryInterface.dropTable("establishments"),

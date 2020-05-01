@@ -315,12 +315,12 @@ describe("Function: sendTascomiRegistration: ", () => {
     beforeEach(async () => {
       jest.clearAllMocks();
       createFoodBusinessRegistration.mockImplementation(
-        () => new Promise(resolve => resolve('{ "id": "123"}'))
+        () => new Promise((resolve) => resolve('{ "id": "123"}'))
       );
       updateStatusInCache.mockImplementation(() => {});
       createReferenceNumber.mockImplementation(
         () =>
-          new Promise(resolve =>
+          new Promise((resolve) =>
             resolve('{ "id": "123", "online_reference": "0000123"}')
           )
       );
@@ -360,10 +360,10 @@ describe("Function: sendTascomiRegistration: ", () => {
     beforeEach(async () => {
       jest.clearAllMocks();
       createFoodBusinessRegistration.mockImplementation(
-        () => new Promise(resolve => resolve('{ "id": "123"}'))
+        () => new Promise((resolve) => resolve('{ "id": "123"}'))
       );
       createReferenceNumber.mockImplementation(
-        () => new Promise(reject => reject('{ "id": 0 }'))
+        () => new Promise((reject) => reject('{ "id": 0 }'))
       );
       updateStatusInCache.mockImplementation(() => {});
       getAllLocalCouncilConfig.mockImplementation(() => [

@@ -173,9 +173,7 @@ const sendEmails = async (
       if (status.notifications[index].sent === true) {
         logEmitter.emit(
           INFO,
-          `Skipping email send (already sent) - type: ${
-            emailsToSend[index].type
-          } index:${index} for FSAId ${fsaId}`
+          `Skipping email send (already sent) - type: ${emailsToSend[index].type} index:${index} for FSAId ${fsaId}`
         );
 
         continue;
@@ -290,7 +288,7 @@ const sendNotifications = async (
   await sendEmails(emailsToSend, registration, fsaId, lcContactConfig);
 };
 
-const initialiseNotificationsStatus = emailsToSend => {
+const initialiseNotificationsStatus = (emailsToSend) => {
   let notifications = [];
 
   for (let index in emailsToSend) {
@@ -334,9 +332,7 @@ const initialiseNotificationsStatusIfNotSet = async (fsaId, emailsToSend) => {
         logEmitter.emit(
           INFO,
           `Reintialising notifications status for FSAId ${fsaId} - 
-            the length doesnt match emails to send (${
-              status.notifications.length
-            }) (${emailsToSend.length}) `
+            the length doesnt match emails to send (${status.notifications.length}) (${emailsToSend.length}) `
         );
       }
     }
@@ -344,9 +340,7 @@ const initialiseNotificationsStatusIfNotSet = async (fsaId, emailsToSend) => {
     status.notifications = initialiseNotificationsStatus(emailsToSend);
     logEmitter.emit(
       INFO,
-      `Initialising notifications status for FSAId ${fsaId}: ${
-        emailsToSend.length
-      } emails to send`
+      `Initialising notifications status for FSAId ${fsaId}: ${emailsToSend.length} emails to send`
     );
     await updateStatus(cachedRegistrations, fsaId, status);
 
@@ -427,7 +421,7 @@ const generateEmailsToSend = (registration, lcContactConfig, configData) => {
  *
  * @returns Comma-separated partner names
  */
-const transformPartnersForNotify = partners => {
+const transformPartnersForNotify = (partners) => {
   const partnerNames = [];
   for (let partner in partners) {
     partnerNames.push(partners[partner].partner_name);
@@ -442,8 +436,8 @@ const transformPartnersForNotify = partners => {
  *
  * @returns Name of main partnership contact
  */
-const getMainPartnershipContactName = partners => {
-  const mainPartnershipContact = partners.find(partner => {
+const getMainPartnershipContactName = (partners) => {
+  const mainPartnershipContact = partners.find((partner) => {
     return partner.partner_is_primary_contact === true;
   });
   return mainPartnershipContact.partner_name;

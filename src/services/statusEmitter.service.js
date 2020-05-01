@@ -5,7 +5,7 @@ class StatusUpdate extends EventEmitter {}
 
 const statusEmitter = new StatusUpdate();
 
-statusEmitter.on("incrementCount", async statusName => {
+statusEmitter.on("incrementCount", async (statusName) => {
   incrementStatusCount(statusName);
 });
 

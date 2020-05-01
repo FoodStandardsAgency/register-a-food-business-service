@@ -60,7 +60,7 @@ const transformDataForPdf = (registrationData, lcContactConfig) => {
   return pdfData;
 };
 
-const transformPartnersForPdf = partners => {
+const transformPartnersForPdf = (partners) => {
   const partnerNames = [];
   for (let partner in partners) {
     partnerNames.push(partners[partner].partner_name);
@@ -68,21 +68,17 @@ const transformPartnersForPdf = partners => {
   return partnerNames.join(", ");
 };
 
-const getMainPartnershipContactName = partners => {
-  const mainPartnershipContact = partners.find(partner => {
+const getMainPartnershipContactName = (partners) => {
+  const mainPartnershipContact = partners.find((partner) => {
     return partner.partner_is_primary_contact === true;
   });
   return mainPartnershipContact.partner_name;
 };
 
-const convertKeyToDisplayName = key =>
-  key.charAt(0).toUpperCase() +
-  key
-    .slice(1)
-    .split("_")
-    .join(" ");
+const convertKeyToDisplayName = (key) =>
+  key.charAt(0).toUpperCase() + key.slice(1).split("_").join(" ");
 
-const getLcNamesAndCountry = lcContactConfig => {
+const getLcNamesAndCountry = (lcContactConfig) => {
   const lcInfo = {};
   if (lcContactConfig.hygieneAndStandards) {
     lcInfo.local_council = lcContactConfig.hygieneAndStandards.local_council;
@@ -112,14 +108,14 @@ const createSingleSection = (title, sectionData) => {
   return section;
 };
 
-const convertBoolToString = answer => {
+const convertBoolToString = (answer) => {
   if (answer === true) {
     return "Yes";
   }
   return "No";
 };
 
-const createContent = pdfData => {
+const createContent = (pdfData) => {
   let content = [];
   content.push(createTitle("New food business registration received", "h1"));
   content.push(createNewSpace(2));
@@ -168,8 +164,8 @@ const createContent = pdfData => {
  * @returns {base64Pdf} Encoded strng that Notify service can use to create the PDF
  */
 
-const pdfGenerator = pdfData => {
-  return new Promise(resolve => {
+const pdfGenerator = (pdfData) => {
+  return new Promise((resolve) => {
     const clonedFontDes = JSON.parse(JSON.stringify(fontDescriptors));
     const printer = new PdfPrinter(clonedFontDes);
     const content = createContent(pdfData);
@@ -184,7 +180,7 @@ const pdfGenerator = pdfData => {
       resolve(base64Pdf);
     };
 
-    pdfMake.on("data", segment => {
+    pdfMake.on("data", (segment) => {
       segmentsOfPdf.push(segment);
     });
 

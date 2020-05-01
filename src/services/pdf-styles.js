@@ -77,7 +77,7 @@ const createSingleLine = (key, value) => {
   return singleLine;
 };
 
-const createNewSpace = x => {
+const createNewSpace = (x) => {
   let newLine = "";
   for (let i = 1; i <= x; i++) {
     newLine = newLine.concat("\n");
@@ -142,7 +142,7 @@ const createFsaRnBox = (fsarnNumber, lcInfo) => {
   return fsaRnBox;
 };
 
-const createLcContactSection = lcInfo => {
+const createLcContactSection = (lcInfo) => {
   const lcContactSection = [];
   if (lcInfo.local_council) {
     lcContactSection.push(createTitle(lcInfo.local_council, "h2"));
@@ -160,7 +160,7 @@ const createLcContactSection = lcInfo => {
   return lcContactSection;
 };
 
-const createGuidanceLinksSection = lcInfo => {
+const createGuidanceLinksSection = (lcInfo) => {
   const guidanceLinksSectiionNoSpaces = [];
   guidanceLinksSectiionNoSpaces.push(
     createTitle("Guidance links provided ", "bigger")
@@ -256,7 +256,7 @@ const createGuidanceLinksSection = lcInfo => {
   return guidanceLinksSectiion;
 };
 
-const docDefinitionGenerator = content => {
+const docDefinitionGenerator = (content) => {
   const docDefinition = {
     pageSize: "A4",
     content,
