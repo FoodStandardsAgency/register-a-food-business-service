@@ -160,6 +160,102 @@ const createLcContactSection = (lcInfo) => {
   return lcContactSection;
 };
 
+const createGuidanceLinksSection = (lcInfo) => {
+  const guidanceLinksSectionNoSpaces = [];
+  guidanceLinksSectionNoSpaces.push(
+    createTitle("Guidance links provided ", "bigger")
+  );
+  if (lcInfo.country == "wales") {
+    guidanceLinksSectionNoSpaces.push(createTitle("English", "h2"));
+  }
+  guidanceLinksSectionNoSpaces.push(
+    createTitle(
+      "Guidance on food hygiene and how to run a safe food business: https://www.food.gov.uk/business-guidance",
+      "h4"
+    )
+  );
+  guidanceLinksSectionNoSpaces.push(
+    createTitle(
+      "How to achieve a high food hygiene rating (FHRS score) : https://www.food.gov.uk/business-guidance/food-hygiene-ratings-for-businesses",
+      "h4"
+    )
+  );
+  guidanceLinksSectionNoSpaces.push(
+    createTitle(
+      "Information on the food safety management system safer food, better business: https://www.food.gov.uk/business-guidance/safer-food-better-business",
+      "h4"
+    )
+  );
+  guidanceLinksSectionNoSpaces.push(
+    createTitle(
+      "Food labelling and allergens guidance: https://www.food.gov.uk/business-guidance/industry-specific-advice/labelling-and-allergenss",
+      "h4"
+    )
+  );
+  if (lcInfo.country == "england") {
+    guidanceLinksSectionNoSpaces.push(
+      createTitle(
+        "Business support & helpline: https://www.gov.uk/business-support-helpline",
+        "h4"
+      )
+    );
+  } else if (lcInfo.country == "wales") {
+    guidanceLinksSectionNoSpaces.push(
+      createTitle(
+        "Business support: https://www.businesswales.gov.wales/starting-up",
+        "h4"
+      )
+    );
+    guidanceLinksSectionNoSpaces.push(createTitle("Cymru", "h2"));
+    guidanceLinksSectionNoSpaces.push(
+      createTitle(
+        "I gael cyngor cyffredinol ar hylendid bwyd a sut i redeg busnes bwyd diogel: https://www.food.gov.uk/cy/canllawiau-ar-gyfer-busnesau",
+        "h4"
+      )
+    );
+    guidanceLinksSectionNoSpaces.push(
+      createTitle(
+        "I gael gwybodaeth am sut i gael sgôr uchel o dan y Cynllun Sgorio Hylendid Bwyd: https://www.food.gov.uk/cy/business-guidance/sgoriau-hylendid-bwyd-ar-gyfer-busnesau",
+        "h4"
+      )
+    );
+    guidanceLinksSectionNoSpaces.push(
+      createTitle(
+        "I gael gwybodaeth am y system rheoli diogelwch bwyd, Bwyd mwy Diogel, Busnes Gwell: https://www.food.gov.uk/cy/business-guidance/bwyd-mwy-diogel-busnes-gwell",
+        "h4"
+      )
+    );
+    guidanceLinksSectionNoSpaces.push(
+      createTitle(
+        " I gael canllawiau ar labelu bwyd ac alergenau: https://www.food.gov.uk/cy/canllawiau-ar-gyfer-busnesau/cyngor-penodol-ar-gyfer-y-diwydiant/labelu-ac-alergenau",
+        "h4"
+      )
+    );
+    guidanceLinksSectionNoSpaces.push(
+      createTitle(
+        "I gael cyngor busnes cyffredinol: https://businesswales.gov.wales/starting-up/cy",
+        "h4"
+      )
+    );
+  } else if (lcInfo.country == "northern-ireland") {
+    guidanceLinksSectionNoSpaces.push(
+      createTitle(
+        "Safe Catering: https://www.food.gov.uk/business-guidance/safe-catering",
+        "h4"
+      )
+    );
+    guidanceLinksSectionNoSpaces.push(
+      createTitle("Business support: https://www.nibusinessinfo.co.uk/", "h4")
+    );
+  }
+  const guidanceLinksSectiion = [];
+  for (let index = 0; index < guidanceLinksSectionNoSpaces.length; index++) {
+    guidanceLinksSectiion.push(createNewSpace(2));
+    guidanceLinksSectiion.push(guidanceLinksSectionNoSpaces[index]);
+  }
+  return guidanceLinksSectiion;
+};
+
 const docDefinitionGenerator = (content) => {
   const docDefinition = {
     pageSize: "A4",
@@ -205,5 +301,6 @@ module.exports = {
   createSingleLine,
   createNewSpace,
   createFsaRnBox,
-  createLcContactSection
+  createLcContactSection,
+  createGuidanceLinksSection
 };
