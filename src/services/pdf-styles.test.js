@@ -168,7 +168,7 @@ describe("Function: createGuidanceLinksSections", () => {
     });
 
     it("Should return an array of length 8", () => {
-      expect(result.length).toBe(12);
+      expect(result).toHaveLength(12);
     });
   });
   describe("When lcInfo.country is wales", () => {
@@ -178,7 +178,7 @@ describe("Function: createGuidanceLinksSections", () => {
     });
 
     it("Should return an array of length 24", () => {
-      expect(result.length).toBe(26);
+      expect(result).toHaveLength(26);
     });
   });
   describe("When lcInfo.country is northern-ireland", () => {
@@ -188,7 +188,7 @@ describe("Function: createGuidanceLinksSections", () => {
     });
 
     it("Should return an array of length 14", () => {
-      expect(result.length).toBe(14);
+      expect(result).toHaveLength(14);
     });
   });
 });
