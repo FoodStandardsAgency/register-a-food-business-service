@@ -13,7 +13,8 @@ const {
   createSingleLine,
   createGreyLine,
   createFsaRnBox,
-  createLcContactSection
+  createLcContactSection,
+  createGuidanceLinksSection
 } = require("./pdf-styles");
 
 /**
@@ -26,7 +27,7 @@ const {
  */
 
 const transformDataForPdf = (registrationData, lcContactConfig) => {
-  const lcInfo = getLcNames(lcContactConfig);
+  const lcInfo = getLcNamesAndCountry(lcContactConfig);
 
   const operator = { ...registrationData.establishment.operator };
   delete operator.operator_first_line;
@@ -77,13 +78,15 @@ const getMainPartnershipContactName = (partners) => {
 const convertKeyToDisplayName = (key) =>
   key.charAt(0).toUpperCase() + key.slice(1).split("_").join(" ");
 
-const getLcNames = (lcContactConfig) => {
+const getLcNamesAndCountry = (lcContactConfig) => {
   const lcInfo = {};
   if (lcContactConfig.hygieneAndStandards) {
     lcInfo.local_council = lcContactConfig.hygieneAndStandards.local_council;
+    lcInfo.country = lcContactConfig.hygieneAndStandards.country;
   } else {
     lcInfo.local_council_hygiene = lcContactConfig.hygiene.local_council;
     lcInfo.local_council_standards = lcContactConfig.standards.local_council;
+    lcInfo.country = lcContactConfig.hygiene.country;
   }
   return lcInfo;
 };
@@ -149,6 +152,7 @@ const createContent = (pdfData) => {
   );
   content.push(createSingleSection("Activities", pdfData.activities));
   content.push(createSingleSection("Declaration", pdfData.declaration));
+  content.push(createGuidanceLinksSection(pdfData.metaData.lcInfo));
   return content;
 };
 
