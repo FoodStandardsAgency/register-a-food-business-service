@@ -18,8 +18,6 @@ const {
   createGuidanceLinksSection
 } = require("./pdf-styles");
 
-
-
 /**
  * Function that does data manipulation to return an object with data in the needed format
  *
