@@ -4,6 +4,7 @@
  */
 
 const PdfPrinter = require("pdfmake/src/printer");
+const moment = require("moment");
 
 const {
   docDefinitionGenerator,
@@ -16,6 +17,8 @@ const {
   createLcContactSection,
   createGuidanceLinksSection
 } = require("./pdf-styles");
+
+
 
 /**
  * Function that does data manipulation to return an object with data in the needed format
@@ -116,6 +119,7 @@ const convertBoolToString = (answer) => {
 };
 
 const createContent = (pdfData) => {
+  let subDate = moment().format('L', pdfData.metadata.reg_submission_date);
   let content = [];
   content.push(createTitle("New food business registration received", "h1"));
   content.push(createNewSpace(2));
@@ -135,7 +139,7 @@ const createContent = (pdfData) => {
   content.push(createTitle("Registration details", "bigger"));
   content.push(createNewSpace(2));
   content.push(
-    createSingleLine("Submitted on", pdfData.metaData.reg_submission_date)
+    createSingleLine("Submitted on", subDate)
   );
   if (pdfData.partnershipDetails !== undefined) {
     content.push(
