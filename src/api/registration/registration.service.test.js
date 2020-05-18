@@ -487,6 +487,7 @@ describe("Function: getLcContactConfig: ", () => {
           expect(
             result.hygieneAndStandards.local_council_phone_number
           ).toBeDefined();
+          expect(result.hygieneAndStandards.hasAuth).toBe(true);
         });
       });
       describe("given phone number does not exist", () => {
