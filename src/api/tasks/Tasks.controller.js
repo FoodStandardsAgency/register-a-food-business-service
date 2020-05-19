@@ -108,7 +108,7 @@ const sendRegistrationToTascomiAction = async (fsaId, req, res) => {
   if (isEmpty(registration)) {
     let message = `Could not find registration with ID ${fsaId}`;
     logEmitter.emit(ERROR, message);
-    throw message;
+    throw new Error(`${message}`);
   }
   logEmitter.emit(INFO, `Found registration with ID ${fsaId}`);
   //GET LOCAL COUNCIL
@@ -117,7 +117,7 @@ const sendRegistrationToTascomiAction = async (fsaId, req, res) => {
   if (isEmpty(localCouncil)) {
     let message = `Could not find local council with ID ${localCouncilId}`;
     logEmitter.emit(ERROR, message);
-    throw message;
+    throw new Error(`${message}`);
   }
 
   // DO LOOK UP
@@ -230,7 +230,7 @@ const sendNotificationsForRegistrationAction = async (fsaId, req, res) => {
   if (isEmpty(registration)) {
     let message = `Could not find registration with ID ${fsaId}`;
     logEmitter.emit(ERROR, message);
-    throw message;
+    throw new Error(`${message}`);
   }
   logEmitter.emit(INFO, `Found registration with ID ${fsaId}`);
 
@@ -240,7 +240,7 @@ const sendNotificationsForRegistrationAction = async (fsaId, req, res) => {
   if (isEmpty(localCouncil)) {
     let message = `Could not find local council with ID ${localCouncilId}`;
     logEmitter.emit(ERROR, message);
-    throw message;
+    throw new Error(`${message}`);
   }
 
   let configVersion = registration.registration_data_version
@@ -250,7 +250,7 @@ const sendNotificationsForRegistrationAction = async (fsaId, req, res) => {
   if (isEmpty(config)) {
     let message = `Could not find config ${fsaId} version : ${configVersion}`;
     logEmitter.emit(ERROR, message);
-    throw message;
+    throw new Error(`${message}`);
   }
 
   //this method is in dire need of refactoring...
@@ -261,7 +261,7 @@ const sendNotificationsForRegistrationAction = async (fsaId, req, res) => {
   if (isEmpty(lcContactConfig)) {
     let message = `Could not find local council config ${fsaId} ${localCouncil.local_council_url}`;
     logEmitter.emit(ERROR, message);
-    throw message;
+    throw new Error(`${message}`);
   }
 
   await sendNotifications(fsaId, lcContactConfig, registration, config);
@@ -372,7 +372,7 @@ const saveRegistrationToTempStoreAction = async (fsaId, req, res) => {
   if (isEmpty(registration)) {
     let message = `Could not find registration with ID ${fsaId}`;
     logEmitter.emit(ERROR, message);
-    throw message;
+    throw new Error(`${message}`);
   }
 
   logEmitter.emit(INFO, `Found registration with ID ${fsaId}`);
@@ -383,7 +383,7 @@ const saveRegistrationToTempStoreAction = async (fsaId, req, res) => {
   if (isEmpty(localCouncil)) {
     let message = `Could not find local council with ID ${councilId}`;
     logEmitter.emit(ERROR, message);
-    throw message;
+    throw new Error(`${message}`);
   }
 
   await saveRegistration(registration, fsaId, localCouncil.local_council_url);
@@ -413,7 +413,7 @@ const multiSendNotifications = async (
   if (isEmpty(localCouncil)) {
     let message = `Could not find local council with ID ${localCouncilId}`;
     logEmitter.emit(ERROR, message);
-    throw message;
+    throw new Error(`${message}`);
   }
 
   let configVersion = registration.registration_data_version
@@ -424,7 +424,7 @@ const multiSendNotifications = async (
   if (isEmpty(config)) {
     let message = `Could not find config ${fsaId} version : ${configVersion}`;
     logEmitter.emit(ERROR, message);
-    throw message;
+    throw new Error(`${message}`);
   }
 
   //this method is in dire need of refactoring...
@@ -435,7 +435,7 @@ const multiSendNotifications = async (
   if (isEmpty(lcContactConfig)) {
     let message = `Could not find lcContactConfig ${fsaId} ${localCouncil.local_council_url}`;
     logEmitter.emit(ERROR, message);
-    throw message;
+    throw new Error(`${message}`);
   }
 
   await sendNotifications(fsaId, lcContactConfig, registration, config);
@@ -458,7 +458,7 @@ const multiSendRegistrationToTascomi = async (
   if (isEmpty(localCouncil)) {
     let message = `Could not find local council with ID ${councilId}`;
     logEmitter.emit(ERROR, message);
-    throw message;
+    throw new Error(`${message}`);
   }
 
   // DO LOOK UP
@@ -503,7 +503,7 @@ const multiSaveRegistrationsToTempStore = async (
   if (isEmpty(localCouncil)) {
     let message = `Could not find local council with ID ${councilId}`;
     logEmitter.emit(ERROR, message);
-    throw message;
+    throw new Error(`${message}`);
   }
 
   await saveRegistration(registration, fsaId, localCouncil.local_council_url);
