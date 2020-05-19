@@ -64,7 +64,7 @@ const sendAllOutstandingRegistrationsToTascomiAction = async (
     }
 
     //sleep
-    await new Promise(resolve => setTimeout(resolve, throttle));
+    await new Promise((resolve) => setTimeout(resolve, throttle));
 
     logEmitter.emit(
       INFO,
@@ -115,9 +115,7 @@ const sendRegistrationToTascomiAction = async (fsaId, req, res) => {
       //FAIL
       logEmitter.emit(
         ERROR,
-        `Could not push to tascomi for ${fsaId} and local council ${
-          localCouncil._id
-        }. Error: "${e.message}"`
+        `Could not push to tascomi for ${fsaId} and local council ${localCouncil._id}. Error: "${e.message}"`
       );
       await updateStatusInCache(fsaId, "tascomi", TASCOMI_FAIL);
     }
@@ -167,7 +165,7 @@ const sendAllNotificationsForRegistrationsAction = async (
     }
 
     //sleep
-    await new Promise(resolve => setTimeout(resolve, throttle));
+    await new Promise((resolve) => setTimeout(resolve, throttle));
 
     logEmitter.emit(
       INFO,
@@ -223,9 +221,7 @@ const sendNotificationsForRegistrationAction = async (fsaId, req, res) => {
     allLcConfigData
   );
   if (isEmpty(lcContactConfig)) {
-    let message = `Could not find local council config ${fsaId} ${
-      localCouncil.local_council_url
-    }`;
+    let message = `Could not find local council config ${fsaId} ${localCouncil.local_council_url}`;
     logEmitter.emit(ERROR, message);
     throw message;
   }
@@ -267,7 +263,7 @@ const saveAllOutstandingRegistrationsToTempStoreAction = async (
     }
 
     //sleep
-    await new Promise(resolve => setTimeout(resolve, throttle));
+    await new Promise((resolve) => setTimeout(resolve, throttle));
 
     logEmitter.emit(
       INFO,
@@ -348,9 +344,7 @@ const multiSendNotifications = async (
     allLocalCouncils
   );
   if (isEmpty(lcContactConfig)) {
-    let message = `Could not find lcContactConfig ${fsaId} ${
-      localCouncil.local_council_url
-    }`;
+    let message = `Could not find lcContactConfig ${fsaId} ${localCouncil.local_council_url}`;
     logEmitter.emit(ERROR, message);
     throw message;
   }
@@ -385,9 +379,7 @@ const multiSendRegistrationToTascomi = async (
       //FAIL
       logEmitter.emit(
         ERROR,
-        `Could not push to tascomi for ${fsaId} and local council ${
-          localCouncil._id
-        }. Error: "${e.message}"`
+        `Could not push to tascomi for ${fsaId} and local council ${localCouncil._id}. Error: "${e.message}"`
       );
       await updateStatusInCache(fsaId, "tascomi", TASCOMI_FAIL);
     }
@@ -445,11 +437,11 @@ const getRegistration = async (client, fsaId) => {
 // };
 
 const findCouncilByIdInArray = (id, allCouncils = []) => {
-  let out = allCouncils.find(council => council._id === id);
+  let out = allCouncils.find((council) => council._id === id);
   return out;
 };
 
-const getLocalCouncilIdForRegistration = registration => {
+const getLocalCouncilIdForRegistration = (registration) => {
   let councilId;
 
   if (registration.source_council_id) {

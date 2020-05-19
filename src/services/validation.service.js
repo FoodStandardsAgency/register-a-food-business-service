@@ -75,12 +75,12 @@ validator.attributes.validation = (instance, schema, options, ctx) => {
   }
 };
 
-module.exports.validate = data => {
+module.exports.validate = (data) => {
   logEmitter.emit("functionCall", "validation.service", "validate");
   const result = [];
   const validatorResult = validator.validate(data, schema.registration);
   // turn errors into key:value pairs
-  validatorResult.errors.forEach(error => {
+  validatorResult.errors.forEach((error) => {
     result.push({ property: error.property, message: error.message });
 
     const newError = new Error(`${(error.property, error.message)}`);

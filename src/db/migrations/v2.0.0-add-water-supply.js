@@ -5,7 +5,7 @@ module.exports = {
       queryInterface.addColumn("activities", "water_supply", Sequelize.STRING)
     ]);
   },
-  down: queryInterface => {
+  down: (queryInterface) => {
     return Promise.all([
       queryInterface.removeColumn("activities", "water_supply")
     ]);

@@ -14,7 +14,7 @@ module.exports = {
       )
     ]);
   },
-  down: queryInterface => {
+  down: (queryInterface) => {
     return Promise.all([
       queryInterface.removeColumn("operators", "operator_dependent_locality"),
       queryInterface.removeColumn(

@@ -66,7 +66,7 @@ module.exports = {
       queryInterface.addColumn("registrations", "fsa_rn", Sequelize.STRING)
     ]);
   },
-  down: queryInterface => {
+  down: (queryInterface) => {
     return Promise.all([
       queryInterface.removeColumn("activities", "customer_type"),
       queryInterface.removeColumn("activities", "business_type"),

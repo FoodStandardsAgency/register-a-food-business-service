@@ -44,7 +44,7 @@ module.exports = {
       )
     ]);
   },
-  down: queryInterface => {
+  down: (queryInterface) => {
     return Promise.all([
       queryInterface.removeColumn("activities", "opening_days_irregular"),
       queryInterface.removeColumn("activities", "opening_day_monday"),

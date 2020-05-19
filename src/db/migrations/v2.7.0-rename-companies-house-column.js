@@ -1,6 +1,6 @@
 "use strict";
 module.exports = {
-  up: queryInterface => {
+  up: (queryInterface) => {
     return Promise.all([
       queryInterface.renameColumn(
         "operators",
@@ -9,7 +9,7 @@ module.exports = {
       )
     ]);
   },
-  down: queryInterface => {
+  down: (queryInterface) => {
     return Promise.all([
       queryInterface.renameColumn(
         "operators",

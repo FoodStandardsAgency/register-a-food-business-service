@@ -65,7 +65,8 @@ describe("Pdf Service: ", () => {
             local_council: "City of Cardiff Council",
             local_council_notify_emails: ["fsatestemail.valid@gmail.com"],
             local_council_email: "fsatestemail.valid@gmail.com",
-            local_council_phone_number: "0300 123 6696"
+            local_council_phone_number: "0300 123 6696",
+            country: "wales"
           }
         };
 
@@ -90,6 +91,9 @@ describe("Pdf Service: ", () => {
             "City of Cardiff Council"
           );
         });
+        it("Should return lcInfo.country", () => {
+          expect(result.metaData.lcInfo.country).toBe("wales");
+        });
       });
 
       describe("When given seperate hygiene and standards council", () => {
@@ -99,14 +103,16 @@ describe("Pdf Service: ", () => {
             local_council: "City of Cardiff Council",
             local_council_notify_emails: ["fsatestemail.valid@gmail.com"],
             local_council_email: "fsatestemail.valid@gmail.com",
-            local_council_phone_number: "0300 123 6696"
+            local_council_phone_number: "0300 123 6696",
+            country: "wales"
           },
           standards: {
             code: 8015,
             local_council: "Standards Council",
             local_council_notify_emails: ["fsatestemail.valid@gmail.com"],
             local_council_email: "fsatestemail.valid@gmail.com",
-            local_council_phone_number: "0300 123 6696"
+            local_council_phone_number: "0300 123 6696",
+            country: "wales"
           }
         };
 
@@ -134,6 +140,9 @@ describe("Pdf Service: ", () => {
           expect(result.metaData.lcInfo.local_council_standards).toBe(
             "Standards Council"
           );
+        });
+        it("Should return lcInfo.country", () => {
+          expect(result.metaData.lcInfo.country).toBe("wales");
         });
       });
     });
@@ -203,7 +212,8 @@ describe("Pdf Service: ", () => {
             local_council: "City of Cardiff Council",
             local_council_notify_emails: ["fsatestemail.valid@gmail.com"],
             local_council_email: "fsatestemail.valid@gmail.com",
-            local_council_phone_number: "0300 123 6696"
+            local_council_phone_number: "0300 123 6696",
+            country: "wales"
           }
         };
 
@@ -229,6 +239,9 @@ describe("Pdf Service: ", () => {
             "City of Cardiff Council"
           );
         });
+        it("Should return lcInfo.country", () => {
+          expect(result.metaData.lcInfo.country).toBe("wales");
+        });
       });
 
       describe("When given seperate hygiene and standards council", () => {
@@ -238,14 +251,16 @@ describe("Pdf Service: ", () => {
             local_council: "City of Cardiff Council",
             local_council_notify_emails: ["fsatestemail.valid@gmail.com"],
             local_council_email: "fsatestemail.valid@gmail.com",
-            local_council_phone_number: "0300 123 6696"
+            local_council_phone_number: "0300 123 6696",
+            country: "wales"
           },
           standards: {
             code: 8015,
             local_council: "Standards Council",
             local_council_notify_emails: ["fsatestemail.valid@gmail.com"],
             local_council_email: "fsatestemail.valid@gmail.com",
-            local_council_phone_number: "0300 123 6696"
+            local_council_phone_number: "0300 123 6696",
+            country: "wales"
           }
         };
 
@@ -273,6 +288,9 @@ describe("Pdf Service: ", () => {
           expect(result.metaData.lcInfo.local_council_standards).toBe(
             "Standards Council"
           );
+        });
+        it("Should return lcInfo.country", () => {
+          expect(result.metaData.lcInfo.country).toBe("wales");
         });
       });
     });
