@@ -215,6 +215,7 @@ const getStatus = async (cachedRegistrations, fsa_rn) => {
 };
 
 const updateStatus = async (cachedRegistrations, fsa_rn, newStatus) => {
+  logEmitter.emit("functionCall", "cacheDb.connector", "updateStatus");
   try {
     await cachedRegistrations.updateOne(
       { "fsa-rn": fsa_rn },
@@ -245,12 +246,23 @@ const updateNotificationOnSent = (
   sent,
   date = null
 ) => {
+  logEmitter.emit(
+    "functionCall",
+    "cacheDb.connector",
+    "updateNotificationOnSent"
+  );
   let { type, address } = emailsToSend[index];
   date = date === null ? getDate() : date;
   status.notifications[index].address = address;
   status.notifications[index].type = type;
   status.notifications[index].time = date;
   status.notifications[index].sent = sent;
+
+  logEmitter.emit(
+    "functionSuccess",
+    "cacheDb.connector",
+    "updateNotificationOnSent"
+  );
 
   return status;
 };
