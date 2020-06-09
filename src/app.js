@@ -1,5 +1,13 @@
+const appInsights = require('applicationinsights');
+
+if ('APPINSIGHTS_INSTRUMENTATIONKEY' in process.env) {
+  console.log(`Setting up application insights modules`)
+  appInsights.setup().start();
+}
+
 const express = require("express");
-const winston = require("winston");
+const { logger } = require("./services/winston");
+const morgan = require("morgan");
 const bodyParser = require("body-parser");
 const helmet = require("helmet");
 const rateLimit = require("express-rate-limit");
@@ -19,7 +27,7 @@ app.use(helmet());
 app.use(bodyParser.json());
 app.use("/", routers());
 app.use(errorHandler);
-
+app.use(morgan("combined", {stream: logger.stream}))
 app.listen(port, () => {
-  winston.info(`App Started listening on port ${port}`);
+  logger.info(`App Started listening on port ${port}`);
 });
