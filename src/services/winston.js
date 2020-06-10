@@ -3,7 +3,6 @@ const logger = createLogger({
     exitOnError: false, // do not exit on handled exceptions
 });
 
-// const { Logstash } = require('winston-logstash');
 const { AzureApplicationInsightsLogger } = require('winston-azure-application-insights');
 const { ElasticsearchTransport } = require('winston-elasticsearch');
 
@@ -32,7 +31,7 @@ switch(env){
         };
 
 
-        if('APPINSIGHTS_INSTRUMENTATIONKEY' in process.env){
+        if('APPINSIGHTS_INSTRUMENTATIONKEY' in process.env && process.env['APPINSIGHTS_INSTRUMENTATIONKEY'] !== ""){
             console.log(`Starting azure logger`);
             transportConfig = [
                 new AzureApplicationInsightsLogger(options.azureOpts)
@@ -40,7 +39,9 @@ switch(env){
         }
 
         break;
+
     case 'local':
+    default:
         options  = {
             console: {
                 level: "info",
@@ -70,7 +71,7 @@ switch(env){
 }
 
 logger.stream = {
-    write: (message, context = {}) => {logger.info(message, context)}
+    write: (message, context = {}) => {logger.info(message, context);}
 };
 
 transportConfig.push(new transports.Console(options.console));

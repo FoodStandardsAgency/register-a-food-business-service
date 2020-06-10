@@ -1,12 +1,12 @@
 const appInsights = require('applicationinsights');
 
-if ('APPINSIGHTS_INSTRUMENTATIONKEY' in process.env) {
+if ('APPINSIGHTS_INSTRUMENTATIONKEY' in process.env && process.env['APPINSIGHTS_INSTRUMENTATIONKEY'] !== "") {
   console.log(`Setting up application insights modules`)
   appInsights.setup().start();
 }
 
-const express = require("express");
 const { logger } = require("./services/winston");
+const express = require("express");
 const morgan = require("morgan");
 const bodyParser = require("body-parser");
 const helmet = require("helmet");

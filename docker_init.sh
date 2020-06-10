@@ -8,4 +8,4 @@ npm config set -g registry https://registry.npmjs.org/ && \
 npm config set -g '//registry.npmjs.org/:_authToken' "${NPM_TOKEN}" && \
 npm config ls --long
 
-tail -f /dev/null
+npm run local:start:docker
