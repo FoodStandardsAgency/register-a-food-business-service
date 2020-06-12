@@ -1,5 +1,5 @@
 const EventEmitter = require("events");
-const {logger} = require("./winston");
+const { logger } = require("./winston");
 
 class LogEmitter extends EventEmitter {}
 
@@ -14,7 +14,7 @@ const DOUBLE_MODE = "doubleMode";
 
 const logEmitter = new LogEmitter();
 
-const logStuff = (message, data = {}, method = "info") => {
+const logStuff = (message, method = "info") => {
   if (!logger) {
     //create a logger now... its probably a test - enable below if you want debug
     //console.log({message, data, method});
@@ -35,7 +35,7 @@ logEmitter.on(FUNCTION_SUCCESS, (module, functionName) => {
 
 logEmitter.on(FUNCTION_FAIL, (module, functionName, err) => {
   let message = `${module}: ${functionName} failed with: ${err.message}`;
-  logStuff(message, {}, "error");
+  logStuff(message, "error");
 });
 
 logEmitter.on(DOUBLE_MODE, (module, functionName) => {
@@ -48,15 +48,15 @@ logEmitter.on(INFO, (message) => {
 });
 
 logEmitter.on(WARN, (message) => {
-  logStuff(message, {}, "warn");
+  logStuff(message, "warn");
 });
 
 logEmitter.on(DEBUG, (message) => {
-  logStuff(message, {}, "debug");
+  logStuff(message, "debug");
 });
 
 logEmitter.on(ERROR, (message) => {
-  logStuff(message, {}, "error");
+  logStuff(message, "error");
 });
 
 module.exports = {

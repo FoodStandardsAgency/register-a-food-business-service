@@ -1,7 +1,9 @@
-const appInsights = require('applicationinsights');
+const appInsights = require("applicationinsights");
 
-if ('APPINSIGHTS_INSTRUMENTATIONKEY' in process.env && process.env['APPINSIGHTS_INSTRUMENTATIONKEY'] !== "") {
-  console.log(`Setting up application insights modules`)
+if (
+  "APPINSIGHTS_INSTRUMENTATIONKEY" in process.env &&
+  process.env["APPINSIGHTS_INSTRUMENTATIONKEY"] !== ""
+) {
   appInsights.setup().start();
 }
 
@@ -27,7 +29,7 @@ app.use(helmet());
 app.use(bodyParser.json());
 app.use("/", routers());
 app.use(errorHandler);
-app.use(morgan("combined", {stream: logger.stream}))
+app.use(morgan("combined", { stream: logger.stream }));
 app.listen(port, () => {
   logger.info(`App Started listening on port ${port}`);
 });
