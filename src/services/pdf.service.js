@@ -117,7 +117,7 @@ const convertBoolToString = (answer) => {
 };
 
 const createContent = (pdfData) => {
-  let subDate = moment(pdfData.metadata.reg_submission_date).format("L");
+  let subDate = moment(pdfData.metaData.reg_submission_date).format("L");
   let content = [];
   content.push(createTitle("New food business registration received", "h1"));
   content.push(createNewSpace(2));
