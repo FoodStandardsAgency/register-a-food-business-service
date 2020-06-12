@@ -117,7 +117,7 @@ const convertBoolToString = (answer) => {
 };
 
 const createContent = (pdfData) => {
-  let subDate = moment().format('L', pdfData.metadata.reg_submission_date);
+  let subDate = moment().format("L", pdfData.metadata.reg_submission_date);
   let content = [];
   content.push(createTitle("New food business registration received", "h1"));
   content.push(createNewSpace(2));
@@ -136,9 +136,7 @@ const createContent = (pdfData) => {
   content.push(createNewSpace(2));
   content.push(createTitle("Registration details", "bigger"));
   content.push(createNewSpace(2));
-  content.push(
-    createSingleLine("Submitted on", subDate)
-  );
+  content.push(createSingleLine("Submitted on", subDate));
   if (pdfData.partnershipDetails !== undefined) {
     content.push(
       createSingleSection("Partnership details", pdfData.partnershipDetails)
