@@ -4,6 +4,7 @@
  */
 
 const PdfPrinter = require("pdfmake/src/printer");
+const moment = require("moment");
 
 const {
   docDefinitionGenerator,
@@ -116,6 +117,7 @@ const convertBoolToString = (answer) => {
 };
 
 const createContent = (pdfData) => {
+  let subDate = moment(pdfData.metaData.reg_submission_date).format("L");
   let content = [];
   content.push(createTitle("New food business registration received", "h1"));
   content.push(createNewSpace(2));
@@ -134,9 +136,7 @@ const createContent = (pdfData) => {
   content.push(createNewSpace(2));
   content.push(createTitle("Registration details", "bigger"));
   content.push(createNewSpace(2));
-  content.push(
-    createSingleLine("Submitted on", pdfData.metaData.reg_submission_date)
-  );
+  content.push(createSingleLine("Submitted on", subDate));
   if (pdfData.partnershipDetails !== undefined) {
     content.push(
       createSingleSection("Partnership details", pdfData.partnershipDetails)
