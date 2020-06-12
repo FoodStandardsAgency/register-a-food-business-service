@@ -38,10 +38,6 @@ const {
   mongodb
 } = require("../../connectors/configDb/configDb.connector");
 
-const {
-  updateStatusInCache
-} = require("../../connectors/cacheDb/cacheDb.connector");
-
 const { logEmitter } = require("../../services/logging.service");
 const { statusEmitter } = require("../../services/statusEmitter.service");
 
@@ -124,39 +120,12 @@ const saveRegistration = async (registration, fsa_rn, council) => {
     };
   };
 
-  try {
-    //execute the transaction
-    let tempStoreSaved = await transaction();
-
-    logEmitter.emit(
-      "functionSuccess",
-      "registration.service",
-      "saveRegistration"
-    );
-    logEmitter.emit(
-      INFO,
-      `Saved ${tempStoreSaved.id} fsaId: ${fsa_rn} in temp store `
-    );
-
-    await updateStatusInCache(fsa_rn, "registration", true);
-
-    return tempStoreSaved;
-  } catch (err) {
-    statusEmitter.emit("incrementCount", "storeRegistrationsInDbFailed");
-    statusEmitter.emit(
-      "setStatus",
-      "mostRecentStoreRegistrationInDbSucceeded",
-      false
-    );
-    logEmitter.emit(
-      "functionFail",
-      "registration.service",
-      "saveRegistration",
-      err
-    );
-    await updateStatusInCache(fsa_rn, "registration", false);
-    throw err;
-  }
+  logEmitter.emit(
+    "functionSuccess",
+    "registration.service",
+    "saveRegistration"
+  );
+  return transaction();
 };
 
 const getFullRegistrationByFsaRn = async (fsa_rn) => {
@@ -232,11 +201,7 @@ const sendTascomiRegistration = async (registration, localCouncil) => {
 
   const auth = localCouncil.auth;
   const reg = await promiseRetry({ retries: 3 }, (retry, number) => {
-    logEmitter.emit(
-      "functionCall",
-      "registration.service",
-      `createdFoodBusinessRegistration attempt ${number}`
-    );
+    logEmitter.emit(INFO, `createdFoodBusinessRegistration attempt ${number}`);
     return createFoodBusinessRegistration(
       registration,
       postRegistrationMetadata,
@@ -254,11 +219,7 @@ const sendTascomiRegistration = async (registration, localCouncil) => {
   }
 
   const response = await promiseRetry({ retries: 3 }, (retry, number) => {
-    logEmitter.emit(
-      "functionCall",
-      "registration.service",
-      `createdReferenceNumber attempt ${number}`
-    );
+    logEmitter.emit(INFO, `createdReferenceNumber attempt ${number}`);
     return createReferenceNumber(referenceIdInput, auth).catch(retry);
   });
 
@@ -343,7 +304,11 @@ const getLcContactConfigFromArray = async (
   localCouncilUrl,
   allCouncils = []
 ) => {
-  logEmitter.emit("functionCall", "registration.service", "getLcContactConfig");
+  logEmitter.emit(
+    "functionCall",
+    "registration.service",
+    "getLcContactConfigFromArray"
+  );
 
   if (localCouncilUrl) {
     const allLcConfigData = allCouncils;
@@ -392,7 +357,7 @@ const getLcContactConfigFromArray = async (
           logEmitter.emit(
             "functionSuccess",
             "registration.service",
-            "getLcContactConfig"
+            "getLcContactConfigFromArray"
           );
 
           return separateCouncils;
@@ -403,7 +368,7 @@ const getLcContactConfigFromArray = async (
           logEmitter.emit(
             "functionFail",
             "registration.service",
-            "getLcContactConfig",
+            "getLcContactConfigFromArray",
             newError
           );
           throw newError;
@@ -429,7 +394,7 @@ const getLcContactConfigFromArray = async (
         logEmitter.emit(
           "functionSuccess",
           "registration.service",
-          "getLcContactConfig"
+          "getLcContactConfigFromArray"
         );
 
         return hygieneAndStandardsCouncil;
@@ -441,7 +406,7 @@ const getLcContactConfigFromArray = async (
       logEmitter.emit(
         "functionFail",
         "registration.service",
-        "getLcContactConfig",
+        "getLcContactConfigFromArray",
         newError
       );
       throw newError;
@@ -453,7 +418,7 @@ const getLcContactConfigFromArray = async (
     logEmitter.emit(
       "functionFail",
       "registration.service",
-      "getLcContactConfig",
+      "getLcContactConfigFromArray",
       newError
     );
     throw newError;

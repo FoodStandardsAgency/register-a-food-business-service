@@ -181,7 +181,7 @@ describe("registration controller", () => {
               local_council_url: exampleLCUrl,
               hygiene_council_code: 1234,
               registration_data_version: "1.2.0",
-              source_council_id: exampleCouncil.id
+              source_council_id: exampleCouncil._id
             }
           );
           expect(cacheRegistration).toHaveBeenLastCalledWith(expectedToCache);
