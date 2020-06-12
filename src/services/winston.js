@@ -1,10 +1,12 @@
 let { createLogger, transports } = require("winston");
 const logger = createLogger({
-    exitOnError: false, // do not exit on handled exceptions
+  exitOnError: false // do not exit on handled exceptions
 });
 
-const { AzureApplicationInsightsLogger } = require('winston-azure-application-insights');
-const { ElasticsearchTransport } = require('winston-elasticsearch');
+const {
+  AzureApplicationInsightsLogger
+} = require("winston-azure-application-insights");
+const { ElasticsearchTransport } = require("winston-elasticsearch");
 
 let env = process.env.NODE_ENV;
 
@@ -13,70 +15,89 @@ let options;
 // transports
 let transportConfig;
 
-switch(env){
-    case 'test':
-    case 'development':
-    case 'production':
-        options  = {
-            console: {
-                level: 'error',
-                handleExceptions: true,
-                colorize: true,
-            },
+switch (env) {
+  case "production":
+    options = {
+      console: {
+        level: "error",
+        handleExceptions: true,
+        colorize: true
+      },
+      esTransportOpts: {
+        clientOpts: {
+          node: "http://elk:9200"
+        },
+        level: "info"
+      },
 
-            azureOpts: {
-                level: "error",
-                key: process.env.APPINSIGHTS_INSTRUMENTATIONKEY
-            }
-        };
+      azureOpts: {
+        level: "error",
+        key: process.env.APPINSIGHTS_INSTRUMENTATIONKEY
+      }
+    };
 
+    if (
+      "APPINSIGHTS_INSTRUMENTATIONKEY" in process.env &&
+      process.env["APPINSIGHTS_INSTRUMENTATIONKEY"] !== ""
+    ) {
+      console.log(`Starting azure logger`);
+      // transportConfig = [new AzureApplicationInsightsLogger(options.azureOpts)];
+      transportConfig = [new ElasticsearchTransport(options.esTransportOpts)];
+    }
 
-        if('APPINSIGHTS_INSTRUMENTATIONKEY' in process.env && process.env['APPINSIGHTS_INSTRUMENTATIONKEY'] !== ""){
-            console.log(`Starting azure logger`);
-            transportConfig = [
-                new AzureApplicationInsightsLogger(options.azureOpts)
-            ];
-        }
+    break;
+  case "test":
+    options = {
+      console: {
+        level: "info",
+        handleExceptions: true,
+        json: true,
+        colorize: true
+      }
+    };
 
-        break;
+    transportConfig = [];
+    break;
+  case "development":
+  case "local":
+  default:
+    options = {
+      console: {
+        level: "info",
+        handleExceptions: true,
+        json: true,
+        colorize: true
+      },
 
-    case 'local':
-    default:
-        options  = {
-            console: {
-                level: "info",
-                handleExceptions: true,
-                json: false,
-                colorize: true,
-            },
+      esTransportOpts: {
+        clientOpts: {
+          node: "http://elk:9200"
+        },
+        level: "info"
+      },
 
-            esTransportOpts: {
-                clientOpts:{
-                    node:  "http://elk:9200"
-                },
-                level: "info"
-            },
+      azureOpts: {
+        level: "error",
+        key: process.env.APPINSIGHTS_INSTRUMENTATIONKEY
+      }
+    };
 
-            azureOpts: {
-                level: "error",
-                key: process.env.APPINSIGHTS_INSTRUMENTATIONKEY
-            }
-        };
+    transportConfig = [new ElasticsearchTransport(options.esTransportOpts)];
 
-        transportConfig = [
-            new ElasticsearchTransport(options.esTransportOpts)
-        ]
-
-        break;
+    break;
 }
 
 logger.stream = {
-    write: (message, context = {}) => {logger.info(message, context);}
+  write: (message, context = {}) => {
+    logger.info(message, context);
+  }
 };
 
 transportConfig.push(new transports.Console(options.console));
 
 //add the transports to the logger
-transportConfig.forEach((item)=>{logger.add(item)});
+transportConfig.forEach((item) => {
+  logger.add(item);
+});
 
 module.exports = { logger };
