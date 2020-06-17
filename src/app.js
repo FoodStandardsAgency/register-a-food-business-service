@@ -39,6 +39,7 @@ const limiter = rateLimit({
   max: process.env.RATE_LIMIT // limit each IP to x requests per minute
 });
 
+app.use(clsMiddleware);
 app.use(limiter);
 app.use(helmet());
 app.use(bodyParser.json());

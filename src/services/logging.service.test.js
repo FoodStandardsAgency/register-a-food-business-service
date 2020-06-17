@@ -85,7 +85,7 @@ describe("logEmitter", () => {
     });
   });
 
-  describe("on functionSuccess event", () => {
+  describe("on functionSuccessWith event", () => {
     it("should call winston info", async () => {
       let message = FUNCTION_SUCCESS_WITH;
       let moduleMessage = "someModule";
