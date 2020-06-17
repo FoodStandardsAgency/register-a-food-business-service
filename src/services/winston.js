@@ -6,7 +6,10 @@ const logger = createLogger({
 const {
   AzureApplicationInsightsLogger
 } = require("winston-azure-application-insights");
+
+/* eslint-disable */
 const { ElasticsearchTransport } = require("winston-elasticsearch");
+/* eslint-enable */
 
 let env = process.env.NODE_ENV;
 let logLevel = env === "production" ? "error" : "info";
@@ -27,7 +30,6 @@ switch (env) {
     options = {
       console: {
         level: logLevel,
-        handleExceptions: true,
         colorize: true
       },
 
@@ -48,7 +50,6 @@ switch (env) {
     options = {
       console: {
         level: logLevel,
-        handleExceptions: true,
         json: true,
         colorize: true
       }
@@ -61,7 +62,6 @@ switch (env) {
     options = {
       console: {
         level: logLevel,
-        handleExceptions: true,
         json: true,
         colorize: true
       },
@@ -74,7 +74,8 @@ switch (env) {
       }
     };
 
-    transportConfig.push(new ElasticsearchTransport(options.esTransportOpts));
+    //rem this in when you need it atow there is a problem with this closing its fileHandle
+    //transportConfig.push(new ElasticsearchTransport(options.esTransportOpts));
 
     break;
 }
