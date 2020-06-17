@@ -8,4 +8,5 @@ npm config set -g registry https://registry.npmjs.org/ && \
 npm config set -g '//registry.npmjs.org/:_authToken' "${NPM_TOKEN}" && \
 npm config ls --long
 
-npm run local:start:docker
+node src/db/check-connection.js && npm run migrate:local
+npm run local:start

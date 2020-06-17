@@ -1,5 +1,6 @@
-const appInsights = require("applicationinsights");
+const cls = require("cls-hooked");
 
+const appInsights = require("applicationinsights");
 if (
   "APPINSIGHTS_INSTRUMENTATIONKEY" in process.env &&
   process.env["APPINSIGHTS_INSTRUMENTATIONKEY"] !== ""
@@ -17,6 +18,20 @@ const rateLimit = require("express-rate-limit");
 const { routers } = require("./api/routers");
 const { errorHandler } = require("./middleware/errorHandler");
 
+const clsNamespace = cls.createNamespace("application");
+
+const clsMiddleware = (req, res, next) => {
+  // req and res are event emitters. We want to access CLS context inside of their event callbacks
+  clsNamespace.bind(req);
+  clsNamespace.bind(res);
+
+  clsNamespace.run(() => {
+    clsNamespace.set("request", req);
+
+    next();
+  });
+};
+
 const app = express();
 const port = process.env.PORT || 4000;
 
@@ -24,6 +39,7 @@ const limiter = rateLimit({
   max: process.env.RATE_LIMIT // limit each IP to x requests per minute
 });
 
+app.use(clsMiddleware);
 app.use(limiter);
 app.use(helmet());
 app.use(bodyParser.json());
