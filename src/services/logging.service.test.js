@@ -9,6 +9,7 @@ jest.mock("./winston", () => ({
 }));
 
 const { logger } = require("./winston");
+const packageJson = require("../../package.json");
 
 const {
   logEmitter,
@@ -25,8 +26,10 @@ const {
 } = require("./logging.service");
 
 const noSession = {
-  session_id: null,
-  status: "no-session"
+  context: {
+    application_name: packageJson.name,
+    session_id: null
+  }
 };
 
 describe("logEmitter", () => {
