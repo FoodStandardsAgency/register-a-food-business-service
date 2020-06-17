@@ -24,7 +24,7 @@ const getPresentContext = () => {
   let context = {
     context: {
       application_name: packageJson.name,
-      session_id: null
+      request_id: null
     }
   };
 
@@ -32,10 +32,10 @@ const getPresentContext = () => {
     return context;
   }
 
-  let req = writer.get("request");
+  let req = writer.get("requestId");
 
   if (req) {
-    context.context.session_id = req.session.id;
+    context.context.request_id = req;
   }
 
   return context;
@@ -51,7 +51,7 @@ const logStuff = (message, data = {}, method = "info") => {
 };
 /* eslint-enable */
 
-logEmitter.on(FUNCTION_CALL_WITH, (module, functionName, data) => {
+logEmitter.on(FUNCTION_CALL_WITH, (module, functionName, data = {}) => {
   let message = `${module}: ${functionName} called with: ${data}`;
   logStuff(message, data);
 });
@@ -66,15 +66,18 @@ logEmitter.on(FUNCTION_SUCCESS, (module, functionName) => {
   logStuff(message);
 });
 
-logEmitter.on(FUNCTION_SUCCESS_WITH, (module, functionName, data) => {
+logEmitter.on(FUNCTION_SUCCESS_WITH, (module, functionName, data = {}) => {
   let message = `${module}: ${functionName} successful with: ${data}`;
   logStuff(message);
 });
 
-logEmitter.on(FUNCTION_FAIL, (module, functionName, err) => {
-  let message = `${module}: ${functionName} failed with: ${err.message}`;
-  logStuff(message, {}, "error");
-});
+logEmitter.on(
+  FUNCTION_FAIL,
+  (module, functionName, err = { message: null }) => {
+    let message = `${module}: ${functionName} failed with: ${err.message}`;
+    logStuff(message, {}, "error");
+  }
+);
 
 logEmitter.on(DOUBLE_MODE, (module, functionName) => {
   let message = `${module}: ${functionName}: running in double mode`;
