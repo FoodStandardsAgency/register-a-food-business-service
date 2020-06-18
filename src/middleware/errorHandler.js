@@ -14,16 +14,16 @@
 // 7 - notifyMissingPersonalisation
 // 8 - mongoConnectionError
 
-const winston = require("winston");
+const { logger } = require("../services/winston");
 const errorDetails = require("./errors.json");
 
 /* eslint-disable */
 const errorHandler = (err, req, res, next) => {
   /* eslint-enable */
-  winston.error(`Application error handled...`);
-  winston.error(err);
+  logger.error(`Application error handled...`);
 
   if (err.name) {
+    logger.error(`Application error details:`, err);
     const errorDetail = errorDetails.find((error) => {
       return error.name === err.name;
     });

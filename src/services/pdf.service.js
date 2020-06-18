@@ -4,6 +4,7 @@
  */
 
 const PdfPrinter = require("pdfmake/src/printer");
+const moment = require("moment");
 
 const {
   docDefinitionGenerator,
@@ -37,6 +38,15 @@ const transformDataForPdf = (registrationData, lcContactConfig) => {
   const premise = { ...registrationData.establishment.premise };
   delete premise.establishment_first_line;
   delete premise.establishment_street;
+
+  registrationData.establishment.establishment_details.establishment_opening_date = moment(
+    registrationData.establishment.establishment_details
+      .establishment_opening_date
+  ).format("DD MMM YYYY");
+
+  registrationData.reg_submission_date = moment(
+    registrationData.reg_submission_date
+  ).format("DD MMM YYYY");
 
   const pdfData = {
     operator,

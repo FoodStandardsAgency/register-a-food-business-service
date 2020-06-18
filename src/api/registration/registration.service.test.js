@@ -157,14 +157,6 @@ describe("Function: saveRegistration: ", () => {
     });
   });
 
-  it("Should should call the updateStatusInCache with true", () => {
-    expect(updateStatusInCache).toHaveBeenLastCalledWith(
-      123,
-      "registration",
-      true
-    );
-  });
-
   // TODO JMB: add proper error case for this in handler.
   describe("Given one of the calls fails", () => {
     beforeEach(async () => {
@@ -189,13 +181,6 @@ describe("Function: saveRegistration: ", () => {
 
     it("Should throw an error", () => {
       expect(result.message).toBeDefined();
-    });
-    it("Should should call the updateStatusInCache with false", () => {
-      expect(updateStatusInCache).toHaveBeenLastCalledWith(
-        123,
-        "registration",
-        false
-      );
     });
   });
 });
