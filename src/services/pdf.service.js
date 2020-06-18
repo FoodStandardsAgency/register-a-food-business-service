@@ -39,6 +39,15 @@ const transformDataForPdf = (registrationData, lcContactConfig) => {
   delete premise.establishment_first_line;
   delete premise.establishment_street;
 
+  registrationData.establishment.establishment_details.establishment_opening_date = moment(
+    registrationData.establishment.establishment_details
+      .establishment_opening_date
+  ).format("DD MMM YYYY");
+
+  registrationData.reg_submission_date = moment(
+    registrationData.reg_submission_date
+  ).format("DD MMM YYYY");
+
   const pdfData = {
     operator,
     establishment: {
@@ -117,7 +126,6 @@ const convertBoolToString = (answer) => {
 };
 
 const createContent = (pdfData) => {
-  let subDate = moment(pdfData.metaData.reg_submission_date).format("L");
   let content = [];
   content.push(createTitle("New food business registration received", "h1"));
   content.push(createNewSpace(2));
@@ -136,7 +144,9 @@ const createContent = (pdfData) => {
   content.push(createNewSpace(2));
   content.push(createTitle("Registration details", "bigger"));
   content.push(createNewSpace(2));
-  content.push(createSingleLine("Submitted on", subDate));
+  content.push(
+    createSingleLine("Submitted on", pdfData.metaData.reg_submission_date)
+  );
   if (pdfData.partnershipDetails !== undefined) {
     content.push(
       createSingleSection("Partnership details", pdfData.partnershipDetails)
