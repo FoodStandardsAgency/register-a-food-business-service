@@ -6,7 +6,8 @@ const {
   Operator,
   Premise,
   Registration,
-  Partner
+  Partner,
+  Council
 } = require("../../db/db");
 
 const db = require("../../db/models");
@@ -90,6 +91,34 @@ const createRegistration = async (fsa_rn, council, transaction = null) => {
   return modelCreate(data, Registration, "Registration", transaction);
 };
 
+const createCouncil = async (data, transaction = null) => {
+
+  return modelCreate(data, Council, "Council", transaction);
+};
+
+const modelFind = async (query, model, functionName, transaction = null) => {
+  logEmitter.emit("functionCall", "registration.connector.js", functionName);
+
+  let t = Object.assign({}, query, { transaction });
+  try {
+    const response = await model.find(t);
+    logEmitter.emit(
+        "functionSuccess",
+        "registrationDb.js",
+        functionName
+    );
+    return response;
+  } catch (err) {
+    logEmitter.emit(
+        "functionFail",
+        "registrationDb.js",
+        functionName,
+        err
+    );
+    throw err;
+  }
+};
+
 const modelFindOne = async (query, model, functionName, transaction = null) => {
   logEmitter.emit("functionCall", "registration.connector.js", functionName);
 
@@ -98,14 +127,14 @@ const modelFindOne = async (query, model, functionName, transaction = null) => {
     const response = await model.findOne(t);
     logEmitter.emit(
       "functionSuccess",
-      "registration.connector.js",
+        "registrationDb.js",
       functionName
     );
     return response;
   } catch (err) {
     logEmitter.emit(
       "functionFail",
-      "registration.connector.js",
+        "registrationDb.js",
       functionName,
       err
     );
@@ -143,6 +172,31 @@ const getDeclarationByRegId = async (id) => {
     { where: { registrationId: id } },
     Declaration,
     "getDeclarationByRegId"
+  );
+};
+
+const getAllCouncils = async () => {
+  return await modelFind(
+      { },
+      Council,
+      "getAllCouncils"
+  );
+};
+
+const getCouncilById = async (id, transaction=null) => {
+  return modelFindOne(
+      { where: { local_council_id: id } },
+      Council,
+      "getCouncilById"
+  );
+};
+
+
+const getCouncilByUrl = async (url, transaction=null) => {
+  return modelFindOne(
+      { where: { local_council_url: url } },
+      Council,
+      "getCouncilByUrl"
   );
 };
 
@@ -248,6 +302,10 @@ module.exports = {
   createPremise,
   createPartner,
   createRegistration,
+  createCouncil,
+  getCouncilByUrl,
+  getCouncilById,
+  getAllCouncils,
   getRegistrationById,
   getRegistrationByFsaRn,
   getEstablishmentByRegId,

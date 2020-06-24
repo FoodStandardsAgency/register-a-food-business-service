@@ -8,6 +8,8 @@ const connectToDb = async () => {
   } catch (err) {
     info(`Unable to connect to the database: ${err}`);
   }
+
+  return db;
 };
 
 const closeConnection = async () => {
