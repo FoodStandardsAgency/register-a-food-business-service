@@ -7,7 +7,6 @@ module.exports = (sequelize, DataTypes) => {
       local_council_url: { type: DataTypes.STRING, primaryKey: true },
       competent_authority_id: { type: DataTypes.INTEGER },
       local_council_full_name: { type: DataTypes.STRING },
-      local_council: { type: DataTypes.STRING },
       local_council_phone_number: { type: DataTypes.STRING },
       country: { type: DataTypes.STRING },
       separate_standards_council: { type: DataTypes.INTEGER },
@@ -21,7 +20,16 @@ module.exports = (sequelize, DataTypes) => {
           return this.local_council_id;
         },
         set(value) {
-          throw new Error(`Do not try to set the _id value (${value})!`);
+          this.local_council_id = value;
+        }
+      },
+      local_council: {
+        type: DataTypes.VIRTUAL,
+        get() {
+          return this.local_council_full_name;
+        },
+        set(value) {
+          this.local_council_full_name = value;
         }
       }
     },

@@ -95,20 +95,6 @@ const createCouncil = async (data, transaction = null) => {
   return modelCreate(data, Council, "Council", transaction);
 };
 
-const modelFind = async (query, model, functionName, transaction = null) => {
-  logEmitter.emit("functionCall", "registration.connector.js", functionName);
-
-  let t = Object.assign({}, query, { transaction });
-  try {
-    const response = await model.find(t);
-    logEmitter.emit("functionSuccess", "registrationDb.js", functionName);
-    return response;
-  } catch (err) {
-    logEmitter.emit("functionFail", "registrationDb.js", functionName, err);
-    throw err;
-  }
-};
-
 const modelFindOne = async (query, model, functionName, transaction = null) => {
   logEmitter.emit("functionCall", "registration.connector.js", functionName);
 
@@ -157,7 +143,9 @@ const getDeclarationByRegId = async (id) => {
 };
 
 const getAllCouncils = async () => {
-  return await modelFind({}, Council, "getAllCouncils");
+  let out = await Council.findAll();
+
+  return out;
 };
 
 const getCouncilById = async (id) => {

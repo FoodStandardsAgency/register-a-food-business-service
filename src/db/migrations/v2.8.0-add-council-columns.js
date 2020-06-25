@@ -5,9 +5,6 @@ module.exports = {
     await queryInterface.addColumn("councils", "local_council_id", {
       type: Sequelize.INTEGER
     });
-    await queryInterface.addColumn("councils", "local_council", {
-      type: Sequelize.STRING
-    });
     await queryInterface.addColumn("councils", "local_council_phone_number", {
       type: Sequelize.STRING
     });
@@ -27,7 +24,6 @@ module.exports = {
 
   down: async (queryInterface) => {
     await queryInterface.removeColumn("councils", "local_council_id");
-    await queryInterface.removeColumn("councils", "local_council");
     await queryInterface.removeColumn("councils", "local_council_phone_number");
     await queryInterface.removeColumn("councils", "country");
     await queryInterface.removeColumn("councils", "separate_standards_council");
