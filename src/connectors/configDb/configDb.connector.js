@@ -3,12 +3,14 @@ const { lcConfigCollectionDouble } = require("./configDb.double");
 const { CONFIGDB_URL } = require("../../config");
 const { logEmitter } = require("../../services/logging.service");
 const { statusEmitter } = require("../../services/statusEmitter.service");
-const {managedTransaction, getCouncilByUrl, getCouncilById, getAllCouncils, createCouncil } = require("../registrationDb/registrationDb");
+const {
+  getCouncilByUrl,
+  getCouncilById,
+  getAllCouncils
+} = require("../registrationDb/registrationDb");
 
 let client = undefined;
 let configDB = undefined;
-
-let allLcConfigData;
 
 const establishConnectionToMongo = async (collectionName) => {
   if (process.env.DOUBLE_MODE === "true") {

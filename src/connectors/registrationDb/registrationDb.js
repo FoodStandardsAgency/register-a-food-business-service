@@ -92,7 +92,6 @@ const createRegistration = async (fsa_rn, council, transaction = null) => {
 };
 
 const createCouncil = async (data, transaction = null) => {
-
   return modelCreate(data, Council, "Council", transaction);
 };
 
@@ -102,19 +101,10 @@ const modelFind = async (query, model, functionName, transaction = null) => {
   let t = Object.assign({}, query, { transaction });
   try {
     const response = await model.find(t);
-    logEmitter.emit(
-        "functionSuccess",
-        "registrationDb.js",
-        functionName
-    );
+    logEmitter.emit("functionSuccess", "registrationDb.js", functionName);
     return response;
   } catch (err) {
-    logEmitter.emit(
-        "functionFail",
-        "registrationDb.js",
-        functionName,
-        err
-    );
+    logEmitter.emit("functionFail", "registrationDb.js", functionName, err);
     throw err;
   }
 };
@@ -125,19 +115,10 @@ const modelFindOne = async (query, model, functionName, transaction = null) => {
   let t = Object.assign({}, query, { transaction });
   try {
     const response = await model.findOne(t);
-    logEmitter.emit(
-      "functionSuccess",
-        "registrationDb.js",
-      functionName
-    );
+    logEmitter.emit("functionSuccess", "registrationDb.js", functionName);
     return response;
   } catch (err) {
-    logEmitter.emit(
-      "functionFail",
-        "registrationDb.js",
-      functionName,
-      err
-    );
+    logEmitter.emit("functionFail", "registrationDb.js", functionName, err);
     throw err;
   }
 };
@@ -176,27 +157,22 @@ const getDeclarationByRegId = async (id) => {
 };
 
 const getAllCouncils = async () => {
-  return await modelFind(
-      { },
-      Council,
-      "getAllCouncils"
+  return await modelFind({}, Council, "getAllCouncils");
+};
+
+const getCouncilById = async (id) => {
+  return modelFindOne(
+    { where: { local_council_id: id } },
+    Council,
+    "getCouncilById"
   );
 };
 
-const getCouncilById = async (id, transaction=null) => {
+const getCouncilByUrl = async (url) => {
   return modelFindOne(
-      { where: { local_council_id: id } },
-      Council,
-      "getCouncilById"
-  );
-};
-
-
-const getCouncilByUrl = async (url, transaction=null) => {
-  return modelFindOne(
-      { where: { local_council_url: url } },
-      Council,
-      "getCouncilByUrl"
+    { where: { local_council_url: url } },
+    Council,
+    "getCouncilByUrl"
   );
 };
 
