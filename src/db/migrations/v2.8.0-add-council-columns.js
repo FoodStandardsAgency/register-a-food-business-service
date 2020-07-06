@@ -35,23 +35,21 @@ module.exports = {
   },
 
   down: async (queryInterface) => {
-    return queryInterface.sequelize.transaction(async (transaction) => {
-      await queryInterface.removeColumn("councils", "local_council_id");
-      await queryInterface.removeColumn(
-        "councils",
-        "local_council_phone_number"
-      );
-      await queryInterface.removeColumn("councils", "local_council_email");
-      await queryInterface.removeColumn("councils", "country");
-      await queryInterface.removeColumn(
-        "councils",
-        "separate_standards_council"
-      );
-      await queryInterface.removeColumn(
-        "councils",
-        "local_council_notify_emails"
-      );
-      await queryInterface.removeColumn("councils", "auth");
-    });
+    await queryInterface.removeColumn("councils", "local_council_id");
+    await queryInterface.removeColumn(
+      "councils",
+      "local_council_phone_number"
+    );
+    await queryInterface.removeColumn("councils", "local_council_email");
+    await queryInterface.removeColumn("councils", "country");
+    await queryInterface.removeColumn(
+      "councils",
+      "separate_standards_council"
+    );
+    await queryInterface.removeColumn(
+      "councils",
+      "local_council_notify_emails"
+    );
+    await queryInterface.removeColumn("councils", "auth");
   }
 };
