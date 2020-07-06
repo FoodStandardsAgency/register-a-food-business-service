@@ -104,64 +104,14 @@ const getConfigVersion = async (regDataVersion) => {
 
 const findCouncilById = async (collection, id) => {
   return getCouncilById(id);
-
-  // return await collection.findOne({
-  //   _id: id
-  // });
 };
 
 const findCouncilByUrl = async (collection, url) => {
   return await getCouncilByUrl(url);
-
-  // return await collection.findOne({
-  //   local_council_url: url
-  // });
 };
 
 const getAllLocalCouncilConfig = async () => {
   return await getAllCouncils();
-
-  // logEmitter.emit(
-  //   "functionCall",
-  //   "configDb.connector",
-  //   "getAllLocalCouncilConfig"
-  // );
-  //
-  // try {
-  //   const lcConfigCollection = await establishConnectionToMongo("lcConfig");
-  //   const allLcConfigDataCursor = await lcConfigCollection.find({});
-  //   allLcConfigData = allLcConfigDataCursor.toArray();
-  //
-  //   statusEmitter.emit("incrementCount", "getConfigFromDbSucceeded");
-  //   statusEmitter.emit("setStatus", "mostRecentGetConfigFromDbSucceeded", true);
-  // } catch (err) {
-  //   statusEmitter.emit("incrementCount", "getConfigFromDbFailed");
-  //   statusEmitter.emit(
-  //     "setStatus",
-  //     "mostRecentGetConfigFromDbSucceeded",
-  //     false
-  //   );
-  //   logEmitter.emit(
-  //     "functionFail",
-  //     "configDb.connector",
-  //     "getAllLocalCouncilConfig",
-  //     err
-  //   );
-  //
-  //   const newError = new Error();
-  //   newError.name = "mongoConnectionError";
-  //   newError.message = err.message;
-  //
-  //   throw newError;
-  // }
-  //
-  // logEmitter.emit(
-  //   "functionSuccess",
-  //   "configDb.connector",
-  //   "getAllLocalCouncilConfig"
-  // );
-  //
-  // return allLcConfigData;
 };
 
 const clearMongoConnection = () => {
