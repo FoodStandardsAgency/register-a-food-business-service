@@ -1,8 +1,8 @@
 require("dotenv").config();
 const mongodb = require("mongodb");
 const { logEmitter, INFO } = require("../src/services/logging.service");
-const {connectToDb, closeConnection } = require("../src/db/db");
-const {managedTransaction, getCouncilByUrl, createCouncil } = require("../src/connectors/registrationDb/registrationDb");
+const {connectToDb, closeConnection} = require("../src/db/db");
+const {getCouncilByUrl, createCouncil } = require("../src/connectors/registrationDb/registrationDb");
 
 let client;
 let configDB;
@@ -34,8 +34,6 @@ const getLocalCouncils = async () => {
       })
       .toArray();
 
-
-
     if (localCouncils !== null) {
       localCouncils = localCouncils.map(res => ({
         competent_authority_id: res._id,
@@ -43,18 +41,17 @@ const getLocalCouncils = async () => {
         local_council_full_name: res.local_council,
         local_council_url: res.local_council_url,
         local_council_phone_number: res.local_council_phone_number,
+        local_council_email: res.local_council_email,
         country: res.country,
         separate_standards_council: res.separate_standards_council,
         local_council_notify_emails: res.local_council_notify_emails,
         auth: res.auth,
       }));
-
-
     }
   } catch (err) {
     logEmitter.emit(
       "functionFail",
-      "populate-council-table",
+      "sync-council-table",
       "getLocalCouncils",
       err
     );
@@ -64,66 +61,52 @@ const getLocalCouncils = async () => {
 
   logEmitter.emit(
     "functionSuccess",
-    "populate-council-table",
+    "sync-council-table",
     "getLocalCouncils"
   );
 
   return localCouncils;
 };
 
-const populateCouncils = async () => {
-  let  db = await connectToDb();
+const syncCouncils = async transaction => {
+  await connectToDb();
   const data = await getLocalCouncils();
-  const promises = [];
+  let model;
 
-  let created = [];
-  let updated = [];
+  for (const record of data) {
+    model = await getCouncilByUrl(record.local_council_url);
 
+    logEmitter.emit(
+        INFO,
+        `Done ${record.local_council_url}`
+    );
 
-
-  const callback =  async (transaction)=>{
-
-    let models = [];
-    let model;
-
-    for (const record of data) {
-      model = await getCouncilByUrl(record.local_council_url);
-
-      logEmitter.emit(
-          INFO,
-          `Done ${record.local_council_url}`
-      );
-
-      if (model === null) {
-        model = await createCouncil(data, transaction);
-        created.push(model.local_council_url);
-      }
-
-      //sync stuff
-      model.local_council_id = record.local_council_id;
-      model.local_council = record.local_council;
-      model.local_council_email = record.local_council_email;
-      model.local_council_phone_number = record.local_council_phone_number;
-      model.country = record.country;
-      model.separate_standards_council = record.separate_standards_council;
-      model.local_council_notify_emails = record.local_council_notify_emails;
-      model.auth = record.auth;
-
-
-      await model.save();
+    if (model === null) {
+      model = await createCouncil(data, transaction);
     }
-    console.log("All models were synchronized successfully.");
-  }
 
-  await callback();
+    //sync stuff
+    model.local_council_id = record.local_council_id;
+    model.local_council = record.local_council;
+    model.local_council_email = record.local_council_email;
+    model.local_council_phone_number = record.local_council_phone_number;
+    model.country = record.country;
+    model.separate_standards_council = record.separate_standards_council;
+    model.local_council_notify_emails = record.local_council_notify_emails;
+    model.auth = record.auth;
+
+    await model.save();
+  }
+  console.log("All models were synchronized successfully.");
+
   client.close();
   await closeConnection();
 
   logEmitter.emit(
     "functionSuccess",
-    "populate-council-table",
-    "populateCouncils"
+    "sync-council-table",
+    "syncCouncils"
   );
 };
 
-populateCouncils();
+module.exports = { syncCouncils };

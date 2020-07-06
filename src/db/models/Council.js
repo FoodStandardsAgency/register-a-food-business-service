@@ -8,6 +8,7 @@ module.exports = (sequelize, DataTypes) => {
       competent_authority_id: { type: DataTypes.INTEGER },
       local_council_full_name: { type: DataTypes.STRING },
       local_council_phone_number: { type: DataTypes.STRING },
+      local_council_email: { type: DataTypes.STRING },
       country: { type: DataTypes.STRING },
       separate_standards_council: { type: DataTypes.INTEGER },
 
