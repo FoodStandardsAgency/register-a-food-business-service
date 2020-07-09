@@ -25,14 +25,7 @@ const getLocalCouncils = async () => {
   try {
     await establishConnectionToMongo();
 
-    localCouncils = await lcConfigCollection
-      .find({
-        $and: [
-          { local_council_url: { $ne: "" } },
-          { local_council_url: { $ne: null } }
-        ]
-      })
-      .toArray();
+    localCouncils = await lcConfigCollection.find({}).toArray();
 
     if (localCouncils !== null) {
       localCouncils = localCouncils.map(res => ({
@@ -68,12 +61,12 @@ const getLocalCouncils = async () => {
   return localCouncils;
 };
 
-const modelCreate = async (data, model, transaction) => {
-  const response = await model.create(data, { transaction: transaction });
+const modelCreate = async (data, model) => {
+  const response = await model.create(data);
   return response;
 };
 
-const syncCouncils = async transaction => {
+const syncCouncils = async () => {
   await connectToDb();
   const data = await getLocalCouncils();
   let model;
@@ -82,7 +75,7 @@ const syncCouncils = async transaction => {
     model = await getCouncilByUrl(record.local_council_url);
 
     if (model === null) {
-      model = await modelCreate(record, Council, transaction);
+      model = await modelCreate(record, Council);
     }
 
     //sync stuff

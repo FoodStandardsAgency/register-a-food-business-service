@@ -2,113 +2,109 @@
 
 const { syncCouncils } = require("../../../scripts/sync-council-table");
 
-const moveToCouncilsSchema = async (queryInterface) => {
-  await queryInterface.createSchema("councils");
-  // Move councils table to new schema
-  queryInterface.sequelize.query(
-    "UPDATE pg_catalog.pg_class SET relnamespace = (SELECT oid FROM pg_catalog.pg_namespace WHERE nspname = 'councils') WHERE relnamespace = (SELECT oid FROM pg_catalog.pg_namespace WHERE nspname = 'registrations') AND relname = 'councils';"
-  );
-  queryInterface.sequelize.query(
-    "UPDATE pg_catalog.pg_type SET typnamespace  = (SELECT oid FROM pg_catalog.pg_namespace WHERE nspname = 'councils') WHERE typnamespace  = (SELECT oid FROM pg_catalog.pg_namespace WHERE nspname = 'registrations') AND typname = 'councils';"
+const createNewCouncilsTable = async (
+  queryInterface,
+  Sequelize,
+  councilSchema
+) => {
+  await queryInterface.createTable(
+    { tableName: "councils", schema: councilSchema },
+    {
+      createdAt: {
+        type: Sequelize.DATE
+      },
+      updatedAt: {
+        type: Sequelize.DATE
+      },
+      local_council_url: {
+        type: Sequelize.STRING,
+        primaryKey: true
+      },
+      local_council_full_name: {
+        type: Sequelize.STRING
+      },
+      competent_authority_id: {
+        type: Sequelize.INTEGER
+      },
+      local_council_id: {
+        type: Sequelize.INTEGER
+      },
+      local_council_phone_number: {
+        type: Sequelize.STRING
+      },
+      local_council_email: {
+        type: Sequelize.STRING
+      },
+      country: {
+        type: Sequelize.STRING
+      },
+      separate_standards_council: {
+        type: Sequelize.INTEGER
+      },
+      local_council_notify_emails: {
+        type: Sequelize.JSONB
+      },
+      auth: {
+        type: Sequelize.JSONB
+      }
+    },
+    {}
   );
 };
 
-const revertMoveToCouncilsSchema = async (queryInterface) => {
-  queryInterface.sequelize.query(
-    "UPDATE pg_catalog.pg_class SET relnamespace = (SELECT oid FROM pg_catalog.pg_namespace WHERE nspname = 'registrations') WHERE relnamespace = (SELECT oid FROM pg_catalog.pg_namespace WHERE nspname = 'councils') AND relname = 'councils';"
+const createCouncilsForeignKey = async (queryInterface, councilSchema) => {
+  return queryInterface.addConstraint(
+    { tableName: "registrations", schema: "registrations" },
+    ["council"],
+    {
+      type: "foreign key",
+      name: "registrations_council_fkey",
+      references: {
+        table: { tableName: "councils", schema: councilSchema },
+        field: "local_council_url"
+      },
+      onUpdate: "cascade",
+      onDelete: "cascade"
+    }
   );
-  queryInterface.sequelize.query(
-    "UPDATE pg_catalog.pg_type SET typnamespace  = (SELECT oid FROM pg_catalog.pg_namespace WHERE nspname = 'registrations') WHERE typnamespace  = (SELECT oid FROM pg_catalog.pg_namespace WHERE nspname = 'councils') AND typname = 'councils';"
-  );
-  await queryInterface.dropSchema("councils");
 };
 
 module.exports = {
   up: async (queryInterface, Sequelize) => {
-    return queryInterface.sequelize.transaction(async (transaction) => {
-      await queryInterface.addColumn(
-        { tableName: "councils", schema: "registrations" },
-        "local_council_id",
-        {
-          type: Sequelize.INTEGER
-        }
-      );
-      await queryInterface.addColumn(
-        { tableName: "councils", schema: "registrations" },
-        "local_council_phone_number",
-        {
-          type: Sequelize.STRING
-        }
-      );
-      await queryInterface.addColumn(
-        { tableName: "councils", schema: "registrations" },
-        "local_council_email",
-        {
-          type: Sequelize.STRING
-        }
-      );
-      await queryInterface.addColumn(
-        { tableName: "councils", schema: "registrations" },
-        "country",
-        {
-          type: Sequelize.STRING
-        }
-      );
-      await queryInterface.addColumn(
-        { tableName: "councils", schema: "registrations" },
-        "separate_standards_council",
-        {
-          type: Sequelize.INTEGER
-        }
-      );
-      await queryInterface.addColumn(
-        { tableName: "councils", schema: "registrations" },
-        "local_council_notify_emails",
-        {
-          type: Sequelize.JSONB
-        }
-      );
-      await queryInterface.addColumn(
-        { tableName: "councils", schema: "registrations" },
-        "auth",
-        {
-          type: Sequelize.JSONB
-        }
-      );
-      await moveToCouncilsSchema(queryInterface);
-      await syncCouncils(transaction);
-    });
+    return Promise.all([
+      await queryInterface.createSchema("councils").then(async () => {
+        await createNewCouncilsTable(
+          queryInterface,
+          Sequelize,
+          "councils"
+        ).then(async () => {
+          await syncCouncils();
+          await queryInterface
+            .dropTable(
+              {
+                tableName: "councils",
+                schema: "registrations"
+              },
+              { cascade: true }
+            )
+            .then(async () => {
+              await createCouncilsForeignKey(queryInterface, "councils");
+            });
+        });
+      })
+    ]);
   },
 
-  down: async (queryInterface) => {
-    await revertMoveToCouncilsSchema(queryInterface);
-    await queryInterface.removeColumn(
-      { tableName: "councils", schema: "registrations" },
-      "local_council_id"
+  down: async (queryInterface, Sequelize) => {
+    await createNewCouncilsTable(queryInterface, Sequelize, "registrations");
+    await queryInterface.dropTable(
+      {
+        tableName: "councils",
+        schema: "councils"
+      },
+      { cascade: true }
     );
-    await queryInterface.removeColumn(
-      { tableName: "councils", schema: "registrations" },
-      "local_council_phone_number"
-    );
-    await queryInterface.removeColumn(
-      { tableName: "councils", schema: "registrations" },
-      "local_council_email"
-    );
-    await queryInterface.removeColumn(
-      { tableName: "councils", schema: "registrations" },
-      "country"
-    );
-    await queryInterface.removeColumn(
-      { tableName: "councils", schema: "registrations" },
-      "separate_standards_council"
-    );
-    await queryInterface.removeColumn(
-      { tableName: "councils", schema: "registrations" },
-      "local_council_notify_emails"
-    );
-    await queryInterface.removeColumn(
-      { tableName: "councils", schema: "registrations" },
-      "auth"
-    );
+    await createCouncilsForeignKey(queryInterface, "registrations");
+    await queryInterface.dropSchema("councils");
   }
 };
