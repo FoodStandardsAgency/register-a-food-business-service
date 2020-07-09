@@ -26,57 +26,57 @@ const revertMoveToCouncilsSchema = async (queryInterface) => {
 module.exports = {
   up: async (queryInterface, Sequelize) => {
     return queryInterface.sequelize.transaction(async (transaction) => {
-        await queryInterface.addColumn(
-          { tableName: "councils", schema: "registrations" },
-          "local_council_id",
-          {
-            type: Sequelize.INTEGER
-          }
-        );
-        await queryInterface.addColumn(
-          { tableName: "councils", schema: "registrations" },
-          "local_council_phone_number",
-          {
-            type: Sequelize.STRING
-          }
-        );
-        await queryInterface.addColumn(
-          { tableName: "councils", schema: "registrations" },
-          "local_council_email",
-          {
-            type: Sequelize.STRING
-          }
-        );
-        await queryInterface.addColumn(
-          { tableName: "councils", schema: "registrations" },
-          "country",
-          {
-            type: Sequelize.STRING
-          }
-        );
-        await queryInterface.addColumn(
-          { tableName: "councils", schema: "registrations" },
-          "separate_standards_council",
-          {
-            type: Sequelize.INTEGER
-          }
-        );
-        await queryInterface.addColumn(
-          { tableName: "councils", schema: "registrations" },
-          "local_council_notify_emails",
-          {
-            type: Sequelize.JSONB
-          }
-        );
-        await queryInterface.addColumn(
-          { tableName: "councils", schema: "registrations" },
-          "auth",
-          {
-            type: Sequelize.JSONB
-          }
-        );
-        await moveToCouncilsSchema(queryInterface)
-        await syncCouncils(transaction);
+      await queryInterface.addColumn(
+        { tableName: "councils", schema: "registrations" },
+        "local_council_id",
+        {
+          type: Sequelize.INTEGER
+        }
+      );
+      await queryInterface.addColumn(
+        { tableName: "councils", schema: "registrations" },
+        "local_council_phone_number",
+        {
+          type: Sequelize.STRING
+        }
+      );
+      await queryInterface.addColumn(
+        { tableName: "councils", schema: "registrations" },
+        "local_council_email",
+        {
+          type: Sequelize.STRING
+        }
+      );
+      await queryInterface.addColumn(
+        { tableName: "councils", schema: "registrations" },
+        "country",
+        {
+          type: Sequelize.STRING
+        }
+      );
+      await queryInterface.addColumn(
+        { tableName: "councils", schema: "registrations" },
+        "separate_standards_council",
+        {
+          type: Sequelize.INTEGER
+        }
+      );
+      await queryInterface.addColumn(
+        { tableName: "councils", schema: "registrations" },
+        "local_council_notify_emails",
+        {
+          type: Sequelize.JSONB
+        }
+      );
+      await queryInterface.addColumn(
+        { tableName: "councils", schema: "registrations" },
+        "auth",
+        {
+          type: Sequelize.JSONB
+        }
+      );
+      await moveToCouncilsSchema(queryInterface);
+      await syncCouncils(transaction);
     });
   },
 
