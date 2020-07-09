@@ -2,10 +2,19 @@
 module.exports = {
   up: (queryInterface, Sequelize) => {
     return Promise.all([
-      queryInterface.addColumn("metadata", "feedback1", Sequelize.STRING)
+      queryInterface.addColumn(
+        { tableName: "metadata", schema: "registrations" },
+        "feedback1",
+        Sequelize.STRING
+      )
     ]);
   },
   down: (queryInterface) => {
-    return Promise.all([queryInterface.removeColumn("metadata", "feedback1")]);
+    return Promise.all([
+      queryInterface.removeColumn(
+        { tableName: "metadata", schema: "registrations" },
+        "feedback1"
+      )
+    ]);
   }
 };

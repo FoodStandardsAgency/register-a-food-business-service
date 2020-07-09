@@ -2,12 +2,18 @@
 module.exports = {
   up: (queryInterface) => {
     return Promise.all([
-      queryInterface.renameTable("metadata", "declarations")
+      queryInterface.renameTable(
+        { tableName: "metadata", schema: "registrations" },
+        "declarations"
+      )
     ]);
   },
   down: (queryInterface) => {
     return Promise.all([
-      queryInterface.renameTable("declarations", "metadata")
+      queryInterface.renameTable(
+        { tableName: "declarations", schema: "registrations" },
+        "metadata"
+      )
     ]);
   }
 };

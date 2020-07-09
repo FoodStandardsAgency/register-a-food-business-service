@@ -34,7 +34,9 @@ module.exports = (sequelize, DataTypes) => {
         }
       }
     },
-    {}
+    {
+      schema: "councils"
+    }
   );
   return Council;
 };

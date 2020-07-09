@@ -1,7 +1,7 @@
 require("dotenv").config();
 const mongodb = require("mongodb");
 const { logEmitter, INFO } = require("../src/services/logging.service");
-const {connectToDb, closeConnection} = require("../src/db/db");
+const {Council, connectToDb, closeConnection} = require("../src/db/db");
 const {getCouncilByUrl, createCouncil } = require("../src/connectors/registrationDb/registrationDb");
 
 let client;
@@ -68,21 +68,21 @@ const getLocalCouncils = async () => {
   return localCouncils;
 };
 
+const modelCreate = async (data, model, transaction) => {
+  const response = await model.create(data, { transaction: transaction });
+  return response;
+};
+
 const syncCouncils = async transaction => {
   await connectToDb();
   const data = await getLocalCouncils();
   let model;
-
+  console.log(data);
   for (const record of data) {
     model = await getCouncilByUrl(record.local_council_url);
 
-    logEmitter.emit(
-        INFO,
-        `Done ${record.local_council_url}`
-    );
-
     if (model === null) {
-      model = await createCouncil(data, transaction);
+      model = await modelCreate(record, Council, transaction);
     }
 
     //sync stuff
@@ -96,6 +96,11 @@ const syncCouncils = async transaction => {
     model.auth = record.auth;
 
     await model.save();
+
+    logEmitter.emit(
+        INFO,
+        `Done ${record.local_council_url}`
+    );
   }
   console.log("All models were synchronized successfully.");
 
