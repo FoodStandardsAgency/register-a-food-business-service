@@ -95,7 +95,6 @@ const syncCouncils = async () => {
         `Done ${record.local_council_url}`
     );
   }
-  console.log("All models were synchronized successfully.");
 
   client.close();
   await closeConnection();

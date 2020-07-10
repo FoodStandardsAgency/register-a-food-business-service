@@ -550,7 +550,6 @@ const getRegistration = async (client, fsaId) => {
 const findCouncilByIdInArray = (id, allCouncils = []) => {
   logEmitter.emit("functionCall", "Tasks.controller", "findCouncilByIdInArray");
   let out = allCouncils.find((council) => {
-    console.log(council);
     return council._id === id;
   });
 
