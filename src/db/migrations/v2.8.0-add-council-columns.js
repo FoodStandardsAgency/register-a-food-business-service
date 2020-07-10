@@ -55,8 +55,8 @@ const createNewCouncilsTable = async (
 const createCouncilsForeignKey = async (queryInterface, councilSchema) => {
   return queryInterface.addConstraint(
     { tableName: "registrations", schema: "registrations" },
-    ["council"],
     {
+      fields: ["council"],
       type: "foreign key",
       name: "registrations_council_fkey",
       references: {
