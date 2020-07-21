@@ -1,6 +1,7 @@
 "use strict";
 
 const { logEmitter, INFO, ERROR } = require("../../services/logging.service");
+const { statusEmitter } = require("../../services/statusEmitter.service");
 const { sendNotifications } = require("../../services/notifications.service");
 const { isEmpty } = require("lodash");
 const { success } = require("../../utils/express/response");
@@ -40,6 +41,11 @@ const sendAllOutstandingRegistrationsToTascomiAction = async (
   dryrun,
   throttle = 0
 ) => {
+  logEmitter.emit(
+    "functionCall",
+    "Tasks.controller",
+    "sendAllOutstandingRegistrationsToTascomiAction"
+  );
   let beCacheDb = await connectToBeCacheDb();
   let configDb = await connectToConfigDb();
   let registrationsCollection = await CachedRegistrationsCollection(beCacheDb);
@@ -72,6 +78,12 @@ const sendAllOutstandingRegistrationsToTascomiAction = async (
     );
   }
 
+  logEmitter.emit(
+    "functionSuccess",
+    "Tasks.controller",
+    "sendAllOutstandingRegistrationsToTascomiAction"
+  );
+
   await success(res, {
     message: `Updated tascomi registration status`,
     attempted: idsAttempted,
@@ -82,6 +94,11 @@ const sendAllOutstandingRegistrationsToTascomiAction = async (
 
 //actions
 const sendRegistrationToTascomiAction = async (fsaId, req, res) => {
+  logEmitter.emit(
+    "functionCall",
+    "Tasks.controller",
+    "sendRegistrationToTascomiAction"
+  );
   //GET REGISTRATION
   let beCacheDb = await connectToBeCacheDb();
   let cachedRegistrations = await CachedRegistrationsCollection(beCacheDb);
@@ -91,7 +108,7 @@ const sendRegistrationToTascomiAction = async (fsaId, req, res) => {
   if (isEmpty(registration)) {
     let message = `Could not find registration with ID ${fsaId}`;
     logEmitter.emit(ERROR, message);
-    throw message;
+    throw new Error(`${message}`);
   }
   logEmitter.emit(INFO, `Found registration with ID ${fsaId}`);
   //GET LOCAL COUNCIL
@@ -100,7 +117,7 @@ const sendRegistrationToTascomiAction = async (fsaId, req, res) => {
   if (isEmpty(localCouncil)) {
     let message = `Could not find local council with ID ${localCouncilId}`;
     logEmitter.emit(ERROR, message);
-    throw message;
+    throw new Error(`${message}`);
   }
 
   // DO LOOK UP
@@ -124,6 +141,12 @@ const sendRegistrationToTascomiAction = async (fsaId, req, res) => {
     await updateStatusInCache(fsaId, "tascomi", TASCOMI_SKIPPING);
   }
 
+  logEmitter.emit(
+    "functionSuccess",
+    "Tasks.controller",
+    "sendRegistrationToTascomiAction"
+  );
+
   await success(res, { fsaId, message: `Updated tascomi registration status` });
 };
 
@@ -133,6 +156,11 @@ const sendAllNotificationsForRegistrationsAction = async (
   dryrun,
   throttle = 0
 ) => {
+  logEmitter.emit(
+    "functionCall",
+    "Tasks.controller",
+    "sendAllNotificationsForRegistrationsAction"
+  );
   let beCacheDb = await connectToBeCacheDb();
   let configDb = await connectToConfigDb();
   let idsAttempted = [];
@@ -173,6 +201,11 @@ const sendAllNotificationsForRegistrationsAction = async (
     );
   }
 
+  logEmitter.emit(
+    "functionSuccess",
+    "Tasks.controller",
+    "sendAllNotificationsForRegistrationsAction"
+  );
   await success(res, {
     message: `Updated notification status`,
     attempted: idsAttempted,
@@ -182,6 +215,11 @@ const sendAllNotificationsForRegistrationsAction = async (
 };
 
 const sendNotificationsForRegistrationAction = async (fsaId, req, res) => {
+  logEmitter.emit(
+    "functionCall",
+    "Tasks.controller",
+    "sendNotificationsForRegistrationAction"
+  );
   let beCacheDb = await connectToBeCacheDb();
   let configDb = await connectToConfigDb();
   let allLcConfigData = await getAllLocalCouncilConfig();
@@ -192,7 +230,7 @@ const sendNotificationsForRegistrationAction = async (fsaId, req, res) => {
   if (isEmpty(registration)) {
     let message = `Could not find registration with ID ${fsaId}`;
     logEmitter.emit(ERROR, message);
-    throw message;
+    throw new Error(`${message}`);
   }
   logEmitter.emit(INFO, `Found registration with ID ${fsaId}`);
 
@@ -202,7 +240,7 @@ const sendNotificationsForRegistrationAction = async (fsaId, req, res) => {
   if (isEmpty(localCouncil)) {
     let message = `Could not find local council with ID ${localCouncilId}`;
     logEmitter.emit(ERROR, message);
-    throw message;
+    throw new Error(`${message}`);
   }
 
   let configVersion = registration.registration_data_version
@@ -212,7 +250,7 @@ const sendNotificationsForRegistrationAction = async (fsaId, req, res) => {
   if (isEmpty(config)) {
     let message = `Could not find config ${fsaId} version : ${configVersion}`;
     logEmitter.emit(ERROR, message);
-    throw message;
+    throw new Error(`${message}`);
   }
 
   //this method is in dire need of refactoring...
@@ -223,12 +261,17 @@ const sendNotificationsForRegistrationAction = async (fsaId, req, res) => {
   if (isEmpty(lcContactConfig)) {
     let message = `Could not find local council config ${fsaId} ${localCouncil.local_council_url}`;
     logEmitter.emit(ERROR, message);
-    throw message;
+    throw new Error(`${message}`);
   }
 
   await sendNotifications(fsaId, lcContactConfig, registration, config);
 
   logEmitter.emit(INFO, `Send notifications for ${fsaId}`);
+  logEmitter.emit(
+    "functionSuccess",
+    "Tasks.controller",
+    "sendNotificationsForRegistrationAction"
+  );
 
   await success(res, { fsaId, message: `Updated notifications status` });
 };
@@ -239,9 +282,15 @@ const saveAllOutstandingRegistrationsToTempStoreAction = async (
   dryrun,
   throttle = 0
 ) => {
+  logEmitter.emit(
+    "functionCall",
+    "Tasks.controller",
+    "saveAllOutstandingRegistrationsToTempStore"
+  );
   let beCacheDb = await connectToBeCacheDb();
   let configDb = await connectToConfigDb();
   let idsAttempted = [];
+  let idsFailed = [];
   let registrationsCollection = await CachedRegistrationsCollection(beCacheDb);
   let registrations = await findAllOutstandingSavesToTempStore(
     registrationsCollection
@@ -255,31 +304,65 @@ const saveAllOutstandingRegistrationsToTempStoreAction = async (
     idsAttempted.push(registration["fsa-rn"]);
 
     if (!dryrun) {
-      await multiSaveRegistrationsToTempStore(
-        configDb,
-        registration,
-        allLcConfigData
-      );
+      try {
+        await multiSaveRegistrationsToTempStore(
+          configDb,
+          registration,
+          allLcConfigData
+        );
+
+        await updateStatusInCache(registration["fsa-rn"], "registration", true);
+
+        logEmitter.emit(
+          "funtionSuccess",
+          "Tasks.controller",
+          "saveAllOutstandingRegistrationsToTempStoreAction"
+        );
+        logEmitter.emit(
+          INFO,
+          `Saved registration to temp-store for fsaId: ${registration["fsa-rn"]} in temp store`
+        );
+      } catch (err) {
+        idsFailed.push(registration["fsa-rn"]);
+        statusEmitter.emit("incrementCount", "storeRegistrationsInDbFailed");
+        statusEmitter.emit(
+          "setStatus",
+          "mostRecentStoreRegistrationInDbSucceeded",
+          false
+        );
+        logEmitter.emit(
+          "functionFail",
+          "Tasks.controller",
+          "saveAllOutstandingRegistrationsToTempStoreAction",
+          err
+        );
+        await updateStatusInCache(
+          registration["fsa-rn"],
+          "registration",
+          false
+        );
+      }
     }
 
     //sleep
     await new Promise((resolve) => setTimeout(resolve, throttle));
-
-    logEmitter.emit(
-      INFO,
-      `Saved registration to temp-store for FSAId ${registration["fsa-rn"]}`
-    );
   }
 
   await success(res, {
     message: `Updated temp-store`,
     attempted: idsAttempted,
+    failed: idsFailed,
     dryrun,
     throttle
   });
 };
 
 const saveRegistrationToTempStoreAction = async (fsaId, req, res) => {
+  logEmitter.emit(
+    "functionCall",
+    "Tasks.controller",
+    "saveRegistrationToTempStoreAction"
+  );
   const beCacheDb = await connectToBeCacheDb();
   let allLcConfigData = await getAllLocalCouncilConfig();
 
@@ -289,7 +372,7 @@ const saveRegistrationToTempStoreAction = async (fsaId, req, res) => {
   if (isEmpty(registration)) {
     let message = `Could not find registration with ID ${fsaId}`;
     logEmitter.emit(ERROR, message);
-    throw message;
+    throw new Error(`${message}`);
   }
 
   logEmitter.emit(INFO, `Found registration with ID ${fsaId}`);
@@ -300,10 +383,16 @@ const saveRegistrationToTempStoreAction = async (fsaId, req, res) => {
   if (isEmpty(localCouncil)) {
     let message = `Could not find local council with ID ${councilId}`;
     logEmitter.emit(ERROR, message);
-    throw message;
+    throw new Error(`${message}`);
   }
 
   await saveRegistration(registration, fsaId, localCouncil.local_council_url);
+
+  logEmitter.emit(
+    "functionSuccess",
+    "Tasks.controller",
+    "saveRegistrationToTempStoreAction"
+  );
 
   await success(res, { fsaId, message: `Updated temp-store status` });
 };
@@ -324,7 +413,7 @@ const multiSendNotifications = async (
   if (isEmpty(localCouncil)) {
     let message = `Could not find local council with ID ${localCouncilId}`;
     logEmitter.emit(ERROR, message);
-    throw message;
+    throw new Error(`${message}`);
   }
 
   let configVersion = registration.registration_data_version
@@ -335,7 +424,7 @@ const multiSendNotifications = async (
   if (isEmpty(config)) {
     let message = `Could not find config ${fsaId} version : ${configVersion}`;
     logEmitter.emit(ERROR, message);
-    throw message;
+    throw new Error(`${message}`);
   }
 
   //this method is in dire need of refactoring...
@@ -346,7 +435,7 @@ const multiSendNotifications = async (
   if (isEmpty(lcContactConfig)) {
     let message = `Could not find lcContactConfig ${fsaId} ${localCouncil.local_council_url}`;
     logEmitter.emit(ERROR, message);
-    throw message;
+    throw new Error(`${message}`);
   }
 
   await sendNotifications(fsaId, lcContactConfig, registration, config);
@@ -357,6 +446,11 @@ const multiSendRegistrationToTascomi = async (
   registration,
   allLcConfigData
 ) => {
+  logEmitter.emit(
+    "functionCall",
+    "Tasks.controller",
+    "multiSendRegistrationToTascomi"
+  );
   let fsaId = registration["fsa-rn"];
 
   let councilId = getLocalCouncilIdForRegistration(registration);
@@ -364,7 +458,7 @@ const multiSendRegistrationToTascomi = async (
   if (isEmpty(localCouncil)) {
     let message = `Could not find local council with ID ${councilId}`;
     logEmitter.emit(ERROR, message);
-    throw message;
+    throw new Error(`${message}`);
   }
 
   // DO LOOK UP
@@ -387,6 +481,12 @@ const multiSendRegistrationToTascomi = async (
     //NOT APPLICABLE - nothing to update
     await updateStatusInCache(fsaId, "tascomi", TASCOMI_SKIPPING);
   }
+
+  logEmitter.emit(
+    "functionSuccess",
+    "Tasks.controller",
+    "multiSendRegistrationToTascomi"
+  );
 };
 
 const multiSaveRegistrationsToTempStore = async (
@@ -394,6 +494,7 @@ const multiSaveRegistrationsToTempStore = async (
   registration,
   allLocalCouncils
 ) => {
+  logEmitter.emit("functionCall", "Tasks.controller", "mulitSaveregistrations");
   let fsaId = registration["fsa-rn"];
 
   //GET LOCAL COUNCIL
@@ -402,19 +503,29 @@ const multiSaveRegistrationsToTempStore = async (
   if (isEmpty(localCouncil)) {
     let message = `Could not find local council with ID ${councilId}`;
     logEmitter.emit(ERROR, message);
-    throw message;
+    throw new Error(`${message}`);
   }
 
   await saveRegistration(registration, fsaId, localCouncil.local_council_url);
+
+  logEmitter.emit(
+    "functionSuccess",
+    "Tasks.controller",
+    "multiSaveRegistrationsToTempStore"
+  );
 };
 
 const getConfig = async (client, configVersion) => {
+  logEmitter.emit("functionCall", "Tasks.controller", "getConfig");
   let configCollection = await ConfigVersionCollection(client);
+  logEmitter.emit("functionSuccess", "Tasks.controller", "getConfig");
   return await configCollection.findOne({ _id: configVersion });
 };
 
 const getRegistration = async (client, fsaId) => {
+  logEmitter.emit("functionCall", "Tasks.controller", "getRegistration");
   const cachedRegistrations = await CachedRegistrationsCollection(client);
+  logEmitter.emit("functionSuccess", "Tasks.controller", "getRegistration");
   return await findOneById(cachedRegistrations, fsaId);
 };
 
@@ -437,11 +548,22 @@ const getRegistration = async (client, fsaId) => {
 // };
 
 const findCouncilByIdInArray = (id, allCouncils = []) => {
+  logEmitter.emit("functionCall", "Tasks.controller", "findCouncilByIdInArray");
   let out = allCouncils.find((council) => council._id === id);
+  logEmitter.emit(
+    "functionSuccess",
+    "Tasks.controller",
+    "findCouncilByIdInArray"
+  );
   return out;
 };
 
 const getLocalCouncilIdForRegistration = (registration) => {
+  logEmitter.emit(
+    "functionCall",
+    "Tasks.controller",
+    "getLocalCouncilIdForRegistration"
+  );
   let councilId;
 
   if (registration.source_council_id) {
@@ -453,6 +575,12 @@ const getLocalCouncilIdForRegistration = (registration) => {
       ? registration.hygieneAndStandards.code
       : registration.hygiene.code;
   }
+
+  logEmitter.emit(
+    "functionSuccess",
+    "Tasks.controller",
+    "getLocalCouncilIdForRegistration"
+  );
 
   return councilId;
 };
