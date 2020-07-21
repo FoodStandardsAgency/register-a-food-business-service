@@ -22,13 +22,15 @@ const {
   INFO,
   ERROR,
   DEBUG,
-  WARN
+  WARN,
+  ERROR_WITH
 } = require("./logging.service");
 
 const noSession = {
   context: {
     application_name: packageJson.name,
-    request_id: null
+    request_id: null,
+    session_id: null
   }
 };
 
@@ -114,6 +116,22 @@ describe("logEmitter", () => {
       await logEmitter.emit(message, moduleMessage, funcMessage, err);
 
       await expect(logger.error).toBeCalledWith(expected, noSession);
+    });
+  });
+
+  describe("on errorWith event", () => {
+    it("should call winston info", async () => {
+      let message = ERROR_WITH;
+      let moduleMessage = "someModule";
+      let funcMessage = "someFunction";
+      let someData = { data: "data" };
+      let expected1 = `${moduleMessage}: ${funcMessage} error with: ${JSON.stringify(someData)}`;
+
+      logger.info.mockImplementation(() => {});
+
+      await logEmitter.emit(message, moduleMessage, funcMessage, someData);
+
+      await expect(logger.info).toBeCalledWith(expected1, noSession);
     });
   });
 
