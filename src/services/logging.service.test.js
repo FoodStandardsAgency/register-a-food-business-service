@@ -125,7 +125,9 @@ describe("logEmitter", () => {
       let moduleMessage = "someModule";
       let funcMessage = "someFunction";
       let someData = { data: "data" };
-      let expected1 = `${moduleMessage}: ${funcMessage} error with: ${JSON.stringify(someData)}`;
+      let expected1 = `${moduleMessage}: ${funcMessage} error with: ${JSON.stringify(
+        someData
+      )}`;
 
       logger.info.mockImplementation(() => {});
 
