@@ -58,8 +58,6 @@ steps:
     organization: 'fsa'
     scannerMode: 'CLI'
     configMode: 'file'
-    projectKey: 'rafb-registration-service'
-    projectName: 'RaFB registration service'
     
 - task: SonarCloudAnalyze@1
 
