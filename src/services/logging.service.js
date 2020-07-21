@@ -9,6 +9,7 @@ const ERROR = "error";
 const INFO = "info";
 const FUNCTION_CALL_WITH = "functionCallWith";
 const FUNCTION_SUCCESS_WITH = "functionSuccessWith";
+const ERROR_WITH = "errorWith";
 const FUNCTION_CALL = "functionCall";
 const FUNCTION_SUCCESS = "functionSuccess";
 const FUNCTION_FAIL = "functionFail";
@@ -24,18 +25,21 @@ const getPresentContext = () => {
   let context = {
     context: {
       application_name: packageJson.name,
-      request_id: null
+      request_id: null,
+      session_id: null
     }
   };
 
   if (writer === undefined) {
     return context;
   }
-
-  let req = writer.get("requestId");
+  let reqId = writer.get("requestId");
+  let req = writer.get("request");
 
   if (req) {
-    context.context.request_id = req;
+    context.context.request_id = reqId;
+    context.context.session_id = req.headers['front-end-session-id'];
+
   }
 
   return context;
@@ -74,7 +78,7 @@ logEmitter.on(FUNCTION_SUCCESS_WITH, (module, functionName, data = {}) => {
 logEmitter.on(
   FUNCTION_FAIL,
   (module, functionName, err = { message: null }) => {
-    let message = `${module}: ${functionName} failed with: ${err.message}`;
+    let message = `${module}: ${functionName} failed with: ${err.message || err}`;
     logStuff(message, {}, "error");
   }
 );
@@ -100,6 +104,11 @@ logEmitter.on(ERROR, (message) => {
   logStuff(message, {}, "error");
 });
 
+logEmitter.on(ERROR_WITH, (module, functionName, data = {}) => {
+  let message = `${module}: ${functionName} error with: ${data}`;
+  logStuff(message);
+});
+
 module.exports = {
   logEmitter,
   FUNCTION_CALL,
@@ -110,6 +119,7 @@ module.exports = {
   DOUBLE_MODE,
   INFO,
   ERROR,
+  ERROR_WITH,
   DEBUG,
   WARN
 };

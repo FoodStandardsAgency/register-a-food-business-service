@@ -59,6 +59,7 @@ const registrationRouter = () => {
           "createNewRegistration"
         );
       } catch (err) {
+        logEmitter.emit("errorWith", "registration.router", "createNewRegistration", req.body.registration);
         statusEmitter.emit("incrementCount", "endToEndRegistrationsFailed");
         statusEmitter.emit(
           "setStatus",
