@@ -106,7 +106,9 @@ logEmitter.on(ERROR, (message) => {
 });
 
 logEmitter.on(ERROR_WITH, (module, functionName, data = {}) => {
-  let message = `${module}: ${functionName} error with: ${data}`;
+  let message = `${module}: ${functionName} error with: ${JSON.stringify(
+    data
+  )}`;
   logStuff(message);
 });
 
