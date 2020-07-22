@@ -36,7 +36,7 @@ const noSession = {
 
 describe("logEmitter", () => {
   /* eslint-disable */
-  const clsNamespace;
+  let clsNamespace;
 
   beforeEach(async () => {
     clsNamespace = cls.createNamespace("rafbfe");
