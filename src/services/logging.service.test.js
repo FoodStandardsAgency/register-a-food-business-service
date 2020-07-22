@@ -36,7 +36,7 @@ const noSession = {
 
 describe("logEmitter", () => {
   /* eslint-disable */
-  let clsNamespace;
+  const clsNamespace;
 
   beforeEach(async () => {
     clsNamespace = cls.createNamespace("rafbfe");
@@ -46,12 +46,14 @@ describe("logEmitter", () => {
   });
   /* eslint-enable */
   describe("on functionCall event", () => {
-    it("should call winston info", async () => {
-      let message = FUNCTION_CALL;
-      let moduleMessage = "someModule";
-      let funcMessage = "someFunction";
-      let expected = `${moduleMessage}: ${funcMessage} called`;
-      logger.info.mockImplementation(() => {});
+    it("should call winston info with called", async () => {
+      const message = FUNCTION_CALL;
+      const moduleMessage = "someModule";
+      const funcMessage = "someFunction";
+      const expected = `${moduleMessage}: ${funcMessage} called`;
+      logger.info.mockImplementation(() => {
+        //Mock
+      });
 
       await logEmitter.emit(message, moduleMessage, funcMessage);
 
@@ -61,14 +63,16 @@ describe("logEmitter", () => {
 
   //broken seems to not call the right log message
   describe("on functionCallWith event", () => {
-    it("should call winston info", async () => {
-      let message = FUNCTION_CALL_WITH;
-      let moduleMessage = "someModule";
-      let funcMessage = "someFunction";
-      let someData = { data: "data" };
-      let expected = `${moduleMessage}: ${funcMessage} called with: ${someData}`;
+    it("should call winston info with called with", async () => {
+      const message = FUNCTION_CALL_WITH;
+      const moduleMessage = "someModule";
+      const funcMessage = "someFunction";
+      const someData = { data: "data" };
+      const expected = `${moduleMessage}: ${funcMessage} called with: ${someData}`;
 
-      logger.info.mockImplementation(() => {});
+      logger.info.mockImplementation(() => {
+        //Mock
+      });
 
       await logEmitter.emit(message, moduleMessage, funcMessage, someData);
 
@@ -78,11 +82,13 @@ describe("logEmitter", () => {
 
   describe("on functionSuccess event", () => {
     it("should call winston info", async () => {
-      let message = FUNCTION_SUCCESS;
-      let moduleMessage = "someModule";
-      let funcMessage = "someFunction";
-      let expected = `${moduleMessage}: ${funcMessage} successful`;
-      logger.info.mockImplementation(() => {});
+      const message = FUNCTION_SUCCESS;
+      const moduleMessage = "someModule";
+      const funcMessage = "someFunction";
+      const expected = `${moduleMessage}: ${funcMessage} successful`;
+      logger.info.mockImplementation(() => {
+        //Mock
+      });
 
       await logEmitter.emit(message, moduleMessage, funcMessage);
 
@@ -91,13 +97,15 @@ describe("logEmitter", () => {
   });
 
   describe("on functionSuccessWith event", () => {
-    it("should call winston info", async () => {
-      let message = FUNCTION_SUCCESS_WITH;
-      let moduleMessage = "someModule";
-      let funcMessage = "someFunction";
-      let someData = { data: "data" };
-      let expected = `${moduleMessage}: ${funcMessage} called with: ${someData}`;
-      logger.info.mockImplementation(() => {});
+    it("should call winston info with called with success", async () => {
+      const message = FUNCTION_SUCCESS_WITH;
+      const moduleMessage = "someModule";
+      const funcMessage = "someFunction";
+      const someData = { data: "data" };
+      const expected = `${moduleMessage}: ${funcMessage} called with: ${someData}`;
+      logger.info.mockImplementation(() => {
+        //Mock
+      });
       await logEmitter.emit(message, moduleMessage, funcMessage, someData);
 
       await expect(logger.info).toBeCalledWith(expected, noSession);
@@ -105,13 +113,15 @@ describe("logEmitter", () => {
   });
 
   describe("on functionFail event", () => {
-    it("should call winston info", async () => {
-      let message = FUNCTION_FAIL;
-      let moduleMessage = "someModule";
-      let funcMessage = "someFunction";
-      let err = new Error("test");
-      let expected = `${moduleMessage}: ${funcMessage} failed with: ${err.message}`;
-      logger.error.mockImplementation(() => {});
+    it("should call winston info with failed with", async () => {
+      const message = FUNCTION_FAIL;
+      const moduleMessage = "someModule";
+      const funcMessage = "someFunction";
+      const err = new Error("test");
+      const expected = `${moduleMessage}: ${funcMessage} failed with: ${err.message}`;
+      logger.error.mockImplementation(() => {
+        //Mock
+      });
 
       await logEmitter.emit(message, moduleMessage, funcMessage, err);
 
@@ -120,16 +130,18 @@ describe("logEmitter", () => {
   });
 
   describe("on errorWith event", () => {
-    it("should call winston info", async () => {
-      let message = ERROR_WITH;
-      let moduleMessage = "someModule";
-      let funcMessage = "someFunction";
-      let someData = { data: "data" };
-      let expected1 = `${moduleMessage}: ${funcMessage} error with: ${JSON.stringify(
+    it("should call winston info with error with", async () => {
+      const message = ERROR_WITH;
+      const moduleMessage = "someModule";
+      const funcMessage = "someFunction";
+      const someData = { data: "data" };
+      const expected1 = `${moduleMessage}: ${funcMessage} error with: ${JSON.stringify(
         someData
       )}`;
 
-      logger.info.mockImplementation(() => {});
+      logger.info.mockImplementation(() => {
+        //Mock
+      });
 
       await logEmitter.emit(message, moduleMessage, funcMessage, someData);
 
@@ -138,12 +150,14 @@ describe("logEmitter", () => {
   });
 
   describe("on doubleMode event", () => {
-    it("should call winston info", async () => {
-      let message = DOUBLE_MODE;
-      let moduleMessage = "someModule";
-      let funcMessage = "someFunction";
-      let expected = `${moduleMessage}: ${funcMessage}: running in double mode`;
-      logger.info.mockImplementation(() => {});
+    it("should call winston info with double mode", async () => {
+      const message = DOUBLE_MODE;
+      const moduleMessage = "someModule";
+      const funcMessage = "someFunction";
+      const expected = `${moduleMessage}: ${funcMessage}: running in double mode`;
+      logger.info.mockImplementation(() => {
+        //Mock
+      });
 
       await logEmitter.emit(message, moduleMessage, funcMessage);
 
@@ -153,9 +167,11 @@ describe("logEmitter", () => {
 
   describe("simple logging", () => {
     it("should call winston info", async () => {
-      let message = INFO;
-      let expected = "someModule";
-      logger.info.mockImplementation(() => {});
+      const message = INFO;
+      const expected = "someModule";
+      logger.info.mockImplementation(() => {
+        //Mock
+      });
 
       await logEmitter.emit(message, expected);
 
@@ -163,9 +179,11 @@ describe("logEmitter", () => {
     });
 
     it("should call winston error", async () => {
-      let message = ERROR;
-      let expected = "someModule";
-      logger.error.mockImplementation(() => {});
+      const message = ERROR;
+      const expected = "someModule";
+      logger.error.mockImplementation(() => {
+        //Mock
+      });
 
       await logEmitter.emit(message, expected);
 
@@ -173,9 +191,11 @@ describe("logEmitter", () => {
     });
 
     it("should call winston debug", async () => {
-      let message = DEBUG;
-      let expected = "someModule";
-      logger.debug.mockImplementation(() => {});
+      const message = DEBUG;
+      const expected = "someModule";
+      logger.debug.mockImplementation(() => {
+        //Mock
+      });
 
       await logEmitter.emit(message, expected);
 
@@ -183,9 +203,11 @@ describe("logEmitter", () => {
     });
 
     it("should call winston warn", async () => {
-      let message = WARN;
-      let expected = "someModule";
-      logger.warn.mockImplementation(() => {});
+      const message = WARN;
+      const expected = "someModule";
+      logger.warn.mockImplementation(() => {
+        //Mock
+      });
 
       await logEmitter.emit(message, expected);
 

@@ -20,9 +20,9 @@ const logEmitter = new LogEmitter();
 const getPresentContext = () => {
   let getNamespace = require("cls-hooked").getNamespace;
 
-  let writer = getNamespace("application");
+  const writer = getNamespace("application");
 
-  let context = {
+  const context = {
     context: {
       application_name: packageJson.name,
       request_id: null,
@@ -33,8 +33,8 @@ const getPresentContext = () => {
   if (writer === undefined) {
     return context;
   }
-  let reqId = writer.get("requestId");
-  let req = writer.get("request");
+  const reqId = writer.get("requestId");
+  const req = writer.get("request");
 
   if (req) {
     context.context.request_id = reqId;
@@ -55,29 +55,29 @@ const logStuff = (message, data = {}, method = "info") => {
 /* eslint-enable */
 
 logEmitter.on(FUNCTION_CALL_WITH, (module, functionName, data = {}) => {
-  let message = `${module}: ${functionName} called with: ${data}`;
+  const message = `${module}: ${functionName} called with: ${data}`;
   logStuff(message, data);
 });
 
 logEmitter.on(FUNCTION_CALL, (module, functionName) => {
-  let message = `${module}: ${functionName} called`;
+  const message = `${module}: ${functionName} called`;
   logStuff(message);
 });
 
 logEmitter.on(FUNCTION_SUCCESS, (module, functionName) => {
-  let message = `${module}: ${functionName} successful`;
+  const message = `${module}: ${functionName} successful`;
   logStuff(message);
 });
 
 logEmitter.on(FUNCTION_SUCCESS_WITH, (module, functionName, data = {}) => {
-  let message = `${module}: ${functionName} successful with: ${data}`;
+  const message = `${module}: ${functionName} successful with: ${data}`;
   logStuff(message);
 });
 
 logEmitter.on(
   FUNCTION_FAIL,
   (module, functionName, err = { message: null }) => {
-    let message = `${module}: ${functionName} failed with: ${
+    const message = `${module}: ${functionName} failed with: ${
       err.message || err
     }`;
     logStuff(message, {}, "error");
@@ -85,7 +85,7 @@ logEmitter.on(
 );
 
 logEmitter.on(DOUBLE_MODE, (module, functionName) => {
-  let message = `${module}: ${functionName}: running in double mode`;
+  const message = `${module}: ${functionName}: running in double mode`;
   logStuff(message);
 });
 
@@ -106,7 +106,7 @@ logEmitter.on(ERROR, (message) => {
 });
 
 logEmitter.on(ERROR_WITH, (module, functionName, data = {}) => {
-  let message = `${module}: ${functionName} error with: ${JSON.stringify(
+  const message = `${module}: ${functionName} error with: ${JSON.stringify(
     data
   )}`;
   logStuff(message);
