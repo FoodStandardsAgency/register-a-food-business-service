@@ -73,6 +73,7 @@ validator.attributes.validation = (instance, schema, options, ctx) => {
       return errorMessages[propertyName];
     }
   }
+  return undefined;
 };
 
 module.exports.validate = (data) => {

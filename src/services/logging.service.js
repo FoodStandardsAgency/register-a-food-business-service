@@ -18,7 +18,7 @@ const DOUBLE_MODE = "doubleMode";
 const logEmitter = new LogEmitter();
 
 const getPresentContext = () => {
-  let getNamespace = require("cls-hooked").getNamespace;
+  const getNamespace = require("cls-hooked").getNamespace;
 
   const writer = getNamespace("application");
 
