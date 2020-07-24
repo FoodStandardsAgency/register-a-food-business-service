@@ -21,8 +21,8 @@
     "test:component:ci": "mkdir -p reports && cucumber-js --format=json | cucumber-junit > reports/TEST-component.xml",
     "test:securityall": "snyk wizard",
     "test:security": "snyk wizard --severity-threshold=medium",
-    "lint": "eslint ./src",
-    "lint:fix": "eslint --fix ./src ",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
     "format:verify": "prettier --list-different '{src,tests}/**/*.js'",
     "format": "prettier --write '{src,tests}/**/*.js'",
     "seed:configdb": "node src/connectors/configDb/configDb-seed/runSeedScripts",
@@ -111,6 +111,7 @@
       "ecmaVersion": 2019
     },
     "rules": {
+      "no-trailing-spaces": "error",
       "jest/no-disabled-tests": "warn",
       "jest/no-focused-tests": "error",
       "jest/no-identical-title": "error",
@@ -145,9 +146,15 @@
         "always"
       ],
       "node/prefer-promises/dns": "error",
-      "node/prefer-promises/fs": "error"
+      "node/prefer-promises/fs": "error",
+      "node/no-unpublished-require": ["error", {
+        "allowModules": ["cucumber", "jest-transform-stealthy-require"]
+    }]
     }
   },
+  "eslintIgnore": [
+    "coverage", "scripts", "node_modules"
+  ],
   "nodemonConfig": {
     "verbose": true,
     "ignore": [
