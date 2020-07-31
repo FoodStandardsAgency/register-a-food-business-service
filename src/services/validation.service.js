@@ -19,7 +19,7 @@ const errorMessages = {
   operator_email: "Invalid operator email",
   operator_company_name: "Invalid operator company name",
   operator_companies_house_number: "Invalid operator Companies House number",
-  operator_charity_name: "Invalid operator charity name",
+  operator_charity_name: "Invalid operator charity, organisation or trust name",
   operator_charity_number: "Invalid operator charity number",
   establishment_address_line_1: "Invalid first line of address",
   establishment_address_line_2: "Invalid second line of address",
