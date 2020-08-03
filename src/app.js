@@ -23,17 +23,14 @@ const { routers } = require("./api/routers");
 const { errorHandler } = require("./middleware/errorHandler");
 
 const clsNamespace = cls.createNamespace("application");
-const { v5: uuidv5 } = require("uuid");
+const { v4: uuidv4 } = require("uuid");
 const clsMiddleware = (req, res, next) => {
   // req and res are event emitters. We want to access CLS context inside of their event callbacks
   clsNamespace.bindEmitter(req);
   clsNamespace.bindEmitter(res);
 
   clsNamespace.run(() => {
-    clsNamespace.set(
-      "requestId",
-      uuidv5("https://register.food.gov.uk/", uuidv5.DNS)
-    );
+    clsNamespace.set("requestId", uuidv4());
     clsNamespace.set("request", req);
     next();
   });
