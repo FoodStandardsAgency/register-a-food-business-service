@@ -126,6 +126,14 @@ const schema = {
                 type: "string",
                 validation: validateEmail
               },
+              contact_representative_name: {
+                type: "string",
+                validation: validateName
+              },
+              contact_representative_role: {
+                type: "string",
+                validation: validateOptionalString
+              },
               contact_representative_number: {
                 type: "string",
                 validation: validatePhoneNumber
