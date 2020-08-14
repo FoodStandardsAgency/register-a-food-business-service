@@ -1,7 +1,6 @@
 const {
   validateDeclaration,
   validatePostCode,
-  validateFirstLine,
   validateOptionalString,
   validateMandatoryString,
   validateName,
@@ -246,7 +245,7 @@ const schema = {
               },
               business_type_search_term: {
                 type: "string",
-                validation: validateFirstLine
+                validation: validateMandatoryString
               },
               import_export_activities: {
                 type: "string",
