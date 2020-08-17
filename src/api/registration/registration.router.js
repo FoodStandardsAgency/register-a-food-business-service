@@ -14,7 +14,7 @@ const registrationRouter = () => {
   router.post(
     "/createNewRegistration",
     createRegistrationAuth,
-    async (req, res, next) => {
+    async (req, res) => {
       logEmitter.emit(
         "functionCall",
         "registration.router",
