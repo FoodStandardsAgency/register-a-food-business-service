@@ -1,4 +1,5 @@
 const { Router } = require("express");
+const { fail } = require("../../utils/express/response");
 const registrationController = require("./registration.controller");
 const {
   createRegistrationAuth,
@@ -77,7 +78,8 @@ const registrationRouter = () => {
           "createNewRegistration",
           err
         );
-        next(err);
+        await fail(res.status || 406, res, err.message);
+        throw err;
       }
     }
   );
