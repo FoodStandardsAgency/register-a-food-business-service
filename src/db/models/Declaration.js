@@ -12,7 +12,9 @@ module.exports = (sequelize, DataTypes) => {
       declaration3: { type: DataTypes.STRING },
       feedback1: { type: DataTypes.STRING }
     },
-    {}
+    {
+      schema: "registrations"
+    }
   );
   Declaration.associate = function (models) {
     Declaration.belongsTo(models.registration);

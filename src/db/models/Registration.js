@@ -21,7 +21,9 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.STRING
       }
     },
-    {}
+    {
+      schema: "registrations"
+    }
   );
   return Registration;
 };

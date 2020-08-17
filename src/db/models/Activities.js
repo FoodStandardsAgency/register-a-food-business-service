@@ -29,7 +29,9 @@ module.exports = (sequelize, DataTypes) => {
       opening_hours_saturday: { type: DataTypes.STRING(50) },
       opening_hours_sunday: { type: DataTypes.STRING(50) }
     },
-    {}
+    {
+      schema: "registrations"
+    }
   );
   Activities.associate = function (models) {
     Activities.belongsTo(models.establishment);
