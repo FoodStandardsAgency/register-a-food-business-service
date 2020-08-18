@@ -53,30 +53,34 @@ describe("registration router", () => {
 
     describe("when an error is thrown", () => {
       let next;
+      let errorMessage = "reg error";
       beforeEach(async () => {
         registrationController.createNewRegistration.mockImplementation(() => {
-          throw new Error("reg error");
+          throw new Error(errorMessage);
         });
         status.mockImplementation(() => ({
-          send: jest.fn()
+          send: send
         }));
         next = jest.fn();
-        await handler(
-          {
-            body: {
-              registration: "reg",
-              local_council_url: "example-council-url"
+        await expect(
+          handler(
+            {
+              body: {
+                registration: "reg",
+                local_council_url: "example-council-url"
+              },
+              headers: {
+                "registration-data-version": "1.2.0"
+              }
             },
-            headers: {
-              "registration-data-version": "1.2.0"
-            }
-          },
-          { send, status },
-          next
-        );
+            { send, status },
+            next
+          )
+        ).rejects.toThrow(Error);
       });
-      it("should call next with error", () => {
-        expect(next).toBeCalledWith(new Error("reg error"));
+      it("should call send with status and error", () => {
+        expect(status).toBeCalledWith(406);
+        expect(send).toBeCalledWith({ error: errorMessage });
       });
     });
   });
