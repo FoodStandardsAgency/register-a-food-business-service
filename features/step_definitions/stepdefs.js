@@ -197,7 +197,7 @@ Then("I get a success response", async function() {
 });
 
 Then("I get an error response", async function() {
-  assert.ok(this.response.errorCode);
+  assert.ok(this.response.userMessages);
 });
 
 Then("The non personal information is saved to the database", async function() {
