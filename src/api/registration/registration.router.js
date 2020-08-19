@@ -1,5 +1,4 @@
 const { Router } = require("express");
-const { fail } = require("../../utils/express/response");
 const registrationController = require("./registration.controller");
 const {
   createRegistrationAuth,
@@ -14,7 +13,7 @@ const registrationRouter = () => {
   router.post(
     "/createNewRegistration",
     createRegistrationAuth,
-    async (req, res) => {
+    async (req, res, next) => {
       logEmitter.emit(
         "functionCall",
         "registration.router",
@@ -78,8 +77,7 @@ const registrationRouter = () => {
           "createNewRegistration",
           err
         );
-        await fail(res.status || 406, res, err.message);
-        throw err;
+        next(err);
       }
     }
   );

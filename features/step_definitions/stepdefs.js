@@ -10,7 +10,7 @@ const {
 
 setDefaultTimeout(60 * 1000);
 
-let apiUrl = "https://test-register-a-food-business-service.azurewebsites.net";
+let apiUrl = "http://localhost:4000";
 if(process.env.NODE_ENV === 'local'){
   apiUrl = process.env.API_URL ? process.env.API_URL : apiUrl;
 }
