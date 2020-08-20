@@ -39,7 +39,7 @@ const removeExistingRegistrations = async () => {
           console.log("number 3");
           await cachedRegistrations
             .remove({ "fsa-rn": record["fsa-rn"] });
-        }    
+        }
       });
     }
   } catch (err) {

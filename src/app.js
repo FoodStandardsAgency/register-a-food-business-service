@@ -1,4 +1,5 @@
 const cls = require("cls-hooked");
+const packageJson = require("../package.json");
 
 const appInsights = require("applicationinsights");
 if (
@@ -6,6 +7,9 @@ if (
   process.env["APPINSIGHTS_INSTRUMENTATIONKEY"] !== ""
 ) {
   appInsights.setup().start();
+  appInsights.defaultClient.addTelemetryProcessor((envelope) => {
+    envelope.tags["ai.cloud.role"] = packageJson.name;
+  });
 }
 
 const { logger } = require("./services/winston");
@@ -19,15 +23,15 @@ const { routers } = require("./api/routers");
 const { errorHandler } = require("./middleware/errorHandler");
 
 const clsNamespace = cls.createNamespace("application");
-const { v5 } = require("uuid");
+const { v4: uuidv4 } = require("uuid");
 const clsMiddleware = (req, res, next) => {
   // req and res are event emitters. We want to access CLS context inside of their event callbacks
-  clsNamespace.bind(req);
-  clsNamespace.bind(res);
+  clsNamespace.bindEmitter(req);
+  clsNamespace.bindEmitter(res);
 
   clsNamespace.run(() => {
-    clsNamespace.set("requestId", v5.DNS);
-
+    clsNamespace.set("requestId", uuidv4());
+    clsNamespace.set("request", req);
     next();
   });
 };

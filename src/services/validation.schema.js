@@ -1,7 +1,6 @@
 const {
   validateDeclaration,
   validatePostCode,
-  validateFirstLine,
   validateOptionalString,
   validateMandatoryString,
   validateName,
@@ -126,6 +125,14 @@ const schema = {
                 type: "string",
                 validation: validateEmail
               },
+              contact_representative_name: {
+                type: "string",
+                validation: validateName
+              },
+              contact_representative_role: {
+                type: "string",
+                validation: validateOptionalString
+              },
               contact_representative_number: {
                 type: "string",
                 validation: validatePhoneNumber
@@ -238,7 +245,7 @@ const schema = {
               },
               business_type_search_term: {
                 type: "string",
-                validation: validateFirstLine
+                validation: validateMandatoryString
               },
               import_export_activities: {
                 type: "string",

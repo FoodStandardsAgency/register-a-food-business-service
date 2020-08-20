@@ -39,10 +39,10 @@ describe("configDb contract: getAllLocalCouncilConfig", () => {
   });
 
   it("Should both pass format validation", async () => {
-    expect(validator.validate(doubleResult, lcConfigSchema).errors.length).toBe(
-      0
-    );
-    expect(validator.validate(realResult, lcConfigSchema).errors.length).toBe(
+    expect(
+      validator.validate(doubleResult, lcConfigSchema).errors
+    ).toHaveLength(0);
+    expect(validator.validate(realResult, lcConfigSchema).errors).toHaveLength(
       0
     );
   });
