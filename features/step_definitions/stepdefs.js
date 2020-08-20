@@ -10,7 +10,7 @@ const {
 
 setDefaultTimeout(60 * 1000);
 
-let apiUrl = "https://test-register-a-food-business-service.azurewebsites.net";
+let apiUrl = "https://staging-register-a-food-business-service.azurewebsites.net";
 if(process.env.NODE_ENV === 'local'){
   apiUrl = process.env.API_URL ? process.env.API_URL : apiUrl;
 }
@@ -197,7 +197,7 @@ Then("I get a success response", async function() {
 });
 
 Then("I get an error response", async function() {
-  assert.ok(this.response.errorCode);
+  assert.ok(this.response.userMessages);
 });
 
 Then("The non personal information is saved to the database", async function() {
