@@ -6,7 +6,7 @@ jest.mock("express", () => ({
   }))
 }));
 jest.mock("./registration.controller", () => ({
-  createNewRegistration: jest.fn((a, b, c, sendResponse) => {
+  createNewRegistration: jest.fn((a, b, c, d, sendResponse) => {
     sendResponse();
   }),
   getRegistration: jest.fn(),
@@ -44,6 +44,71 @@ describe("registration router", () => {
           },
           { send, status }
         );
+      });
+
+      it("should call res.send", () => {
+        expect(send).toBeCalled();
+      });
+    });
+
+    describe("when an error is thrown", () => {
+      let next;
+      beforeEach(async () => {
+        registrationController.createNewRegistration.mockImplementation(() => {
+          throw new Error("reg error");
+        });
+        status.mockImplementation(() => ({
+          send: jest.fn()
+        }));
+        next = jest.fn();
+        await handler(
+          {
+            body: {
+              registration: "reg",
+              local_council_url: "example-council-url"
+            },
+            headers: {
+              "registration-data-version": "1.2.0"
+            }
+          },
+          { send, status },
+          next
+        );
+      });
+      it("should call next with error", () => {
+        expect(next).toBeCalledWith(new Error("reg error"));
+      });
+    });
+  });
+
+  describe("Post to /createNewLcSubmittedRegistration", () => {
+    beforeEach(() => {
+      registrationController.createNewRegistration.mockImplementation(
+        (a, b, c, d, sendResponse) => {
+          sendResponse();
+        }
+      );
+      handler = router.post.mock.calls[1][2];
+    });
+
+    describe("when making a valid request", () => {
+      beforeEach(async () => {
+        await handler(
+          {
+            body: {
+              registration: "reg",
+              local_council_url: "example-council-url"
+            },
+            headers: {
+              "registration-data-version": "1.6.0"
+            }
+          },
+          { send, status }
+        );
+      });
+
+      it("should call createNewRegistration", () => {
+        expect(registrationController.createNewRegistration).toBeCalled();
       });
 
       it("should call res.send", () => {

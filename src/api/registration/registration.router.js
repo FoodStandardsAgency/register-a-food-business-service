@@ -44,6 +44,7 @@ const registrationRouter = () => {
         await registrationController.createNewRegistration(
           req.body.registration,
           req.body.local_council_url,
+          false,
           regDataVersion,
           sendResponse
         );
@@ -75,6 +76,79 @@ const registrationRouter = () => {
           "functionFail",
           "registration.router",
           "createNewRegistration",
+          err
+        );
+        next(err);
+      }
+    }
+  );
+
+  router.post(
+    "/createNewLcSubmittedRegistration",
+    createRegistrationAuth,
+    async (req, res, next) => {
+      logEmitter.emit(
+        "functionCall",
+        "registration.router",
+        "createNewLcSubmittedRegistration"
+      );
+      const sendResponse = (response) => {
+        statusEmitter.emit("incrementCount", "lcRegistrationsSucceeded");
+        statusEmitter.emit(
+          "setStatus",
+          "mostRecentlcRegistrationSucceeded",
+          true
+        );
+        res.send(response);
+      };
+      try {
+        statusEmitter.emit("incrementCount", "lcSubmissionsReceived");
+
+        const regDataVersion = req.headers["registration-data-version"];
+
+        if (regDataVersion === undefined) {
+          const missingHeaderError = new Error(
+            "Missing 'registration-data-version' header"
+          );
+          missingHeaderError.name = "missingRequiredHeader";
+          throw missingHeaderError;
+        }
+
+        await registrationController.createNewRegistration(
+          req.body.registration,
+          req.body.local_council_url,
+          true,
+          regDataVersion,
+          sendResponse
+        );
+        statusEmitter.emit("incrementCount", "endToEndRegistrationsSucceeded");
+        statusEmitter.emit(
+          "setStatus",
+          "mostRecentEndToEndRegistrationSucceeded",
+          true
+        );
+        logEmitter.emit(
+          "functionSuccess",
+          "registration.router",
+          "createNewLcSubmittedRegistration"
+        );
+      } catch (err) {
+        logEmitter.emit(
+          "errorWith",
+          "registration.router",
+          "createNewLcSubmittedRegistration",
+          req.body.registration
+        );
+        statusEmitter.emit("incrementCount", "endToEndRegistrationsFailed");
+        statusEmitter.emit(
+          "setStatus",
+          "mostRecentEndToEndRegistrationSucceeded",
+          false
+        );
+        logEmitter.emit(
+          "functionFail",
+          "registration.router",
+          "createNewLcSubmittedRegistration",
           err
         );
         next(err);
