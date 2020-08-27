@@ -6,6 +6,7 @@ const {
 } = require("../../middleware/authHandler");
 const { logEmitter } = require("../../services/logging.service");
 const { statusEmitter } = require("../../services/statusEmitter.service");
+const { mapFromCollectionsRegistration } = require("../../utils/registrationMapper")
 
 const registrationRouter = () => {
   const router = Router();
@@ -114,9 +115,11 @@ const registrationRouter = () => {
           throw missingHeaderError;
         }
 
+        const mappedRegistration = mapFromCollectionsRegistration(req.body);
+        
         await registrationController.createNewRegistration(
-          req.body.registration,
-          req.body.local_council_url,
+          mappedRegistration,
+          req.body.council,
           true,
           regDataVersion,
           sendResponse
@@ -137,7 +140,7 @@ const registrationRouter = () => {
           "errorWith",
           "registration.router",
           "createNewLcSubmittedRegistration",
-          req.body.registration
+          req.body
         );
         statusEmitter.emit("incrementCount", "endToEndRegistrationsFailed");
         statusEmitter.emit(
