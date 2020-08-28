@@ -2,12 +2,19 @@
 module.exports = {
   up: (queryInterface, Sequelize) => {
     return Promise.all([
-      queryInterface.addColumn("activities", "water_supply", Sequelize.STRING)
+      queryInterface.addColumn(
+        { tableName: "activities", schema: "registrations" },
+        "water_supply",
+        Sequelize.STRING
+      )
     ]);
   },
   down: (queryInterface) => {
     return Promise.all([
-      queryInterface.removeColumn("activities", "water_supply")
+      queryInterface.removeColumn(
+        { tableName: "activities", schema: "registrations" },
+        "water_supply"
+      )
     ]);
   }
 };

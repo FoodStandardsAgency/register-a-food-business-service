@@ -15,7 +15,9 @@ module.exports = (sequelize, DataTypes) => {
       establishment_uprn: { type: DataTypes.STRING },
       establishment_type: { type: DataTypes.STRING }
     },
-    {}
+    {
+      schema: "registrations"
+    }
   );
   Premise.associate = function (models) {
     Premise.belongsTo(models.establishment);

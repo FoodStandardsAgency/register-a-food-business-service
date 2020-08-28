@@ -13,7 +13,9 @@ module.exports = (sequelize, DataTypes) => {
       establishment_secondary_number: { type: DataTypes.STRING },
       establishment_email: { type: DataTypes.STRING }
     },
-    {}
+    {
+      schema: "registrations"
+    }
   );
   Establishment.associate = function (models) {
     Establishment.belongsTo(models.registration);
