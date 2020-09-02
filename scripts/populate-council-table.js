@@ -8,7 +8,9 @@ let configDB;
 let lcConfigCollection;
 
 const establishConnectionToMongo = async () => {
-  client = await mongodb.MongoClient.connect(process.env.CONFIGDB_URL, {
+  console.log(`Env Config DB URL: ${process.env.CONFIGDB_URL}`);
+  console.log(`Config Config DB URL: ${CONFIGDB_URL}`);
+  client = await mongodb.MongoClient.connect(CONFIGDB_URL, {
     useNewUrlParser: true
   });
 
