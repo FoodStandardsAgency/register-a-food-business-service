@@ -1,4 +1,5 @@
 require("dotenv").config();
+const { CONFIGDB_URL } = require("../src/config");
 const mongodb = require("mongodb");
 const { logEmitter } = require("../src/services/logging.service");
 const { Council, connectToDb, closeConnection } = require("../src/db/db");
