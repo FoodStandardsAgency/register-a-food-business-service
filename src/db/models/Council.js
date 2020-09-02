@@ -7,7 +7,7 @@ module.exports = (sequelize, DataTypes) => {
       competent_authority_id: { type: DataTypes.INTEGER }
     },
     {
-      schema: "councils"
+      schema: "registrations"
     }
   );
   return Council;
