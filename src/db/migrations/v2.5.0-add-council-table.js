@@ -1,6 +1,6 @@
 "use strict";
 
-//const { populateCouncils } = require("../../../scripts/populate-council-table");
+const { populateCouncils } = require("../../../scripts/populate-council-table");
 
 const createCouncil = async (queryInterface, Sequelize, transaction) => {
   queryInterface.createTable(
@@ -57,8 +57,7 @@ module.exports = {
   up: (queryInterface, Sequelize) => {
     return queryInterface.sequelize.transaction(async (transaction) => {
       await createCouncil(queryInterface, Sequelize, transaction);
-      // This is now done in 2.8.0 due to schema change
-      //await populateCouncils(transaction);
+      await populateCouncils(transaction);
       return createCouncilsForeignKey(queryInterface, transaction);
     });
   },
