@@ -6,7 +6,6 @@ const {
 } = require("../../middleware/authHandler");
 const { logEmitter } = require("../../services/logging.service");
 const { statusEmitter } = require("../../services/statusEmitter.service");
-const { mapFromCollectionsRegistration } = require("../../utils/registrationMapper")
 
 const registrationRouter = () => {
   const router = Router();
@@ -45,7 +44,6 @@ const registrationRouter = () => {
         await registrationController.createNewRegistration(
           req.body.registration,
           req.body.local_council_url,
-          false,
           regDataVersion,
           sendResponse
         );
@@ -115,12 +113,8 @@ const registrationRouter = () => {
           throw missingHeaderError;
         }
 
-        const mappedRegistration = mapFromCollectionsRegistration(req.body);
-        
-        await registrationController.createNewRegistration(
-          mappedRegistration,
-          req.body.council,
-          true,
+        await registrationController.createNewLcRegistration(
+          req.body,
           regDataVersion,
           sendResponse
         );

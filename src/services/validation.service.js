@@ -1,6 +1,7 @@
 const { Validator } = require("jsonschema");
 const { logEmitter } = require("./logging.service");
 const schema = require("./validation.schema");
+const lcSubmissionSchema = require("./validationLcSubmission.schema");
 
 const errorMessages = {
   declaration1: "Invalid declaration1",
@@ -76,10 +77,23 @@ validator.attributes.validation = (instance, schema, options, ctx) => {
   return undefined;
 };
 
-module.exports.validate = (data) => {
+module.exports.validate = (data, isLcSubmission = false) => {
   logEmitter.emit("functionCall", "validation.service", "validate");
   const result = [];
-  const validatorResult = validator.validate(data, schema.registration);
+
+  var validationSchema = schema;
+  if (isLcSubmission) {
+    logEmitter.emit("info", "Validating with LC submission schema");
+    validationSchema = lcSubmissionSchema;
+  } else {
+    logEmitter.emit("info", "Validating with standard schema");
+  }
+
+  const validatorResult = validator.validate(
+    data,
+    validationSchema.registration
+  );
+
   // turn errors into key:value pairs
   validatorResult.errors.forEach((error) => {
     result.push({ property: error.property, message: error.message });
@@ -87,6 +101,7 @@ module.exports.validate = (data) => {
     const newError = new Error(`${(error.property, error.message)}`);
     logEmitter.emit("functionFail", "validation.service", "validate", newError);
   });
+
   logEmitter.emit("functionSuccess", "validation.service", "validate");
   return result;
 };
