@@ -2,99 +2,127 @@
 
 const dropEstablishmentsForeignKey = (queryInterface, t) =>
   queryInterface.removeConstraint(
-    "establishments",
+    { tableName: "establishments", schema: "registrations" },
     "establishments_registrationId_fkey",
     { transaction: t }
   );
 
 const recreateEstablishmentsForeignKey = (queryInterface, t, setting) =>
-  queryInterface.addConstraint("establishments", ["registrationId"], {
-    type: "foreign key",
-    name: "establishments_registrationId_fkey",
-    references: {
-      table: "registrations",
-      field: "id"
-    },
-    onUpdate: "cascade",
-    onDelete: setting,
-    transaction: t
-  });
+  queryInterface.addConstraint(
+    { tableName: "establishments", schema: "registrations" },
+    ["registrationId"],
+    {
+      type: "foreign key",
+      name: "establishments_registrationId_fkey",
+      references: {
+        table: { tableName: "registrations", schema: "registrations" },
+        field: "id"
+      },
+      onUpdate: "cascade",
+      onDelete: setting,
+      transaction: t
+    }
+  );
 
 const dropMetadataForeignKey = (queryInterface, t) =>
-  queryInterface.removeConstraint("metadata", "metadata_registrationId_fkey", {
-    transaction: t
-  });
+  queryInterface.removeConstraint(
+    { tableName: "metadata", schema: "registrations" },
+    "metadata_registrationId_fkey",
+    {
+      transaction: t
+    }
+  );
 
 const recreateMetadataForeignKey = (queryInterface, t, setting) =>
-  queryInterface.addConstraint("metadata", ["registrationId"], {
-    type: "foreign key",
-    name: "metadata_registrationId_fkey",
-    references: {
-      table: "registrations",
-      field: "id"
-    },
-    onUpdate: "cascade",
-    onDelete: setting,
-    transaction: t
-  });
+  queryInterface.addConstraint(
+    { tableName: "metadata", schema: "registrations" },
+    ["registrationId"],
+    {
+      type: "foreign key",
+      name: "metadata_registrationId_fkey",
+      references: {
+        table: { tableName: "registrations", schema: "registrations" },
+        field: "id"
+      },
+      onUpdate: "cascade",
+      onDelete: setting,
+      transaction: t
+    }
+  );
 
 const dropOperatorsForeignKey = (queryInterface, t) =>
   queryInterface.removeConstraint(
-    "operators",
+    { tableName: "operators", schema: "registrations" },
     "operators_establishmentId_fkey",
     { transaction: t }
   );
 
 const recreateOperatorsForeignKey = (queryInterface, t, setting) =>
-  queryInterface.addConstraint("operators", ["establishmentId"], {
-    type: "foreign key",
-    name: "operators_establishmentId_fkey",
-    references: {
-      table: "establishments",
-      field: "id"
-    },
-    onUpdate: "cascade",
-    onDelete: setting,
-    transaction: t
-  });
+  queryInterface.addConstraint(
+    { tableName: "operators", schema: "registrations" },
+    ["establishmentId"],
+    {
+      type: "foreign key",
+      name: "operators_establishmentId_fkey",
+      references: {
+        table: { tableName: "establishments", schema: "registrations" },
+        field: "id"
+      },
+      onUpdate: "cascade",
+      onDelete: setting,
+      transaction: t
+    }
+  );
 
 const dropPremisesForeignKey = (queryInterface, t) =>
-  queryInterface.removeConstraint("premises", "premises_establishmentId_fkey", {
-    transaction: t
-  });
+  queryInterface.removeConstraint(
+    { tableName: "premises", schema: "registrations" },
+    "premises_establishmentId_fkey",
+    {
+      transaction: t
+    }
+  );
 
 const recreatePremisesForeignKey = (queryInterface, t, setting) =>
-  queryInterface.addConstraint("premises", ["establishmentId"], {
-    type: "foreign key",
-    name: "premises_establishmentId_fkey",
-    references: {
-      table: "establishments",
-      field: "id"
-    },
-    onUpdate: "cascade",
-    onDelete: setting,
-    transaction: t
-  });
+  queryInterface.addConstraint(
+    { tableName: "premises", schema: "registrations" },
+    ["establishmentId"],
+    {
+      type: "foreign key",
+      name: "premises_establishmentId_fkey",
+      references: {
+        table: { tableName: "establishments", schema: "registrations" },
+        field: "id"
+      },
+      onUpdate: "cascade",
+      onDelete: setting,
+      transaction: t
+    }
+  );
 
 const dropActivitiesForeignKey = (queryInterface, t) =>
   queryInterface.removeConstraint(
-    "activities",
+    { tableName: "activities", schema: "registrations" },
     "activities_establishmentId_fkey",
     { transaction: t }
   );
 
 const recreateActivitiesForeignKey = (queryInterface, t, setting) =>
-  queryInterface.addConstraint("activities", ["establishmentId"], {
-    type: "foreign key",
-    name: "activities_establishmentId_fkey",
-    references: {
-      table: "establishments",
-      field: "id"
-    },
-    onUpdate: "cascade",
-    onDelete: setting,
-    transaction: t
-  });
+  queryInterface.addConstraint(
+    { tableName: "activities", schema: "registrations" },
+    ["establishmentId"],
+    {
+      type: "foreign key",
+      name: "activities_establishmentId_fkey",
+      references: {
+        table: { tableName: "establishments", schema: "registrations" },
+        field: "id"
+      },
+      onUpdate: "cascade",
+      onDelete: setting,
+      transaction: t
+    }
+  );
 
 module.exports = {
   up: (queryInterface) => {

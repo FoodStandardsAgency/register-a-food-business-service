@@ -6,7 +6,9 @@ module.exports = (sequelize, DataTypes) => {
       local_council_full_name: { type: DataTypes.STRING },
       competent_authority_id: { type: DataTypes.INTEGER }
     },
-    {}
+    {
+      schema: "registrations"
+    }
   );
   return Council;
 };

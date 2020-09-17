@@ -2,12 +2,15 @@
 module.exports = {
   up: (queryInterface, Sequelize) => {
     return queryInterface.addColumn(
-      "registrations",
+      { tableName: "registrations", schema: "registrations" },
       "collected",
       Sequelize.BOOLEAN
     );
   },
   down: (queryInterface) => {
-    return queryInterface.removeColumn("registrations", "collected");
+    return queryInterface.removeColumn(
+      { tableName: "registrations", schema: "registrations" },
+      "collected"
+    );
   }
 };
