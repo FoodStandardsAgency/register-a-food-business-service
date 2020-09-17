@@ -34,36 +34,25 @@ const schema = {
       establishment: {
         type: "object",
         properties: {
-          establishment_details: {
-            type: "object",
-            properties: {
-              establishment_trading_name: {
-                type: "string",
-                validation: validateEstablishmentTradingName
-              },
-              establishment_primary_number: {
-                type: "string",
-                validation: validatePhoneNumber
-              },
-              establishment_secondary_number: {
-                type: "string",
-                validation: validatePhoneNumberOptional
-              },
-              establishment_email: {
-                type: "string",
-                validation: validateEmail
-              },
-              establishment_opening_date: {
-                type: "string",
-                validation: validateDate
-              }
-            },
-            required: [
-              "establishment_trading_name",
-              "establishment_primary_number",
-              "establishment_email",
-              "establishment_opening_date"
-            ]
+          establishment_trading_name: {
+            type: "string",
+            validation: validateEstablishmentTradingName
+          },
+          establishment_primary_number: {
+            type: "string",
+            validation: validatePhoneNumberOptional
+          },
+          establishment_secondary_number: {
+            type: "string",
+            validation: validatePhoneNumberOptional
+          },
+          establishment_email: {
+            type: "string",
+            validation: validateEmail
+          },
+          establishment_opening_date: {
+            type: "string",
+            validation: validateDate
           },
           operator: {
             type: "object",
@@ -111,7 +100,7 @@ const schema = {
               },
               operator_town: {
                 type: "string",
-                validation: validateMandatoryString
+                validation: validateOptionalString
               },
               operator_primary_number: {
                 type: "string",
@@ -165,34 +154,17 @@ const schema = {
             required: [
               "operator_type",
               "operator_postcode",
-              "operator_address_line_1",
-              "operator_town"
+              "operator_address_line_1"
             ],
             allOf: [
               {
                 oneOf: [
                   {
-                    required: [
-                      "operator_company_name",
-                      "operator_companies_house_number"
-                    ]
+                    required: ["operator_company_name"]
                   },
                   { required: ["operator_charity_name"] },
                   { required: ["operator_first_name", "operator_last_name"] },
                   { required: ["partners"] }
-                ]
-              },
-              {
-                oneOf: [
-                  {
-                    required: ["operator_primary_number", "operator_email"]
-                  },
-                  {
-                    required: [
-                      "contact_representative_email",
-                      "contact_representative_number"
-                    ]
-                  }
                 ]
               }
             ]
@@ -218,19 +190,18 @@ const schema = {
               },
               establishment_town: {
                 type: "string",
-                validation: validateMandatoryString
+                validation: validateOptionalString
+              },
+              establishment_uprn: {
+                type: "string",
+                validation: validateOptionalString
               },
               establishment_type: {
                 type: "string",
                 validation: validateRadioButtons
               }
             },
-            required: [
-              "establishment_postcode",
-              "establishment_address_line_1",
-              "establishment_type",
-              "establishment_town"
-            ]
+            required: ["establishment_postcode", "establishment_address_line_1"]
           },
           activities: {
             type: "object",
@@ -245,7 +216,7 @@ const schema = {
               },
               business_type_search_term: {
                 type: "string",
-                validation: validateMandatoryString
+                validation: validateOptionalString
               },
               import_export_activities: {
                 type: "string",
@@ -319,38 +290,27 @@ const schema = {
                 type: "string",
                 validation: validateOpeningHours
               }
-            },
-            required: [
-              "customer_type",
-              "business_type",
-              "import_export_activities",
-              "water_supply",
-              "opening_day_monday",
-              "opening_day_tuesday",
-              "opening_day_wednesday",
-              "opening_day_thursday",
-              "opening_day_friday",
-              "opening_day_saturday",
-              "opening_day_sunday"
-            ]
+            }
           }
         },
-        required: ["establishment_details", "operator", "premise", "activities"]
+        required: ["establishment_trading_name", "operator", "premise"]
       },
-      declaration: {
+      metadata: {
         type: "object",
         properties: {
           declaration1: { type: "string", validation: validateDeclaration },
           declaration2: { type: "string", validation: validateDeclaration },
           declaration3: { type: "string", validation: validateDeclaration },
           feedback1: { type: "string", validation: validateDeclaration }
-        },
-        required: ["declaration1", "declaration2", "declaration3"]
-      }
+        }
+      },
+      competent_authority_id: { type: "number" },
+      fsa_rn: { type: "string" },
+      created_at: { type: "date" },
+      updated_at: { type: "date" }
     },
-    required: ["establishment", "declaration"]
-  },
-  local_council_url: { type: "string" }
+    required: ["establishment", "competent_authority_id"]
+  }
 };
 
 module.exports = schema;

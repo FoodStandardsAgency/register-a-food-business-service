@@ -14,7 +14,7 @@ const getUprn = async (first_line, postcode) => {
   logEmitter.emit("functionCallWith", "address-matcher", "getUprn", postcode);
 
   try {
-    var uprn = null;
+    let uprn = null;
     const addressLookupResponse = await connector.getAddressesByPostcode(
       postcode
     );

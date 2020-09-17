@@ -1,3 +1,4 @@
+const moment = require("moment");
 const { validate } = require("../../services/validation.service");
 const {
   getFullRegistrationByFsaRn,
@@ -133,6 +134,15 @@ const createNewLcRegistration = async (
     throw new Error("registration is undefined");
   }
 
+  // Validate according to correct schema
+  const errors = validate(registration, true);
+  if (errors.length) {
+    const err = new Error();
+    err.name = "validationError";
+    err.validationErrors = errors;
+    throw err;
+  }
+
   // Convert to correct format
   const mappedRegistration = mapFromCollectionsRegistration(registration);
 
@@ -145,15 +155,6 @@ const createNewLcRegistration = async (
     lcConfigCollection,
     registration.competent_authority_id
   );
-
-  // Validate according to correct schema
-  const errors = validate(mappedRegistration, true);
-  if (errors.length) {
-    const err = new Error();
-    err.name = "validationError";
-    err.validationErrors = errors;
-    throw err;
-  }
 
   // Get UPRN of establishment and operator
   const promises = [];
@@ -181,12 +182,16 @@ const createNewLcRegistration = async (
     );
   }
 
-  await Promise.all(promises);
-
   //left here as legacy code
-  const lcContactConfig = await getLcContactConfig(
-    sourceCouncil.local_council_url
+  let lcContactConfig;
+  promises.push(
+    getLcContactConfig(sourceCouncil.local_council_url).then(
+      (result) => (lcContactConfig = result)
+    )
   );
+
+  // Wait for asyncs to catch up
+  await Promise.all(promises);
 
   let hygieneCouncilCode;
   if (lcContactConfig.hygieneAndStandards) {
@@ -195,26 +200,28 @@ const createNewLcRegistration = async (
     hygieneCouncilCode = lcContactConfig.hygiene.code;
   }
 
-  const postRegistrationMetadata = await getRegistrationMetaData(
-    hygieneCouncilCode
-  );
+  let reg_metadata = {
+    "fsa-rn": registration.fsa_rn,
+    reg_submission_date: moment().format("YYYY-MM-DD"),
+    directLcSubmission: true,
+    createdAt: registration.createdAt || moment().format(),
+    updatedAt: registration.updatedAt || moment().format()
+  };
+
+  if (!reg_metadata["fsa-rn"]) {
+    await getRegistrationMetaData(hygieneCouncilCode).then(
+      (result) => (reg_metadata["fsa-rn"] = result["fsa-rn"])
+    );
+  }
 
   const status = {
     registration: null,
     notifications: null
   };
-  if (sourceCouncil.auth) {
-    status.tascomi = {};
-  }
 
-  //this is all very messy but ported from legacy code.
   const completeCacheRecord = Object.assign(
     {},
-    {
-      "fsa-rn": postRegistrationMetadata["fsa-rn"],
-      reg_submission_date: postRegistrationMetadata.reg_submission_date,
-      directLcSubmission: true
-    },
+    reg_metadata,
     mappedRegistration,
     lcContactConfig,
     {
@@ -225,13 +232,12 @@ const createNewLcRegistration = async (
       local_council_url: sourceCouncil.local_council_url,
       source_council_id: sourceCouncil._id,
       registration_data_version: regDataVersion
-    },
-    postRegistrationMetadata
+    }
   );
 
   await cacheRegistration(completeCacheRecord);
 
-  const combinedResponse = Object.assign({}, postRegistrationMetadata, {
+  const combinedResponse = Object.assign({}, reg_metadata, {
     lc_config: lcContactConfig
   });
 
