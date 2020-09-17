@@ -85,8 +85,13 @@ const createPremise = async (premise, establishmentId, transaction = null) => {
   return modelCreate(data, Premise, "Premise", transaction);
 };
 
-const createRegistration = async (fsa_rn, council, transaction = null) => {
-  const data = { fsa_rn, council };
+const createRegistration = async (
+  fsa_rn,
+  council,
+  direct_submission,
+  transaction = null
+) => {
+  const data = { fsa_rn, council, direct_submission };
   return modelCreate(data, Registration, "Registration", transaction);
 };
 
