@@ -6,7 +6,10 @@ jest.mock("express", () => ({
   }))
 }));
 jest.mock("./registration.controller", () => ({
-  createNewRegistration: jest.fn((a, b, c, d, sendResponse) => {
+  createNewRegistration: jest.fn((a, b, c, sendResponse) => {
+    sendResponse();
+  }),
+  createNewLcRegistration: jest.fn((a, b, sendResponse) => {
     sendResponse();
   }),
   getRegistration: jest.fn(),
@@ -83,8 +86,8 @@ describe("registration router", () => {
 
   describe("Post to /createNewLcSubmittedRegistration", () => {
     beforeEach(() => {
-      registrationController.createNewRegistration.mockImplementation(
-        (a, b, c, d, sendResponse) => {
+      registrationController.createNewLcRegistration.mockImplementation(
+        (a, b, sendResponse) => {
           sendResponse();
         }
       );
@@ -108,7 +111,7 @@ describe("registration router", () => {
       });
 
       it("should call createNewRegistration", () => {
-        expect(registrationController.createNewRegistration).toBeCalled();
+        expect(registrationController.createNewLcRegistration).toBeCalled();
       });
 
       it("should call res.send", () => {
@@ -119,9 +122,11 @@ describe("registration router", () => {
     describe("when an error is thrown", () => {
       let next;
       beforeEach(async () => {
-        registrationController.createNewRegistration.mockImplementation(() => {
-          throw new Error("reg error");
-        });
+        registrationController.createNewLcRegistration.mockImplementation(
+          () => {
+            throw new Error("reg error");
+          }
+        );
         status.mockImplementation(() => ({
           send: jest.fn()
         }));

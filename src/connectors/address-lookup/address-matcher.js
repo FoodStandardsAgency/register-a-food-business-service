@@ -1,4 +1,4 @@
-const connector = require("./address-lookup-api.connector");
+const { getAddressesByPostcode } = require("./address-lookup-api.connector");
 const { logEmitter } = require("../../services/logging.service");
 
 /**
@@ -12,12 +12,10 @@ const { logEmitter } = require("../../services/logging.service");
  */
 const getUprn = async (first_line, postcode) => {
   logEmitter.emit("functionCallWith", "address-matcher", "getUprn", postcode);
+  let uprn = null;
 
   try {
-    let uprn = null;
-    const addressLookupResponse = await connector.getAddressesByPostcode(
-      postcode
-    );
+    const addressLookupResponse = await getAddressesByPostcode(postcode);
 
     // Try to match returned addresses against provided first line
     for (var i = 0; i < addressLookupResponse.length; i++) {
@@ -29,10 +27,10 @@ const getUprn = async (first_line, postcode) => {
     }
 
     logEmitter.emit("functionSuccess", "address-matcher", "getUprn");
-    return uprn;
   } catch (err) {
     logEmitter.emit("functionFail", "address-matcher", "getUprn", err);
   }
+  return uprn;
 };
 
 module.exports = { getUprn };
