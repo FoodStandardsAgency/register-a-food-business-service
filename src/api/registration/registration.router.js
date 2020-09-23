@@ -105,14 +105,6 @@ const registrationRouter = () => {
 
         const regDataVersion = req.headers["registration-data-version"];
 
-        if (regDataVersion === undefined) {
-          const missingHeaderError = new Error(
-            "Missing 'registration-data-version' header"
-          );
-          missingHeaderError.name = "missingRequiredHeader";
-          throw missingHeaderError;
-        }
-
         await registrationController.createNewLcRegistration(
           req.body,
           regDataVersion,

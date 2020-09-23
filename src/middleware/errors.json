@@ -94,7 +94,7 @@
     "name": "localCouncilNotFound",
     "code": "13",
     "developerMessage":
-      "The local council url has not matched any records in the config database. Raw error:",
+      "The local council has not matched any records in the config database. Raw error:",
     "userMessages": "",
     "statusCode": 400
   },

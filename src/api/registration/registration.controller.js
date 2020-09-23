@@ -127,7 +127,7 @@ const createNewLcRegistration = async (
   logEmitter.emit(
     "functionCall",
     "registration.controller",
-    "createNewRegistration"
+    "createNewLcRegistration"
   );
 
   if (registration === undefined) {
@@ -155,6 +155,18 @@ const createNewLcRegistration = async (
     lcConfigCollection,
     registration.competent_authority_id
   );
+  if (!sourceCouncil) {
+    const newError = new Error();
+    newError.name = "localCouncilNotFound";
+    newError.message = `Config for council ID "${registration.competent_authority_id}" not found`;
+    logEmitter.emit(
+      "functionFail",
+      "registration.controller",
+      "createNewLcRegistration",
+      newError
+    );
+    throw newError;
+  }
 
   // Get UPRN of establishment and operator
   const promises = [];

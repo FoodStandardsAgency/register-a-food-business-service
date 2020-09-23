@@ -111,7 +111,7 @@ describe("Middleware: errorHandler", () => {
       errorHandler(error, "request", res);
       expect(res.status).toBeCalledWith(400);
       expect(res.send.mock.calls[0][0].developerMessage).toEqual(
-        "The local council url has not matched any records in the config database. Raw error: some-invalid-local-council"
+        "The local council has not matched any records in the config database. Raw error: some-invalid-local-council"
       );
     });
   });
