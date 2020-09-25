@@ -1,4 +1,13 @@
 [
+
+  {
+    "name": "doubleFail",
+    "code": "0",
+    "developerMessage":
+      "Double Mode Error. Raw error:",
+    "userMessages": "",
+    "statusCode": 400
+  },
   {
     "name": "tascomiAuth",
     "code": "1",

@@ -6,6 +6,7 @@ const {
   getRegistrationMetaData,
   getLcContactConfig
 } = require("./registration.service");
+const { registrationDouble } = require("./registration.double");
 
 const {
   cacheRegistration
@@ -122,6 +123,7 @@ const createNewRegistration = async (
 const createNewLcRegistration = async (
   registration,
   regDataVersion,
+  doubleMode,
   sendResponse
 ) => {
   logEmitter.emit(
@@ -129,6 +131,11 @@ const createNewLcRegistration = async (
     "registration.controller",
     "createNewLcRegistration"
   );
+
+  if (doubleMode) {
+    sendResponse(registrationDouble(doubleMode));
+    return;
+  }
 
   if (registration === undefined) {
     throw new Error("registration is undefined");

@@ -305,9 +305,9 @@ const schema = {
         }
       },
       competent_authority_id: { type: "number" },
-      fsa_rn: { type: "string" },
-      created_at: { type: "date" },
-      updated_at: { type: "date" }
+      fsa_rn: { type: "string", validation: validateOptionalString },
+      createdAt: { type: "string", validation: validateDate },
+      updatedAt: { type: "string", validation: validateDate }
     },
     required: ["establishment", "competent_authority_id"]
   }

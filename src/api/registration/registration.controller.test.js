@@ -62,6 +62,8 @@ const {
 
 const { getUprn } = require("../../connectors/address-lookup/address-matcher");
 
+const { doubleResponse } = require("./registration.double");
+
 const exampleLCUrl = "http://example-council-url";
 
 const exampleCouncil = {
@@ -124,6 +126,7 @@ describe("registration controller", () => {
   };
   const testLocalCouncilUrl = "http://example-council-url";
   const testRegDataVersion = "1.2.0";
+  const testDoubleMode = null;
   const testConfigVersion = {
     notify_template_keys: { key1: "abc", key2: "xyz" }
   };
@@ -326,6 +329,7 @@ describe("registration controller", () => {
         result = await createNewLcRegistration(
           testLcRegistration,
           testRegDataVersion,
+          testDoubleMode,
           mockSendResponse
         );
       });
@@ -350,6 +354,7 @@ describe("registration controller", () => {
         result = await createNewLcRegistration(
           testLcRegistration,
           testRegDataVersion,
+          testDoubleMode,
           mockSendResponse
         );
       });
@@ -383,6 +388,7 @@ describe("registration controller", () => {
         result = await createNewLcRegistration(
           testLcRegistration,
           testRegDataVersion,
+          testDoubleMode,
           mockSendResponse
         );
       });
@@ -428,6 +434,48 @@ describe("registration controller", () => {
         } catch (err) {
           expect(err.message).toBeDefined();
         }
+      });
+    });
+
+    describe("when given doubleMode success header", () => {
+      beforeEach(async () => {
+        result = await createNewLcRegistration(
+          testLcRegistration,
+          testRegDataVersion,
+          "success",
+          mockSendResponse
+        );
+      });
+
+      it("should not cache the registration", () => {
+        expect(cacheRegistration).not.toHaveBeenCalled();
+      });
+
+      it("should return the double response", () => {
+        expect(mockSendResponse).toHaveBeenCalledWith(doubleResponse);
+      });
+    });
+
+    describe("when given doubleMode fail header", () => {
+      beforeEach(async () => {
+        try {
+          result = await createNewLcRegistration(
+            testLcRegistration,
+            testRegDataVersion,
+            "fail",
+            mockSendResponse
+          );
+        } catch (err) {
+          result = err;
+        }
+      });
+
+      it("should throw a double error", () => {
+        expect(result.name).toEqual("doubleFail");
+      });
+
+      it("should not cache the registration", () => {
+        expect(cacheRegistration).not.toHaveBeenCalled();
       });
     });
   });

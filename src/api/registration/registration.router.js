@@ -104,10 +104,12 @@ const registrationRouter = () => {
         statusEmitter.emit("incrementCount", "lcSubmissionsReceived");
 
         const regDataVersion = req.headers["registration-data-version"];
+        const doubleMode = req.headers["double-mode"] || "";
 
         await registrationController.createNewLcRegistration(
           req.body,
           regDataVersion,
+          doubleMode,
           sendResponse
         );
         statusEmitter.emit("incrementCount", "endToEndRegistrationsSucceeded");

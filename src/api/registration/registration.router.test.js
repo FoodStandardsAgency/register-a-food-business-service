@@ -9,7 +9,7 @@ jest.mock("./registration.controller", () => ({
   createNewRegistration: jest.fn((a, b, c, sendResponse) => {
     sendResponse();
   }),
-  createNewLcRegistration: jest.fn((a, b, sendResponse) => {
+  createNewLcRegistration: jest.fn((a, b, c, sendResponse) => {
     sendResponse();
   }),
   getRegistration: jest.fn(),
@@ -87,7 +87,7 @@ describe("registration router", () => {
   describe("Post to /createNewLcSubmittedRegistration", () => {
     beforeEach(() => {
       registrationController.createNewLcRegistration.mockImplementation(
-        (a, b, sendResponse) => {
+        (a, b, c, sendResponse) => {
           sendResponse();
         }
       );
