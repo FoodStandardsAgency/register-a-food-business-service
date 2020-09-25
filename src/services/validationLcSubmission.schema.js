@@ -304,12 +304,11 @@ const schema = {
           feedback1: { type: "string", validation: validateDeclaration }
         }
       },
-      competent_authority_id: { type: "number" },
       fsa_rn: { type: "string", validation: validateOptionalString },
       createdAt: { type: "string", validation: validateDate },
       updatedAt: { type: "string", validation: validateDate }
     },
-    required: ["establishment", "competent_authority_id"]
+    required: ["establishment"]
   }
 };
 

@@ -9,7 +9,7 @@ jest.mock("./registration.controller", () => ({
   createNewRegistration: jest.fn((a, b, c, sendResponse) => {
     sendResponse();
   }),
-  createNewLcRegistration: jest.fn((a, b, c, sendResponse) => {
+  createNewLcRegistration: jest.fn((a, b, sendResponse) => {
     sendResponse();
   }),
   getRegistration: jest.fn(),
@@ -87,7 +87,7 @@ describe("registration router", () => {
   describe("Post to /createNewLcSubmittedRegistration", () => {
     beforeEach(() => {
       registrationController.createNewLcRegistration.mockImplementation(
-        (a, b, c, sendResponse) => {
+        (a, b, sendResponse) => {
           sendResponse();
         }
       );
@@ -99,11 +99,13 @@ describe("registration router", () => {
         await handler(
           {
             body: {
-              registration: "reg",
-              local_council_url: "example-council-url"
+              registration: "reg"
             },
             headers: {
               "registration-data-version": "1.6.0"
+            },
+            params: {
+              lc: "cardiff"
             }
           },
           { send, status }
@@ -139,6 +141,9 @@ describe("registration router", () => {
             },
             headers: {
               "registration-data-version": "1.2.0"
+            },
+            params: {
+              lc: "cardiff"
             }
           },
           { send, status },

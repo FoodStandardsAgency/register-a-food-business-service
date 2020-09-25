@@ -16,7 +16,6 @@ const { getUprn } = require("../../connectors/address-lookup/address-matcher");
 
 const {
   findCouncilByUrl,
-  findCouncilById,
   connectToConfigDb,
   LocalCouncilConfigDbCollection
 } = require("../../connectors/configDb/configDb.connector");
@@ -120,20 +119,15 @@ const createNewRegistration = async (
   );
 };
 
-const createNewLcRegistration = async (
-  registration,
-  regDataVersion,
-  doubleMode,
-  sendResponse
-) => {
+const createNewLcRegistration = async (registration, options, sendResponse) => {
   logEmitter.emit(
     "functionCall",
     "registration.controller",
     "createNewLcRegistration"
   );
 
-  if (doubleMode) {
-    sendResponse(registrationDouble(doubleMode));
+  if (options.doubleMode) {
+    sendResponse(registrationDouble(options.doubleMode));
     return;
   }
 
@@ -158,14 +152,14 @@ const createNewLcRegistration = async (
   const lcConfigCollection = await LocalCouncilConfigDbCollection(configDb);
 
   // Get Council details
-  const sourceCouncil = await findCouncilById(
+  const sourceCouncil = await findCouncilByUrl(
     lcConfigCollection,
-    registration.competent_authority_id
+    options.council
   );
   if (!sourceCouncil) {
     const newError = new Error();
     newError.name = "localCouncilNotFound";
-    newError.message = `Config for council ID "${registration.competent_authority_id}" not found`;
+    newError.message = `Config for council ID "${options.council}" not found`;
     logEmitter.emit(
       "functionFail",
       "registration.controller",
@@ -250,7 +244,7 @@ const createNewLcRegistration = async (
       hygiene_council_code: hygieneCouncilCode,
       local_council_url: sourceCouncil.local_council_url,
       source_council_id: sourceCouncil._id,
-      registration_data_version: regDataVersion
+      registration_data_version: options.regDataVersion
     }
   );
 

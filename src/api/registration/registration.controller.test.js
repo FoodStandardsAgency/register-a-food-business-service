@@ -56,8 +56,7 @@ const {
 
 const {
   getConfigVersion,
-  findCouncilByUrl,
-  findCouncilById
+  findCouncilByUrl
 } = require("../../connectors/configDb/configDb.connector");
 
 const { getUprn } = require("../../connectors/address-lookup/address-matcher");
@@ -114,7 +113,6 @@ describe("registration controller", () => {
     establishment: { operator: { operator_email: "operator@example.com" } }
   };
   const testLcRegistration = {
-    competent_authority_id: 4012,
     establishment: {
       operator: {
         operator_email: "operator@example.com"
@@ -126,7 +124,11 @@ describe("registration controller", () => {
   };
   const testLocalCouncilUrl = "http://example-council-url";
   const testRegDataVersion = "1.2.0";
-  const testDoubleMode = null;
+  const testOptions = {
+    regDataVersion: testRegDataVersion,
+    council: testLocalCouncilUrl,
+    doubleMode: null
+  };
   const testConfigVersion = {
     notify_template_keys: { key1: "abc", key2: "xyz" }
   };
@@ -311,7 +313,7 @@ describe("registration controller", () => {
     beforeEach(() => {
       jest.clearAllMocks();
 
-      findCouncilById.mockImplementation(() => exampleCouncil);
+      findCouncilByUrl.mockImplementation(() => exampleCouncil);
     });
     describe("when given valid data", () => {
       beforeEach(async () => {
@@ -328,8 +330,7 @@ describe("registration controller", () => {
         getConfigVersion.mockImplementation(() => testConfigVersion);
         result = await createNewLcRegistration(
           testLcRegistration,
-          testRegDataVersion,
-          testDoubleMode,
+          testOptions,
           mockSendResponse
         );
       });
@@ -353,8 +354,7 @@ describe("registration controller", () => {
         getConfigVersion.mockImplementation(() => testConfigVersion);
         result = await createNewLcRegistration(
           testLcRegistration,
-          testRegDataVersion,
-          testDoubleMode,
+          testOptions,
           mockSendResponse
         );
       });
@@ -387,8 +387,7 @@ describe("registration controller", () => {
         getConfigVersion.mockImplementation(() => testConfigVersion);
         result = await createNewLcRegistration(
           testLcRegistration,
-          testRegDataVersion,
-          testDoubleMode,
+          testOptions,
           mockSendResponse
         );
       });
@@ -412,7 +411,10 @@ describe("registration controller", () => {
           return ["ERROR"];
         });
         try {
-          result = await createNewLcRegistration(testLcRegistration);
+          result = await createNewLcRegistration(
+            testLcRegistration,
+            testOptions
+          );
         } catch (err) {
           result = err;
         }
@@ -441,8 +443,11 @@ describe("registration controller", () => {
       beforeEach(async () => {
         result = await createNewLcRegistration(
           testLcRegistration,
-          testRegDataVersion,
-          "success",
+          {
+            regDataVersion: testRegDataVersion,
+            council: testLocalCouncilUrl,
+            doubleMode: "success"
+          },
           mockSendResponse
         );
       });
@@ -461,8 +466,11 @@ describe("registration controller", () => {
         try {
           result = await createNewLcRegistration(
             testLcRegistration,
-            testRegDataVersion,
-            "fail",
+            {
+              regDataVersion: testRegDataVersion,
+              council: testLocalCouncilUrl,
+              doubleMode: "fail"
+            },
             mockSendResponse
           );
         } catch (err) {

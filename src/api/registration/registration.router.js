@@ -83,7 +83,7 @@ const registrationRouter = () => {
   );
 
   router.post(
-    "/createNewLcSubmittedRegistration",
+    "/createNewLcSubmittedRegistration/:lc",
     createRegistrationAuth,
     async (req, res, next) => {
       logEmitter.emit(
@@ -103,13 +103,15 @@ const registrationRouter = () => {
       try {
         statusEmitter.emit("incrementCount", "lcSubmissionsReceived");
 
-        const regDataVersion = req.headers["registration-data-version"];
-        const doubleMode = req.headers["double-mode"] || "";
+        const options = {
+          doubleMode: req.headers["double-mode"] || "",
+          regDataVersion: req.headers["registration-data-version"] || "",
+          council: req.params.lc || ""
+        };
 
         await registrationController.createNewLcRegistration(
           req.body,
-          regDataVersion,
-          doubleMode,
+          options,
           sendResponse
         );
         statusEmitter.emit("incrementCount", "endToEndRegistrationsSucceeded");
