@@ -148,7 +148,7 @@ const createNewLcRegistration = async (registration, options, sendResponse) => {
   const mappedRegistration = mapFromCollectionsRegistration(registration);
 
   // RESOLUTION
-  let configDb = await connectToConfigDb();
+  const configDb = await connectToConfigDb();
   const lcConfigCollection = await LocalCouncilConfigDbCollection(configDb);
 
   // Get Council details
@@ -213,7 +213,7 @@ const createNewLcRegistration = async (registration, options, sendResponse) => {
     hygieneCouncilCode = lcContactConfig.hygiene.code;
   }
 
-  let reg_metadata = {
+  const regMetadata = {
     "fsa-rn": registration.fsa_rn,
     reg_submission_date: moment().format("YYYY-MM-DD"),
     directLcSubmission: true,
@@ -221,9 +221,9 @@ const createNewLcRegistration = async (registration, options, sendResponse) => {
     updatedAt: registration.updatedAt || moment().format()
   };
 
-  if (!reg_metadata["fsa-rn"]) {
+  if (!regMetadata["fsa-rn"]) {
     await getRegistrationMetaData(hygieneCouncilCode).then(
-      (result) => (reg_metadata["fsa-rn"] = result["fsa-rn"])
+      (result) => (regMetadata["fsa-rn"] = result["fsa-rn"])
     );
   }
 
@@ -234,7 +234,7 @@ const createNewLcRegistration = async (registration, options, sendResponse) => {
 
   const completeCacheRecord = Object.assign(
     {},
-    reg_metadata,
+    regMetadata,
     mappedRegistration,
     lcContactConfig,
     {
@@ -250,11 +250,7 @@ const createNewLcRegistration = async (registration, options, sendResponse) => {
 
   await cacheRegistration(completeCacheRecord);
 
-  const combinedResponse = Object.assign({}, reg_metadata, {
-    lc_config: lcContactConfig
-  });
-
-  sendResponse(combinedResponse);
+  sendResponse({ "fsa-rn": regMetadata["fsa-rn"] });
 
   logEmitter.emit(
     "functionSuccess",

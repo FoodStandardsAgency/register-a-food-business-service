@@ -364,12 +364,6 @@ describe("registration controller", () => {
           exampleLcConfig.hygieneAndStandards.code
         );
       });
-
-      it("should call sendResponse wth a lc_config object with the response of getLcContactConfig", () => {
-        expect(mockSendResponse.mock.calls[0][0].lc_config).toEqual(
-          exampleLcConfig
-        );
-      });
     });
 
     describe("given the hygiene and standards Local Councils are separate", () => {
@@ -395,12 +389,6 @@ describe("registration controller", () => {
       it("should call getRegistrationMetaData with the hygiene council code response from getLcContactConfig", () => {
         expect(getRegistrationMetaData).toHaveBeenLastCalledWith(
           exampleMultiLcConfig.hygiene.code
-        );
-      });
-
-      it("should call sendResponse with a lc_config object with the response of getLcContactConfig", () => {
-        expect(mockSendResponse.mock.calls[0][0].lc_config).toEqual(
-          exampleMultiLcConfig
         );
       });
     });

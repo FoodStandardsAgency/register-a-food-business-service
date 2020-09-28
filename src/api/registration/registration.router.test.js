@@ -19,11 +19,15 @@ jest.mock("../../services/statusEmitter.service");
 const registrationController = require("./registration.controller");
 const { registrationRouter } = require("./registration.router");
 describe("registration router", () => {
-  let router, send, handler, status;
+  let router, send, handler, status, testRegistration;
   beforeEach(() => {
     send = jest.fn();
     status = jest.fn();
     router = registrationRouter();
+    testRegistration = {
+      registration: "reg",
+      local_council_url: "example-council-url"
+    };
   });
 
   afterEach(() => jest.clearAllMocks());
@@ -37,10 +41,7 @@ describe("registration router", () => {
       beforeEach(async () => {
         await handler(
           {
-            body: {
-              registration: "reg",
-              local_council_url: "example-council-url"
-            },
+            body: testRegistration,
             headers: {
               "registration-data-version": "1.2.0"
             }
@@ -66,10 +67,7 @@ describe("registration router", () => {
         next = jest.fn();
         await handler(
           {
-            body: {
-              registration: "reg",
-              local_council_url: "example-council-url"
-            },
+            body: testRegistration,
             headers: {
               "registration-data-version": "1.2.0"
             }
@@ -135,10 +133,7 @@ describe("registration router", () => {
         next = jest.fn();
         await handler(
           {
-            body: {
-              registration: "reg",
-              local_council_url: "example-council-url"
-            },
+            body: testRegistration,
             headers: {
               "registration-data-version": "1.2.0"
             },

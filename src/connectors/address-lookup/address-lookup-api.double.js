@@ -5,7 +5,9 @@ const addressLookupDouble = (postcode) => {
     return { json: () => regularIntegrationResponse, status: 200 };
   } else if (postcode === "AA111AA") {
     return { json: () => [], status: 200 };
-  } else return { status: 500 };
+  } else {
+    return { status: 500 };
+  }
 };
 
 module.exports = { addressLookupDouble };
