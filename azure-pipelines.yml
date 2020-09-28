@@ -52,6 +52,16 @@ steps:
     testRunTitle: Integration tests
     mergeTestResults: false
 
+- script: npm run test:e2e
+  displayName: 'e2e tests'
+
+- task: PublishTestResults@2
+  inputs:
+    testRunner: JUnit
+    testresultsFile: ./reports/TEST-e2e.xml
+    testRunTitle: e2e tests
+    mergeTestResults: false
+
 - task: SonarCloudPrepare@1
   inputs:
     SonarCloud: 'Sonarcloud'

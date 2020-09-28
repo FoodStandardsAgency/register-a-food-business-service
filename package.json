@@ -17,6 +17,7 @@
     "test:watch": "export TEST_TYPE=unit && jest ./src --watch",
     "test:integration": "export TEST_TYPE=integration && jest tests/integration/*.js",
     "test:contract": "jest tests/contract/*.js",
+    "test:e2e": "jest ./tests/e2e/*.js",
     "test:component": "cucumber-js",
     "test:component:ci": "mkdir -p reports && cucumber-js --format=json | cucumber-junit > reports/TEST-component.xml",
     "test:securityall": "snyk wizard",
