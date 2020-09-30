@@ -130,6 +130,20 @@ describe("Middleware: errorHandler", () => {
     });
   });
 
+  describe("When given a doubleFail error", () => {
+    it("should append developer mesage with raw error", () => {
+      const error = {
+        name: "doubleFail",
+        message: "Double Mode Failure"
+      };
+      errorHandler(error, "request", res);
+      expect(res.status).toBeCalledWith(400);
+      expect(res.send.mock.calls[0][0].developerMessage).toEqual(
+        "Double Mode Error. Raw error: Double Mode Failure"
+      );
+    });
+  });
+
   describe("When given an unknown error", () => {
     it("should return 500 error", () => {
       const error = {

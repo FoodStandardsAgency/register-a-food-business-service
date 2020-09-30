@@ -339,6 +339,33 @@ describe("registration controller", () => {
       });
     });
 
+    describe("when given valid data including fsa-rn", () => {
+      beforeEach(async () => {
+        validate.mockImplementation(() => {
+          return [];
+        });
+        getUprn.mockImplementation(() => Promise.resolve("TESTUPRN"));
+        getLcContactConfig.mockImplementation(() =>
+          Promise.resolve(exampleLcConfig)
+        );
+        getConfigVersion.mockImplementation(() => testConfigVersion);
+        const registrationWithFsaRn = Object.assign({}, testLcRegistration, {
+          fsa_rn: "TESTRN"
+        });
+        result = await createNewLcRegistration(
+          registrationWithFsaRn,
+          testOptions,
+          mockSendResponse
+        );
+      });
+      it("should not call get Metadata", () => {
+        expect(getRegistrationMetaData).not.toHaveBeenCalled();
+      });
+      it("should call cache registration", () => {
+        expect(cacheRegistration).toHaveBeenCalled();
+      });
+    });
+
     describe("given the Local Council is responsible for both hygiene and standards", () => {
       beforeEach(async () => {
         validate.mockImplementation(() => {
@@ -417,12 +444,37 @@ describe("registration controller", () => {
       });
     });
 
+    describe("when given invalid council", () => {
+      beforeEach(async () => {
+        validate.mockImplementation(() => {
+          return [];
+        });
+        findCouncilByUrl.mockImplementation(() => null);
+        try {
+          result = await createNewLcRegistration(
+            testLcRegistration,
+            testOptions
+          );
+        } catch (err) {
+          result = err;
+        }
+      });
+
+      it("should throw an error", () => {
+        expect(result.name).toEqual("localCouncilNotFound");
+      });
+
+      it("should not cache the registration", () => {
+        expect(cacheRegistration).not.toHaveBeenCalled();
+      });
+    });
+
     describe("when given undefined", () => {
       it("Should throw an error", () => {
         try {
           createNewLcRegistration(undefined);
         } catch (err) {
-          expect(err.message).toBeDefined();
+          expect(err.message).toBe("registration is undefined");
         }
       });
     });
