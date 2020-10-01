@@ -83,7 +83,7 @@ const registrationRouter = () => {
   );
 
   router.post(
-    "/createNewLcSubmittedRegistration/:lc",
+    "/v1/createNewLcSubmittedRegistration/:lc",
     createRegistrationAuth,
     async (req, res, next) => {
       logEmitter.emit(
@@ -105,7 +105,7 @@ const registrationRouter = () => {
 
         const options = {
           doubleMode: req.headers["double-mode"] || "",
-          regDataVersion: req.headers["registration-data-version"] || "",
+          regDataVersion: "v1",
           council: req.params.lc || ""
         };
 

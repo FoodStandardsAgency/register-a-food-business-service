@@ -154,7 +154,8 @@ const schema = {
             required: [
               "operator_type",
               "operator_postcode",
-              "operator_address_line_1"
+              "operator_address_line_1",
+              "operator_town"
             ],
             allOf: [
               {
@@ -201,7 +202,11 @@ const schema = {
                 validation: validateRadioButtons
               }
             },
-            required: ["establishment_postcode", "establishment_address_line_1"]
+            required: [
+              "establishment_postcode",
+              "establishment_address_line_1",
+              "establishment_town"
+            ]
           },
           activities: {
             type: "object",
@@ -304,9 +309,7 @@ const schema = {
           feedback1: { type: "string", validation: validateDeclaration }
         }
       },
-      fsa_rn: { type: "string", validation: validateOptionalString },
-      createdAt: { type: "string", validation: validateDate },
-      updatedAt: { type: "string", validation: validateDate }
+      fsa_rn: { type: "string", validation: validateOptionalString }
     },
     required: ["establishment"]
   }

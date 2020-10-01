@@ -216,9 +216,7 @@ const createNewLcRegistration = async (registration, options, sendResponse) => {
   const regMetadata = {
     "fsa-rn": registration.fsa_rn,
     reg_submission_date: moment().format("YYYY-MM-DD"),
-    directLcSubmission: true,
-    createdAt: registration.createdAt || moment().format(),
-    updatedAt: registration.updatedAt || moment().format()
+    directLcSubmission: true
   };
 
   if (!regMetadata["fsa-rn"]) {
