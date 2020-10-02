@@ -82,7 +82,7 @@ describe("registration router", () => {
     });
   });
 
-  describe("Post to /createNewLcSubmittedRegistration", () => {
+  describe("Post to /v1/createNewLcSubmittedRegistration", () => {
     beforeEach(() => {
       registrationController.createNewLcRegistration.mockImplementation(
         (a, b, sendResponse) => {
