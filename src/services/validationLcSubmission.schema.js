@@ -40,7 +40,7 @@ const schema = {
           },
           establishment_primary_number: {
             type: "string",
-            validation: validatePhoneNumberOptional
+            validation: validatePhoneNumber
           },
           establishment_secondary_number: {
             type: "string",
@@ -100,7 +100,7 @@ const schema = {
               },
               operator_town: {
                 type: "string",
-                validation: validateOptionalString
+                validation: validateMandatoryString
               },
               operator_primary_number: {
                 type: "string",
@@ -152,20 +152,38 @@ const schema = {
               }
             },
             required: [
-              "operator_type",
-              "operator_postcode",
               "operator_address_line_1",
-              "operator_town"
+              "operator_primary_number",
+              "operator_email",
+              "operator_type",
+              "operator_town",
+              "operator_postcode"
             ],
             allOf: [
               {
                 oneOf: [
                   {
-                    required: ["operator_company_name"]
+                    required: [
+                      "operator_company_name",
+                      "operator_companies_house_number"
+                    ]
                   },
                   { required: ["operator_charity_name"] },
                   { required: ["operator_first_name", "operator_last_name"] },
                   { required: ["partners"] }
+                ]
+              },
+              {
+                oneOf: [
+                  {
+                    required: ["operator_primary_number", "operator_email"]
+                  },
+                  {
+                    required: [
+                      "contact_representative_email",
+                      "contact_representative_number"
+                    ]
+                  }
                 ]
               }
             ]
@@ -191,7 +209,7 @@ const schema = {
               },
               establishment_town: {
                 type: "string",
-                validation: validateOptionalString
+                validation: validateMandatoryString
               },
               establishment_uprn: {
                 type: "string",
@@ -205,6 +223,7 @@ const schema = {
             required: [
               "establishment_postcode",
               "establishment_address_line_1",
+              "establishment_type",
               "establishment_town"
             ]
           },
@@ -295,10 +314,23 @@ const schema = {
                 type: "string",
                 validation: validateOpeningHours
               }
-            }
+            },
+            required: [
+              "customer_type",
+              "business_type",
+              "import_export_activities",
+              "water_supply"
+            ]
           }
         },
-        required: ["establishment_trading_name", "operator", "premise"]
+        required: [
+          "establishment_trading_name",
+          "establishment_primary_number",
+          "establishment_email",
+          "establishment_opening_date",
+          "operator",
+          "premise"
+        ]
       },
       metadata: {
         type: "object",
