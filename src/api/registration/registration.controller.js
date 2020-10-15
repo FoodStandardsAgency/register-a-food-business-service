@@ -175,6 +175,7 @@ const createNewLcRegistration = async (registration, options, sendResponse) => {
     promises.push(
       getUprn(
         mappedRegistration.establishment.operator.operator_address_line_1,
+        mappedRegistration.establishment.operator.operator_address_line_2,
         mappedRegistration.establishment.operator.operator_postcode
       ).then(
         (result) =>
@@ -187,6 +188,7 @@ const createNewLcRegistration = async (registration, options, sendResponse) => {
     promises.push(
       getUprn(
         mappedRegistration.establishment.premise.establishment_address_line_1,
+        mappedRegistration.establishment.premise.establishment_address_line_2,
         mappedRegistration.establishment.premise.establishment_postcode
       ).then(
         (result) =>
@@ -204,7 +206,7 @@ const createNewLcRegistration = async (registration, options, sendResponse) => {
   );
 
   // Wait for asyncs to catch up
-  await Promise.all(promises);
+  await Promise.allSettled(promises);
 
   let hygieneCouncilCode;
   if (lcContactConfig.hygieneAndStandards) {
