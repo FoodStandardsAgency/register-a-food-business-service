@@ -6,7 +6,6 @@ const {
   getRegistrationMetaData,
   getLcContactConfig
 } = require("./registration.service");
-const { registrationDouble } = require("./registration.double");
 
 const {
   cacheRegistration
@@ -29,8 +28,7 @@ const { logEmitter } = require("../../services/logging.service");
 const createNewRegistration = async (
   registration,
   localCouncilUrl,
-  regDataVersion,
-  sendResponse
+  regDataVersion
 ) => {
   logEmitter.emit(
     "functionCall",
@@ -110,26 +108,21 @@ const createNewRegistration = async (
     lc_config: lcContactConfig
   });
 
-  sendResponse(combinedResponse);
-
   logEmitter.emit(
     "functionSuccess",
     "registration.controller",
     "createNewRegistration"
   );
+
+  return combinedResponse;
 };
 
-const createNewLcRegistration = async (registration, options, sendResponse) => {
+const createNewLcRegistration = async (registration, options) => {
   logEmitter.emit(
     "functionCall",
     "registration.controller",
     "createNewLcRegistration"
   );
-
-  if (options.doubleMode) {
-    sendResponse(registrationDouble(options.doubleMode));
-    return;
-  }
 
   if (registration === undefined) {
     throw new Error("registration is undefined");
@@ -250,13 +243,15 @@ const createNewLcRegistration = async (registration, options, sendResponse) => {
 
   await cacheRegistration(completeCacheRecord);
 
-  sendResponse({ "fsa-rn": regMetadata["fsa-rn"] });
+  const response = { "fsa-rn": regMetadata["fsa-rn"] };
 
   logEmitter.emit(
     "functionSuccess",
     "registration.controller",
     "createNewLcRegistration"
   );
+
+  return response;
 };
 
 const getRegistration = async (fsa_rn) => {

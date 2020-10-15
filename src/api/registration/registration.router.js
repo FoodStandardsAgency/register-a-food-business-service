@@ -6,6 +6,7 @@ const {
 } = require("../../middleware/authHandler");
 const { logEmitter } = require("../../services/logging.service");
 const { statusEmitter } = require("../../services/statusEmitter.service");
+const { registrationDouble } = require("./registration.double");
 
 const registrationRouter = () => {
   const router = Router();
@@ -19,15 +20,6 @@ const registrationRouter = () => {
         "registration.router",
         "createNewRegistration"
       );
-      const sendResponse = (response) => {
-        statusEmitter.emit("incrementCount", "userRegistrationsSucceeded");
-        statusEmitter.emit(
-          "setStatus",
-          "mostRecentUserRegistrationSucceeded",
-          true
-        );
-        res.send(response);
-      };
       try {
         statusEmitter.emit("incrementCount", "submissionsReceived");
 
@@ -41,11 +33,16 @@ const registrationRouter = () => {
           throw missingHeaderError;
         }
 
-        await registrationController.createNewRegistration(
+        const response = await registrationController.createNewRegistration(
           req.body.registration,
           req.body.local_council_url,
-          regDataVersion,
-          sendResponse
+          regDataVersion
+        );
+        statusEmitter.emit("incrementCount", "userRegistrationsSucceeded");
+        statusEmitter.emit(
+          "setStatus",
+          "mostRecentUserRegistrationSucceeded",
+          true
         );
         statusEmitter.emit("incrementCount", "endToEndRegistrationsSucceeded");
         statusEmitter.emit(
@@ -58,6 +55,8 @@ const registrationRouter = () => {
           "registration.router",
           "createNewRegistration"
         );
+
+        res.send(response);
       } catch (err) {
         logEmitter.emit(
           "errorWith",
@@ -91,33 +90,27 @@ const registrationRouter = () => {
         "registration.router",
         "createNewLcSubmittedRegistration"
       );
-      const sendResponse = (response) => {
-        statusEmitter.emit("incrementCount", "lcRegistrationsSucceeded");
-        statusEmitter.emit(
-          "setStatus",
-          "mostRecentlcRegistrationSucceeded",
-          true
-        );
-        res.send(response);
-      };
       try {
         statusEmitter.emit("incrementCount", "lcSubmissionsReceived");
 
         const options = {
-          doubleMode: req.headers["double-mode"] || "",
           regDataVersion: "v1",
           council: req.params.lc || ""
         };
 
-        await registrationController.createNewLcRegistration(
-          req.body,
-          options,
-          sendResponse
-        );
-        statusEmitter.emit("incrementCount", "endToEndRegistrationsSucceeded");
+        let response;
+        if (req.headers["double-mode"]) {
+          response = registrationDouble(req.headers["double-mode"]);
+        } else {
+          response = await registrationController.createNewLcRegistration(
+            req.body,
+            options
+          );
+        }
+        statusEmitter.emit("incrementCount", "lcRegistrationsSucceeded");
         statusEmitter.emit(
           "setStatus",
-          "mostRecentEndToEndRegistrationSucceeded",
+          "mostRecentlcRegistrationSucceeded",
           true
         );
         logEmitter.emit(
@@ -125,6 +118,7 @@ const registrationRouter = () => {
           "registration.router",
           "createNewLcSubmittedRegistration"
         );
+        res.send(response);
       } catch (err) {
         logEmitter.emit(
           "errorWith",

@@ -61,8 +61,6 @@ const {
 
 const { getUprn } = require("../../connectors/address-lookup/address-matcher");
 
-const { doubleResponse } = require("./registration.double");
-
 const exampleLCUrl = "http://example-council-url";
 
 const exampleCouncil = {
@@ -122,6 +120,9 @@ describe("registration controller", () => {
       }
     }
   };
+  const testLcRegistrationWithFsaRn = Object.assign({}, testLcRegistration, {
+    fsa_rn: "TESTRN"
+  });
   const testLocalCouncilUrl = "http://example-council-url";
   const testRegDataVersion = "1.2.0";
   const testOptions = {
@@ -132,7 +133,6 @@ describe("registration controller", () => {
   const testConfigVersion = {
     notify_template_keys: { key1: "abc", key2: "xyz" }
   };
-  const mockSendResponse = jest.fn();
   describe("Function: createNewRegistration", () => {
     beforeEach(() => {
       jest.clearAllMocks();
@@ -160,8 +160,7 @@ describe("registration controller", () => {
           result = await createNewRegistration(
             testRegistration,
             testLocalCouncilUrl,
-            testRegDataVersion,
-            mockSendResponse
+            testRegDataVersion
           );
         });
       });
@@ -181,8 +180,7 @@ describe("registration controller", () => {
           result = await createNewRegistration(
             testRegistration,
             testLocalCouncilUrl,
-            testRegDataVersion,
-            mockSendResponse
+            testRegDataVersion
           );
         });
         it("should call cache registration", () => {
@@ -228,8 +226,7 @@ describe("registration controller", () => {
         result = await createNewRegistration(
           testRegistration,
           testLocalCouncilUrl,
-          testRegDataVersion,
-          mockSendResponse
+          testRegDataVersion
         );
       });
 
@@ -239,10 +236,8 @@ describe("registration controller", () => {
         );
       });
 
-      it("should call sendResponse wth a lc_config object with the response of getLcContactConfig", () => {
-        expect(mockSendResponse.mock.calls[0][0].lc_config).toEqual(
-          exampleLcConfig
-        );
+      it("should return response wth a lc_config object with the response of getLcContactConfig", () => {
+        expect(result.lc_config).toEqual(exampleLcConfig);
       });
     });
 
@@ -259,8 +254,7 @@ describe("registration controller", () => {
         result = await createNewRegistration(
           testRegistration,
           testLocalCouncilUrl,
-          testRegDataVersion,
-          mockSendResponse
+          testRegDataVersion
         );
       });
 
@@ -270,10 +264,8 @@ describe("registration controller", () => {
         );
       });
 
-      it("should call sendResponse with a lc_config object with the response of getLcContactConfig", () => {
-        expect(mockSendResponse.mock.calls[0][0].lc_config).toEqual(
-          exampleMultiLcConfig
-        );
+      it("should return response with a lc_config object with the response of getLcContactConfig", () => {
+        expect(result.lc_config).toEqual(exampleMultiLcConfig);
       });
     });
 
@@ -312,9 +304,9 @@ describe("registration controller", () => {
   describe("Function: createNewLcRegistration", () => {
     beforeEach(() => {
       jest.clearAllMocks();
-
       findCouncilByUrl.mockImplementation(() => exampleCouncil);
     });
+
     describe("when given valid data", () => {
       beforeEach(async () => {
         validate.mockImplementation(() => {
@@ -328,14 +320,16 @@ describe("registration controller", () => {
           Promise.resolve(exampleLcConfig)
         );
         getConfigVersion.mockImplementation(() => testConfigVersion);
-        result = await createNewLcRegistration(
-          testLcRegistration,
-          testOptions,
-          mockSendResponse
-        );
+        result = await createNewLcRegistration(testLcRegistration, testOptions);
       });
       it("should call cache registration", () => {
         expect(cacheRegistration).toHaveBeenCalled();
+      });
+
+      it("should return generated fsa_rn", () => {
+        expect(result).toEqual({
+          "fsa-rn": postRegistrationMetadata["fsa-rn"]
+        });
       });
     });
 
@@ -349,13 +343,9 @@ describe("registration controller", () => {
           Promise.resolve(exampleLcConfig)
         );
         getConfigVersion.mockImplementation(() => testConfigVersion);
-        const registrationWithFsaRn = Object.assign({}, testLcRegistration, {
-          fsa_rn: "TESTRN"
-        });
         result = await createNewLcRegistration(
-          registrationWithFsaRn,
-          testOptions,
-          mockSendResponse
+          testLcRegistrationWithFsaRn,
+          testOptions
         );
       });
       it("should not call get Metadata", () => {
@@ -363,6 +353,12 @@ describe("registration controller", () => {
       });
       it("should call cache registration", () => {
         expect(cacheRegistration).toHaveBeenCalled();
+      });
+
+      it("should return provided fsa_rn", () => {
+        expect(result).toEqual({
+          "fsa-rn": testLcRegistrationWithFsaRn["fsa_rn"]
+        });
       });
     });
 
@@ -379,11 +375,7 @@ describe("registration controller", () => {
           Promise.resolve(exampleLcConfig)
         );
         getConfigVersion.mockImplementation(() => testConfigVersion);
-        result = await createNewLcRegistration(
-          testLcRegistration,
-          testOptions,
-          mockSendResponse
-        );
+        result = await createNewLcRegistration(testLcRegistration, testOptions);
       });
 
       it("should call getRegistrationMetaData with the hygieneAndStandards council code response from getLcContactConfig", () => {
@@ -406,11 +398,7 @@ describe("registration controller", () => {
           Promise.resolve(exampleMultiLcConfig)
         );
         getConfigVersion.mockImplementation(() => testConfigVersion);
-        result = await createNewLcRegistration(
-          testLcRegistration,
-          testOptions,
-          mockSendResponse
-        );
+        result = await createNewLcRegistration(testLcRegistration, testOptions);
       });
 
       it("should call getRegistrationMetaData with the hygiene council code response from getLcContactConfig", () => {
@@ -476,54 +464,6 @@ describe("registration controller", () => {
         } catch (err) {
           expect(err.message).toBe("registration is undefined");
         }
-      });
-    });
-
-    describe("when given doubleMode success header", () => {
-      beforeEach(async () => {
-        result = await createNewLcRegistration(
-          testLcRegistration,
-          {
-            regDataVersion: testRegDataVersion,
-            council: testLocalCouncilUrl,
-            doubleMode: "success"
-          },
-          mockSendResponse
-        );
-      });
-
-      it("should not cache the registration", () => {
-        expect(cacheRegistration).not.toHaveBeenCalled();
-      });
-
-      it("should return the double response", () => {
-        expect(mockSendResponse).toHaveBeenCalledWith(doubleResponse);
-      });
-    });
-
-    describe("when given doubleMode fail header", () => {
-      beforeEach(async () => {
-        try {
-          result = await createNewLcRegistration(
-            testLcRegistration,
-            {
-              regDataVersion: testRegDataVersion,
-              council: testLocalCouncilUrl,
-              doubleMode: "fail"
-            },
-            mockSendResponse
-          );
-        } catch (err) {
-          result = err;
-        }
-      });
-
-      it("should throw a double error", () => {
-        expect(result.name).toEqual("doubleFail");
-      });
-
-      it("should not cache the registration", () => {
-        expect(cacheRegistration).not.toHaveBeenCalled();
       });
     });
   });

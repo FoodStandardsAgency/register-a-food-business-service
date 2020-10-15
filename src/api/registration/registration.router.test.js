@@ -6,18 +6,15 @@ jest.mock("express", () => ({
   }))
 }));
 jest.mock("./registration.controller", () => ({
-  createNewRegistration: jest.fn((a, b, c, sendResponse) => {
-    sendResponse();
-  }),
-  createNewLcRegistration: jest.fn((a, b, sendResponse) => {
-    sendResponse();
-  }),
+  createNewRegistration: jest.fn(),
+  createNewLcRegistration: jest.fn(),
   getRegistration: jest.fn(),
   deleteRegistration: jest.fn()
 }));
 jest.mock("../../services/statusEmitter.service");
 const registrationController = require("./registration.controller");
 const { registrationRouter } = require("./registration.router");
+const { doubleResponse } = require("./registration.double");
 describe("registration router", () => {
   let router, send, handler, status, testRegistration;
   beforeEach(() => {
@@ -50,7 +47,7 @@ describe("registration router", () => {
         );
       });
 
-      it("should call res.send", () => {
+      it("should return res.send", () => {
         expect(send).toBeCalled();
       });
     });
@@ -84,11 +81,6 @@ describe("registration router", () => {
 
   describe("Post to /v1/createNewLcSubmittedRegistration", () => {
     beforeEach(() => {
-      registrationController.createNewLcRegistration.mockImplementation(
-        (a, b, sendResponse) => {
-          sendResponse();
-        }
-      );
       handler = router.post.mock.calls[1][2];
     });
 
@@ -147,6 +139,71 @@ describe("registration router", () => {
       });
       it("should call next with error", () => {
         expect(next).toBeCalledWith(new Error("reg error"));
+      });
+    });
+
+    describe("when given double mode success header", () => {
+      beforeEach(async () => {
+        await handler(
+          {
+            body: {
+              registration: "reg"
+            },
+            headers: {
+              "double-mode": "success"
+            },
+            params: {
+              lc: "cardiff"
+            }
+          },
+          { send, status }
+        );
+      });
+
+      it("should not call registrationController", () => {
+        expect(
+          registrationController.createNewLcRegistration
+        ).not.toHaveBeenCalled();
+      });
+
+      it("should call res.send", () => {
+        expect(send).toHaveBeenCalledWith(doubleResponse);
+      });
+    });
+
+    describe("when given double mode fail header", () => {
+      let next;
+      beforeEach(async () => {
+        next = jest.fn();
+        await handler(
+          {
+            body: {
+              registration: "reg"
+            },
+            headers: {
+              "double-mode": "fail"
+            },
+            params: {
+              lc: "cardiff"
+            }
+          },
+          { send, status },
+          next
+        );
+      });
+
+      it("should not call registrationController", () => {
+        expect(
+          registrationController.createNewLcRegistration
+        ).not.toHaveBeenCalled();
+      });
+
+      it("should not call res.send", () => {
+        expect(send).not.toHaveBeenCalled();
+      });
+
+      it("should call next with error", () => {
+        expect(next).toHaveBeenCalled();
       });
     });
   });
