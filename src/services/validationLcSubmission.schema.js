@@ -153,8 +153,6 @@ const schema = {
             },
             required: [
               "operator_address_line_1",
-              "operator_primary_number",
-              "operator_email",
               "operator_type",
               "operator_town",
               "operator_postcode"
@@ -319,7 +317,14 @@ const schema = {
               "customer_type",
               "business_type",
               "import_export_activities",
-              "water_supply"
+              "water_supply",
+              "opening_day_monday",
+              "opening_day_tuesday",
+              "opening_day_wednesday",
+              "opening_day_thursday",
+              "opening_day_friday",
+              "opening_day_saturday",
+              "opening_day_sunday"
             ]
           }
         },
@@ -329,7 +334,8 @@ const schema = {
           "establishment_email",
           "establishment_opening_date",
           "operator",
-          "premise"
+          "premise",
+          "activities"
         ]
       },
       metadata: {
@@ -343,7 +349,7 @@ const schema = {
       },
       fsa_rn: { type: "string", validation: validateOptionalString }
     },
-    required: ["establishment"]
+    required: ["establishment", "metadata"]
   }
 };
 
