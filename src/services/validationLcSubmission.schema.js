@@ -317,14 +317,21 @@ const schema = {
               "customer_type",
               "business_type",
               "import_export_activities",
-              "water_supply",
-              "opening_day_monday",
-              "opening_day_tuesday",
-              "opening_day_wednesday",
-              "opening_day_thursday",
-              "opening_day_friday",
-              "opening_day_saturday",
-              "opening_day_sunday"
+              "water_supply"
+            ],
+            oneOf: [
+              {
+                required: [
+                  "opening_day_monday",
+                  "opening_day_tuesday",
+                  "opening_day_wednesday",
+                  "opening_day_thursday",
+                  "opening_day_friday",
+                  "opening_day_saturday",
+                  "opening_day_sunday"
+                ]
+              },
+              { required: ["opening_days_irregular"] }
             ]
           }
         },
@@ -349,7 +356,7 @@ const schema = {
       },
       fsa_rn: { type: "string", validation: validateOptionalString }
     },
-    required: ["establishment", "metadata"]
+    required: ["establishment"]
   }
 };
 
