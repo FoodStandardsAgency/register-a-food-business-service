@@ -86,7 +86,7 @@ const populateCouncils = async transaction => {
     throw err;
   }
   client.close();
-  await closeConnection();
+  //await closeConnection();
 
   logEmitter.emit(
     "functionSuccess",
