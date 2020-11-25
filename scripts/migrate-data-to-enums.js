@@ -111,6 +111,7 @@ const applyCosmosTransforms = async (registration, transform, newStatus) => {
       }
     );
   } catch (err) {
+    logEmitter.emit("info", `Failed to update BE Cache FSA-RN: ${registration["fsa-rn"]} ${err.message}`);
     await beCache.updateOne(
       { "fsa-rn": registration["fsa-rn"] },
       {
@@ -124,7 +125,7 @@ const applyCosmosTransforms = async (registration, transform, newStatus) => {
 
 const transformToKey = (enumType, value) => {
   let transformedValue = value;
-  Object.keys(enumType).forEach(function (enumKey) {
+  Object.keys(enumType).forEach((enumKey) => {
     if (enumType[enumKey].value === value) {
       transformedValue = enumType[enumKey].key;
     }
@@ -154,20 +155,24 @@ const migratePgDataToEnums = async (queryInterface, Sequelize) => {
         type: Sequelize.STRING
       }
     }
-  );
-
-  // Find registrations that haven't already been successfully updated
-  queryInterface.sequelize.query(
-    'SELECT * FROM registrations."registrations" reg LEFT JOIN registrations."tmp280MigrationStatus" status ON status."registrationId" = reg."id" WHERE status."registrationId" IS NULL',
-    { type: queryInterface.sequelize.QueryTypes.SELECT }
-  ).then(async function(regs) {
-    await regs.forEach(async (reg) => {
-      try {
-        await applyPgTransforms(reg, transformToKey);
-        queryInterface.sequelize.query(`INSERT INTO registrations."tmp280MigrationStatus" ("registrationId", "status") values (${reg.id}, 'true')`);
-      } catch (err) {
-        queryInterface.sequelize.query(`INSERT INTO registrations."tmp280MigrationStatus" ("registrationId", "status") values (${reg.id}, 'Error during enum migration: ${err.message}')`);
-      }
+  ).then(async () => {
+    // Find registrations that haven't already been successfully updated
+    await queryInterface.sequelize.query(
+      'SELECT * FROM registrations."registrations" reg LEFT JOIN registrations."tmp280MigrationStatus" status ON status."registrationId" = reg."id" WHERE status."registrationId" IS NULL',
+      { type: queryInterface.sequelize.QueryTypes.SELECT }
+    ).then(async (regs) => {
+      await regs.forEach(async (reg) => {
+        try {
+          await applyPgTransforms(reg, transformToKey).then(async () => {
+            await queryInterface.sequelize.query(`INSERT INTO registrations."tmp280MigrationStatus" ("registrationId", "status") values (${reg.id}, 'true')`).then(() => {
+              logEmitter.emit("info", `Successfully updated Temp-Store ID: ${reg.id}`);
+            });
+          });
+        } catch (err) {
+          logEmitter.emit("info", `Failed to update Temp-Store ID: ${reg.id} ${err.message}`);
+          await queryInterface.sequelize.query(`INSERT INTO registrations."tmp280MigrationStatus" ("registrationId", "status") values (${reg.id}, 'Error during enum migration: ${err.message}')`);
+        }
+      });
     });
   });
 };
@@ -176,16 +181,20 @@ const migratePgDataFromEnums = async (queryInterface) => {
   connectToDb();
 
   // Find registrations that haven't already been successfully updated
-  queryInterface.sequelize.query(
+  await queryInterface.sequelize.query(
     'SELECT * FROM registrations."registrations" reg INNER JOIN registrations."tmp280MigrationStatus" status ON status."registrationId" = reg."id"',
     { type: queryInterface.sequelize.QueryTypes.SELECT }
-  ).then(async function(regs) {
+  ).then(async (regs) => {
     await regs.forEach(async (reg) => {
       try {
-        await applyPgTransforms(reg, transformToValue);
-        queryInterface.sequelize.query(`DELETE FROM registrations."tmp280MigrationStatus" WHERE "registrationId"=${reg.id})`);
+        await applyPgTransforms(reg, transformToValue).then(async () => {
+          await queryInterface.sequelize.query(`DELETE FROM registrations."tmp280MigrationStatus" WHERE "registrationId"=${reg.id})`).then(() => {
+            logEmitter.emit("info", `Successfully updated Temp-Store ID: ${reg.id}`);
+          });
+        });
       } catch (err) {
-        queryInterface.sequelize.query(`INSERT INTO registrations."tmp280MigrationStatus" ("registrationId", "status") values (${reg.id}, 'Error during enum un-migration: ${err.message}')`);
+        logEmitter.emit("info", `Failed to update Temp-Store ID: ${reg.id} ${err.message}`);
+        await queryInterface.sequelize.query(`INSERT INTO registrations."tmp280MigrationStatus" ("registrationId", "status") values (${reg.id}, 'Error during enum un-migration: ${err.message}')`);
       }
     });
   });
@@ -199,7 +208,9 @@ const migrateCosmosDataToEnums = async () => {
   const registrations = beCache.find({"migration-2-8-0-enums-status":{ $ne: true }});
 
   await registrations.forEach(async (reg) => {
-    await applyCosmosTransforms(reg, transformToKey, true);
+    await applyCosmosTransforms(reg, transformToKey, true).then(() => {
+      logEmitter.emit("info", `Successfully updated BE Cache FSA-RN: ${reg["fsa-rn"]}`);
+    });
   });
 };
 
@@ -210,7 +221,9 @@ const migrateCosmosDataFromEnums = async () => {
   const registrations = beCache.find({"migration-2-8-0-enums-status": true});
 
   await registrations.forEach(async (reg) => {
-    await applyCosmosTransforms(reg, transformToValue, false);
+    await applyCosmosTransforms(reg, transformToValue, false).then(() => {
+      logEmitter.emit("info", `Successfully updated BE Cache FSA-RN: ${reg["fsa-rn"]}`);
+    });
   });
 };
 
