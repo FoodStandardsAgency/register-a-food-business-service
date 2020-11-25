@@ -1,90 +1,22 @@
-const OperatorTypeMapping = {
-  SOLETRADER: {
-    key: "SOLETRADER",
-    value: "Sole trader"
-  },
-  PARTNERSHIP: {
-    key: "PARTNERSHIP",
-    value: "Partnership"
-  },
-  PERSON: {
-    key: "PERSON",
-    value: "A person (registered by a representative)"
-  },
-  COMPANY: {
-    key: "COMPANY",
-    value: "A company (registered by a representative)"
-  },
-  CHARITY: {
-    key: "CHARITY",
-    value: "A charity (registered by a representative)"
-  }
-};
+const {
+  operatorTypeEnum,
+  establishmentTypeEnum,
+  customerTypeEnum,
+  waterSupplyEnum,
+  importExportEnum
+} = require("@slice-and-dice/register-a-food-business-validation");
 
-const EstablishmentTypeMapping = {
-  COMMERCIAL: {
-    key: "COMMERCIAL",
-    value: "Place of business or commercial premises"
-  },
-  MOBILE: {
-    key: "MOBILE",
-    value: "Mobile or moveable premises"
-  },
-  DOMESTIC: {
-    key: "DOMESTIC",
-    value: "Home or domestic premises"
-  }
-};
+const OperatorTypeMapping = operatorTypeEnum;
 
-const CustomerTypeMapping = {
-  OTHER_BUSINESSES: {
-    key: "OTHER_BUSINESSES",
-    value: "Other businesses"
-  },
-  END_CONSUMER: {
-    key: "END_CONSUMER",
-    value: "End consumer"
-  },
-  BOTH: {
-    key: "BOTH",
-    value: "End consumer and other businesses"
-  }
-};
+const EstablishmentTypeMapping = establishmentTypeEnum;
 
-const ImportExportActivitiesMapping = {
-  IMPORT: {
-    key: "IMPORT",
-    value: "Directly import"
-  },
-  EXPORT: {
-    key: "EXPORT",
-    value: "Directly export"
-  },
-  BOTH: {
-    key: "BOTH",
-    value: "Directly import and export"
-  },
-  NONE: {
-    key: "NONE",
-    value: "None"
-  }
-};
+const CustomerTypeMapping = customerTypeEnum;
 
-const WaterSupplyMapping = {
-  PUBLIC: {
-    key: "PUBLIC",
-    value: "Public"
-  },
-  PRIVATE: {
-    key: "PRIVATE",
-    value: "Private"
-  },
-  BOTH: {
-    key: "BOTH",
-    value: "Public and private"
-  }
-};
+const ImportExportActivitiesMapping = importExportEnum;
 
+const WaterSupplyMapping = waterSupplyEnum;
+
+// Some v1 values different from v2 values in enum so need hard coded data here.
 const BusinessTypesMapping = {
   "001": { key: "001", value: "Fruit and vegetable farm" },
   "002": { key: "002", value: "Livestock farm" },
