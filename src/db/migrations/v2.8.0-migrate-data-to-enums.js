@@ -1,15 +1,17 @@
 const {
   migratePgDataToEnums,
-  migrateCosmosDataToEnums
+  migratePgDataFromEnums,
+  migrateCosmosDataToEnums,
+  migrateCosmosDataFromEnums
 } = require("../../../scripts/migrate-data-to-enums");
 
 module.exports = {
-  up: async () => {
-    await migratePgDataToEnums(true);
-    await migrateCosmosDataToEnums(true);
+  up: async (queryInterface, Sequelize) => {
+    await migratePgDataToEnums(queryInterface, Sequelize);
+    await migrateCosmosDataToEnums();
   },
-  down: async () => {
-    await migrateCosmosDataToEnums(false);
-    await migratePgDataToEnums(false);
+  down: async (queryInterface) => {
+    await migrateCosmosDataFromEnums();
+    await migratePgDataFromEnums(queryInterface);
   }
 };
