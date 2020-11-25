@@ -18,6 +18,10 @@ const {
   transformDataForNotify
 } = require("./notifications.service");
 
+const {
+  customerTypeEnum
+} = require("@slice-and-dice/register-a-food-business-validation");
+
 const exampleDeclaration = {
   declaration1: "Declaration"
 };
@@ -34,7 +38,7 @@ const exampleRegistrationEstablishment = {
     establishment_postcode: "SW12 9RQ"
   },
   activities: {
-    customer_type: "End consumer"
+    customer_type: customerTypeEnum.END_CONSUMER.key
   }
 };
 
@@ -67,7 +71,7 @@ const examplePartnershipRegistrationEstablishment = {
     establishment_postcode: "SW12 9RQ"
   },
   activities: {
-    customer_type: "End consumer"
+    customer_type: customerTypeEnum.END_CONSUMER.key
   }
 };
 
