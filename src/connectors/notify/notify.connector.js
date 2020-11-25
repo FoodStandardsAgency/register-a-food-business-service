@@ -168,6 +168,12 @@ const sendSingleEmail = async (
       allNotifyPersonalisationData["northern-ireland"] = "yes";
     }
 
+    allNotifyPersonalisationData[
+      "establishment_postcode_FD"
+    ] = allNotifyPersonalisationData.establishment_postcode
+      .replace(" ", "")
+      .slice(0, -3);
+
     const notifyArguments = [
       templateId,
       recipientEmail,
