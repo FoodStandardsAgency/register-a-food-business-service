@@ -7,8 +7,8 @@ const {
 
 module.exports = {
   up: async (queryInterface, Sequelize) => {
-    await migratePgDataToEnums(queryInterface, Sequelize)
-    await migrateCosmosDataToEnums()
+    await migratePgDataToEnums(queryInterface, Sequelize);
+    await migrateCosmosDataToEnums();
   },
   down: async (queryInterface) => {
     await migrateCosmosDataFromEnums();
