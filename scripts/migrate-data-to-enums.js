@@ -1,5 +1,4 @@
 const {
-  Registration,
   Operator,
   Activities,
   Premise,
@@ -26,48 +25,70 @@ const applyPgTransforms = async (registration, transform) => {
   const establishment = await getEstablishmentByRegId(registration.id);
 
   if (!establishment) {
-    throw new Error("No establishment found");
+    logEmitter.emit(
+      "info",
+      `No establishment found for ${registration.id}`
+    );
+    return;
   }
 
   Operator.findOne({ where: { establishmentId: establishment.id } }).then(
     (record) => {
       if (!record) {
-        throw new Error("No Operator found");
+        logEmitter.emit(
+          "info",
+          `No Operator found for ${registration.id}`
+        );
+      } else {
+        record.update({
+          operator_type: transform(OperatorTypeMapping, record.operator_type)
+        }).then(() => {
+          logEmitter.emit("info", `Operator updated for ${registration.id}`);
+        });
       }
-      record.update({
-        operator_type: transform(OperatorTypeMapping, record.operator_type)
-      });
     }
   );
 
   Premise.findOne({ where: { establishmentId: establishment.id } }).then(
     (record) => {
       if (!record) {
-        throw new Error("No Premise found");
+        logEmitter.emit(
+          "info",
+          `No Premise found for ${registration.id}`
+        );
+      } else {
+        record.update({
+          establishment_type: transform(
+            EstablishmentTypeMapping,
+            record.establishment_type
+          )
+        }).then(() => {
+          logEmitter.emit("info", `Premise updated for ${registration.id}`);
+        });
       }
-      record.update({
-        establishment_type: transform(
-          EstablishmentTypeMapping,
-          record.establishment_type
-        )
-      });
     }
   );
 
   Activities.findOne({ where: { establishmentId: establishment.id } }).then(
     (record) => {
       if (!record) {
-        throw new Error("No Activities found");
+        logEmitter.emit(
+          "info",
+          `No Activities found for ${registration.id}`
+        );
+      } else {
+        record.update({
+          customer_type: transform(CustomerTypeMapping, record.customer_type),
+          import_export_activities: transform(
+            ImportExportActivitiesMapping,
+            record.import_export_activities
+          ),
+          water_supply: transform(WaterSupplyMapping, record.water_supply),
+          business_type: transform(BusinessTypesMapping, record.business_type)
+        }).then(() => {
+          logEmitter.emit("info", `Activities updated for ${registration.id}`);
+        });
       }
-      record.update({
-        customer_type: transform(CustomerTypeMapping, record.customer_type),
-        import_export_activities: transform(
-          ImportExportActivitiesMapping,
-          record.import_export_activities
-        ),
-        water_supply: transform(WaterSupplyMapping, record.water_supply),
-        business_type: transform(BusinessTypesMapping, record.business_type)
-      });
     }
   );
 };
