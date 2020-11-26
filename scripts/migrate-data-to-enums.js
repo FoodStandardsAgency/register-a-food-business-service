@@ -228,7 +228,7 @@ const migrateCosmosDataToEnums = async () => {
   beCache = await establishConnectionToMongo();
 
   // Find documents that haven't already been successfully updated
-  const registrations = beCache.find({"migration-2-8-0-enums-status":{ $ne: true }});
+  const registrations = await beCache.find({"migration-2-8-0-enums-status":{ $ne: true }}).toArray();
 
   const promises = registrations.map(async (reg) => {
     await applyCosmosTransforms(reg, transformToKey, true).then(() => {
@@ -242,7 +242,7 @@ const migrateCosmosDataFromEnums = async () => {
   beCache = await establishConnectionToMongo();
 
   // Find documents that have been updated
-  const registrations = beCache.find({"migration-2-8-0-enums-status": true});
+  const registrations = await beCache.find({"migration-2-8-0-enums-status": true}).toArray();
 
   const promises = registrations.map(async (reg) => {
     await applyCosmosTransforms(reg, transformToValue, false).then(() => {
