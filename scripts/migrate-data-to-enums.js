@@ -32,15 +32,15 @@ const applyPgTransforms = async (registration, transform) => {
     return;
   }
 
-  Operator.findOne({ where: { establishmentId: establishment.id } }).then(
-    (record) => {
+  await Operator.findOne({ where: { establishmentId: establishment.id } }).then(
+    async (record) => {
       if (!record) {
         logEmitter.emit(
           "info",
           `No Operator found for ${registration.id}`
         );
       } else {
-        record.update({
+        await record.update({
           operator_type: transform(OperatorTypeMapping, record.operator_type)
         }).then(() => {
           logEmitter.emit("info", `Operator updated for ${registration.id}`);
@@ -49,15 +49,15 @@ const applyPgTransforms = async (registration, transform) => {
     }
   );
 
-  Premise.findOne({ where: { establishmentId: establishment.id } }).then(
-    (record) => {
+  await Premise.findOne({ where: { establishmentId: establishment.id } }).then(
+    async (record) => {
       if (!record) {
         logEmitter.emit(
           "info",
           `No Premise found for ${registration.id}`
         );
       } else {
-        record.update({
+        await record.update({
           establishment_type: transform(
             EstablishmentTypeMapping,
             record.establishment_type
@@ -69,15 +69,15 @@ const applyPgTransforms = async (registration, transform) => {
     }
   );
 
-  Activities.findOne({ where: { establishmentId: establishment.id } }).then(
-    (record) => {
+  await Activities.findOne({ where: { establishmentId: establishment.id } }).then(
+    async (record) => {
       if (!record) {
         logEmitter.emit(
           "info",
           `No Activities found for ${registration.id}`
         );
       } else {
-        record.update({
+        await record.update({
           customer_type: transform(CustomerTypeMapping, record.customer_type),
           import_export_activities: transform(
             ImportExportActivitiesMapping,
@@ -162,7 +162,7 @@ const transformToValue = (enumType, key) => {
 };
 
 const migratePgDataToEnums = async (queryInterface, Sequelize) => {
-  connectToDb();
+  await connectToDb();
 
   // Creates table to store update statuses (if it doesn't already exist from previous migration attempt)
   await queryInterface.createTable(
@@ -182,7 +182,7 @@ const migratePgDataToEnums = async (queryInterface, Sequelize) => {
       'SELECT * FROM registrations."registrations" reg LEFT JOIN registrations."tmp280MigrationStatus" status ON status."registrationId" = reg."id" WHERE status."registrationId" IS NULL',
       { type: queryInterface.sequelize.QueryTypes.SELECT }
     ).then(async (regs) => {
-      await regs.forEach(async (reg) => {
+      const promises = regs.map(async (reg) => {
         try {
           await applyPgTransforms(reg, transformToKey).then(async () => {
             await queryInterface.sequelize.query(`INSERT INTO registrations."tmp280MigrationStatus" ("registrationId", "status") values (${reg.id}, 'true')`).then(() => {
@@ -194,19 +194,20 @@ const migratePgDataToEnums = async (queryInterface, Sequelize) => {
           await queryInterface.sequelize.query(`INSERT INTO registrations."tmp280MigrationStatus" ("registrationId", "status") values (${reg.id}, 'Error during enum migration: ${err.message}')`);
         }
       });
+      await Promise.allSettled(promises);
     });
   });
 };
 
 const migratePgDataFromEnums = async (queryInterface) => {
-  connectToDb();
+  await connectToDb();
 
   // Find registrations that haven't already been successfully updated
   await queryInterface.sequelize.query(
     'SELECT * FROM registrations."registrations" reg INNER JOIN registrations."tmp280MigrationStatus" status ON status."registrationId" = reg."id"',
     { type: queryInterface.sequelize.QueryTypes.SELECT }
   ).then(async (regs) => {
-    await regs.forEach(async (reg) => {
+    const promises = regs.map(async (reg) => {
       try {
         await applyPgTransforms(reg, transformToValue).then(async () => {
           await queryInterface.sequelize.query(`DELETE FROM registrations."tmp280MigrationStatus" WHERE "registrationId"=${reg.id})`).then(() => {
@@ -218,6 +219,7 @@ const migratePgDataFromEnums = async (queryInterface) => {
         await queryInterface.sequelize.query(`INSERT INTO registrations."tmp280MigrationStatus" ("registrationId", "status") values (${reg.id}, 'Error during enum un-migration: ${err.message}')`);
       }
     });
+    await Promise.allSettled(promises);
   });
 };
 
@@ -228,11 +230,12 @@ const migrateCosmosDataToEnums = async () => {
   // Find documents that haven't already been successfully updated
   const registrations = beCache.find({"migration-2-8-0-enums-status":{ $ne: true }});
 
-  await registrations.forEach(async (reg) => {
+  const promises = registrations.map(async (reg) => {
     await applyCosmosTransforms(reg, transformToKey, true).then(() => {
       logEmitter.emit("info", `Successfully updated BE Cache FSA-RN: ${reg["fsa-rn"]}`);
     });
   });
+  await Promise.allSettled(promises);
 };
 
 const migrateCosmosDataFromEnums = async () => {
@@ -241,11 +244,12 @@ const migrateCosmosDataFromEnums = async () => {
   // Find documents that have been updated
   const registrations = beCache.find({"migration-2-8-0-enums-status": true});
 
-  await registrations.forEach(async (reg) => {
+  const promises = registrations.map(async (reg) => {
     await applyCosmosTransforms(reg, transformToValue, false).then(() => {
       logEmitter.emit("info", `Successfully updated BE Cache FSA-RN: ${reg["fsa-rn"]}`);
     });
   });
+  await Promise.allSettled(promises);
 };
 
 module.exports = { migratePgDataToEnums, migratePgDataFromEnums, migrateCosmosDataToEnums, migrateCosmosDataFromEnums };
