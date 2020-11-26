@@ -470,43 +470,32 @@ const getMainPartnershipContactName = (partners) => {
   return mainPartnershipContact.partner_name;
 };
 
-const transformEstablishmentTypeForNotify = (establishment_type) => {
-  if (establishment_type) {
-    return establishmentTypeEnum[establishment_type].value;
-  }
+const transformEstablishmentTypeForNotify = (establishmentType) => {
+  return establishmentTypeEnum[establishmentType].value;
 };
 
-const transformOperatorTypeForNotify = (operator_type) => {
-  if (operator_type) {
-    return operatorTypeEnum[operator_type].value;
-  }
+const transformOperatorTypeForNotify = (operatorType) => {
+  return operatorTypeEnum[operatorType].value;
 };
 
-const transformWaterSupplyForNotify = (water_supply) => {
-  if (water_supply) {
-    return waterSupplyEnum[water_supply].value;
-  }
+const transformWaterSupplyForNotify = (waterSupply) => {
+  return waterSupplyEnum[waterSupply].value;
 };
 
-const transformBusinessImportExportForNotify = (import_export_activities) => {
-  if (import_export_activities) {
-    return importExportEnum[import_export_activities].value;
-  }
+const transformBusinessImportExportForNotify = (importExportActivities) => {
+  return importExportEnum[importExportActivities].value;
 };
 
-const transformCustomerTypeForNotify = (customer_type) => {
-  if (customer_type) {
-    return customerTypeEnum[customer_type].value;
-  }
+const transformCustomerTypeForNotify = (customerType) => {
+  return customerTypeEnum[customerType].value;
 };
 
 const transformBusinessTypeForNotify = (id) => {
   const businessTypesObject = JSON.parse(JSON.stringify(businessTypeEnum));
-  for (let record in businessTypesObject) {
-    if (businessTypesObject[record].key === id) {
-      return businessTypesObject[record].value;
-    }
-  }
+  let businessType = Object.keys(businessTypesObject).filter(
+    (key) => key === id
+  );
+  return businessTypesObject[businessType].value;
 };
 
 module.exports = {
