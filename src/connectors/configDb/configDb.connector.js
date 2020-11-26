@@ -20,7 +20,8 @@ const establishConnectionToMongo = async (collectionName) => {
   } else {
     if (configDB === undefined) {
       client = await mongodb.MongoClient.connect(CONFIGDB_URL, {
-        useNewUrlParser: true
+        useNewUrlParser: true,
+        useUnifiedTopology: true
       });
       configDB = client.db("register_a_food_business_config");
     }
