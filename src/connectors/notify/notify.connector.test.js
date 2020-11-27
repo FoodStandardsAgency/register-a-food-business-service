@@ -55,13 +55,11 @@ describe("Function: sendSingleEmail", () => {
       NotifyClient.mockImplementation(() => mockNotifyClient);
     });
 
-    it("Should resolve with the success message", async () => {
-      await expect(sendSingleEmail(...args)).resolves.toBe(
-        "This is a success message from the notify client"
-      );
+    it("Should resolve to null ", async () => {
+      await expect(sendSingleEmail(...args)).resolves.toBe(null);
     });
 
-    it("Should have called the Notify sendEmail function with the template ID, recipient, and flattenedData (within an object)", () => {
+    it.only("Should have called the Notify sendEmail function with the template ID, recipient, and flattenedData (within an object)", () => {
       return sendSingleEmail(...args).then(() => {
         const expectedFlattenedDataWithExists = {
           example: "value",
