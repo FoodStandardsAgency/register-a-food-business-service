@@ -61,7 +61,7 @@ describe("Function: sendSingleEmail", () => {
       );
     });
 
-    it.only("Should have called the Notify sendEmail function with the template ID, recipient, and flattenedData (within an object)", () => {
+    it("Should have called the Notify sendEmail function with the template ID, recipient, and flattenedData (within an object)", () => {
       return sendSingleEmail(...args).then(() => {
         const expectedFlattenedDataWithExists = {
           example: "value",
