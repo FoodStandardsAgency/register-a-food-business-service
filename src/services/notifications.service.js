@@ -15,6 +15,14 @@ const {
   updateNotificationOnSent
 } = require("../connectors/cacheDb/cacheDb.connector");
 const { has, isArrayLikeObject } = require("lodash");
+const {
+  operatorTypeEnum,
+  establishmentTypeEnum,
+  customerTypeEnum,
+  importExportEnum,
+  waterSupplyEnum,
+  businessTypeEnum
+} = require("@slice-and-dice/register-a-food-business-validation");
 /**
  * Function that converts the data into format for Notify and creates a new object
  *
@@ -111,6 +119,24 @@ const transformDataForNotify = (registration, lcContactConfig) => {
   flattenedData.establishment_postcode_FD = flattenedData.establishment_postcode
     .replace(" ", "")
     .slice(0, -3);
+  flattenedData.operator_type = transformOperatorTypeForNotify(
+    flattenedData.operator_type
+  );
+  flattenedData.establishment_type = transformEstablishmentTypeForNotify(
+    flattenedData.establishment_type
+  );
+  flattenedData.customer_type = transformCustomerTypeForNotify(
+    flattenedData.customer_type
+  );
+  flattenedData.business_type = transformBusinessTypeForNotify(
+    flattenedData.business_type
+  );
+  flattenedData.import_export_activities = transformBusinessImportExportForNotify(
+    flattenedData.import_export_activities
+  );
+  flattenedData.water_supply = transformWaterSupplyForNotify(
+    flattenedData.water_supply
+  );
 
   return flattenedData;
 };
@@ -445,6 +471,45 @@ const getMainPartnershipContactName = (partners) => {
     return partner.partner_is_primary_contact === true;
   });
   return mainPartnershipContact.partner_name;
+};
+
+const transformEstablishmentTypeForNotify = (establishment_type) => {
+  if (establishment_type) {
+    return establishmentTypeEnum[establishment_type].value;
+  }
+};
+
+const transformOperatorTypeForNotify = (operator_type) => {
+  if (operator_type) {
+    return operatorTypeEnum[operator_type].value;
+  }
+};
+
+const transformWaterSupplyForNotify = (water_supply) => {
+  if (water_supply) {
+    return waterSupplyEnum[water_supply].value;
+  }
+};
+
+const transformBusinessImportExportForNotify = (import_export_activities) => {
+  if (import_export_activities) {
+    return importExportEnum[import_export_activities].value;
+  }
+};
+
+const transformCustomerTypeForNotify = (customer_type) => {
+  if (customer_type) {
+    return customerTypeEnum[customer_type].value;
+  }
+};
+
+const transformBusinessTypeForNotify = (id) => {
+  const businessTypesObject = JSON.parse(JSON.stringify(businessTypeEnum));
+  for (let record in businessTypesObject) {
+    if (businessTypesObject[record].key === id) {
+      return businessTypesObject[record].value;
+    }
+  }
 };
 
 module.exports = {
