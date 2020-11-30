@@ -116,6 +116,9 @@ const transformDataForNotify = (registration, lcContactConfig) => {
     Object.assign(flattenedData, { ...partnershipDetails });
   }
 
+  flattenedData.establishment_postcode_FD = flattenedData.establishment_postcode
+    .replace(" ", "")
+    .slice(0, -3);
   flattenedData.operator_type = transformOperatorTypeForNotify(
     flattenedData.operator_type
   );

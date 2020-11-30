@@ -55,7 +55,7 @@ describe("Function: sendSingleEmail", () => {
       NotifyClient.mockImplementation(() => mockNotifyClient);
     });
 
-    it("Should resolve with the success message", async () => {
+    it("Should resolve with the success message ", async () => {
       await expect(sendSingleEmail(...args)).resolves.toBe(
         "This is a success message from the notify client"
       );
