@@ -451,6 +451,7 @@ describe("Function: transformDataForNotify", () => {
           operator_first_name: "Fred",
           operator_type: null,
           establishment_postcode: "SW12 9RQ",
+          establishment_postcode_FD: "SW12",
           establishment_type: null,
           establishment_opening_date: "30 Dec 2017",
           customer_type: null,
@@ -506,14 +507,7 @@ describe("Function: transformDataForNotify", () => {
           local_council_standards: "Standards council name",
           local_council_email_standards: "standards@example.com",
           local_council_phone_number_standards: "123456789",
-          partner_names: "Tom, Fred",
-          main_contact: "Tom",
-          establishment_postcode_FD: "SW12",
-          operator_type: undefined,
-          establishment_type: undefined,
-          business_type: undefined,
-          import_export_activities: undefined,
-          water_supply: undefined
+          establishment_postcode_FD: "SW12"
         };
 
         expect(result).toEqual(expectedFormat);
@@ -548,14 +542,7 @@ describe("Function: transformDataForNotify", () => {
           country: "wales",
           hasAuth: true,
           local_council_phone_number: "123456789",
-          partner_names: "Tom, Fred",
-          main_contact: "Tom",
-          establishment_postcode_FD: "SW12",
-          operator_type: undefined,
-          establishment_type: undefined,
-          business_type: undefined,
-          import_export_activities: undefined,
-          water_supply: undefined
+          establishment_postcode_FD: "SW12"
         };
 
         expect(result).toEqual(expectedFormat);
@@ -590,14 +577,7 @@ describe("Function: transformDataForNotify", () => {
           local_council_email: "both@example.com",
           country: undefined,
           hasAuth: undefined,
-          partner_names: "Tom, Fred",
-          main_contact: "Tom",
-          establishment_postcode_FD: "SW12",
-          operator_type: undefined,
-          establishment_type: undefined,
-          business_type: undefined,
-          import_export_activities: undefined,
-          water_supply: undefined
+          establishment_postcode_FD: "SW12"
         };
 
         expect(result).toEqual(expectedFormat);
@@ -634,14 +614,7 @@ describe("Function: transformDataForNotify", () => {
           hasAuth: undefined,
           local_council_standards: "Standards council name",
           local_council_email_standards: "standards@example.com",
-          partner_names: "Tom, Fred",
-          main_contact: "Tom",
-          establishment_postcode_FD: "SW12",
-          operator_type: undefined,
-          establishment_type: undefined,
-          business_type: undefined,
-          import_export_activities: undefined,
-          water_supply: undefined
+          establishment_postcode_FD: "SW12"
         };
 
         expect(result).toEqual(expectedFormat);
