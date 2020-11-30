@@ -10,9 +10,6 @@ jest.mock("./logging.service", () => ({
   logEmitter: { emit: mockEmit }
 }));
 
-const moment = require("moment");
-const today = moment().format("DD MMM YYYY");
-
 const {
   generateEmailsToSend,
   transformDataForNotify
@@ -397,7 +394,7 @@ describe("Function: transformDataForNotify", () => {
           operator_first_name: "Fred",
           customer_type: "End consumer",
           declaration1: "Declaration",
-          reg_submission_date: "27 Nov 2020",
+          reg_submission_date: "30 Nov 2020",
           local_council_hygiene: "Hygiene council name",
           local_council_email_hygiene: "hygiene@example.com",
           country: undefined,
@@ -408,7 +405,12 @@ describe("Function: transformDataForNotify", () => {
           local_council_phone_number_standards: "123456789",
           partner_names: "Tom, Fred",
           main_contact: "Tom",
-          establishment_postcode_FD: "SW12"
+          establishment_postcode_FD: "SW12",
+          operator_type: undefined,
+          establishment_type: undefined,
+          business_type: undefined,
+          import_export_activities: undefined,
+          water_supply: undefined
         };
 
         expect(result).toEqual(expectedFormat);
@@ -430,7 +432,7 @@ describe("Function: transformDataForNotify", () => {
           operator_first_name: "Fred",
           customer_type: "End consumer",
           declaration1: "Declaration",
-          reg_submission_date: "27 Nov 2020",
+          reg_submission_date: "30 Nov 2020",
           local_council: "Hygiene and standards council name",
           local_council_email: "both@example.com",
           country: "wales",
@@ -438,7 +440,12 @@ describe("Function: transformDataForNotify", () => {
           local_council_phone_number: "123456789",
           partner_names: "Tom, Fred",
           main_contact: "Tom",
-          establishment_postcode_FD: "SW12"
+          establishment_postcode_FD: "SW12",
+          operator_type: undefined,
+          establishment_type: undefined,
+          business_type: undefined,
+          import_export_activities: undefined,
+          water_supply: undefined
         };
 
         expect(result).toEqual(expectedFormat);
@@ -461,14 +468,19 @@ describe("Function: transformDataForNotify", () => {
           operator_first_name: "Fred",
           customer_type: "End consumer",
           declaration1: "Declaration",
-          reg_submission_date: "27 Nov 2020",
+          reg_submission_date: "30 Nov 2020",
           local_council: "Hygiene and standards council name",
           local_council_email: "both@example.com",
           country: undefined,
           hasAuth: undefined,
           partner_names: "Tom, Fred",
           main_contact: "Tom",
-          establishment_postcode_FD: "SW12"
+          establishment_postcode_FD: "SW12",
+          operator_type: undefined,
+          establishment_type: undefined,
+          business_type: undefined,
+          import_export_activities: undefined,
+          water_supply: undefined
         };
 
         expect(result).toEqual(expectedFormat);
@@ -491,7 +503,7 @@ describe("Function: transformDataForNotify", () => {
           operator_first_name: "Fred",
           customer_type: "End consumer",
           declaration1: "Declaration",
-          reg_submission_date: "27 Nov 2020",
+          reg_submission_date: "30 Nov 2020",
           local_council_hygiene: "Hygiene council name",
           local_council_email_hygiene: "hygiene@example.com",
           country: undefined,
@@ -500,7 +512,12 @@ describe("Function: transformDataForNotify", () => {
           local_council_email_standards: "standards@example.com",
           partner_names: "Tom, Fred",
           main_contact: "Tom",
-          establishment_postcode_FD: "SW12"
+          establishment_postcode_FD: "SW12",
+          operator_type: undefined,
+          establishment_type: undefined,
+          business_type: undefined,
+          import_export_activities: undefined,
+          water_supply: undefined
         };
 
         expect(result).toEqual(expectedFormat);
