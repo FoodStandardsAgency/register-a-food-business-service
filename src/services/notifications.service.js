@@ -471,31 +471,37 @@ const getMainPartnershipContactName = (partners) => {
 };
 
 const transformEstablishmentTypeForNotify = (establishmentType) => {
-  return establishmentTypeEnum[establishmentType].value;
+  return establishmentTypeEnum[establishmentType]
+    ? establishmentTypeEnum[establishmentType].value
+    : null;
 };
 
 const transformOperatorTypeForNotify = (operatorType) => {
-  return operatorTypeEnum[operatorType].value;
+  return operatorTypeEnum[operatorType]
+    ? operatorTypeEnum[operatorType].value
+    : null;
 };
 
 const transformWaterSupplyForNotify = (waterSupply) => {
-  return waterSupplyEnum[waterSupply].value;
+  return waterSupplyEnum[waterSupply]
+    ? waterSupplyEnum[waterSupply].value
+    : null;
 };
 
 const transformBusinessImportExportForNotify = (importExportActivities) => {
-  return importExportEnum[importExportActivities].value;
+  return importExportEnum[importExportActivities]
+    ? importExportEnum[importExportActivities].value
+    : null;
 };
 
 const transformCustomerTypeForNotify = (customerType) => {
-  return customerTypeEnum[customerType].value;
+  return customerTypeEnum[customerType]
+    ? customerTypeEnum[customerType].value
+    : null;
 };
 
 const transformBusinessTypeForNotify = (id) => {
-  const businessTypesObject = JSON.parse(JSON.stringify(businessTypeEnum));
-  let businessType = Object.keys(businessTypesObject).filter(
-    (key) => key === id
-  );
-  return businessTypesObject[businessType].value;
+  return businessTypeEnum[id] ? businessTypeEnum[id].value : null;
 };
 
 module.exports = {
