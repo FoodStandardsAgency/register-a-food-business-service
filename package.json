@@ -1,6 +1,6 @@
 {
   "name": "register-a-food-business-service",
-  "version": "9.5.0",
+  "version": "10.0.0",
   "description": "",
   "main": "src/app.js",
   "engines": {
