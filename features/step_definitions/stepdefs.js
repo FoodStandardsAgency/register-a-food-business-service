@@ -10,46 +10,41 @@ const {
 
 setDefaultTimeout(60 * 1000);
 
-let apiUrl = "https://staging-register-a-food-business-service.azurewebsites.net";
-if(process.env.NODE_ENV === 'local'){
+let apiUrl =
+  "https://staging-register-a-food-business-service.azurewebsites.net";
+if (process.env.NODE_ENV === "local") {
   apiUrl = process.env.API_URL ? process.env.API_URL : apiUrl;
 }
 
-const sendRequest = async body => {
+const sendRequest = async (body) => {
   const headers = {
     "Content-Type": "application/json",
     "api-secret": FRONT_END_SECRET,
     "client-name": FRONT_END_NAME,
     "registration-data-version": "1.2.1"
   };
-  const res = await fetch(
-    `${apiUrl}/api/registration/createNewRegistration`,
-    {
-      method: "POST",
-      headers,
-      body: JSON.stringify(body)
-    }
-  );
+  const res = await fetch(`${apiUrl}/api/registration/createNewRegistration`, {
+    method: "POST",
+    headers,
+    body: JSON.stringify(body)
+  });
   return res.json();
 };
 
-const getRequest = async id => {
+const getRequest = async (id) => {
   const headers = {
     "Content-Type": "application/json",
     "api-secret": ADMIN_SECRET,
     "client-name": ADMIN_NAME
   };
-  const res = await fetch(
-    `${apiUrl}/api/registration/${id}`,
-    {
-      headers
-    }
-  );
+  const res = await fetch(`${apiUrl}/api/registration/${id}`, {
+    headers
+  });
   return res.json();
 };
 ////////
 
-Given("I have a new registration with all valid required fields", function() {
+Given("I have a new registration with all valid required fields", function () {
   this.registration = {
     registration: {
       establishment: {
@@ -70,7 +65,7 @@ Given("I have a new registration with all valid required fields", function() {
           operator_town: "London",
           operator_primary_number: "9827235",
           operator_email: "fsatestemail.valid@gmail.com",
-          operator_type: "Sole trader"
+          operator_type: "SOLETRADER"
         },
         premise: {
           establishment_postcode: "SW12 9RQ",
@@ -78,12 +73,12 @@ Given("I have a new registration with all valid required fields", function() {
           establishment_address_line_2: "Street",
           establishment_address_line_3: "Locality",
           establishment_town: "London",
-          establishment_type: "domestic"
+          establishment_type: "DOMESTIC"
         },
         activities: {
-          customer_type: "End consumer",
-          business_type: "Livestock farm",
-          import_export_activities: "None",
+          customer_type: "END_CONSUMER",
+          business_type: "002",
+          import_export_activities: "NONE",
           business_other_details: "Food business",
           opening_days_irregular: "Open christmas",
           opening_day_monday: true,
@@ -93,7 +88,7 @@ Given("I have a new registration with all valid required fields", function() {
           opening_day_friday: true,
           opening_day_saturday: true,
           opening_day_sunday: true,
-          water_supply: "Public"
+          water_supply: "PUBLIC"
         }
       },
       declaration: {
@@ -108,7 +103,7 @@ Given("I have a new registration with all valid required fields", function() {
 
 Given(
   "I have a new establishment with some invalid required fields",
-  function() {
+  function () {
     this.registration = {
       registration: {
         establishment: {
@@ -156,16 +151,16 @@ Given(
     };
   }
 );
-Given("I have multiple conditional required fields", function() {
+Given("I have multiple conditional required fields", function () {
   this.registration.registration.establishment.operator.operator_charity_name =
     "Op Charity Name";
 });
 
-When("I submit it to the backend", async function() {
+When("I submit it to the backend", async function () {
   this.response = await sendRequest(this.registration);
 });
 
-When("I submit my multiple fields to the backend", async function() {
+When("I submit my multiple fields to the backend", async function () {
   const requestBody = JSON.stringify({
     query: `mutation { createEstablishment(id: 1, 
     operator_email: "${this.operator_email}", 
@@ -192,28 +187,34 @@ When("I submit my multiple fields to the backend", async function() {
   this.response = await sendRequest(requestBody);
 });
 
-Then("I get a success response", async function() {
+Then("I get a success response", async function () {
   assert.ok(this.response["fsa-rn"]);
 });
 
-Then("I get an error response", async function() {
+Then("I get an error response", async function () {
   assert.ok(this.response.userMessages);
 });
 
-Then("The non personal information is saved to the database", async function() {
-  const id = this.response["fsa-rn"];
-  getRequest(id).then(response => () => {
-    assert.equal(response.establishment.establishment_trading_name, "Itsu");
-  });
-});
+Then(
+  "The non personal information is saved to the database",
+  async function () {
+    const id = this.response["fsa-rn"];
+    getRequest(id).then((response) => () => {
+      assert.equal(response.establishment.establishment_trading_name, "Itsu");
+    });
+  }
+);
 
-Then("The personal information is not saved to the database", async function() {
-  const id = this.response["fsa-rn"];
-  getRequest(id).then(response => () => {
-    assert.equal(response.establishment.operator_first_name, null);
-  });
-});
+Then(
+  "The personal information is not saved to the database",
+  async function () {
+    const id = this.response["fsa-rn"];
+    getRequest(id).then((response) => () => {
+      assert.equal(response.establishment.operator_first_name, null);
+    });
+  }
+);
 
-Then("I receive a confirmation number", async function() {
+Then("I receive a confirmation number", async function () {
   assert.ok(this.response["fsa-rn"]);
 });
