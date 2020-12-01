@@ -20,6 +20,15 @@ const {
   createReferenceNumber
 } = require("./tascomi.connector");
 
+const {
+  businessTypeEnum,
+  customerTypeEnum,
+  establishmentTypeEnum,
+  importExportEnum,
+  operatorTypeEnum,
+  waterSupplyEnum
+} = require("@slice-and-dice/register-a-food-business-validation");
+
 const registration = {
   establishment: {
     establishment_details: {
@@ -39,7 +48,7 @@ const registration = {
       operator_town: "London",
       operator_primary_number: "9827235",
       operator_email: "operator@email.com",
-      operator_type: "Sole trader"
+      operator_type: operatorTypeEnum.SOLETRADER.key
     },
     premise: {
       establishment_postcode: "SW12 9RQ",
@@ -47,11 +56,13 @@ const registration = {
       establishment_address_line_2: "Street",
       establishment_address_line_3: "Locality",
       establishment_town: "London",
-      establishment_type: "somewhere"
+      establishment_type: establishmentTypeEnum.DOMESTIC.key
     },
     activities: {
-      customer_type: "End consumer",
-      water_supply: "Public",
+      customer_type: customerTypeEnum.END_CONSUMER.key,
+      water_supply: waterSupplyEnum.PUBLIC.key,
+      business_type: businessTypeEnum["002"].key,
+      import_export_activities: importExportEnum.BOTH.key,
       opening_hours_monday: "9:30 - 19:00",
       opening_hours_tuesday: "09:30 - 19:00",
       opening_hours_wednesday: "9:30am - 7pm",
@@ -87,7 +98,7 @@ const partnership_registration = {
       operator_town: "London",
       operator_primary_number: "9827235",
       operator_email: "operator@email.com",
-      operator_type: "Partnership",
+      operator_type: operatorTypeEnum.PARTNERSHIP.key,
       partners: [
         {
           partner_name: "Fred",
@@ -105,11 +116,13 @@ const partnership_registration = {
       establishment_address_line_2: "Street",
       establishment_address_line_3: "Locality",
       establishment_town: "London",
-      establishment_type: "somewhere"
+      establishment_type: establishmentTypeEnum.COMMERCIAL.key
     },
     activities: {
-      customer_type: "End consumer",
-      water_supply: "Public",
+      customer_type: customerTypeEnum.END_CONSUMER.key,
+      water_supply: waterSupplyEnum.PUBLIC.key,
+      business_type: businessTypeEnum["002"].key,
+      import_export_activities: importExportEnum.BOTH.key,
       opening_hours_monday: "9:30 - 19:00",
       opening_hours_tuesday: "09:30 - 19:00",
       opening_hours_wednesday: "9:30am - 7pm",
@@ -155,10 +168,11 @@ describe("Function: createFoodBusinessRegistration", () => {
         );
       } catch (err) {
         result = err;
+        console.log(result);
       }
     });
 
-    it("should throw the error", () => {
+    it.only("should throw the error", () => {
       expect(result.message).toBe("Request error");
     });
   });
@@ -233,7 +247,7 @@ describe("Function: createFoodBusinessRegistration", () => {
         return "request response";
       });
       registration.establishment.premise.establishment_type =
-        "Home or domestic premises";
+        establishmentTypeEnum.DOMESTIC.key;
       result = await createFoodBusinessRegistration(
         registration,
         postRegistrationMetadata,
@@ -254,7 +268,7 @@ describe("Function: createFoodBusinessRegistration", () => {
         return "request response";
       });
       registration.establishment.premise.establishment_type =
-        "Mobile or moveable premises";
+        establishmentTypeEnum.MOBILE.key;
       result = await createFoodBusinessRegistration(
         registration,
         postRegistrationMetadata,
@@ -275,7 +289,7 @@ describe("Function: createFoodBusinessRegistration", () => {
         return "request response";
       });
       registration.establishment.activities.import_export_activities =
-        "Directly import";
+        importExportEnum.IMPORT.key;
       result = await createFoodBusinessRegistration(
         registration,
         postRegistrationMetadata,
@@ -296,7 +310,7 @@ describe("Function: createFoodBusinessRegistration", () => {
         return "request response";
       });
       registration.establishment.activities.import_export_activities =
-        "Directly export";
+        importExportEnum.EXPORT.key;
       result = await createFoodBusinessRegistration(
         registration,
         postRegistrationMetadata,
@@ -317,7 +331,7 @@ describe("Function: createFoodBusinessRegistration", () => {
         return "request response";
       });
       registration.establishment.activities.import_export_activities =
-        "Directly import and export";
+        importExportEnum.BOTH.key;
       result = await createFoodBusinessRegistration(
         registration,
         postRegistrationMetadata,
