@@ -1,4 +1,3 @@
-const { iteratee } = require("lodash");
 const {
   transformBusinessImportExportEnum,
   transformBusinessTypeEnum,
@@ -19,6 +18,7 @@ const {
 
 describe("Function: transformBusinessImportEcportForNotify", () => {
   describe("When given a valid enum key", () => {
+    let result;
     beforeEach(() => {
       result = transformBusinessImportExportEnum(importExportEnum.IMPORT.key);
     });
@@ -27,6 +27,7 @@ describe("Function: transformBusinessImportEcportForNotify", () => {
     });
   });
   describe("When given an ivalid enum key", () => {
+    let result;
     beforeEach(() => {
       result = transformBusinessImportExportEnum("invalid");
     });
@@ -37,6 +38,7 @@ describe("Function: transformBusinessImportEcportForNotify", () => {
 });
 describe("Function: transformBusinessTypeEnum", () => {
   describe("When given a valid enum key", () => {
+    let result;
     beforeEach(() => {
       result = transformBusinessTypeEnum(businessTypeEnum["002"].key);
     });
@@ -45,6 +47,7 @@ describe("Function: transformBusinessTypeEnum", () => {
     });
   });
   describe("When given an ivalid enum key", () => {
+    let result;
     beforeEach(() => {
       result = transformBusinessTypeEnum("invalid");
     });
@@ -55,6 +58,7 @@ describe("Function: transformBusinessTypeEnum", () => {
 });
 describe("Function: transformCustomerTypeEnum", () => {
   describe("When given a valid enum key", () => {
+    let result;
     beforeEach(() => {
       result = transformCustomerTypeEnum(customerTypeEnum.END_CONSUMER.key);
     });
@@ -63,6 +67,7 @@ describe("Function: transformCustomerTypeEnum", () => {
     });
   });
   describe("When given an ivalid enum key", () => {
+    let result;
     beforeEach(() => {
       result = transformCustomerTypeEnum("invalid");
     });
@@ -73,6 +78,7 @@ describe("Function: transformCustomerTypeEnum", () => {
 });
 describe("Function: transformEstablishmentTypeEnum", () => {
   describe("When given a valid enum key", () => {
+    let result;
     beforeEach(() => {
       result = transformEstablishmentTypeEnum(
         establishmentTypeEnum.DOMESTIC.key
@@ -83,6 +89,7 @@ describe("Function: transformEstablishmentTypeEnum", () => {
     });
   });
   describe("When given an ivalid enum key", () => {
+    let result;
     beforeEach(() => {
       result = transformEstablishmentTypeEnum("invalid");
     });
@@ -93,6 +100,7 @@ describe("Function: transformEstablishmentTypeEnum", () => {
 });
 describe("Function: transformOperatorTypeEnum", () => {
   describe("When given a valid enum key", () => {
+    let result;
     beforeEach(() => {
       result = transformOperatorTypeEnum(operatorTypeEnum.COMPANY.key);
     });
@@ -101,6 +109,7 @@ describe("Function: transformOperatorTypeEnum", () => {
     });
   });
   describe("When given an ivalid enum key", () => {
+    let result;
     beforeEach(() => {
       result = transformOperatorTypeEnum("invalid");
     });
@@ -111,6 +120,7 @@ describe("Function: transformOperatorTypeEnum", () => {
 });
 describe("Function: transformWaterSupplyEnum", () => {
   describe("When given a valid enum key", () => {
+    let result;
     beforeEach(() => {
       result = transformWaterSupplyEnum(waterSupplyEnum.PUBLIC.key);
     });
@@ -119,6 +129,7 @@ describe("Function: transformWaterSupplyEnum", () => {
     });
   });
   describe("When given an ivalid enum key", () => {
+    let result;
     beforeEach(() => {
       result = transformWaterSupplyEnum("invalid");
     });

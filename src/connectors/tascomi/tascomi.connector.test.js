@@ -172,7 +172,7 @@ describe("Function: createFoodBusinessRegistration", () => {
       }
     });
 
-    it.only("should throw the error", () => {
+    it("should throw the error", () => {
       expect(result.message).toBe("Request error");
     });
   });
