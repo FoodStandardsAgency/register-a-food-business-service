@@ -28,7 +28,7 @@ describe("Pdf Service: ", () => {
             operator_town: "London",
             operator_primary_number: "9827235",
             operator_email: "operator@email.com",
-            operator_type: "Sole trader"
+            operator_type: "SOLETRADER"
           },
           premise: {
             establishment_postcode: "SW12 9RQ",
@@ -36,12 +36,12 @@ describe("Pdf Service: ", () => {
             establishment_address_line_2: "Street",
             establishment_address_line_3: "Locality",
             establishment_town: "London",
-            establishment_type: "Place"
+            establishment_type: "DOMESTIC"
           },
           activities: {
-            customer_type: "End consumer",
-            business_type: "Livestock farm",
-            import_export_activities: "None",
+            customer_type: "END_CONSUMER",
+            business_type: "002",
+            import_export_activities: "NONE",
             opening_day_monday: true,
             opening_day_tuesday: true,
             opening_day_wednesday: true,
@@ -164,7 +164,7 @@ describe("Pdf Service: ", () => {
             operator_town: "London",
             operator_primary_number: "9827235",
             operator_email: "operator@email.com",
-            operator_type: "Sole trader",
+            operator_type: "SOLETRADER",
             partners: [
               {
                 partner_name: "Joe",
@@ -182,12 +182,12 @@ describe("Pdf Service: ", () => {
             establishment_address_line_2: "Street",
             establishment_address_line_3: "Locality",
             establishment_town: "London",
-            establishment_type: "Place"
+            establishment_type: "DOMESTIC"
           },
           activities: {
-            customer_type: "End consumer",
-            business_type: "Livestock farm",
-            import_export_activities: "None",
+            customer_type: "END_CONSUMER",
+            business_type: "002",
+            import_export_activities: "NONE",
             water_supply: "Public",
             opening_day_monday: true,
             opening_day_tuesday: true,
@@ -309,7 +309,7 @@ describe("Pdf Service: ", () => {
           operator_town: "London",
           operator_primary_number: "9827235",
           operator_email: "operator@email.com",
-          operator_type: "Sole trader"
+          operator_type: "SOLETRADER"
         },
         establishment: {
           establishment_trading_name: "Itsu",
@@ -322,12 +322,12 @@ describe("Pdf Service: ", () => {
           establishment_address_line_2: "Street",
           establishment_address_line_3: "Locality",
           establishment_town: "London",
-          establishment_type: "Place"
+          establishment_type: "DOMESTIC"
         },
         activities: {
-          customer_type: "End consumer",
-          business_type: "Livestock farm",
-          import_export_activities: "None",
+          customer_type: "END_CONSUMER",
+          business_type: "002",
+          import_export_activities: "NONE",
           water_supply: "Private",
           opening_day_monday: true,
           opening_day_tuesday: true,
@@ -367,7 +367,7 @@ describe("Pdf Service: ", () => {
           operator_town: "London",
           operator_primary_number: "9827235",
           operator_email: "operator@email.com",
-          operator_type: "Sole trader"
+          operator_type: "SOLETRADER"
         },
         partnershipDetails: {
           partner_names: "Joe, Tom",
@@ -384,12 +384,12 @@ describe("Pdf Service: ", () => {
           establishment_address_line_2: "Street",
           establishment_address_line_3: "Locality",
           establishment_town: "London",
-          establishment_type: "Place"
+          establishment_type: "DOMESTIC"
         },
         activities: {
-          customer_type: "End consumer",
-          business_type: "Livestock farm",
-          import_export_activities: "None",
+          customer_type: "END_CONSUMER",
+          business_type: "002",
+          import_export_activities: "NONE",
           water_supply: "Private",
           opening_day_monday: true,
           opening_day_tuesday: true,
