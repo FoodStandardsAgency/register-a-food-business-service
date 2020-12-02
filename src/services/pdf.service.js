@@ -47,6 +47,7 @@ const transformDataForPdf = (registrationData, lcContactConfig) => {
   const premise = { ...registrationData.establishment.premise };
   delete premise.establishment_first_line;
   delete premise.establishment_street;
+  const activities = { ...registrationData.establishment.activities };
 
   registrationData.establishment.establishment_details.establishment_opening_date = moment(
     registrationData.establishment.establishment_details
@@ -57,24 +58,20 @@ const transformDataForPdf = (registrationData, lcContactConfig) => {
     registrationData.reg_submission_date
   ).format("DD MMM YYYY");
 
-  registrationData.establishment.operator.operator_type = transformOperatorTypeEnum(
-    registrationData.establishment.operator.operator_type
+  operator.operator_type = transformOperatorTypeEnum(operator.operator_type);
+  premise.establishment_type = transformEstablishmentTypeEnum(
+    premise.establishment_type
   );
-  registrationData.establishment.premise.establishment_type = transformEstablishmentTypeEnum(
-    registrationData.establishment.premise.establishment_type
+  activities.customer_type = transformCustomerTypeEnum(
+    activities.customer_type
   );
-  registrationData.establishment.activities.customer_type = transformCustomerTypeEnum(
-    registrationData.establishment.activities.customer_type
+  activities.business_type = transformBusinessTypeEnum(
+    activities.business_type
   );
-  registrationData.establishment.activities.business_type = transformBusinessTypeEnum(
-    registrationData.establishment.activities.business_type
+  activities.import_export_activities = transformBusinessImportExportEnum(
+    activities.import_export_activities
   );
-  registrationData.establishment.activities.import_export_activities = transformBusinessImportExportEnum(
-    registrationData.establishment.activities.import_export_activities
-  );
-  registrationData.establishment.activities.water_supply = transformWaterSupplyEnum(
-    registrationData.establishment.activities.water_supply
-  );
+  activities.water_supply = transformWaterSupplyEnum(activities.water_supply);
 
   const pdfData = {
     operator,
@@ -82,7 +79,7 @@ const transformDataForPdf = (registrationData, lcContactConfig) => {
       ...registrationData.establishment.establishment_details,
       ...premise
     },
-    activities: { ...registrationData.establishment.activities },
+    activities: activities,
     declaration: { ...registrationData.declaration },
     metaData: { ...registrationData, lcInfo }
   };

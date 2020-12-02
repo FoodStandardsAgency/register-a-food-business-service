@@ -42,6 +42,7 @@ describe("Pdf Service: ", () => {
             customer_type: "END_CONSUMER",
             business_type: "002",
             import_export_activities: "NONE",
+            water_supply: "PUBLIC",
             opening_day_monday: true,
             opening_day_tuesday: true,
             opening_day_wednesday: true,
@@ -144,6 +145,16 @@ describe("Pdf Service: ", () => {
         it("Should return lcInfo.country", () => {
           expect(result.metaData.lcInfo.country).toBe("wales");
         });
+        it("Should return correct value for key transformed fields", () => {
+          expect(result.operator.operator_type).toBe("Sole trader");
+          expect(result.establishment.establishment_type).toBe(
+            "Home or domestic premises"
+          );
+          expect(result.activities.customer_type).toBe("End consumer");
+          expect(result.activities.business_type).toBe("Livestock farm");
+          expect(result.activities.import_export_activities).toBe("None");
+          expect(result.activities.water_supply).toBe("Public");
+        });
       });
     });
     describe("when registration role is partnership", () => {
@@ -188,7 +199,7 @@ describe("Pdf Service: ", () => {
             customer_type: "END_CONSUMER",
             business_type: "002",
             import_export_activities: "NONE",
-            water_supply: "Public",
+            water_supply: "PUBLIC",
             opening_day_monday: true,
             opening_day_tuesday: true,
             opening_day_wednesday: true,
@@ -242,6 +253,16 @@ describe("Pdf Service: ", () => {
         it("Should return lcInfo.country", () => {
           expect(result.metaData.lcInfo.country).toBe("wales");
         });
+        it("Should return correct value for key transformed fields", () => {
+          expect(result.operator.operator_type).toBe("Sole trader");
+          expect(result.establishment.establishment_type).toBe(
+            "Home or domestic premises"
+          );
+          expect(result.activities.customer_type).toBe("End consumer");
+          expect(result.activities.business_type).toBe("Livestock farm");
+          expect(result.activities.import_export_activities).toBe("None");
+          expect(result.activities.water_supply).toBe("Public");
+        });
       });
 
       describe("When given seperate hygiene and standards council", () => {
@@ -291,6 +312,16 @@ describe("Pdf Service: ", () => {
         });
         it("Should return lcInfo.country", () => {
           expect(result.metaData.lcInfo.country).toBe("wales");
+        });
+        it("Should return correct value for key transformed fields", () => {
+          expect(result.operator.operator_type).toBe("Sole trader");
+          expect(result.establishment.establishment_type).toBe(
+            "Home or domestic premises"
+          );
+          expect(result.activities.customer_type).toBe("End consumer");
+          expect(result.activities.business_type).toBe("Livestock farm");
+          expect(result.activities.import_export_activities).toBe("None");
+          expect(result.activities.water_supply).toBe("Public");
         });
       });
     });
