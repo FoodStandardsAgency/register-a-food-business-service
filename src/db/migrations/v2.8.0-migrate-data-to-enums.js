@@ -8,19 +8,13 @@ const { logEmitter } = require("../../services/logging.service");
 
 module.exports = {
   up: async (queryInterface, Sequelize) => {
-    const promises = [];
-    promises.push(migratePgDataToEnums(queryInterface, Sequelize));
-    promises.push(migrateCosmosDataToEnums());
-    await Promise.allSettled(promises);
-
+    await migratePgDataToEnums(queryInterface, Sequelize);
+    await migrateCosmosDataToEnums();
     logEmitter.emit("info", "Migration to enums complete");
   },
   down: async (queryInterface) => {
-    const promises = [];
-    promises.push(migrateCosmosDataFromEnums());
-    promises.push(migratePgDataFromEnums(queryInterface));
-    await Promise.allSettled(promises);
-
+    await migrateCosmosDataFromEnums();
+    await migratePgDataFromEnums(queryInterface);
     logEmitter.emit("info", "Migration from enums complete");
   }
 };
