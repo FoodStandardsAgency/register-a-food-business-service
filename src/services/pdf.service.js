@@ -18,6 +18,15 @@ const {
   createGuidanceLinksSection
 } = require("./pdf-styles");
 
+const {
+  transformBusinessImportExportEnum,
+  transformBusinessTypeEnum,
+  transformCustomerTypeEnum,
+  transformEstablishmentTypeEnum,
+  transformOperatorTypeEnum,
+  transformWaterSupplyEnum
+} = require("./transformEnums.service");
+
 /**
  * Function that does data manipulation to return an object with data in the needed format
  *
@@ -38,6 +47,7 @@ const transformDataForPdf = (registrationData, lcContactConfig) => {
   const premise = { ...registrationData.establishment.premise };
   delete premise.establishment_first_line;
   delete premise.establishment_street;
+  const activities = { ...registrationData.establishment.activities };
 
   registrationData.establishment.establishment_details.establishment_opening_date = moment(
     registrationData.establishment.establishment_details
@@ -48,13 +58,28 @@ const transformDataForPdf = (registrationData, lcContactConfig) => {
     registrationData.reg_submission_date
   ).format("DD MMM YYYY");
 
+  operator.operator_type = transformOperatorTypeEnum(operator.operator_type);
+  premise.establishment_type = transformEstablishmentTypeEnum(
+    premise.establishment_type
+  );
+  activities.customer_type = transformCustomerTypeEnum(
+    activities.customer_type
+  );
+  activities.business_type = transformBusinessTypeEnum(
+    activities.business_type
+  );
+  activities.import_export_activities = transformBusinessImportExportEnum(
+    activities.import_export_activities
+  );
+  activities.water_supply = transformWaterSupplyEnum(activities.water_supply);
+
   const pdfData = {
     operator,
     establishment: {
       ...registrationData.establishment.establishment_details,
       ...premise
     },
-    activities: { ...registrationData.establishment.activities },
+    activities: activities,
     declaration: { ...registrationData.declaration },
     metaData: { ...registrationData, lcInfo }
   };

@@ -4,6 +4,18 @@ const { doubleRequest } = require("./tascomi.double");
 const { logEmitter } = require("../../services/logging.service");
 const { statusEmitter } = require("../../services/statusEmitter.service");
 
+const {
+  establishmentTypeEnum,
+  importExportEnum
+} = require("@slice-and-dice/register-a-food-business-validation");
+
+const {
+  transformBusinessTypeEnum,
+  transformCustomerTypeEnum,
+  transformOperatorTypeEnum,
+  transformWaterSupplyEnum
+} = require("../../services/transformEnums.service");
+
 const TASCOMI_SKIPPING = "skipping";
 const TASCOMI_SUCCESS = true;
 const TASCOMI_FAIL = false;
@@ -69,6 +81,18 @@ const createFoodBusinessRegistration = async (
         }))
       : [];
 
+    operatorDetails.operator_type = transformOperatorTypeEnum(
+      operatorDetails.operator_type
+    );
+    activitiesDetails.customer_type = transformCustomerTypeEnum(
+      activitiesDetails.customer_type
+    );
+    activitiesDetails.business_type = transformBusinessTypeEnum(
+      activitiesDetails.business_type
+    );
+    activitiesDetails.water_supply = transformWaterSupplyEnum(
+      activitiesDetails.water_supply
+    );
     const requestData = {
       fsa_rn: postRegistrationMetadata["fsa-rn"],
       fsa_council_id: postRegistrationMetadata.hygiene_council_code,
@@ -167,25 +191,30 @@ const createFoodBusinessRegistration = async (
       requestData.premise_typical_trading_days_sunday = "f";
     }
 
-    if (premiseDetails.establishment_type === "Home or domestic premises") {
+    if (
+      premiseDetails.establishment_type === establishmentTypeEnum.DOMESTIC.key
+    ) {
       requestData.premise_domestic_premises = "t";
     } else {
       requestData.premise_domestic_premises = "f";
     }
-    if (premiseDetails.establishment_type === "Mobile or moveable premises") {
+    if (
+      premiseDetails.establishment_type === establishmentTypeEnum.MOBILE.key
+    ) {
       requestData.premise_mobile_premises = "t";
     } else {
       requestData.premise_mobile_premises = "f";
     }
-    if (activitiesDetails.import_export_activities === "Directly import") {
+    if (
+      activitiesDetails.import_export_activities === importExportEnum.IMPORT.key
+    ) {
       requestData.import_food = "t";
     } else if (
-      activitiesDetails.import_export_activities === "Directly export"
+      activitiesDetails.import_export_activities === importExportEnum.EXPORT.key
     ) {
       requestData.export_food = "t";
     } else if (
-      activitiesDetails.import_export_activities ===
-      "Directly import and export"
+      activitiesDetails.import_export_activities === importExportEnum.BOTH.key
     ) {
       requestData.import_food = "t";
       requestData.export_food = "t";

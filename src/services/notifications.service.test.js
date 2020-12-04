@@ -10,6 +10,9 @@ jest.mock("./logging.service", () => ({
   logEmitter: { emit: mockEmit }
 }));
 
+const moment = require("moment");
+const today = moment().format("DD MMM YYYY");
+
 const {
   generateEmailsToSend,
   transformDataForNotify
@@ -498,7 +501,7 @@ describe("Function: transformDataForNotify", () => {
           import_export_activities: importExportEnum.BOTH.value,
           water_supply: waterSupplyEnum.PUBLIC.value,
           declaration1: "Declaration",
-          reg_submission_date: "30 Nov 2020",
+          reg_submission_date: today,
           local_council_hygiene: "Hygiene council name",
           local_council_email_hygiene: "hygiene@example.com",
           country: undefined,
@@ -536,7 +539,7 @@ describe("Function: transformDataForNotify", () => {
           import_export_activities: importExportEnum.BOTH.value,
           water_supply: waterSupplyEnum.PUBLIC.value,
           declaration1: "Declaration",
-          reg_submission_date: "30 Nov 2020",
+          reg_submission_date: today,
           local_council: "Hygiene and standards council name",
           local_council_email: "both@example.com",
           country: "wales",
@@ -572,7 +575,7 @@ describe("Function: transformDataForNotify", () => {
           import_export_activities: importExportEnum.BOTH.value,
           water_supply: waterSupplyEnum.PUBLIC.value,
           declaration1: "Declaration",
-          reg_submission_date: "30 Nov 2020",
+          reg_submission_date: today,
           local_council: "Hygiene and standards council name",
           local_council_email: "both@example.com",
           country: undefined,
@@ -607,7 +610,7 @@ describe("Function: transformDataForNotify", () => {
           import_export_activities: importExportEnum.BOTH.value,
           water_supply: waterSupplyEnum.PUBLIC.value,
           declaration1: "Declaration",
-          reg_submission_date: "30 Nov 2020",
+          reg_submission_date: today,
           local_council_hygiene: "Hygiene council name",
           local_council_email_hygiene: "hygiene@example.com",
           country: undefined,

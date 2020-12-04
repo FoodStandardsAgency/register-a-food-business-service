@@ -16,13 +16,13 @@ const {
 } = require("../connectors/cacheDb/cacheDb.connector");
 const { has, isArrayLikeObject } = require("lodash");
 const {
-  operatorTypeEnum,
-  establishmentTypeEnum,
-  customerTypeEnum,
-  importExportEnum,
-  waterSupplyEnum,
-  businessTypeEnum
-} = require("@slice-and-dice/register-a-food-business-validation");
+  transformBusinessImportExportEnum,
+  transformBusinessTypeEnum,
+  transformCustomerTypeEnum,
+  transformEstablishmentTypeEnum,
+  transformOperatorTypeEnum,
+  transformWaterSupplyEnum
+} = require("./transformEnums.service");
 /**
  * Function that converts the data into format for Notify and creates a new object
  *
@@ -119,22 +119,22 @@ const transformDataForNotify = (registration, lcContactConfig) => {
   flattenedData.establishment_postcode_FD = flattenedData.establishment_postcode
     .replace(" ", "")
     .slice(0, -3);
-  flattenedData.operator_type = transformOperatorTypeForNotify(
+  flattenedData.operator_type = transformOperatorTypeEnum(
     flattenedData.operator_type
   );
-  flattenedData.establishment_type = transformEstablishmentTypeForNotify(
+  flattenedData.establishment_type = transformEstablishmentTypeEnum(
     flattenedData.establishment_type
   );
-  flattenedData.customer_type = transformCustomerTypeForNotify(
+  flattenedData.customer_type = transformCustomerTypeEnum(
     flattenedData.customer_type
   );
-  flattenedData.business_type = transformBusinessTypeForNotify(
+  flattenedData.business_type = transformBusinessTypeEnum(
     flattenedData.business_type
   );
-  flattenedData.import_export_activities = transformBusinessImportExportForNotify(
+  flattenedData.import_export_activities = transformBusinessImportExportEnum(
     flattenedData.import_export_activities
   );
-  flattenedData.water_supply = transformWaterSupplyForNotify(
+  flattenedData.water_supply = transformWaterSupplyEnum(
     flattenedData.water_supply
   );
 
@@ -471,40 +471,6 @@ const getMainPartnershipContactName = (partners) => {
     return partner.partner_is_primary_contact === true;
   });
   return mainPartnershipContact.partner_name;
-};
-
-const transformEstablishmentTypeForNotify = (establishmentType) => {
-  return establishmentTypeEnum[establishmentType]
-    ? establishmentTypeEnum[establishmentType].value
-    : null;
-};
-
-const transformOperatorTypeForNotify = (operatorType) => {
-  return operatorTypeEnum[operatorType]
-    ? operatorTypeEnum[operatorType].value
-    : null;
-};
-
-const transformWaterSupplyForNotify = (waterSupply) => {
-  return waterSupplyEnum[waterSupply]
-    ? waterSupplyEnum[waterSupply].value
-    : null;
-};
-
-const transformBusinessImportExportForNotify = (importExportActivities) => {
-  return importExportEnum[importExportActivities]
-    ? importExportEnum[importExportActivities].value
-    : null;
-};
-
-const transformCustomerTypeForNotify = (customerType) => {
-  return customerTypeEnum[customerType]
-    ? customerTypeEnum[customerType].value
-    : null;
-};
-
-const transformBusinessTypeForNotify = (id) => {
-  return businessTypeEnum[id] ? businessTypeEnum[id].value : null;
 };
 
 module.exports = {
