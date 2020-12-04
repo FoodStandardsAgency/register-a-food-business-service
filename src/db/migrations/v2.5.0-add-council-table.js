@@ -4,7 +4,7 @@ const { populateCouncils } = require("../../../scripts/populate-council-table");
 
 const createCouncil = async (queryInterface, Sequelize, transaction) => {
   queryInterface.createTable(
-    "councils",
+    { tableName: "councils", schema: "registrations" },
     {
       createdAt: {
         type: Sequelize.DATE
@@ -28,22 +28,26 @@ const createCouncil = async (queryInterface, Sequelize, transaction) => {
 };
 
 const createCouncilsForeignKey = async (queryInterface, transaction) => {
-  return queryInterface.addConstraint("registrations", ["council"], {
-    type: "foreign key",
-    name: "registrations_council_fkey",
-    references: {
-      table: "councils",
-      field: "local_council_url"
-    },
-    onUpdate: "cascade",
-    onDelete: "cascade",
-    transaction: transaction
-  });
+  return queryInterface.addConstraint(
+    { tableName: "registrations", schema: "registrations" },
+    ["council"],
+    {
+      type: "foreign key",
+      name: "registrations_council_fkey",
+      references: {
+        table: { tableName: "councils", schema: "registrations" },
+        field: "local_council_url"
+      },
+      onUpdate: "cascade",
+      onDelete: "cascade",
+      transaction: transaction
+    }
+  );
 };
 
 const dropCouncilsForeignKey = async (queryInterface, transaction) => {
   return queryInterface.removeConstraint(
-    "registrations",
+    { tableName: "registrations", schema: "registrations" },
     "registrations_council_fkey",
     { transaction: transaction }
   );
@@ -60,7 +64,10 @@ module.exports = {
   down: (queryInterface) => {
     return queryInterface.sequelize.transaction(async (transaction) => {
       await dropCouncilsForeignKey(queryInterface, transaction);
-      return queryInterface.dropTable("councils", { transaction: transaction });
+      return queryInterface.dropTable(
+        { tableName: "councils", schema: "registrations" },
+        { transaction: transaction }
+      );
     });
   }
 };

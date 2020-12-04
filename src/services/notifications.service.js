@@ -15,6 +15,14 @@ const {
   updateNotificationOnSent
 } = require("../connectors/cacheDb/cacheDb.connector");
 const { has, isArrayLikeObject } = require("lodash");
+const {
+  transformBusinessImportExportEnum,
+  transformBusinessTypeEnum,
+  transformCustomerTypeEnum,
+  transformEstablishmentTypeEnum,
+  transformOperatorTypeEnum,
+  transformWaterSupplyEnum
+} = require("./transformEnums.service");
 /**
  * Function that converts the data into format for Notify and creates a new object
  *
@@ -107,6 +115,28 @@ const transformDataForNotify = (registration, lcContactConfig) => {
     };
     Object.assign(flattenedData, { ...partnershipDetails });
   }
+
+  flattenedData.establishment_postcode_FD = flattenedData.establishment_postcode
+    .replace(" ", "")
+    .slice(0, -3);
+  flattenedData.operator_type = transformOperatorTypeEnum(
+    flattenedData.operator_type
+  );
+  flattenedData.establishment_type = transformEstablishmentTypeEnum(
+    flattenedData.establishment_type
+  );
+  flattenedData.customer_type = transformCustomerTypeEnum(
+    flattenedData.customer_type
+  );
+  flattenedData.business_type = transformBusinessTypeEnum(
+    flattenedData.business_type
+  );
+  flattenedData.import_export_activities = transformBusinessImportExportEnum(
+    flattenedData.import_export_activities
+  );
+  flattenedData.water_supply = transformWaterSupplyEnum(
+    flattenedData.water_supply
+  );
 
   return flattenedData;
 };

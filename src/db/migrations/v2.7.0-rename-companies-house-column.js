@@ -3,7 +3,7 @@ module.exports = {
   up: (queryInterface) => {
     return Promise.all([
       queryInterface.renameColumn(
-        "operators",
+        { tableName: "operators", schema: "registrations" },
         "operator_company_house_number",
         "operator_companies_house_number"
       )
@@ -12,7 +12,7 @@ module.exports = {
   down: (queryInterface) => {
     return Promise.all([
       queryInterface.renameColumn(
-        "operators",
+        { tableName: "operators", schema: "registrations" },
         "operator_companies_house_number",
         "operator_company_house_number"
       )
