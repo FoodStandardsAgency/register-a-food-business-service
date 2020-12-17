@@ -22,8 +22,8 @@ describe("Function: transformBusinessImportEcportForNotify", () => {
     beforeEach(() => {
       result = transformBusinessImportExportEnum(importExportEnum.IMPORT.key);
     });
-    it("should return the corresponding value", () => {
-      expect(result).toBe(importExportEnum.IMPORT.value);
+    it("should return the corresponding value.en", () => {
+      expect(result).toBe(importExportEnum.IMPORT.value.en);
     });
   });
   describe("When given an ivalid enum key", () => {
@@ -42,8 +42,8 @@ describe("Function: transformBusinessTypeEnum", () => {
     beforeEach(() => {
       result = transformBusinessTypeEnum(businessTypeEnum["002"].key);
     });
-    it("should return the corresponding value", () => {
-      expect(result).toBe(businessTypeEnum["002"].value);
+    it("should return the corresponding value.en", () => {
+      expect(result).toBe(businessTypeEnum["002"].value.en);
     });
   });
   describe("When given an ivalid enum key", () => {
@@ -62,8 +62,8 @@ describe("Function: transformCustomerTypeEnum", () => {
     beforeEach(() => {
       result = transformCustomerTypeEnum(customerTypeEnum.END_CONSUMER.key);
     });
-    it("should return the corresponding value", () => {
-      expect(result).toBe(customerTypeEnum.END_CONSUMER.value);
+    it("should return the corresponding value.en", () => {
+      expect(result).toBe(customerTypeEnum.END_CONSUMER.value.en);
     });
   });
   describe("When given an ivalid enum key", () => {
@@ -84,8 +84,8 @@ describe("Function: transformEstablishmentTypeEnum", () => {
         establishmentTypeEnum.DOMESTIC.key
       );
     });
-    it("should return the corresponding value", () => {
-      expect(result).toBe(establishmentTypeEnum.DOMESTIC.value);
+    it("should return the corresponding value.en", () => {
+      expect(result).toBe(establishmentTypeEnum.DOMESTIC.value.en);
     });
   });
   describe("When given an ivalid enum key", () => {
@@ -104,8 +104,8 @@ describe("Function: transformOperatorTypeEnum", () => {
     beforeEach(() => {
       result = transformOperatorTypeEnum(operatorTypeEnum.COMPANY.key);
     });
-    it("should return the corresponding value", () => {
-      expect(result).toBe(operatorTypeEnum.COMPANY.value);
+    it("should return the corresponding value.en", () => {
+      expect(result).toBe(operatorTypeEnum.COMPANY.value.en);
     });
   });
   describe("When given an ivalid enum key", () => {
@@ -124,8 +124,8 @@ describe("Function: transformWaterSupplyEnum", () => {
     beforeEach(() => {
       result = transformWaterSupplyEnum(waterSupplyEnum.PUBLIC.key);
     });
-    it("should return the corresponding value", () => {
-      expect(result).toBe(waterSupplyEnum.PUBLIC.value);
+    it("should return the corresponding value.en", () => {
+      expect(result).toBe(waterSupplyEnum.PUBLIC.value.en);
     });
   });
   describe("When given an ivalid enum key", () => {

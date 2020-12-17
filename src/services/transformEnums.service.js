@@ -11,36 +11,36 @@ const {
 
 const transformEstablishmentTypeEnum = (establishmentType) => {
   return establishmentTypeEnum[establishmentType]
-    ? establishmentTypeEnum[establishmentType].value
+    ? establishmentTypeEnum[establishmentType].value.en
     : null;
 };
 
 const transformOperatorTypeEnum = (operatorType) => {
   return operatorTypeEnum[operatorType]
-    ? operatorTypeEnum[operatorType].value
+    ? operatorTypeEnum[operatorType].value.en
     : null;
 };
 
 const transformWaterSupplyEnum = (waterSupply) => {
   return waterSupplyEnum[waterSupply]
-    ? waterSupplyEnum[waterSupply].value
+    ? waterSupplyEnum[waterSupply].value.en
     : null;
 };
 
 const transformBusinessImportExportEnum = (importExportActivities) => {
   return importExportEnum[importExportActivities]
-    ? importExportEnum[importExportActivities].value
+    ? importExportEnum[importExportActivities].value.en
     : null;
 };
 
 const transformCustomerTypeEnum = (customerType) => {
   return customerTypeEnum[customerType]
-    ? customerTypeEnum[customerType].value
+    ? customerTypeEnum[customerType].value.en
     : null;
 };
 
 const transformBusinessTypeEnum = (id) => {
-  return businessTypeEnum[id] ? businessTypeEnum[id].value : null;
+  return businessTypeEnum[id] ? businessTypeEnum[id].value.en : null;
 };
 
 module.exports = {
