@@ -8,7 +8,6 @@ const {
   validatePhoneNumber,
   validatePhoneNumberOptional,
   validateEmail,
-  validateRadioButtons,
   validateCompanyName,
   validateCompaniesHouseNumber,
   validateCharityName,
@@ -24,7 +23,9 @@ const {
   validatePartnerIsPrimaryContact,
   validatePartnerName,
   validateOpeningHours,
-  validateWaterSupply
+  validateWaterSupply,
+  validateOperatorType,
+  validateEstablishmentType
 } = require("@slice-and-dice/register-a-food-business-validation");
 
 const schema = {
@@ -143,7 +144,7 @@ const schema = {
               },
               operator_type: {
                 type: "string",
-                validation: validateRadioButtons
+                validation: validateOperatorType
               },
               operator_company_name: {
                 type: "string",
@@ -222,7 +223,7 @@ const schema = {
               },
               establishment_type: {
                 type: "string",
-                validation: validateRadioButtons
+                validation: validateEstablishmentType
               }
             },
             required: [

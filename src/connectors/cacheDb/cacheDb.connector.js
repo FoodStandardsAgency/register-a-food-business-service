@@ -18,7 +18,8 @@ const establishConnectionToMongo = async () => {
   } else {
     if (cacheDB === undefined) {
       client = await mongodb.MongoClient.connect(CACHEDB_URL, {
-        useNewUrlParser: true
+        useNewUrlParser: true,
+        useUnifiedTopology: true
       });
       cacheDB = client.db("register_a_food_business_cache");
     }

@@ -18,6 +18,15 @@ const {
   transformDataForNotify
 } = require("./notifications.service");
 
+const {
+  businessTypeEnum,
+  customerTypeEnum,
+  establishmentTypeEnum,
+  importExportEnum,
+  operatorTypeEnum,
+  waterSupplyEnum
+} = require("@slice-and-dice/register-a-food-business-validation");
+
 const exampleDeclaration = {
   declaration1: "Declaration"
 };
@@ -28,18 +37,51 @@ const exampleRegistrationEstablishment = {
     establishment_opening_date: "2017-12-30"
   },
   operator: {
-    operator_first_name: "Fred"
+    operator_first_name: "Fred",
+    operator_type: operatorTypeEnum.COMPANY.key
   },
   premise: {
-    establishment_postcode: "SW12 9RQ"
+    establishment_postcode: "SW12 9RQ",
+    establishment_type: establishmentTypeEnum.COMMERCIAL.key
   },
   activities: {
-    customer_type: "End consumer"
+    customer_type: customerTypeEnum.END_CONSUMER.key,
+    business_type: businessTypeEnum["001"].key,
+    import_export_activities: importExportEnum.BOTH.key,
+    water_supply: waterSupplyEnum.PUBLIC.key
+  }
+};
+
+const exampleRegistrationEstablishmentWithFalseEnums = {
+  establishment_details: {
+    establishment_trading_name: "Itsu",
+    establishment_opening_date: "2017-12-30"
+  },
+  operator: {
+    operator_first_name: "Fred",
+    operator_type: "Test"
+  },
+  premise: {
+    establishment_postcode: "SW12 9RQ",
+    establishment_type: "Test"
+  },
+  activities: {
+    customer_type: "Test",
+    business_type: "Test",
+    import_export_activities: "Test",
+    water_supply: "Test"
   }
 };
 
 const testRegistrationData = {
   establishment: exampleRegistrationEstablishment,
+  declaration: exampleDeclaration,
+  example: "value",
+  reg_submission_date: "2018-12-01"
+};
+
+const testRegistrationDataWithFalseEnums = {
+  establishment: exampleRegistrationEstablishmentWithFalseEnums,
   declaration: exampleDeclaration,
   example: "value",
   reg_submission_date: "2018-12-01"
@@ -52,6 +94,7 @@ const examplePartnershipRegistrationEstablishment = {
   },
   operator: {
     operator_first_name: "Fred",
+    operator_type: operatorTypeEnum.PARTNERSHIP.key,
     partners: [
       {
         partner_name: "Tom",
@@ -64,10 +107,14 @@ const examplePartnershipRegistrationEstablishment = {
     ]
   },
   premise: {
-    establishment_postcode: "SW12 9RQ"
+    establishment_postcode: "SW12 9RQ",
+    establishment_type: establishmentTypeEnum.COMMERCIAL.key
   },
   activities: {
-    customer_type: "End consumer"
+    customer_type: customerTypeEnum.END_CONSUMER.key,
+    business_type: businessTypeEnum["001"].key,
+    import_export_activities: importExportEnum.BOTH.key,
+    water_supply: waterSupplyEnum.PUBLIC.key
   }
 };
 
@@ -267,20 +314,27 @@ describe("Function: transformDataForNotify", () => {
         const expectedFormat = {
           establishment_trading_name: "Itsu",
           operator_first_name: "Fred",
+          operator_type: operatorTypeEnum.COMPANY.value.en,
           establishment_postcode: "SW12 9RQ",
+          establishment_type: establishmentTypeEnum.COMMERCIAL.value.en,
           establishment_opening_date: "30 Dec 2017",
-          customer_type: "End consumer",
+          customer_type: customerTypeEnum.END_CONSUMER.value.en,
+          business_type: businessTypeEnum["001"].value.en,
+          import_export_activities: importExportEnum.BOTH.value.en,
+          water_supply: waterSupplyEnum.PUBLIC.value.en,
           declaration1: "Declaration",
-          example: "value",
+          reg_submission_date: "01 Dec 2018",
           local_council_hygiene: "Hygiene council name",
           local_council_email_hygiene: "hygiene@example.com",
+          country: undefined,
+          hasAuth: undefined,
           local_council_phone_number_hygiene: "123456789",
           local_council_standards: "Standards council name",
           local_council_email_standards: "standards@example.com",
           local_council_phone_number_standards: "123456789",
-          reg_submission_date: "01 Dec 2018"
+          example: "value",
+          establishment_postcode_FD: "SW12"
         };
-
         expect(result).toEqual(expectedFormat);
       });
     });
@@ -296,19 +350,24 @@ describe("Function: transformDataForNotify", () => {
         const expectedFormat = {
           establishment_trading_name: "Itsu",
           operator_first_name: "Fred",
+          operator_type: operatorTypeEnum.COMPANY.value.en,
           establishment_postcode: "SW12 9RQ",
+          establishment_type: establishmentTypeEnum.COMMERCIAL.value.en,
           establishment_opening_date: "30 Dec 2017",
-          customer_type: "End consumer",
+          customer_type: customerTypeEnum.END_CONSUMER.value.en,
+          business_type: businessTypeEnum["001"].value.en,
+          import_export_activities: importExportEnum.BOTH.value.en,
+          water_supply: waterSupplyEnum.PUBLIC.value.en,
           declaration1: "Declaration",
-          example: "value",
+          reg_submission_date: "01 Dec 2018",
           local_council: "Hygiene and standards council name",
           local_council_email: "both@example.com",
-          local_council_phone_number: "123456789",
-          reg_submission_date: "01 Dec 2018",
           country: "wales",
-          hasAuth: true
+          hasAuth: true,
+          local_council_phone_number: "123456789",
+          example: "value",
+          establishment_postcode_FD: "SW12"
         };
-
         expect(result).toEqual(expectedFormat);
       });
     });
@@ -325,14 +384,22 @@ describe("Function: transformDataForNotify", () => {
         const expectedFormat = {
           establishment_trading_name: "Itsu",
           operator_first_name: "Fred",
+          operator_type: operatorTypeEnum.COMPANY.value.en,
           establishment_postcode: "SW12 9RQ",
+          establishment_type: establishmentTypeEnum.COMMERCIAL.value.en,
           establishment_opening_date: "30 Dec 2017",
-          customer_type: "End consumer",
+          customer_type: customerTypeEnum.END_CONSUMER.value.en,
+          business_type: businessTypeEnum["001"].value.en,
+          import_export_activities: importExportEnum.BOTH.value.en,
+          water_supply: waterSupplyEnum.PUBLIC.value.en,
           declaration1: "Declaration",
-          example: "value",
+          reg_submission_date: "01 Dec 2018",
           local_council: "Hygiene and standards council name",
           local_council_email: "both@example.com",
-          reg_submission_date: "01 Dec 2018"
+          country: undefined,
+          hasAuth: undefined,
+          example: "value",
+          establishment_postcode_FD: "SW12"
         };
 
         expect(result).toEqual(expectedFormat);
@@ -351,15 +418,57 @@ describe("Function: transformDataForNotify", () => {
         const expectedFormat = {
           establishment_trading_name: "Itsu",
           operator_first_name: "Fred",
+          operator_type: operatorTypeEnum.COMPANY.value.en,
           establishment_postcode: "SW12 9RQ",
+          establishment_type: establishmentTypeEnum.COMMERCIAL.value.en,
           establishment_opening_date: "30 Dec 2017",
-          customer_type: "End consumer",
+          customer_type: customerTypeEnum.END_CONSUMER.value.en,
+          business_type: businessTypeEnum["001"].value.en,
+          import_export_activities: importExportEnum.BOTH.value.en,
+          water_supply: waterSupplyEnum.PUBLIC.value.en,
+          declaration1: "Declaration",
+          reg_submission_date: "01 Dec 2018",
+          local_council_hygiene: "Hygiene council name",
+          local_council_email_hygiene: "hygiene@example.com",
+          country: undefined,
+          hasAuth: undefined,
+          local_council_standards: "Standards council name",
+          local_council_email_standards: "standards@example.com",
+          example: "value",
+          establishment_postcode_FD: "SW12"
+        };
+
+        expect(result).toEqual(expectedFormat);
+      });
+    });
+    describe("given separate hygiene and standards councils with a phone number however with false enums", () => {
+      beforeEach(() => {
+        result = transformDataForNotify(
+          testRegistrationDataWithFalseEnums,
+          testLcContactConfigSplitWithPhoneNumber
+        );
+      });
+      it("should return the flattened data with two sets of council details and the enum values to be null", () => {
+        const expectedFormat = {
+          establishment_trading_name: "Itsu",
+          operator_first_name: "Fred",
+          operator_type: null,
+          establishment_postcode: "SW12 9RQ",
+          establishment_postcode_FD: "SW12",
+          establishment_type: null,
+          establishment_opening_date: "30 Dec 2017",
+          customer_type: null,
+          business_type: null,
+          import_export_activities: null,
+          water_supply: null,
           declaration1: "Declaration",
           example: "value",
           local_council_hygiene: "Hygiene council name",
           local_council_email_hygiene: "hygiene@example.com",
+          local_council_phone_number_hygiene: "123456789",
           local_council_standards: "Standards council name",
           local_council_email_standards: "standards@example.com",
+          local_council_phone_number_standards: "123456789",
           reg_submission_date: "01 Dec 2018"
         };
 
@@ -381,19 +490,27 @@ describe("Function: transformDataForNotify", () => {
         const expectedFormat = {
           establishment_trading_name: "Itsu",
           operator_first_name: "Fred",
+          operator_type: operatorTypeEnum.PARTNERSHIP.value.en,
           main_contact: "Tom",
           partner_names: "Tom, Fred",
           establishment_postcode: "SW12 9RQ",
+          establishment_type: establishmentTypeEnum.COMMERCIAL.value.en,
           establishment_opening_date: "30 Dec 2017",
-          customer_type: "End consumer",
+          customer_type: customerTypeEnum.END_CONSUMER.value.en,
+          business_type: businessTypeEnum["001"].value.en,
+          import_export_activities: importExportEnum.BOTH.value.en,
+          water_supply: waterSupplyEnum.PUBLIC.value.en,
           declaration1: "Declaration",
+          reg_submission_date: today,
           local_council_hygiene: "Hygiene council name",
           local_council_email_hygiene: "hygiene@example.com",
+          country: undefined,
+          hasAuth: undefined,
           local_council_phone_number_hygiene: "123456789",
           local_council_standards: "Standards council name",
           local_council_email_standards: "standards@example.com",
           local_council_phone_number_standards: "123456789",
-          reg_submission_date: today
+          establishment_postcode_FD: "SW12"
         };
 
         expect(result).toEqual(expectedFormat);
@@ -411,18 +528,24 @@ describe("Function: transformDataForNotify", () => {
         const expectedFormat = {
           establishment_trading_name: "Itsu",
           operator_first_name: "Fred",
+          operator_type: operatorTypeEnum.PARTNERSHIP.value.en,
           main_contact: "Tom",
           partner_names: "Tom, Fred",
           establishment_postcode: "SW12 9RQ",
+          establishment_type: establishmentTypeEnum.COMMERCIAL.value.en,
           establishment_opening_date: "30 Dec 2017",
-          customer_type: "End consumer",
+          customer_type: customerTypeEnum.END_CONSUMER.value.en,
+          business_type: businessTypeEnum["001"].value.en,
+          import_export_activities: importExportEnum.BOTH.value.en,
+          water_supply: waterSupplyEnum.PUBLIC.value.en,
           declaration1: "Declaration",
+          reg_submission_date: today,
           local_council: "Hygiene and standards council name",
           local_council_email: "both@example.com",
-          local_council_phone_number: "123456789",
-          reg_submission_date: today,
           country: "wales",
-          hasAuth: true
+          hasAuth: true,
+          local_council_phone_number: "123456789",
+          establishment_postcode_FD: "SW12"
         };
 
         expect(result).toEqual(expectedFormat);
@@ -441,15 +564,23 @@ describe("Function: transformDataForNotify", () => {
         const expectedFormat = {
           establishment_trading_name: "Itsu",
           operator_first_name: "Fred",
+          operator_type: operatorTypeEnum.PARTNERSHIP.value.en,
           main_contact: "Tom",
           partner_names: "Tom, Fred",
           establishment_postcode: "SW12 9RQ",
+          establishment_type: establishmentTypeEnum.COMMERCIAL.value.en,
           establishment_opening_date: "30 Dec 2017",
-          customer_type: "End consumer",
+          customer_type: customerTypeEnum.END_CONSUMER.value.en,
+          business_type: businessTypeEnum["001"].value.en,
+          import_export_activities: importExportEnum.BOTH.value.en,
+          water_supply: waterSupplyEnum.PUBLIC.value.en,
           declaration1: "Declaration",
+          reg_submission_date: today,
           local_council: "Hygiene and standards council name",
           local_council_email: "both@example.com",
-          reg_submission_date: today
+          country: undefined,
+          hasAuth: undefined,
+          establishment_postcode_FD: "SW12"
         };
 
         expect(result).toEqual(expectedFormat);
@@ -468,17 +599,25 @@ describe("Function: transformDataForNotify", () => {
         const expectedFormat = {
           establishment_trading_name: "Itsu",
           operator_first_name: "Fred",
+          operator_type: operatorTypeEnum.PARTNERSHIP.value.en,
           main_contact: "Tom",
           partner_names: "Tom, Fred",
           establishment_postcode: "SW12 9RQ",
+          establishment_type: establishmentTypeEnum.COMMERCIAL.value.en,
           establishment_opening_date: "30 Dec 2017",
-          customer_type: "End consumer",
+          customer_type: customerTypeEnum.END_CONSUMER.value.en,
+          business_type: businessTypeEnum["001"].value.en,
+          import_export_activities: importExportEnum.BOTH.value.en,
+          water_supply: waterSupplyEnum.PUBLIC.value.en,
           declaration1: "Declaration",
+          reg_submission_date: today,
           local_council_hygiene: "Hygiene council name",
           local_council_email_hygiene: "hygiene@example.com",
+          country: undefined,
+          hasAuth: undefined,
           local_council_standards: "Standards council name",
           local_council_email_standards: "standards@example.com",
-          reg_submission_date: today
+          establishment_postcode_FD: "SW12"
         };
 
         expect(result).toEqual(expectedFormat);

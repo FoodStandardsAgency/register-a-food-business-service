@@ -28,7 +28,7 @@ describe("Pdf Service: ", () => {
             operator_town: "London",
             operator_primary_number: "9827235",
             operator_email: "operator@email.com",
-            operator_type: "Sole trader"
+            operator_type: "SOLETRADER"
           },
           premise: {
             establishment_postcode: "SW12 9RQ",
@@ -36,12 +36,13 @@ describe("Pdf Service: ", () => {
             establishment_address_line_2: "Street",
             establishment_address_line_3: "Locality",
             establishment_town: "London",
-            establishment_type: "Place"
+            establishment_type: "DOMESTIC"
           },
           activities: {
-            customer_type: "End consumer",
-            business_type: "Livestock farm",
-            import_export_activities: "None",
+            customer_type: "END_CONSUMER",
+            business_type: "002",
+            import_export_activities: "NONE",
+            water_supply: "PUBLIC",
             opening_day_monday: true,
             opening_day_tuesday: true,
             opening_day_wednesday: true,
@@ -144,6 +145,16 @@ describe("Pdf Service: ", () => {
         it("Should return lcInfo.country", () => {
           expect(result.metaData.lcInfo.country).toBe("wales");
         });
+        it("Should return correct value for key transformed fields", () => {
+          expect(result.operator.operator_type).toBe("Sole trader");
+          expect(result.establishment.establishment_type).toBe(
+            "Home or domestic premises"
+          );
+          expect(result.activities.customer_type).toBe("End consumer");
+          expect(result.activities.business_type).toBe("Livestock farm");
+          expect(result.activities.import_export_activities).toBe("None");
+          expect(result.activities.water_supply).toBe("Public");
+        });
       });
     });
     describe("when registration role is partnership", () => {
@@ -164,7 +175,7 @@ describe("Pdf Service: ", () => {
             operator_town: "London",
             operator_primary_number: "9827235",
             operator_email: "operator@email.com",
-            operator_type: "Sole trader",
+            operator_type: "SOLETRADER",
             partners: [
               {
                 partner_name: "Joe",
@@ -182,13 +193,13 @@ describe("Pdf Service: ", () => {
             establishment_address_line_2: "Street",
             establishment_address_line_3: "Locality",
             establishment_town: "London",
-            establishment_type: "Place"
+            establishment_type: "DOMESTIC"
           },
           activities: {
-            customer_type: "End consumer",
-            business_type: "Livestock farm",
-            import_export_activities: "None",
-            water_supply: "Public",
+            customer_type: "END_CONSUMER",
+            business_type: "002",
+            import_export_activities: "NONE",
+            water_supply: "PUBLIC",
             opening_day_monday: true,
             opening_day_tuesday: true,
             opening_day_wednesday: true,
@@ -242,6 +253,16 @@ describe("Pdf Service: ", () => {
         it("Should return lcInfo.country", () => {
           expect(result.metaData.lcInfo.country).toBe("wales");
         });
+        it("Should return correct value for key transformed fields", () => {
+          expect(result.operator.operator_type).toBe("Sole trader");
+          expect(result.establishment.establishment_type).toBe(
+            "Home or domestic premises"
+          );
+          expect(result.activities.customer_type).toBe("End consumer");
+          expect(result.activities.business_type).toBe("Livestock farm");
+          expect(result.activities.import_export_activities).toBe("None");
+          expect(result.activities.water_supply).toBe("Public");
+        });
       });
 
       describe("When given seperate hygiene and standards council", () => {
@@ -292,6 +313,16 @@ describe("Pdf Service: ", () => {
         it("Should return lcInfo.country", () => {
           expect(result.metaData.lcInfo.country).toBe("wales");
         });
+        it("Should return correct value for key transformed fields", () => {
+          expect(result.operator.operator_type).toBe("Sole trader");
+          expect(result.establishment.establishment_type).toBe(
+            "Home or domestic premises"
+          );
+          expect(result.activities.customer_type).toBe("End consumer");
+          expect(result.activities.business_type).toBe("Livestock farm");
+          expect(result.activities.import_export_activities).toBe("None");
+          expect(result.activities.water_supply).toBe("Public");
+        });
       });
     });
   });
@@ -309,7 +340,7 @@ describe("Pdf Service: ", () => {
           operator_town: "London",
           operator_primary_number: "9827235",
           operator_email: "operator@email.com",
-          operator_type: "Sole trader"
+          operator_type: "SOLETRADER"
         },
         establishment: {
           establishment_trading_name: "Itsu",
@@ -322,12 +353,12 @@ describe("Pdf Service: ", () => {
           establishment_address_line_2: "Street",
           establishment_address_line_3: "Locality",
           establishment_town: "London",
-          establishment_type: "Place"
+          establishment_type: "DOMESTIC"
         },
         activities: {
-          customer_type: "End consumer",
-          business_type: "Livestock farm",
-          import_export_activities: "None",
+          customer_type: "END_CONSUMER",
+          business_type: "002",
+          import_export_activities: "NONE",
           water_supply: "Private",
           opening_day_monday: true,
           opening_day_tuesday: true,
@@ -367,7 +398,7 @@ describe("Pdf Service: ", () => {
           operator_town: "London",
           operator_primary_number: "9827235",
           operator_email: "operator@email.com",
-          operator_type: "Sole trader"
+          operator_type: "SOLETRADER"
         },
         partnershipDetails: {
           partner_names: "Joe, Tom",
@@ -384,12 +415,12 @@ describe("Pdf Service: ", () => {
           establishment_address_line_2: "Street",
           establishment_address_line_3: "Locality",
           establishment_town: "London",
-          establishment_type: "Place"
+          establishment_type: "DOMESTIC"
         },
         activities: {
-          customer_type: "End consumer",
-          business_type: "Livestock farm",
-          import_export_activities: "None",
+          customer_type: "END_CONSUMER",
+          business_type: "002",
+          import_export_activities: "NONE",
           water_supply: "Private",
           opening_day_monday: true,
           opening_day_tuesday: true,

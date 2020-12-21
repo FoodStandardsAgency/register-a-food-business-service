@@ -4,20 +4,24 @@ const mongoClient = require("mongodb").MongoClient;
 const fs = require("fs");
 const inquirer = require("inquirer");
 const generalQs = require("./questions/general.questions");
-const localCouncilQs = require("./questions/lcConfigquestions");
+const localCouncilQs = require("./questions/lcConfig.questions");
 const configVersionQs = require("./questions/configVersion.questions");
+const supplierQs = require("./questions/supplierConfig.questions");
 const localCouncilTemplate = require("./templates/lcConfig.template");
 const configVersionTemplate = require("./templates/configVersion.template");
+const supplierTemplate = require("./templates/supplierConfig.template");
 
 const questions = {
   general: generalQs,
   lcConfig: localCouncilQs,
-  configVersion: configVersionQs
+  configVersion: configVersionQs,
+  supplierConfig: supplierQs
 };
 
 const templates = {
   lcConfig: localCouncilTemplate,
-  configVersion: configVersionTemplate
+  configVersion: configVersionTemplate,
+  supplierConfig: supplierTemplate
 };
 
 const establishConnectionToMongo = async (configDbUrl) => {
