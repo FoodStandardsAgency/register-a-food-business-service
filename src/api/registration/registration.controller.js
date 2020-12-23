@@ -117,11 +117,11 @@ const createNewRegistration = async (
   return combinedResponse;
 };
 
-const createNewLcRegistration = async (registration, options) => {
+const createNewDirectRegistration = async (registration, options) => {
   logEmitter.emit(
     "functionCall",
     "registration.controller",
-    "createNewLcRegistration"
+    "createNewDirectRegistration"
   );
 
   if (registration === undefined) {
@@ -147,12 +147,12 @@ const createNewLcRegistration = async (registration, options) => {
   // Get Council details
   const sourceCouncil = await findCouncilByUrl(
     lcConfigCollection,
-    options.council
+    options.subscriber
   );
   if (!sourceCouncil) {
     const newError = new Error();
     newError.name = "localCouncilNotFound";
-    newError.message = `Config for council ID "${options.council}" not found`;
+    newError.message = `Config for council ID "${options.subscriber}" not found`;
     logEmitter.emit(
       "functionFail",
       "registration.controller",
@@ -248,7 +248,7 @@ const createNewLcRegistration = async (registration, options) => {
   logEmitter.emit(
     "functionSuccess",
     "registration.controller",
-    "createNewLcRegistration"
+    "createNewDirectRegistration"
   );
 
   return response;
@@ -268,7 +268,7 @@ const deleteRegistration = async (fsa_rn) => {
 
 module.exports = {
   createNewRegistration,
-  createNewLcRegistration,
+  createNewDirectRegistration,
   getRegistration,
   deleteRegistration
 };

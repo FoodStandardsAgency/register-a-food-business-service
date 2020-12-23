@@ -49,7 +49,7 @@ const {
 
 const {
   createNewRegistration,
-  createNewLcRegistration,
+  createNewDirectRegistration,
   getRegistration,
   deleteRegistration
 } = require("./registration.controller");
@@ -110,7 +110,7 @@ describe("registration controller", () => {
   const testRegistration = {
     establishment: { operator: { operator_email: "operator@example.com" } }
   };
-  const testLcRegistration = {
+  const testDirectRegistration = {
     establishment: {
       operator: {
         operator_email: "operator@example.com"
@@ -120,7 +120,7 @@ describe("registration controller", () => {
       }
     }
   };
-  const testLcRegistrationWithFsaRn = Object.assign({}, testLcRegistration, {
+  const testDirectRegistrationWithFsaRn = Object.assign({}, testDirectRegistration, {
     fsa_rn: "TESTRN"
   });
   const testLocalCouncilUrl = "http://example-council-url";
@@ -301,7 +301,7 @@ describe("registration controller", () => {
     });
   });
 
-  describe("Function: createNewLcRegistration", () => {
+  describe("Function: createNewDirectRegistration", () => {
     beforeEach(() => {
       jest.clearAllMocks();
       findCouncilByUrl.mockImplementation(() => exampleCouncil);
@@ -320,7 +320,7 @@ describe("registration controller", () => {
           Promise.resolve(exampleLcConfig)
         );
         getConfigVersion.mockImplementation(() => testConfigVersion);
-        result = await createNewLcRegistration(testLcRegistration, testOptions);
+        result = await createNewDirectRegistration(testDirectRegistration, testOptions);
       });
       it("should call cache registration", () => {
         expect(cacheRegistration).toHaveBeenCalled();
@@ -343,8 +343,8 @@ describe("registration controller", () => {
           Promise.resolve(exampleLcConfig)
         );
         getConfigVersion.mockImplementation(() => testConfigVersion);
-        result = await createNewLcRegistration(
-          testLcRegistrationWithFsaRn,
+        result = await createNewDirectRegistration(
+          testDirectRegistrationWithFsaRn,
           testOptions
         );
       });
@@ -357,7 +357,7 @@ describe("registration controller", () => {
 
       it("should return provided fsa_rn", () => {
         expect(result).toEqual({
-          "fsa-rn": testLcRegistrationWithFsaRn["fsa_rn"]
+          "fsa-rn": testDirectRegistrationWithFsaRn["fsa_rn"]
         });
       });
     });
@@ -375,7 +375,7 @@ describe("registration controller", () => {
           Promise.resolve(exampleLcConfig)
         );
         getConfigVersion.mockImplementation(() => testConfigVersion);
-        result = await createNewLcRegistration(testLcRegistration, testOptions);
+        result = await createNewDirectRegistration(testDirectRegistration, testOptions);
       });
 
       it("should call getRegistrationMetaData with the hygieneAndStandards council code response from getLcContactConfig", () => {
@@ -398,7 +398,7 @@ describe("registration controller", () => {
           Promise.resolve(exampleMultiLcConfig)
         );
         getConfigVersion.mockImplementation(() => testConfigVersion);
-        result = await createNewLcRegistration(testLcRegistration, testOptions);
+        result = await createNewDirectRegistration(testDirectRegistration, testOptions);
       });
 
       it("should call getRegistrationMetaData with the hygiene council code response from getLcContactConfig", () => {
@@ -414,8 +414,8 @@ describe("registration controller", () => {
           return ["ERROR"];
         });
         try {
-          result = await createNewLcRegistration(
-            testLcRegistration,
+          result = await createNewDirectRegistration(
+            testDirectRegistration,
             testOptions
           );
         } catch (err) {
@@ -439,8 +439,8 @@ describe("registration controller", () => {
         });
         findCouncilByUrl.mockImplementation(() => null);
         try {
-          result = await createNewLcRegistration(
-            testLcRegistration,
+          result = await createNewDirectRegistration(
+            testDirectRegistration,
             testOptions
           );
         } catch (err) {
@@ -460,7 +460,7 @@ describe("registration controller", () => {
     describe("when given undefined", () => {
       it("Should throw an error", () => {
         try {
-          createNewLcRegistration(undefined);
+          createNewDirectRegistration(undefined);
         } catch (err) {
           expect(err.message).toBe("registration is undefined");
         }

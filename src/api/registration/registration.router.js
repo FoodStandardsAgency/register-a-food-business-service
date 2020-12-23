@@ -82,48 +82,48 @@ const registrationRouter = () => {
   );
 
   router.post(
-    "/v1/createNewLcSubmittedRegistration/:lc",
+    "/v1/createNewDirectRegistration/:subscriber",
     createRegistrationAuth,
     async (req, res, next) => {
       logEmitter.emit(
         "functionCall",
         "registration.router",
-        "createNewLcSubmittedRegistration"
+        "createNewDirectRegistration"
       );
       try {
-        statusEmitter.emit("incrementCount", "lcSubmissionsReceived");
+        statusEmitter.emit("incrementCount", "directSubmissionsReceived");
 
         const options = {
           regDataVersion: "v1",
-          council: req.params.lc || ""
+          subscriber: req.params.subscriber || ""
         };
 
         let response;
         if (req.headers["double-mode"]) {
           response = registrationDouble(req.headers["double-mode"]);
         } else {
-          response = await registrationController.createNewLcRegistration(
+          response = await registrationController.createNewDirectRegistration(
             req.body,
             options
           );
         }
-        statusEmitter.emit("incrementCount", "lcRegistrationsSucceeded");
+        statusEmitter.emit("incrementCount", "directRegistrationsSucceeded");
         statusEmitter.emit(
           "setStatus",
-          "mostRecentlcRegistrationSucceeded",
+          "mostRecentDirectRegistrationSucceeded",
           true
         );
         logEmitter.emit(
           "functionSuccess",
           "registration.router",
-          "createNewLcSubmittedRegistration"
+          "createNewDirectRegistration"
         );
         res.send(response);
       } catch (err) {
         logEmitter.emit(
           "errorWith",
           "registration.router",
-          "createNewLcSubmittedRegistration",
+          "createNewDirectRegistration",
           req.body
         );
         statusEmitter.emit("incrementCount", "endToEndRegistrationsFailed");
@@ -135,7 +135,7 @@ const registrationRouter = () => {
         logEmitter.emit(
           "functionFail",
           "registration.router",
-          "createNewLcSubmittedRegistration",
+          "createNewDirectRegistration",
           err
         );
         next(err);

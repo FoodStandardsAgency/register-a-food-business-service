@@ -7,7 +7,7 @@ jest.mock("express", () => ({
 }));
 jest.mock("./registration.controller", () => ({
   createNewRegistration: jest.fn(),
-  createNewLcRegistration: jest.fn(),
+  createNewDirectRegistration: jest.fn(),
   getRegistration: jest.fn(),
   deleteRegistration: jest.fn()
 }));
@@ -103,7 +103,7 @@ describe("registration router", () => {
       });
 
       it("should call createNewRegistration", () => {
-        expect(registrationController.createNewLcRegistration).toBeCalled();
+        expect(registrationController.createNewDirectRegistration).toBeCalled();
       });
 
       it("should call res.send", () => {
@@ -114,7 +114,7 @@ describe("registration router", () => {
     describe("when an error is thrown", () => {
       let next;
       beforeEach(async () => {
-        registrationController.createNewLcRegistration.mockImplementation(
+        registrationController.createNewDirectRegistration.mockImplementation(
           () => {
             throw new Error("reg error");
           }
@@ -162,7 +162,7 @@ describe("registration router", () => {
 
       it("should not call registrationController", () => {
         expect(
-          registrationController.createNewLcRegistration
+          registrationController.createNewDirectRegistration
         ).not.toHaveBeenCalled();
       });
 
@@ -194,7 +194,7 @@ describe("registration router", () => {
 
       it("should not call registrationController", () => {
         expect(
-          registrationController.createNewLcRegistration
+          registrationController.createNewDirectRegistration
         ).not.toHaveBeenCalled();
       });
 
