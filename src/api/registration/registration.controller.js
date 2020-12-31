@@ -237,7 +237,8 @@ const createNewDirectRegistration = async (registration, options) => {
       hygiene_council_code: hygieneCouncilCode,
       local_council_url: sourceCouncil.local_council_url,
       source_council_id: sourceCouncil._id,
-      registration_data_version: options.regDataVersion
+      registration_data_version: options.regDataVersion,
+      api_version: options.apiVersion
     }
   );
 

@@ -1,7 +1,7 @@
 const { Validator } = require("jsonschema");
 const { logEmitter } = require("./logging.service");
 const schema = require("./validation.schema");
-const lcSubmissionSchema = require("./validationLcSubmission.schema");
+const directSubmissionSchema = require("./validation.directSubmission.schema");
 
 const errorMessages = {
   declaration1: "Invalid declaration1",
@@ -77,14 +77,14 @@ validator.attributes.validation = (instance, schema, options, ctx) => {
   return undefined;
 };
 
-module.exports.validate = (data, isLcSubmission = false) => {
+module.exports.validate = (data, isDirectSubmission = false) => {
   logEmitter.emit("functionCall", "validation.service", "validate");
   const result = [];
 
   var validationSchema = schema;
-  if (isLcSubmission) {
-    logEmitter.emit("info", "Validating with LC submission schema");
-    validationSchema = lcSubmissionSchema;
+  if (isDirectSubmission) {
+    logEmitter.emit("info", "Validating with direct submission schema");
+    validationSchema = directSubmissionSchema;
   } else {
     logEmitter.emit("info", "Validating with standard schema");
   }

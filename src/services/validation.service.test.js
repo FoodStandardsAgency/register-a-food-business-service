@@ -38,7 +38,7 @@ jest.mock("./validation.schema", () => ({
   }
 }));
 
-jest.mock("./validationLcSubmission.schema", () => ({
+jest.mock("./validation.directSubmission.schema", () => ({
   registration: {
     type: "object",
     properties: {

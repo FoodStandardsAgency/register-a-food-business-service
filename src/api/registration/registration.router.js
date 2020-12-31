@@ -94,7 +94,8 @@ const registrationRouter = () => {
         statusEmitter.emit("incrementCount", "directSubmissionsReceived");
 
         const options = {
-          regDataVersion: "v1",
+          regDataVersion: "2.0.0",
+          apiVersion: "v2.1",
           subscriber: req.params.subscriber || ""
         };
 

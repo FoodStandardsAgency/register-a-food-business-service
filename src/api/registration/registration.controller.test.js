@@ -120,9 +120,13 @@ describe("registration controller", () => {
       }
     }
   };
-  const testDirectRegistrationWithFsaRn = Object.assign({}, testDirectRegistration, {
-    fsa_rn: "TESTRN"
-  });
+  const testDirectRegistrationWithFsaRn = Object.assign(
+    {},
+    testDirectRegistration,
+    {
+      fsa_rn: "TESTRN"
+    }
+  );
   const testLocalCouncilUrl = "http://example-council-url";
   const testRegDataVersion = "1.2.0";
   const testOptions = {
@@ -320,7 +324,10 @@ describe("registration controller", () => {
           Promise.resolve(exampleLcConfig)
         );
         getConfigVersion.mockImplementation(() => testConfigVersion);
-        result = await createNewDirectRegistration(testDirectRegistration, testOptions);
+        result = await createNewDirectRegistration(
+          testDirectRegistration,
+          testOptions
+        );
       });
       it("should call cache registration", () => {
         expect(cacheRegistration).toHaveBeenCalled();
@@ -375,7 +382,10 @@ describe("registration controller", () => {
           Promise.resolve(exampleLcConfig)
         );
         getConfigVersion.mockImplementation(() => testConfigVersion);
-        result = await createNewDirectRegistration(testDirectRegistration, testOptions);
+        result = await createNewDirectRegistration(
+          testDirectRegistration,
+          testOptions
+        );
       });
 
       it("should call getRegistrationMetaData with the hygieneAndStandards council code response from getLcContactConfig", () => {
@@ -398,7 +408,10 @@ describe("registration controller", () => {
           Promise.resolve(exampleMultiLcConfig)
         );
         getConfigVersion.mockImplementation(() => testConfigVersion);
-        result = await createNewDirectRegistration(testDirectRegistration, testOptions);
+        result = await createNewDirectRegistration(
+          testDirectRegistration,
+          testOptions
+        );
       });
 
       it("should call getRegistrationMetaData with the hygiene council code response from getLcContactConfig", () => {
