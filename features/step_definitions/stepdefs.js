@@ -18,12 +18,14 @@ if (process.env.NODE_ENV === "local") {
   apiUrl = process.env.API_URL ? process.env.API_URL : apiUrl;
 }
 
+let directRegistrationFSARNs = [];
+
 const sendRequest = async (body) => {
   const headers = {
     "Content-Type": "application/json",
     "api-secret": FRONT_END_SECRET,
     "client-name": FRONT_END_NAME,
-    "registration-data-version": "1.2.1"
+    "registration-data-version": "1.7.0"
   };
   const res = await fetch(`${apiUrl}/api/registration/createNewRegistration`, {
     method: "POST",
@@ -38,13 +40,16 @@ const sendDirectRequest = async (body) => {
     "Content-Type": "application/json",
     "api-secret": DIRECT_API_SECRET,
     "client-name": DIRECT_API_NAME,
-    "registration-data-version": "1.2.1"
+    "registration-data-version": "1.7.0"
   };
-  const res = await fetch(`${apiUrl}/api/registration/v1/createNewDirectRegistration/cardiff`, {
-    method: "POST",
-    headers,
-    body: JSON.stringify(body)
-  });
+  const res = await fetch(
+    `${apiUrl}/api/registration/v1/createNewDirectRegistration/cardiff`,
+    {
+      method: "POST",
+      headers,
+      body: JSON.stringify(body)
+    }
+  );
   return res.json();
 };
 
@@ -60,6 +65,21 @@ const getRequest = async (id) => {
   return res.json();
 };
 ////////
+
+const triggerNotificationTask = async () => {
+  const res = await fetch(`${apiUrl}/api/tasks/bulk/sendnotification`);
+  return res.json();
+};
+
+const triggerTascomiTask = async () => {
+  const res = await fetch(`${apiUrl}/api/tasks/bulk/createtascomiregistration`);
+  return res.json();
+};
+
+const triggerSaveToTemp = async () => {
+  const res = await fetch(`${apiUrl}/api/tasks/bulk/savetotempstore`);
+  return res.json();
+};
 
 Given("I have a new registration with all valid required fields", function () {
   this.registration = {
@@ -118,8 +138,10 @@ Given("I have a new registration with all valid required fields", function () {
   };
 });
 
-Given("I have a new direct submission registration with all valid required fields", function () {
-  this.registration = {
+Given(
+  "I have a new direct submission registration with all valid required fields",
+  function () {
+    this.registration = {
       establishment: {
         establishment_trading_name: "Itsu",
         establishment_primary_number: "329857245",
@@ -155,8 +177,9 @@ Given("I have a new direct submission registration with all valid required field
           water_supply: "PUBLIC"
         }
       }
-  };
-});
+    };
+  }
+);
 
 Given(
   "I have a new establishment with some invalid required fields",
@@ -219,6 +242,11 @@ When("I submit it to the backend", async function () {
 
 When("I submit it to the direct backend API", async function () {
   this.response = await sendDirectRequest(this.registration);
+  this.response["fsa-rn"]
+    ? directRegistrationFSARNs.push(this.response["fsa-rn"])
+    : {
+        //do nothing
+      };
 });
 
 When("I submit my multiple fields to the backend", async function () {
@@ -248,6 +276,18 @@ When("I submit my multiple fields to the backend", async function () {
   this.response = await sendRequest(requestBody);
 });
 
+When("The send notifications task is triggered", async function () {
+  this.response = await triggerNotificationTask();
+});
+
+When("The tascomi task is triggered", async function () {
+  this.response = await triggerTascomiTask();
+});
+
+When("The save to temp store task is triggered", async function () {
+  this.res = await triggerSaveToTemp();
+});
+
 Then("I get a success response", async function () {
   assert.ok(this.response["fsa-rn"]);
 });
@@ -256,17 +296,28 @@ Then("I get an error response", async function () {
   assert.ok(this.response.userMessages);
 });
 
-Then(
-  "The information is saved to the database",
-  async function () {
-    const id = this.response["fsa-rn"];
-    getRequest(id).then((response) => () => {
-      assert.equal(response.establishment.establishment_trading_name, "Itsu");
-      assert.equal(response.establishment.operator.operator_first_name, "Fred");
-    });
-  }
-);
+Then("The information is saved to the database", async function () {
+  const id = this.response["fsa-rn"];
+  await getRequest(id).then((response) => () => {
+    assert.strictEqual(
+      response.establishment.establishment_trading_name,
+      "Itsu"
+    );
+    assert.strictEqual(
+      response.establishment.operator.operator_first_name,
+      "Fred"
+    );
+  });
+});
 
 Then("I receive a confirmation number", async function () {
   assert.ok(this.response["fsa-rn"]);
+});
+
+Then("It returns an array of attempted registrations", async function () {
+  assert.ok(this.response["attempted"]);
+});
+
+Then("Direct submission registrations are not attempted", function () {
+  assert.ok(!this.response["attempted"].includes(directRegistrationFSARNs));
 });
