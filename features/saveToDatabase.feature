@@ -5,9 +5,11 @@ Feature: Backend saves new establishments to database
     Scenario:
         Given I have a new registration with all valid required fields
         When I submit it to the backend
+        And The save to temp store task is triggered 
         Then The information is saved to the database
 
     Scenario: Save direct submission
         Given I have a new direct submission registration with all valid required fields
         When I submit it to the direct backend API
+        And The save to temp store task is triggered
         Then The information is saved to the database
