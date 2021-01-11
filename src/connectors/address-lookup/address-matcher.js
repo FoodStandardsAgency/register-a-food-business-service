@@ -28,14 +28,14 @@ const getUprn = async (firstLine, secondLine, postcode) => {
     }
 
     // Try to match returned addresses against provided first line
-    for (var i = 0; i < addressLookupResponse.length; i++) {
+    for (let address of addressLookupResponse) {
       const lookUpAddress = transformAddressLineForMatching(
-        addressLookupResponse[i]["addressline1"],
-        addressLookupResponse[i]["addressline2"]
+        address["addressline1"],
+        address["addressline2"]
       );
 
       if (linesMatch(lookUpAddress, providedAddress)) {
-        uprn = addressLookupResponse[i]["uprn"];
+        uprn = address["uprn"];
         logEmitter.emit("info", `UPRN found`);
       }
     }

@@ -175,8 +175,8 @@ const sendAllNotificationsForRegistrationsAction = async (
   );
   failedRegistrations = await failedRegistrations.toArray();
 
-  for (let i = 0; i < failedRegistrations.length; i++) {
-    registrations.push(failedRegistrations[i]);
+  for (let reg of failedRegistrations) {
+    registrations.push(reg);
   }
 
   let allLcConfigData = await getAllLocalCouncilConfig();

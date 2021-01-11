@@ -18,8 +18,8 @@ if (process.env.NODE_ENV === "local") {
   apiUrl = process.env.API_URL ? process.env.API_URL : apiUrl;
 }
 
-let directRegistrationFSARNs = [];
-let frontendRegistrationFSARNs = [];
+const directRegistrationFSARNs = [];
+const frontendRegistrationFSARNs = [];
 
 const sendRequest = async (body) => {
   const headers = {
@@ -239,20 +239,16 @@ Given("I have multiple conditional required fields", function () {
 
 When("I submit it to the backend", async function () {
   this.response = await sendRequest(this.registration);
-  this.response["fsa-rn"]
-    ? frontendRegistrationFSARNs.push(this.response["fsa-rn"])
-    : {
-        // do nothing
-      };
+  if (this.response["fsa-rn"]) {
+    frontendRegistrationFSARNs.push(this.response["fsa-rn"]);
+  }
 });
 
 When("I submit it to the direct backend API", async function () {
   this.response = await sendDirectRequest(this.registration);
-  this.response["fsa-rn"]
-    ? directRegistrationFSARNs.push(this.response["fsa-rn"])
-    : {
-        //do nothing
-      };
+  if (this.response["fsa-rn"]) {
+    directRegistrationFSARNs.push(this.response["fsa-rn"]);
+  }
 });
 
 When("I submit my multiple fields to the backend", async function () {

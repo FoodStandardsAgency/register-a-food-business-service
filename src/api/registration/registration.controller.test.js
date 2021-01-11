@@ -309,14 +309,14 @@ describe("registration controller", () => {
     beforeEach(() => {
       jest.clearAllMocks();
       findCouncilByUrl.mockImplementation(() => exampleCouncil);
+      validate.mockImplementation(() => {
+        return [];
+      });
+      getUprn.mockImplementation(() => Promise.resolve("TESTUPRN"));
     });
 
     describe("when given valid data", () => {
       beforeEach(async () => {
-        validate.mockImplementation(() => {
-          return [];
-        });
-        getUprn.mockImplementation(() => Promise.resolve("TESTUPRN"));
         getRegistrationMetaData.mockImplementation(() =>
           Promise.resolve(postRegistrationMetadata)
         );
@@ -342,10 +342,6 @@ describe("registration controller", () => {
 
     describe("when given valid data including fsa-rn", () => {
       beforeEach(async () => {
-        validate.mockImplementation(() => {
-          return [];
-        });
-        getUprn.mockImplementation(() => Promise.resolve("TESTUPRN"));
         getLcContactConfig.mockImplementation(() =>
           Promise.resolve(exampleLcConfig)
         );
@@ -371,10 +367,6 @@ describe("registration controller", () => {
 
     describe("given the Local Council is responsible for both hygiene and standards", () => {
       beforeEach(async () => {
-        validate.mockImplementation(() => {
-          return [];
-        });
-        getUprn.mockImplementation(() => Promise.resolve("TESTUPRN"));
         getRegistrationMetaData.mockImplementation(() =>
           Promise.resolve(postRegistrationMetadata)
         );
@@ -397,10 +389,6 @@ describe("registration controller", () => {
 
     describe("given the hygiene and standards Local Councils are separate", () => {
       beforeEach(async () => {
-        validate.mockImplementation(() => {
-          return [];
-        });
-        getUprn.mockImplementation(() => Promise.resolve("TESTUPRN"));
         getRegistrationMetaData.mockImplementation(() =>
           Promise.resolve(postRegistrationMetadata)
         );
@@ -471,9 +459,9 @@ describe("registration controller", () => {
     });
 
     describe("when given undefined", () => {
-      it("Should throw an error", () => {
+      it("Should throw an error", async () => {
         try {
-          createNewDirectRegistration(undefined);
+          await createNewDirectRegistration(undefined);
         } catch (err) {
           expect(err.message).toBe("registration is undefined");
         }
