@@ -19,6 +19,7 @@ if (process.env.NODE_ENV === "local") {
 }
 
 let directRegistrationFSARNs = [];
+let frontendRegistrationFSARNs = [];
 
 const sendRequest = async (body) => {
   const headers = {
@@ -238,6 +239,11 @@ Given("I have multiple conditional required fields", function () {
 
 When("I submit it to the backend", async function () {
   this.response = await sendRequest(this.registration);
+  this.response["fsa-rn"]
+    ? frontendRegistrationFSARNs.push(this.response["fsa-rn"])
+    : {
+        // do nothing
+      };
 });
 
 When("I submit it to the direct backend API", async function () {
@@ -318,6 +324,18 @@ Then("It returns an array of attempted registrations", async function () {
   assert.ok(this.response["attempted"]);
 });
 
-Then("Direct submission registrations are not attempted", function () {
-  assert.ok(!this.response["attempted"].includes(directRegistrationFSARNs));
-});
+Then(
+  "Only front-end submission registrations are attempted",
+  async function () {
+    assert.ok(
+      frontendRegistrationFSARNs.every((rn) =>
+        this.response["attempted"].includes(rn)
+      )
+    );
+    assert.ok(
+      directRegistrationFSARNs.every(
+        (rn) => !this.response["attempted"].includes(rn)
+      )
+    );
+  }
+);

@@ -12,4 +12,4 @@ Feature: Send notifications for front-end submissions only
 
         When The send notifications task is triggered
         Then It returns an array of attempted registrations
-        And Direct submission registrations are not attempted
+        And Only front-end submission registrations are attempted
