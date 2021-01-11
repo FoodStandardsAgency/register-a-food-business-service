@@ -61,7 +61,7 @@ const {
 
 const { getUprn } = require("../../connectors/address-lookup/address-matcher");
 
-const exampleLCUrl = "http://example-council-url";
+const exampleLCUrl = "example-council-url";
 
 const exampleCouncil = {
   _id: 1,
@@ -127,7 +127,7 @@ describe("registration controller", () => {
       fsa_rn: "TESTRN"
     }
   );
-  const testLocalCouncilUrl = "http://example-council-url";
+  const testLocalCouncilUrl = "example-council-url";
   const testRegDataVersion = "1.2.0";
   const testOptions = {
     regDataVersion: testRegDataVersion,
