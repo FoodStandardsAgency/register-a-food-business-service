@@ -160,7 +160,10 @@ const findAllOutstandingSavesToTempStore = async (
     .limit(limit);
 };
 
-const findAllBlankRegistrations = async (cachedRegistrations, limit = 100) => {
+const findAllFailedNotificationsRegistrations = async (
+  cachedRegistrations,
+  limit = 100
+) => {
   return await cachedRegistrations
     .find({
       $and: [
@@ -182,10 +185,7 @@ const findAllBlankRegistrations = async (cachedRegistrations, limit = 100) => {
     .limit(limit);
 };
 
-const findAllFailedNotificationsRegistrations = async (
-  cachedRegistrations,
-  limit = 100
-) => {
+const findAllBlankRegistrations = async (cachedRegistrations, limit = 100) => {
   return await cachedRegistrations
     .find({
       $and: [
