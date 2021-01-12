@@ -2,7 +2,9 @@ const {
   ADMIN_NAME,
   ADMIN_SECRET,
   FRONT_END_NAME,
-  FRONT_END_SECRET
+  FRONT_END_SECRET,
+  DIRECT_API_NAME,
+  DIRECT_API_SECRET
 } = require("../config");
 const { logEmitter } = require("../../src/services/logging.service");
 const { statusEmitter } = require("../../src/services/statusEmitter.service");
@@ -75,7 +77,8 @@ const authHandler = (req, res, secrets) => {
 
 const createRegistrationAuth = (req, res, next) => {
   const secrets = {
-    [FRONT_END_NAME]: FRONT_END_SECRET
+    [FRONT_END_NAME]: FRONT_END_SECRET,
+    [DIRECT_API_NAME]: DIRECT_API_SECRET
   };
   authHandler(req, res, secrets);
   next();

@@ -51,6 +51,10 @@ const errorHandler = (err, req, res, next) => {
         errorDetail.developerMessage = `${errorDetail.developerMessage} ${err.message}`;
       }
 
+      if (errorDetail.name === "doubleFail") {
+        errorDetail.developerMessage = `${errorDetail.developerMessage} ${err.message}`;
+      }
+
       if (errorDetail.name === "missingRequiredHeader") {
         errorDetail.developerMessage = `${errorDetail.developerMessage} ${err.message}`;
       }

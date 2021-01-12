@@ -6,6 +6,7 @@ const {
 } = require("../../middleware/authHandler");
 const { logEmitter } = require("../../services/logging.service");
 const { statusEmitter } = require("../../services/statusEmitter.service");
+const { registrationDouble } = require("./registration.double");
 
 const registrationRouter = () => {
   const router = Router();
@@ -19,15 +20,6 @@ const registrationRouter = () => {
         "registration.router",
         "createNewRegistration"
       );
-      const sendResponse = (response) => {
-        statusEmitter.emit("incrementCount", "userRegistrationsSucceeded");
-        statusEmitter.emit(
-          "setStatus",
-          "mostRecentUserRegistrationSucceeded",
-          true
-        );
-        res.send(response);
-      };
       try {
         statusEmitter.emit("incrementCount", "submissionsReceived");
 
@@ -41,11 +33,16 @@ const registrationRouter = () => {
           throw missingHeaderError;
         }
 
-        await registrationController.createNewRegistration(
+        const response = await registrationController.createNewRegistration(
           req.body.registration,
           req.body.local_council_url,
-          regDataVersion,
-          sendResponse
+          regDataVersion
+        );
+        statusEmitter.emit("incrementCount", "userRegistrationsSucceeded");
+        statusEmitter.emit(
+          "setStatus",
+          "mostRecentUserRegistrationSucceeded",
+          true
         );
         statusEmitter.emit("incrementCount", "endToEndRegistrationsSucceeded");
         statusEmitter.emit(
@@ -58,6 +55,8 @@ const registrationRouter = () => {
           "registration.router",
           "createNewRegistration"
         );
+
+        res.send(response);
       } catch (err) {
         logEmitter.emit(
           "errorWith",
@@ -75,6 +74,68 @@ const registrationRouter = () => {
           "functionFail",
           "registration.router",
           "createNewRegistration",
+          err
+        );
+        next(err);
+      }
+    }
+  );
+
+  router.post(
+    "/v2/createNewDirectRegistration/:subscriber",
+    createRegistrationAuth,
+    async (req, res, next) => {
+      logEmitter.emit(
+        "functionCall",
+        "registration.router",
+        "createNewDirectRegistration"
+      );
+      try {
+        statusEmitter.emit("incrementCount", "directSubmissionsReceived");
+
+        const options = {
+          apiVersion: req.headers["api-version"] || "v2.1",
+          subscriber: req.params.subscriber || ""
+        };
+
+        let response;
+        if (req.headers["double-mode"]) {
+          response = registrationDouble(req.headers["double-mode"]);
+        } else {
+          response = await registrationController.createNewDirectRegistration(
+            req.body,
+            options
+          );
+        }
+        statusEmitter.emit("incrementCount", "directRegistrationsSucceeded");
+        statusEmitter.emit(
+          "setStatus",
+          "mostRecentDirectRegistrationSucceeded",
+          true
+        );
+        logEmitter.emit(
+          "functionSuccess",
+          "registration.router",
+          "createNewDirectRegistration"
+        );
+        res.send(response);
+      } catch (err) {
+        logEmitter.emit(
+          "errorWith",
+          "registration.router",
+          "createNewDirectRegistration",
+          req.body
+        );
+        statusEmitter.emit("incrementCount", "endToEndRegistrationsFailed");
+        statusEmitter.emit(
+          "setStatus",
+          "mostRecentEndToEndRegistrationSucceeded",
+          false
+        );
+        logEmitter.emit(
+          "functionFail",
+          "registration.router",
+          "createNewDirectRegistration",
           err
         );
         next(err);

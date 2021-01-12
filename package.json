@@ -18,6 +18,7 @@
     "test:integration": "export TEST_TYPE=integration && jest tests/integration/*.js",
     "test:contract": "jest tests/contract/*.js",
     "test:component": "cucumber-js",
+    "test:component:local": "export $(grep -v '^#' .env | xargs -d '\n') && cucumber-js",
     "test:component:ci": "mkdir -p reports && cucumber-js --format=json | cucumber-junit > reports/TEST-component.xml",
     "test:securityall": "snyk wizard",
     "test:security": "snyk wizard --severity-threshold=medium",
@@ -42,7 +43,7 @@
   "homepage": "https://github.com/FoodStandardsAgency/register-a-food-business-service#readme",
   "dependencies": {
     "@slice-and-dice/fsa-rof": "1.0.7",
-    "@slice-and-dice/register-a-food-business-validation": "1.20.3",
+    "@slice-and-dice/register-a-food-business-validation": "1.21.2",
     "applicationinsights": "^1.7.6",
     "applicationinsights-native-metrics": "0.0.5",
     "body-parser": "^1.19.0",

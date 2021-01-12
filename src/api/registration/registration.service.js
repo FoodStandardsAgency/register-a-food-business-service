@@ -58,7 +58,11 @@ const saveRegistration = async (registration, fsa_rn, council) => {
       );
     }
 
-    reg = await createRegistration(fsa_rn, council);
+    reg = await createRegistration(
+      fsa_rn,
+      council,
+      registration.directLcSubmission
+    );
 
     establishment = await createEstablishment(
       registration.establishment.establishment_details,
@@ -242,7 +246,7 @@ const getRegistrationMetaData = async (councilCode) => {
   logEmitter.emit(
     "functionCall",
     "registration.service",
-    "getRegistrationDeclaration"
+    "getRegistrationMetaData"
   );
 
   if (process.env.NODE_ENV === "local") {
@@ -276,7 +280,7 @@ const getRegistrationMetaData = async (councilCode) => {
     logEmitter.emit(
       "functionSuccess",
       "registration.service",
-      "getRegistrationDeclaration"
+      "getRegistrationMetaData"
     );
     return {
       "fsa-rn": fsa_rn ? fsa_rn["fsa-rn"] : undefined,

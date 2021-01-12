@@ -111,7 +111,7 @@ describe("Middleware: errorHandler", () => {
       errorHandler(error, "request", res);
       expect(res.status).toBeCalledWith(400);
       expect(res.send.mock.calls[0][0].developerMessage).toEqual(
-        "The local council url has not matched any records in the config database. Raw error: some-invalid-local-council"
+        "The local council has not matched any records in the config database. Raw error: some-invalid-local-council"
       );
     });
   });
@@ -126,6 +126,20 @@ describe("Middleware: errorHandler", () => {
       expect(res.status).toBeCalledWith(400);
       expect(res.send.mock.calls[0][0].developerMessage).toEqual(
         "Required header missing in request. Please add and re-try request. Raw error: missing registration-data-version header"
+      );
+    });
+  });
+
+  describe("When given a doubleFail error", () => {
+    it("should append developer mesage with raw error", () => {
+      const error = {
+        name: "doubleFail",
+        message: "Double Mode Failure"
+      };
+      errorHandler(error, "request", res);
+      expect(res.status).toBeCalledWith(400);
+      expect(res.send.mock.calls[0][0].developerMessage).toEqual(
+        "Double Mode Error. Raw error: Double Mode Failure"
       );
     });
   });

@@ -160,26 +160,48 @@ const findAllOutstandingSavesToTempStore = async (
     .limit(limit);
 };
 
-const findAllBlankRegistrations = async (cachedRegistrations, limit = 100) => {
-  return await cachedRegistrations
-    .find({
-      "status.notifications": {
-        $elemMatch: { sent: { $ne: true } }
-      }
-    })
-    .sort({ reg_submission_date: 1 })
-    .limit(limit);
-};
-
 const findAllFailedNotificationsRegistrations = async (
   cachedRegistrations,
   limit = 100
 ) => {
   return await cachedRegistrations
     .find({
-      $or: [
-        { "status.notifications": { $exists: false } },
-        { "status.notifications": null }
+      $and: [
+        {
+          "status.notifications": {
+            $elemMatch: { sent: { $ne: true } }
+          }
+        },
+        {
+          $or: [
+            { directLcSubmission: { $exists: false } },
+            { directLcSubmission: null },
+            { directLcSubmission: false }
+          ]
+        }
+      ]
+    })
+    .sort({ reg_submission_date: 1 })
+    .limit(limit);
+};
+
+const findAllBlankRegistrations = async (cachedRegistrations, limit = 100) => {
+  return await cachedRegistrations
+    .find({
+      $and: [
+        {
+          $or: [
+            { "status.notifications": { $exists: false } },
+            { "status.notifications": null }
+          ]
+        },
+        {
+          $or: [
+            { directLcSubmission: { $exists: false } },
+            { directLcSubmission: null },
+            { directLcSubmission: false }
+          ]
+        }
       ]
     })
     .sort({ reg_submission_date: 1 })
@@ -194,7 +216,14 @@ const findOutstandingTascomiRegistrationsFsaIds = async (
     .find({
       $and: [
         { "status.tascomi": { $exists: true } },
-        { "status.tascomi.complete": { $ne: true } }
+        { "status.tascomi.complete": { $ne: true } },
+        {
+          $or: [
+            { directLcSubmission: { $exists: false } },
+            { directLcSubmission: null },
+            { directLcSubmission: false }
+          ]
+        }
       ]
     })
     .sort({ reg_submission_date: 1 })

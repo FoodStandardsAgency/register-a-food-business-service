@@ -8,7 +8,7 @@ describe("cacheDb integration: cacheRegistration", () => {
     process.env.DOUBLE_MODE = true;
   });
 
-  it("Should return an ID showing a successful email send", async () => {
+  it("Should return an ID showing a successful insertion", async () => {
     const result = await cacheRegistration();
     expect(result.insertedId).toBeDefined();
   });

@@ -29,6 +29,10 @@ jest.mock("../../connectors/configDb/configDb.connector", () => ({
   LocalCouncilConfigDbCollection: jest.fn()
 }));
 
+jest.mock("../../connectors/address-lookup/address-matcher", () => ({
+  getUprn: jest.fn()
+}));
+
 const {
   getFullRegistrationByFsaRn,
   deleteRegistrationByFsaRn,
@@ -45,15 +49,19 @@ const {
 
 const {
   createNewRegistration,
+  createNewDirectRegistration,
   getRegistration,
   deleteRegistration
 } = require("./registration.controller");
+
 const {
   getConfigVersion,
   findCouncilByUrl
 } = require("../../connectors/configDb/configDb.connector");
 
-const exampleLCUrl = "http://example-council-url";
+const { getUprn } = require("../../connectors/address-lookup/address-matcher");
+
+const exampleLCUrl = "example-council-url";
 
 const exampleCouncil = {
   _id: 1,
@@ -102,12 +110,33 @@ describe("registration controller", () => {
   const testRegistration = {
     establishment: { operator: { operator_email: "operator@example.com" } }
   };
-  const testLocalCouncilUrl = "http://example-council-url";
+  const testDirectRegistration = {
+    establishment: {
+      operator: {
+        operator_email: "operator@example.com"
+      },
+      premise: {
+        establishment_postcode: "PO57CDE"
+      }
+    }
+  };
+  const testDirectRegistrationWithFsaRn = Object.assign(
+    {},
+    testDirectRegistration,
+    {
+      fsa_rn: "TESTRN"
+    }
+  );
+  const testLocalCouncilUrl = "example-council-url";
   const testRegDataVersion = "1.2.0";
+  const testOptions = {
+    regDataVersion: testRegDataVersion,
+    council: testLocalCouncilUrl,
+    doubleMode: null
+  };
   const testConfigVersion = {
     notify_template_keys: { key1: "abc", key2: "xyz" }
   };
-  const mockSendResponse = jest.fn();
   describe("Function: createNewRegistration", () => {
     beforeEach(() => {
       jest.clearAllMocks();
@@ -135,8 +164,7 @@ describe("registration controller", () => {
           result = await createNewRegistration(
             testRegistration,
             testLocalCouncilUrl,
-            testRegDataVersion,
-            mockSendResponse
+            testRegDataVersion
           );
         });
       });
@@ -156,8 +184,7 @@ describe("registration controller", () => {
           result = await createNewRegistration(
             testRegistration,
             testLocalCouncilUrl,
-            testRegDataVersion,
-            mockSendResponse
+            testRegDataVersion
           );
         });
         it("should call cache registration", () => {
@@ -166,7 +193,8 @@ describe("registration controller", () => {
             {},
             {
               "fsa-rn": postRegistrationMetadata["fsa-rn"],
-              reg_submission_date: postRegistrationMetadata.reg_submission_date
+              reg_submission_date: postRegistrationMetadata.reg_submission_date,
+              directLcSubmission: false
             },
             testRegistration,
             exampleLcConfig,
@@ -202,8 +230,7 @@ describe("registration controller", () => {
         result = await createNewRegistration(
           testRegistration,
           testLocalCouncilUrl,
-          testRegDataVersion,
-          mockSendResponse
+          testRegDataVersion
         );
       });
 
@@ -213,10 +240,8 @@ describe("registration controller", () => {
         );
       });
 
-      it("should call sendResponse wth a lc_config object with the response of getLcContactConfig", () => {
-        expect(mockSendResponse.mock.calls[0][0].lc_config).toEqual(
-          exampleLcConfig
-        );
+      it("should return response wth a lc_config object with the response of getLcContactConfig", () => {
+        expect(result.lc_config).toEqual(exampleLcConfig);
       });
     });
 
@@ -233,8 +258,7 @@ describe("registration controller", () => {
         result = await createNewRegistration(
           testRegistration,
           testLocalCouncilUrl,
-          testRegDataVersion,
-          mockSendResponse
+          testRegDataVersion
         );
       });
 
@@ -244,10 +268,8 @@ describe("registration controller", () => {
         );
       });
 
-      it("should call sendResponse with a lc_config object with the response of getLcContactConfig", () => {
-        expect(mockSendResponse.mock.calls[0][0].lc_config).toEqual(
-          exampleMultiLcConfig
-        );
+      it("should return response with a lc_config object with the response of getLcContactConfig", () => {
+        expect(result.lc_config).toEqual(exampleMultiLcConfig);
       });
     });
 
@@ -278,6 +300,170 @@ describe("registration controller", () => {
           createNewRegistration(undefined);
         } catch (err) {
           expect(err.message).toBeDefined();
+        }
+      });
+    });
+  });
+
+  describe("Function: createNewDirectRegistration", () => {
+    beforeEach(() => {
+      jest.clearAllMocks();
+      findCouncilByUrl.mockImplementation(() => exampleCouncil);
+      validate.mockImplementation(() => {
+        return [];
+      });
+      getUprn.mockImplementation(() => Promise.resolve("TESTUPRN"));
+    });
+
+    describe("when given valid data", () => {
+      beforeEach(async () => {
+        getRegistrationMetaData.mockImplementation(() =>
+          Promise.resolve(postRegistrationMetadata)
+        );
+        getLcContactConfig.mockImplementation(() =>
+          Promise.resolve(exampleLcConfig)
+        );
+        getConfigVersion.mockImplementation(() => testConfigVersion);
+        result = await createNewDirectRegistration(
+          testDirectRegistration,
+          testOptions
+        );
+      });
+      it("should call cache registration", () => {
+        expect(cacheRegistration).toHaveBeenCalled();
+      });
+
+      it("should return generated fsa_rn", () => {
+        expect(result).toEqual({
+          "fsa-rn": postRegistrationMetadata["fsa-rn"]
+        });
+      });
+    });
+
+    describe("when given valid data including fsa-rn", () => {
+      beforeEach(async () => {
+        getLcContactConfig.mockImplementation(() =>
+          Promise.resolve(exampleLcConfig)
+        );
+        getConfigVersion.mockImplementation(() => testConfigVersion);
+        result = await createNewDirectRegistration(
+          testDirectRegistrationWithFsaRn,
+          testOptions
+        );
+      });
+      it("should not call get Metadata", () => {
+        expect(getRegistrationMetaData).not.toHaveBeenCalled();
+      });
+      it("should call cache registration", () => {
+        expect(cacheRegistration).toHaveBeenCalled();
+      });
+
+      it("should return provided fsa_rn", () => {
+        expect(result).toEqual({
+          "fsa-rn": testDirectRegistrationWithFsaRn["fsa_rn"]
+        });
+      });
+    });
+
+    describe("given the Local Council is responsible for both hygiene and standards", () => {
+      beforeEach(async () => {
+        getRegistrationMetaData.mockImplementation(() =>
+          Promise.resolve(postRegistrationMetadata)
+        );
+        getLcContactConfig.mockImplementation(() =>
+          Promise.resolve(exampleLcConfig)
+        );
+        getConfigVersion.mockImplementation(() => testConfigVersion);
+        result = await createNewDirectRegistration(
+          testDirectRegistration,
+          testOptions
+        );
+      });
+
+      it("should call getRegistrationMetaData with the hygieneAndStandards council code response from getLcContactConfig", () => {
+        expect(getRegistrationMetaData).toHaveBeenLastCalledWith(
+          exampleLcConfig.hygieneAndStandards.code
+        );
+      });
+    });
+
+    describe("given the hygiene and standards Local Councils are separate", () => {
+      beforeEach(async () => {
+        getRegistrationMetaData.mockImplementation(() =>
+          Promise.resolve(postRegistrationMetadata)
+        );
+        getLcContactConfig.mockImplementation(() =>
+          Promise.resolve(exampleMultiLcConfig)
+        );
+        getConfigVersion.mockImplementation(() => testConfigVersion);
+        result = await createNewDirectRegistration(
+          testDirectRegistration,
+          testOptions
+        );
+      });
+
+      it("should call getRegistrationMetaData with the hygiene council code response from getLcContactConfig", () => {
+        expect(getRegistrationMetaData).toHaveBeenLastCalledWith(
+          exampleMultiLcConfig.hygiene.code
+        );
+      });
+    });
+
+    describe("when given invalid data", () => {
+      beforeEach(async () => {
+        validate.mockImplementation(() => {
+          return ["ERROR"];
+        });
+        try {
+          result = await createNewDirectRegistration(
+            testDirectRegistration,
+            testOptions
+          );
+        } catch (err) {
+          result = err;
+        }
+      });
+
+      it("should throw a validation error", () => {
+        expect(result.name).toEqual("validationError");
+      });
+
+      it("should not cache the registration", () => {
+        expect(cacheRegistration).not.toHaveBeenCalled();
+      });
+    });
+
+    describe("when given invalid council", () => {
+      beforeEach(async () => {
+        validate.mockImplementation(() => {
+          return [];
+        });
+        findCouncilByUrl.mockImplementation(() => null);
+        try {
+          result = await createNewDirectRegistration(
+            testDirectRegistration,
+            testOptions
+          );
+        } catch (err) {
+          result = err;
+        }
+      });
+
+      it("should throw an error", () => {
+        expect(result.name).toEqual("localCouncilNotFound");
+      });
+
+      it("should not cache the registration", () => {
+        expect(cacheRegistration).not.toHaveBeenCalled();
+      });
+    });
+
+    describe("when given undefined", () => {
+      it("Should throw an error", async () => {
+        try {
+          await createNewDirectRegistration(undefined);
+        } catch (err) {
+          expect(err.message).toBe("registration is undefined");
         }
       });
     });

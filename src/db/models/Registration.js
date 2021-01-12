@@ -19,6 +19,9 @@ module.exports = (sequelize, DataTypes) => {
       },
       collected_at: {
         type: DataTypes.STRING
+      },
+      direct_submission: {
+        type: DataTypes.BOOLEAN
       }
     },
     {

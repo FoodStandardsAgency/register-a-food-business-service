@@ -38,6 +38,18 @@ jest.mock("./validation.schema", () => ({
   }
 }));
 
+jest.mock("./validation.directSubmission.schema", () => ({
+  registration: {
+    type: "object",
+    properties: {
+      test_lc_submission: {
+        type: "string",
+        validation: (input) => input === "true"
+      }
+    }
+  }
+}));
+
 jest.mock("./logging.service", () => ({
   logEmitter: {
     emit: jest.fn()
@@ -100,6 +112,21 @@ describe("Function: validate", () => {
       expect(response[7].property).toBe(
         "instance.establishment_primary_number"
       );
+    });
+  });
+
+  describe("When given valid input for LC direct submission", () => {
+    it("Should return empty array using LC validation schema", () => {
+      // Arrange
+      const establishment = {
+        test_lc_submission: "true"
+      };
+
+      // Act
+      const response = validate(establishment, true);
+
+      // Assert
+      expect(response).toEqual([]);
     });
   });
 
