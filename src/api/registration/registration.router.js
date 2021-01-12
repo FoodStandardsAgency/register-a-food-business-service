@@ -82,7 +82,7 @@ const registrationRouter = () => {
   );
 
   router.post(
-    "/v1/createNewDirectRegistration/:subscriber",
+    "/v2/createNewDirectRegistration/:subscriber",
     createRegistrationAuth,
     async (req, res, next) => {
       logEmitter.emit(

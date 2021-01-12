@@ -79,7 +79,7 @@ describe("registration router", () => {
     });
   });
 
-  describe("Post to /v1/createNewLcSubmittedRegistration", () => {
+  describe("Post to /v2/createNewDirectRegistration", () => {
     beforeEach(() => {
       handler = router.post.mock.calls[1][2];
     });
