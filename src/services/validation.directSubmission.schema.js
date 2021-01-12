@@ -24,7 +24,8 @@ const {
   validatePartnerIsPrimaryContact,
   validatePartnerName,
   validateOpeningHours,
-  validateWaterSupply
+  validateWaterSupply,
+  validateFsaReferenceNumber
 } = require("@slice-and-dice/register-a-food-business-validation");
 
 const schema = {
@@ -101,6 +102,10 @@ const schema = {
               operator_town: {
                 type: "string",
                 validation: validateMandatoryString
+              },
+              operator_uprn: {
+                type: "string",
+                validation: validateOptionalString
               },
               operator_primary_number: {
                 type: "string",
@@ -354,7 +359,7 @@ const schema = {
           feedback1: { type: "string", validation: validateDeclaration }
         }
       },
-      fsa_rn: { type: "string", validation: validateOptionalString }
+      fsa_rn: { type: "string", validation: validateFsaReferenceNumber }
     },
     required: ["establishment"]
   }

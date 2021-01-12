@@ -15,6 +15,7 @@ const errorMessages = {
   operator_address_line_2: "Invalid operator second line of address",
   operator_address_line_3: "Invalid operator third line of address",
   operator_postcode: "Invalid operator postcode",
+  operator_uprn: "Invalid operator uprn",
   operator_primary_number: "Invalid operator primary number",
   operator_secondary_number: "Invalid operator secondary number",
   operator_email: "Invalid operator email",
@@ -27,6 +28,7 @@ const errorMessages = {
   establishment_address_line_3: "Invalid establishment third line of address",
   establishment_town: "Invalid establishment town name",
   establishment_postcode: "Invalid establishment postcode",
+  establishment_uprn: "Invalid establishment uprn",
   establishment_primary_number: "Invalid establishment primary number",
   establishment_secondary_number: "Invalid establishment secondary number",
   establishment_email: "Invalid establishment email",
@@ -46,7 +48,7 @@ const errorMessages = {
   opening_day_monday: "Invalid opening day monday",
   opening_day_tuesday: "Invalid opening day tuesday",
   opening_day_wednesday: "Invalid opening day wednesday",
-  opening_day_thurday: "Invalid opening day thursday",
+  opening_day_thursday: "Invalid opening day thursday",
   opening_day_friday: "Invalid opening day friday",
   opening_day_saturday: "Invalid opening day saturday",
   opening_day_sunday: "Invalid opening day sunday",
@@ -56,11 +58,12 @@ const errorMessages = {
   opening_hours_monday: "Invalid opening hours monday",
   opening_hours_tuesday: "Invalid opening hours tuesday",
   opening_hours_wednesday: "Invalid opening hours wednesday",
-  opening_hours_thurday: "Invalid opening hours thursday",
+  opening_hours_thursday: "Invalid opening hours thursday",
   opening_hours_friday: "Invalid opening hours friday",
   opening_hours_saturday: "Invalid opening hours saturday",
   opening_hours_sunday: "Invalid opening hours sunday",
-  water_supply: "Invalid water supply"
+  water_supply: "Invalid water supply",
+  fsa_rn: "Invalid FSA Reference Number"
 };
 
 const validator = new Validator();
