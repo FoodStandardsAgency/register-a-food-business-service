@@ -121,7 +121,7 @@ const configVersionTemplate = (seedData) => ({
         "Establishment is already trading": {
           "/establishment-opening-date-retroactive": true
         },
-        "Establishment is not trading yet": {
+        "Establishment due to trade": {
           "/establishment-opening-date-proactive": true
         }
       }
