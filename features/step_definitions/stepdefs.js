@@ -43,7 +43,7 @@ const sendDirectRequest = async (body) => {
     "registration-data-version": "1.7.0"
   };
   const res = await fetch(
-    `${apiUrl}/api/registration/v1/createNewDirectRegistration/cardiff`,
+    `${apiUrl}/api/registration/v2/createNewDirectRegistration/cardiff`,
     {
       method: "POST",
       headers,
