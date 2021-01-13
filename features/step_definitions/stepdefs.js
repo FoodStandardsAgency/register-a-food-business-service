@@ -14,9 +14,8 @@ setDefaultTimeout(60 * 1000);
 
 let apiUrl =
   "https://staging-register-a-food-business-service.azurewebsites.net";
-if (process.env.NODE_ENV === "local") {
-  apiUrl = process.env.API_URL ? process.env.API_URL : apiUrl;
-}
+
+apiUrl = process.env.API_URL ? process.env.API_URL : apiUrl;
 
 const directRegistrationFSARNs = [];
 const frontendRegistrationFSARNs = [];
@@ -44,7 +43,7 @@ const sendDirectRequest = async (body) => {
     "registration-data-version": "1.7.0"
   };
   const res = await fetch(
-    `${apiUrl}/api/registration/v2/createNewDirectRegistration/cardiff`,
+    `${apiUrl}/api/registration/v1/createNewDirectRegistration/cardiff`,
     {
       method: "POST",
       headers,
