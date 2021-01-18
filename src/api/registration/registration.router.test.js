@@ -95,8 +95,9 @@ describe("registration router", () => {
               "registration-data-version": "1.6.0"
             },
             params: {
-              lc: "cardiff"
-            }
+              subscriber: "cardiff"
+            },
+            query: {}
           },
           { send, status }
         );
@@ -130,8 +131,9 @@ describe("registration router", () => {
               "registration-data-version": "1.2.0"
             },
             params: {
-              lc: "cardiff"
-            }
+              subscriber: "cardiff"
+            },
+            query: {}
           },
           { send, status },
           next
@@ -153,8 +155,9 @@ describe("registration router", () => {
               "double-mode": "success"
             },
             params: {
-              lc: "cardiff"
-            }
+              subscriber: "cardiff"
+            },
+            query: {}
           },
           { send, status }
         );
@@ -184,8 +187,9 @@ describe("registration router", () => {
               "double-mode": "fail"
             },
             params: {
-              lc: "cardiff"
-            }
+              subscriber: "cardiff"
+            },
+            query: {}
           },
           { send, status },
           next

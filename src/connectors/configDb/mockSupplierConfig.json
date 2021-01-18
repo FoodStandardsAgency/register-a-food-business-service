@@ -1,0 +1,11 @@
+[
+  {
+    "_id" : 1234,
+    "supplier_name" : "TestSupplier",
+    "supplier_url" : "test-supplier",
+    "local_council_urls" : [ 
+        "cardiff", 
+        "bath"
+    ]
+  }
+]

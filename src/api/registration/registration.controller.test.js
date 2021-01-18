@@ -25,6 +25,7 @@ jest.mock("../../connectors/configDb/configDb.connector", () => ({
   getConfigVersion: jest.fn(),
   findCouncilByUrl: jest.fn(),
   findCouncilById: jest.fn(),
+  getCouncilsForSupplier: jest.fn(),
   connectToConfigDb: jest.fn(),
   LocalCouncilConfigDbCollection: jest.fn()
 }));
@@ -56,7 +57,8 @@ const {
 
 const {
   getConfigVersion,
-  findCouncilByUrl
+  findCouncilByUrl,
+  getCouncilsForSupplier
 } = require("../../connectors/configDb/configDb.connector");
 
 const { getUprn } = require("../../connectors/address-lookup/address-matcher");
@@ -72,6 +74,8 @@ const exampleCouncil = {
   local_council_url: exampleLCUrl,
   country: "test"
 };
+
+const exampleSupplierCouncils = ["cardiff", "west-dorset"];
 
 describe("registration controller", () => {
   let result;
@@ -131,7 +135,8 @@ describe("registration controller", () => {
   const testRegDataVersion = "1.2.0";
   const testOptions = {
     regDataVersion: testRegDataVersion,
-    council: testLocalCouncilUrl,
+    subscriber: testLocalCouncilUrl,
+    requestedCouncil: testLocalCouncilUrl,
     doubleMode: null
   };
   const testConfigVersion = {
@@ -309,6 +314,7 @@ describe("registration controller", () => {
     beforeEach(() => {
       jest.clearAllMocks();
       findCouncilByUrl.mockImplementation(() => exampleCouncil);
+      getCouncilsForSupplier.mockImplementation(() => exampleSupplierCouncils);
       validate.mockImplementation(() => {
         return [];
       });
@@ -337,6 +343,54 @@ describe("registration controller", () => {
         expect(result).toEqual({
           "fsa-rn": postRegistrationMetadata["fsa-rn"]
         });
+      });
+    });
+
+    describe("when given valid data from a supplier", () => {
+      beforeEach(async () => {
+        getRegistrationMetaData.mockImplementation(() =>
+          Promise.resolve(postRegistrationMetadata)
+        );
+        getLcContactConfig.mockImplementation(() =>
+          Promise.resolve(exampleLcConfig)
+        );
+        getConfigVersion.mockImplementation(() => testConfigVersion);
+        const testSupplierOptions = {
+          regDataVersion: testRegDataVersion,
+          subscriber: testLocalCouncilUrl,
+          requestedCouncil: "cardiff"
+        };
+        result = await createNewDirectRegistration(
+          testDirectRegistration,
+          testSupplierOptions
+        );
+      });
+      it("should call cache registration", () => {
+        expect(cacheRegistration).toHaveBeenCalled();
+      });
+
+      it("should return generated fsa_rn", () => {
+        expect(result).toEqual({
+          "fsa-rn": postRegistrationMetadata["fsa-rn"]
+        });
+      });
+    });
+
+    describe("when given invalid requested council from a supplier", () => {
+      it("should not return an error", async () => {
+        try {
+          const testSupplierOptions = {
+            regDataVersion: testRegDataVersion,
+            subscriber: testLocalCouncilUrl,
+            requestedCouncil: "invalid"
+          };
+          await createNewDirectRegistration(
+            testDirectRegistration,
+            testSupplierOptions
+          );
+        } catch (err) {
+          expect(err.name).toBe("supplierCouncilNotFound");
+        }
       });
     });
 

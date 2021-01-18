@@ -121,5 +121,13 @@
       "Required header missing in request. Please add and re-try request. Raw error:",
     "userMessages": "",
     "statusCode": 400
+  },
+  {
+    "name": "supplierCouncilNotFound",
+    "code": "16",
+    "developerMessage":
+      "The requested local-authorities must only contain authorized local authorities.",
+    "userMessages": "",
+    "statusCode": 400
   }
 ]

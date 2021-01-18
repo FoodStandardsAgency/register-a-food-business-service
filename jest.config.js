@@ -29,7 +29,7 @@ module.exports = {
     "!**/src/rootQuery.js",
     "!**/src/schema.js",
     "!**/src/services/validation.schema.js",
-    "!**/src/services/validationLcSubmission.schema.js",
+    "!**/src/services/validation.directSubmission.schema.js",
     "!**/src/connectors/address-lookup/addressSchema.js",
     "!**/src/db/**",
     "!**/src/config.js",

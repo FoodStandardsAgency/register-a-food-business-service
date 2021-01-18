@@ -95,7 +95,9 @@ const registrationRouter = () => {
 
         const options = {
           apiVersion: req.headers["api-version"] || "v2.1",
-          subscriber: req.params.subscriber || ""
+          subscriber: req.params.subscriber || "",
+          requestedCouncil:
+            req.query["local-authority"] || req.params.subscriber
         };
 
         let response;
