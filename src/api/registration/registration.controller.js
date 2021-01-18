@@ -15,6 +15,7 @@ const { getUprn } = require("../../connectors/address-lookup/address-matcher");
 
 const {
   findCouncilByUrl,
+  getCouncilsForSupplier,
   connectToConfigDb,
   LocalCouncilConfigDbCollection
 } = require("../../connectors/configDb/configDb.connector");
@@ -144,19 +145,35 @@ const createNewDirectRegistration = async (registration, options) => {
   const configDb = await connectToConfigDb();
   const lcConfigCollection = await LocalCouncilConfigDbCollection(configDb);
 
+  if (options.requestedCouncil !== options.subscriber) {
+    // Check supplier authorized to access requested council
+    const validCouncils = await getCouncilsForSupplier(options.subscriber);
+    if (validCouncils.indexOf(options.requestedCouncil) < 0) {
+      const newError = new Error();
+      newError.name = "supplierCouncilNotFound";
+      logEmitter.emit(
+        "functionFail",
+        "registration.controller",
+        "createNewDirectRegistration",
+        newError
+      );
+      throw newError;
+    }
+  }
+
   // Get Council details
   const sourceCouncil = await findCouncilByUrl(
     lcConfigCollection,
-    options.subscriber
+    options.requestedCouncil
   );
   if (!sourceCouncil) {
     const newError = new Error();
     newError.name = "localCouncilNotFound";
-    newError.message = `Config for council ID "${options.subscriber}" not found`;
+    newError.message = `Config for council ID "${options.requestedCouncil}" not found`;
     logEmitter.emit(
       "functionFail",
       "registration.controller",
-      "createNewLcRegistration",
+      "createNewDirectRegistration",
       newError
     );
     throw newError;
@@ -225,6 +242,13 @@ const createNewDirectRegistration = async (registration, options) => {
     notifications: null
   };
 
+  var supplierDetails = {};
+  if (options.requestedCouncil !== options.subscriber) {
+    supplierDetails = {
+      supplier_url: options.subscriber
+    };
+  }
+
   const completeCacheRecord = Object.assign(
     {},
     regMetadata,
@@ -238,7 +262,8 @@ const createNewDirectRegistration = async (registration, options) => {
       local_council_url: sourceCouncil.local_council_url,
       source_council_id: sourceCouncil._id,
       api_version: options.apiVersion
-    }
+    },
+    supplierDetails
   );
 
   await cacheRegistration(completeCacheRecord);
