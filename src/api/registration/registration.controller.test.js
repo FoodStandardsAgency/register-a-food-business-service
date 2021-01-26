@@ -3,9 +3,6 @@ jest.mock("../../services/validation.service", () => ({
 }));
 
 jest.mock("./registration.service", () => ({
-  saveRegistration: jest.fn(),
-  getFullRegistrationByFsaRn: jest.fn(),
-  deleteRegistrationByFsaRn: jest.fn(),
   sendTascomiRegistration: jest.fn(),
   getRegistrationMetaData: jest.fn(),
   getLcContactConfig: jest.fn(),
@@ -35,8 +32,6 @@ jest.mock("../../connectors/address-lookup/address-matcher", () => ({
 }));
 
 const {
-  getFullRegistrationByFsaRn,
-  deleteRegistrationByFsaRn,
   getRegistrationMetaData,
   getLcContactConfig,
   getLcAuth
@@ -50,9 +45,7 @@ const {
 
 const {
   createNewRegistration,
-  createNewDirectRegistration,
-  getRegistration,
-  deleteRegistration
+  createNewDirectRegistration
 } = require("./registration.controller");
 
 const {
@@ -519,36 +512,6 @@ describe("registration controller", () => {
         } catch (err) {
           expect(err.message).toBe("registration is undefined");
         }
-      });
-    });
-  });
-
-  describe("Function: getRegistration", () => {
-    describe("when given an id", () => {
-      beforeEach(async () => {
-        getFullRegistrationByFsaRn.mockImplementation(() => {
-          return "response";
-        });
-        result = await getRegistration();
-      });
-
-      it("should return the result of getFullRegistrationById", () => {
-        expect(result).toEqual("response");
-      });
-    });
-  });
-
-  describe("Function: deleteRegistration", () => {
-    describe("when given an fsa_rn", () => {
-      beforeEach(async () => {
-        deleteRegistrationByFsaRn.mockImplementation(() => {
-          return "response";
-        });
-        result = await deleteRegistration();
-      });
-
-      it("should return the result of deleteRegistrationById", () => {
-        expect(result).toEqual("response");
       });
     });
   });
