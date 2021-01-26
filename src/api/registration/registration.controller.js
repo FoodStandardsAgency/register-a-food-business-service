@@ -86,7 +86,11 @@ const createNewRegistration = async (
     {
       "fsa-rn": postRegistrationMetadata["fsa-rn"],
       reg_submission_date: postRegistrationMetadata.reg_submission_date,
-      directLcSubmission: false
+      directLcSubmission: false,
+      collected: false,
+      collected_at: null,
+      createdAt: postRegistrationMetadata.reg_submission_date,
+      updatedAt: postRegistrationMetadata.reg_submission_date
     },
     registration,
     lcContactConfig,
@@ -227,8 +231,12 @@ const createNewDirectRegistration = async (registration, options) => {
 
   const regMetadata = {
     "fsa-rn": registration.fsa_rn,
-    reg_submission_date: moment().format("YYYY-MM-DD"),
-    directLcSubmission: true
+    reg_submission_date: new Date(),
+    directLcSubmission: true,
+    collected: true,
+    collected_at: new Date(),
+    createdAt: new Date(),
+    updatedAt: new Date()
   };
 
   if (!regMetadata["fsa-rn"]) {
