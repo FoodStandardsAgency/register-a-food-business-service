@@ -8,6 +8,7 @@ const { logEmitter, WARN, ERROR, INFO } = require("./logging.service");
 const { statusEmitter } = require("./statusEmitter.service");
 const { sendSingleEmail } = require("../connectors/notify/notify.connector");
 const { pdfGenerator, transformDataForPdf } = require("./pdf.service");
+const i18n = require("../utils/i18n/i18n");
 const {
   establishConnectionToMongo,
   getStatus,
@@ -190,9 +191,10 @@ const sendEmails = async (
       );
     }
 
+    let i18n = new i18n(registration.submission_language || "en");
     const data = transformDataForNotify(registration, lcContactConfig);
     const dataForPDF = transformDataForPdf(registration, lcContactConfig);
-    const pdfFile = await pdfGenerator(dataForPDF);
+    const pdfFile = await pdfGenerator(dataForPDF, i18n);
 
     for (let index in emailsToSend) {
       let fileToSend = undefined;

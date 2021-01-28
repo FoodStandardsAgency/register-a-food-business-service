@@ -126,7 +126,7 @@ const getLcNamesAndCountry = (lcContactConfig) => {
   return lcInfo;
 };
 
-const createSingleSection = (title, sectionData) => {
+const createSingleSection = (title, sectionData, i18n) => {
   let section = [];
   section.push(createTitle(title, "h2"));
   section = section.concat(createGreyLine());
@@ -137,7 +137,7 @@ const createSingleSection = (title, sectionData) => {
     const answer = isValueBoolean
       ? convertBoolToString(sectionData[key])
       : sectionData[key];
-    const newLine = createSingleLine(displayKey, answer);
+    const newLine = createSingleLine(i18n.t(displayKey), i18n.t(answer));
     section = section.concat(newLine);
   }
   return section;
@@ -150,44 +150,44 @@ const convertBoolToString = (answer) => {
   return "No";
 };
 
-const createContent = (pdfData) => {
+const createContent = (pdfData, i18n) => {
   let content = [];
-  content.push(createTitle("New food business registration received", "h1"));
+  content.push(createTitle(i18n.t("New food business registration received"), "h1"));
   content.push(createNewSpace(2));
-  content = content.concat(createLcContactSection(pdfData.metaData.lcInfo));
+  content = content.concat(createLcContactSection(pdfData.metaData.lcInfo, i18n));
   content.push(createNewSpace(2));
   content.push(
     createTitle(
-      "You have received a new food business registration. The registration details are included in this email. The new registration should also be available on your management information system.",
+      i18n.t("You have received a new food business registration. The registration details are included in this email. The new registration should also be available on your management information system."),
       "h4"
     )
   );
   content.push(createNewSpace(2));
   content = content.concat(
-    createFsaRnBox(pdfData.metaData["fsa-rn"], pdfData.metaData.lcInfo)
+    createFsaRnBox(pdfData.metaData["fsa-rn"], pdfData.metaData.lcInfo, i18n)
   );
   content.push(createNewSpace(2));
-  content.push(createTitle("Registration details", "bigger"));
+  content.push(createTitle(i18n.t("Registration details"), "bigger"));
   content.push(createNewSpace(2));
   content.push(
-    createSingleLine("Submitted on", pdfData.metaData.reg_submission_date)
+    createSingleLine(i18n.t("Submitted on"), pdfData.metaData.reg_submission_date)
   );
   if (pdfData.partnershipDetails !== undefined) {
     content.push(
-      createSingleSection("Partnership details", pdfData.partnershipDetails)
+      createSingleSection(i18n.t("Partnership details"), pdfData.partnershipDetails, i18n)
     );
     content.push(
-      createSingleSection("Main partnership contact details", pdfData.operator)
+      createSingleSection(i18n.t("Main partnership contact details"), pdfData.operator, i18n)
     );
   } else {
-    content.push(createSingleSection("Operator details", pdfData.operator));
+    content.push(createSingleSection(i18n.t("Operator details"), pdfData.operator, i18n));
   }
   content.push(
-    createSingleSection("Establishment details", pdfData.establishment)
+    createSingleSection(i18n.t("Establishment details"), pdfData.establishment, i18n)
   );
-  content.push(createSingleSection("Activities", pdfData.activities));
-  content.push(createSingleSection("Declaration", pdfData.declaration));
-  content.push(createGuidanceLinksSection(pdfData.metaData.lcInfo));
+  content.push(createSingleSection(i18n.t("Activities"), pdfData.activities, i18n));
+  content.push(createSingleSection(i18n.t("Declaration"), pdfData.declaration, i18n));
+  content.push(createGuidanceLinksSection(pdfData.metaData.lcInfo, i18n));
   return content;
 };
 
@@ -195,15 +195,16 @@ const createContent = (pdfData) => {
  * Function that uses http://pdfmake.org to convert the data into a base64 string which is what notify uses to create the pdf template
  *
  * @param {object} pdfData An object containing the set of data in the correct format for the pdf service
+ * @param {object} i18n Translation utility
 
  * @returns {base64Pdf} Encoded strng that Notify service can use to create the PDF
  */
 
-const pdfGenerator = (pdfData) => {
+const pdfGenerator = (pdfData, i18n) => {
   return new Promise((resolve) => {
     const clonedFontDes = JSON.parse(JSON.stringify(fontDescriptors));
     const printer = new PdfPrinter(clonedFontDes);
-    const content = createContent(pdfData);
+    const content = createContent(pdfData, i18n);
     const clonedDocDef = docDefinitionGenerator(content);
     const pdfMake = printer.createPdfKitDocument(clonedDocDef);
 
