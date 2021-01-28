@@ -125,7 +125,9 @@ const createFsaRnBox = (fsarnNumber, lcInfo, i18n) => {
   fsaRnBox.push({
     text: [
       {
-        text: i18n.t("The unique food business registration application reference is"),
+        text: i18n.t(
+          "The unique food business registration application reference is"
+        ),
         color: "white",
         fontSize: 16
       }
@@ -147,12 +149,16 @@ const createLcContactSection = (lcInfo, i18n) => {
   if (lcInfo.local_council) {
     lcContactSection.push(createTitle(i18n.tLa(lcInfo.local_council), "h2"));
   } else {
-    lcContactSection.push(createTitle(i18n.tLa(lcInfo.local_council_hygiene), "h2"));
+    lcContactSection.push(
+      createTitle(i18n.tLa(lcInfo.local_council_hygiene), "h2")
+    );
     lcContactSection.push(
       createTitle(i18n.t("Responsible local council for food hygiene"), "h3")
     );
     lcContactSection.push(createNewSpace(1));
-    lcContactSection.push(createTitle(i18n.tLa(lcInfo.local_council_standards), "h2"));
+    lcContactSection.push(
+      createTitle(i18n.tLa(lcInfo.local_council_standards), "h2")
+    );
     lcContactSection.push(
       createTitle(i18n.t("Responsible local council for food standards"), "h3")
     );

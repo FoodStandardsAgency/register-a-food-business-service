@@ -7,7 +7,8 @@ module.exports = class i18n {
   constructor(language) {
     this.language = language;
     this.translations = language === "cy" ? cy : en;
-    this.laTranslations = language === "cy" ? cyLocalAuthorities : enLocalAuthorities;
+    this.laTranslations =
+      language === "cy" ? cyLocalAuthorities : enLocalAuthorities;
   }
   t(key) {
     if (this.translations && this.translations[key]) {
@@ -21,4 +22,4 @@ module.exports = class i18n {
     }
     return key;
   }
-}
+};

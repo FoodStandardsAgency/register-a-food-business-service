@@ -8,7 +8,6 @@ const { logEmitter, WARN, ERROR, INFO } = require("./logging.service");
 const { statusEmitter } = require("./statusEmitter.service");
 const { sendSingleEmail } = require("../connectors/notify/notify.connector");
 const { pdfGenerator, transformDataForPdf } = require("./pdf.service");
-const i18n = require("../utils/i18n/i18n");
 const {
   establishConnectionToMongo,
   getStatus,
@@ -82,6 +81,7 @@ const transformDataForNotify = (registration, lcContactConfig) => {
   delete registrationClone.establishment.premise.establishment_first_line;
   delete registrationClone.establishment.premise.establishment_street;
 
+  moment.locale(registration.submission_language);
   registrationClone.establishment.establishment_details.establishment_opening_date = moment(
     registrationClone.establishment.establishment_details
       .establishment_opening_date
@@ -121,22 +121,28 @@ const transformDataForNotify = (registration, lcContactConfig) => {
     .replace(" ", "")
     .slice(0, -3);
   flattenedData.operator_type = transformOperatorTypeEnum(
-    flattenedData.operator_type
+    flattenedData.operator_type,
+    registration.submission_language
   );
   flattenedData.establishment_type = transformEstablishmentTypeEnum(
-    flattenedData.establishment_type
+    flattenedData.establishment_type,
+    registration.submission_language
   );
   flattenedData.customer_type = transformCustomerTypeEnum(
-    flattenedData.customer_type
+    flattenedData.customer_type,
+    registration.submission_language
   );
   flattenedData.business_type = transformBusinessTypeEnum(
-    flattenedData.business_type
+    flattenedData.business_type,
+    registration.submission_language
   );
   flattenedData.import_export_activities = transformBusinessImportExportEnum(
-    flattenedData.import_export_activities
+    flattenedData.import_export_activities,
+    registration.submission_language
   );
   flattenedData.water_supply = transformWaterSupplyEnum(
-    flattenedData.water_supply
+    flattenedData.water_supply,
+    registration.submission_language
   );
 
   return flattenedData;

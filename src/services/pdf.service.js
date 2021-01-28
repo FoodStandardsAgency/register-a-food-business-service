@@ -49,6 +49,7 @@ const transformDataForPdf = (registrationData, lcContactConfig) => {
   delete premise.establishment_street;
   const activities = { ...registrationData.establishment.activities };
 
+  moment.locale(registrationData.submission_language);
   registrationData.establishment.establishment_details.establishment_opening_date = moment(
     registrationData.establishment.establishment_details
       .establishment_opening_date
@@ -58,20 +59,30 @@ const transformDataForPdf = (registrationData, lcContactConfig) => {
     registrationData.reg_submission_date
   ).format("DD MMM YYYY");
 
-  operator.operator_type = transformOperatorTypeEnum(operator.operator_type);
+  operator.operator_type = transformOperatorTypeEnum(
+    operator.operator_type,
+    registrationData.submission_language
+  );
   premise.establishment_type = transformEstablishmentTypeEnum(
-    premise.establishment_type
+    premise.establishment_type,
+    registrationData.submission_language
   );
   activities.customer_type = transformCustomerTypeEnum(
-    activities.customer_type
+    activities.customer_type,
+    registrationData.submission_language
   );
   activities.business_type = transformBusinessTypeEnum(
-    activities.business_type
+    activities.business_type,
+    registrationData.submission_language
   );
   activities.import_export_activities = transformBusinessImportExportEnum(
-    activities.import_export_activities
+    activities.import_export_activities,
+    registrationData.submission_language
   );
-  activities.water_supply = transformWaterSupplyEnum(activities.water_supply);
+  activities.water_supply = transformWaterSupplyEnum(
+    activities.water_supply,
+    registrationData.submission_language
+  );
 
   const pdfData = {
     operator,
@@ -152,13 +163,19 @@ const convertBoolToString = (answer) => {
 
 const createContent = (pdfData, i18n) => {
   let content = [];
-  content.push(createTitle(i18n.t("New food business registration received"), "h1"));
+  content.push(
+    createTitle(i18n.t("New food business registration received"), "h1")
+  );
   content.push(createNewSpace(2));
-  content = content.concat(createLcContactSection(pdfData.metaData.lcInfo, i18n));
+  content = content.concat(
+    createLcContactSection(pdfData.metaData.lcInfo, i18n)
+  );
   content.push(createNewSpace(2));
   content.push(
     createTitle(
-      i18n.t("You have received a new food business registration. The registration details are included in this email. The new registration should also be available on your management information system."),
+      i18n.t(
+        "You have received a new food business registration. The registration details are included in this email. The new registration should also be available on your management information system."
+      ),
       "h4"
     )
   );
@@ -170,23 +187,44 @@ const createContent = (pdfData, i18n) => {
   content.push(createTitle(i18n.t("Registration details"), "bigger"));
   content.push(createNewSpace(2));
   content.push(
-    createSingleLine(i18n.t("Submitted on"), pdfData.metaData.reg_submission_date)
+    createSingleLine(
+      i18n.t("Submitted on"),
+      pdfData.metaData.reg_submission_date
+    )
   );
   if (pdfData.partnershipDetails !== undefined) {
     content.push(
-      createSingleSection(i18n.t("Partnership details"), pdfData.partnershipDetails, i18n)
+      createSingleSection(
+        i18n.t("Partnership details"),
+        pdfData.partnershipDetails,
+        i18n
+      )
     );
     content.push(
-      createSingleSection(i18n.t("Main partnership contact details"), pdfData.operator, i18n)
+      createSingleSection(
+        i18n.t("Main partnership contact details"),
+        pdfData.operator,
+        i18n
+      )
     );
   } else {
-    content.push(createSingleSection(i18n.t("Operator details"), pdfData.operator, i18n));
+    content.push(
+      createSingleSection(i18n.t("Operator details"), pdfData.operator, i18n)
+    );
   }
   content.push(
-    createSingleSection(i18n.t("Establishment details"), pdfData.establishment, i18n)
+    createSingleSection(
+      i18n.t("Establishment details"),
+      pdfData.establishment,
+      i18n
+    )
   );
-  content.push(createSingleSection(i18n.t("Activities"), pdfData.activities, i18n));
-  content.push(createSingleSection(i18n.t("Declaration"), pdfData.declaration, i18n));
+  content.push(
+    createSingleSection(i18n.t("Activities"), pdfData.activities, i18n)
+  );
+  content.push(
+    createSingleSection(i18n.t("Declaration"), pdfData.declaration, i18n)
+  );
   content.push(createGuidanceLinksSection(pdfData.metaData.lcInfo, i18n));
   return content;
 };
