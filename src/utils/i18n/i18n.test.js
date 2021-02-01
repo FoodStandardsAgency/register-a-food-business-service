@@ -1,25 +1,27 @@
-const { t } = require("./i18n");
+const i18n = require("./i18n");
 
 var result;
 
 describe("Function: t", () => {
   describe("given the request is for english translation", () => {
     beforeEach(() => {
-      result = t("en", "test");
+      const i18nUtil = new i18n("en");
+      result = i18nUtil.t("Registration details");
     });
 
     it("should return the english translation", () => {
-      expect(result).toEqual("english");
+      expect(result).toEqual("Registration details");
     });
   });
 
   describe("given the request is for welsh translation", () => {
     beforeEach(() => {
-      result = t("cy", "test");
+      const i18nUtil = new i18n("cy");
+      result = i18nUtil.t("Registration details");
     });
 
     it("should return the welsh translation", () => {
-      expect(result).toEqual("welsh");
+      expect(result).toEqual("Manylion cofrestru");
     });
   });
 });

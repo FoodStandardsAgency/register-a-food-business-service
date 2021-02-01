@@ -23,6 +23,7 @@ const {
   transformOperatorTypeEnum,
   transformWaterSupplyEnum
 } = require("./transformEnums.service");
+const i18n = require("../utils/i18n/i18n");
 /**
  * Function that converts the data into format for Notify and creates a new object
  *
@@ -36,7 +37,9 @@ const {
 const transformDataForNotify = (registration, lcContactConfig, i18n) => {
   const lcInfo = {};
   if (lcContactConfig.hygieneAndStandards) {
-    lcInfo.local_council = i18n.tLa(lcContactConfig.hygieneAndStandards.local_council);
+    lcInfo.local_council = i18n.tLa(
+      lcContactConfig.hygieneAndStandards.local_council
+    );
 
     lcInfo.local_council_email =
       lcContactConfig.hygieneAndStandards.local_council_email;
@@ -50,7 +53,9 @@ const transformDataForNotify = (registration, lcContactConfig, i18n) => {
         lcContactConfig.hygieneAndStandards.local_council_phone_number;
     }
   } else {
-    lcInfo.local_council_hygiene = i18n.tLa(lcContactConfig.hygiene.local_council);
+    lcInfo.local_council_hygiene = i18n.tLa(
+      lcContactConfig.hygiene.local_council
+    );
 
     lcInfo.local_council_email_hygiene =
       lcContactConfig.hygiene.local_council_email;
@@ -63,7 +68,9 @@ const transformDataForNotify = (registration, lcContactConfig, i18n) => {
       lcInfo.local_council_phone_number_hygiene =
         lcContactConfig.hygiene.local_council_phone_number;
     }
-    lcInfo.local_council_standards = i18n.tLa(lcContactConfig.standards.local_council);
+    lcInfo.local_council_standards = i18n.tLa(
+      lcContactConfig.standards.local_council
+    );
 
     lcInfo.local_council_email_standards =
       lcContactConfig.standards.local_council_email;
@@ -202,7 +209,11 @@ const sendEmails = async (
     }
 
     let i18nUtil = new i18n(registration.submission_language || "en");
-    const data = transformDataForNotify(registration, lcContactConfig, i18nUtil);
+    const data = transformDataForNotify(
+      registration,
+      lcContactConfig,
+      i18nUtil
+    );
     const dataForPDF = transformDataForPdf(registration, lcContactConfig);
     const pdfFile = await pdfGenerator(dataForPDF, i18nUtil);
 
@@ -425,7 +436,9 @@ const generateEmailsToSend = (registration, lcContactConfig, configData) => {
       emailsToSend.push({
         type: "LC",
         address: lcNotificationEmailAddresses[recipientEmailAddress],
-        templateId: cy ? configData.notify_template_keys.lc_new_registration_welsh : configData.notify_template_keys.lc_new_registration
+        templateId: cy
+          ? configData.notify_template_keys.lc_new_registration_welsh
+          : configData.notify_template_keys.lc_new_registration
       });
     }
   }
@@ -437,14 +450,18 @@ const generateEmailsToSend = (registration, lcContactConfig, configData) => {
   emailsToSend.push({
     type: "FBO",
     address: fboEmailAddress,
-    templateId: cy ? configData.notify_template_keys.fbo_submission_complete_welsh : configData.notify_template_keys.fbo_submission_complete
+    templateId: cy
+      ? configData.notify_template_keys.fbo_submission_complete_welsh
+      : configData.notify_template_keys.fbo_submission_complete
   });
 
   if (registration.declaration && registration.declaration.feedback1) {
     emailsToSend.push({
       type: "FBO_FB",
       address: fboEmailAddress,
-      templateId: cy ? configData.notify_template_keys.fbo_feedback_welsh : configData.notify_template_keys.fbo_feedback
+      templateId: cy
+        ? configData.notify_template_keys.fbo_feedback_welsh
+        : configData.notify_template_keys.fbo_feedback
     });
 
     emailsToSend.push({
