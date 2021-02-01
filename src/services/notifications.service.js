@@ -28,14 +28,15 @@ const {
  *
  * @param {object} registration The cached registration
  * @param {object} lcContactConfig The object containing the local council information
+ * @param {object} i18n The translation util
  *
  * @returns {object} Object containing key-value pairs of the data needed to populate corresponding keys in notify template
  */
 
-const transformDataForNotify = (registration, lcContactConfig) => {
+const transformDataForNotify = (registration, lcContactConfig, i18n) => {
   const lcInfo = {};
   if (lcContactConfig.hygieneAndStandards) {
-    lcInfo.local_council = lcContactConfig.hygieneAndStandards.local_council;
+    lcInfo.local_council = i18n.tLa(lcContactConfig.hygieneAndStandards.local_council);
 
     lcInfo.local_council_email =
       lcContactConfig.hygieneAndStandards.local_council_email;
@@ -49,7 +50,7 @@ const transformDataForNotify = (registration, lcContactConfig) => {
         lcContactConfig.hygieneAndStandards.local_council_phone_number;
     }
   } else {
-    lcInfo.local_council_hygiene = lcContactConfig.hygiene.local_council;
+    lcInfo.local_council_hygiene = i18n.tLa(lcContactConfig.hygiene.local_council);
 
     lcInfo.local_council_email_hygiene =
       lcContactConfig.hygiene.local_council_email;
@@ -62,7 +63,7 @@ const transformDataForNotify = (registration, lcContactConfig) => {
       lcInfo.local_council_phone_number_hygiene =
         lcContactConfig.hygiene.local_council_phone_number;
     }
-    lcInfo.local_council_standards = lcContactConfig.standards.local_council;
+    lcInfo.local_council_standards = i18n.tLa(lcContactConfig.standards.local_council);
 
     lcInfo.local_council_email_standards =
       lcContactConfig.standards.local_council_email;
@@ -144,6 +145,9 @@ const transformDataForNotify = (registration, lcContactConfig) => {
     flattenedData.water_supply,
     registration.submission_language
   );
+  flattenedData.declaration1 = i18n.t(flattenedData.declaration1);
+  flattenedData.declaration2 = i18n.t(flattenedData.declaration2);
+  flattenedData.declaration3 = i18n.t(flattenedData.declaration3);
 
   return flattenedData;
 };
@@ -197,10 +201,10 @@ const sendEmails = async (
       );
     }
 
-    let i18n = new i18n(registration.submission_language || "en");
-    const data = transformDataForNotify(registration, lcContactConfig);
+    let i18nUtil = new i18n(registration.submission_language || "en");
+    const data = transformDataForNotify(registration, lcContactConfig, i18nUtil);
     const dataForPDF = transformDataForPdf(registration, lcContactConfig);
-    const pdfFile = await pdfGenerator(dataForPDF, i18n);
+    const pdfFile = await pdfGenerator(dataForPDF, i18nUtil);
 
     for (let index in emailsToSend) {
       let fileToSend = undefined;
@@ -410,6 +414,7 @@ const initialiseNotificationsStatusIfNotSet = async (fsaId, emailsToSend) => {
 };
 
 const generateEmailsToSend = (registration, lcContactConfig, configData) => {
+  const cy = registration.submission_language === "cy";
   let emailsToSend = [];
 
   for (let typeOfCouncil in lcContactConfig) {
@@ -420,7 +425,7 @@ const generateEmailsToSend = (registration, lcContactConfig, configData) => {
       emailsToSend.push({
         type: "LC",
         address: lcNotificationEmailAddresses[recipientEmailAddress],
-        templateId: configData.notify_template_keys.lc_new_registration
+        templateId: cy ? configData.notify_template_keys.lc_new_registration_welsh : configData.notify_template_keys.lc_new_registration
       });
     }
   }
@@ -432,14 +437,14 @@ const generateEmailsToSend = (registration, lcContactConfig, configData) => {
   emailsToSend.push({
     type: "FBO",
     address: fboEmailAddress,
-    templateId: configData.notify_template_keys.fbo_submission_complete
+    templateId: cy ? configData.notify_template_keys.fbo_submission_complete_welsh : configData.notify_template_keys.fbo_submission_complete
   });
 
   if (registration.declaration && registration.declaration.feedback1) {
     emailsToSend.push({
       type: "FBO_FB",
       address: fboEmailAddress,
-      templateId: configData.notify_template_keys.fbo_feedback
+      templateId: cy ? configData.notify_template_keys.fbo_feedback_welsh : configData.notify_template_keys.fbo_feedback
     });
 
     emailsToSend.push({
