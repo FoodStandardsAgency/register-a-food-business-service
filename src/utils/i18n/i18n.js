@@ -11,7 +11,9 @@ module.exports = class i18n {
     this.laTranslations =
       language === "cy" ? cyLocalAuthorities : enLocalAuthorities;
   }
-  language() { return this.lang; }
+  language() {
+    return this.lang;
+  }
   t(key) {
     if (this.translations && this.translations[key]) {
       return this.translations[key];
