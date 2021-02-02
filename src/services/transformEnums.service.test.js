@@ -26,7 +26,19 @@ describe("Function: transformBusinessImportEcportForNotify", () => {
       expect(result).toBe(importExportEnum.IMPORT.value.en);
     });
   });
-  describe("When given an ivalid enum key", () => {
+  describe("When given a valid enum key requested with welsh translation", () => {
+    let result;
+    beforeEach(() => {
+      result = transformBusinessImportExportEnum(
+        importExportEnum.IMPORT.key,
+        "cy"
+      );
+    });
+    it("should return the corresponding value.cy", () => {
+      expect(result).toBe(importExportEnum.IMPORT.value.cy);
+    });
+  });
+  describe("When given an invalid enum key", () => {
     let result;
     beforeEach(() => {
       result = transformBusinessImportExportEnum("invalid");
@@ -46,7 +58,16 @@ describe("Function: transformBusinessTypeEnum", () => {
       expect(result).toBe(businessTypeEnum["002"].value.en);
     });
   });
-  describe("When given an ivalid enum key", () => {
+  describe("When given a valid enum key requested with welsh translation", () => {
+    let result;
+    beforeEach(() => {
+      result = transformBusinessTypeEnum(businessTypeEnum["002"].key, "cy");
+    });
+    it("should return the corresponding value.cy", () => {
+      expect(result).toBe(businessTypeEnum["002"].value.cy);
+    });
+  });
+  describe("When given an invalid enum key", () => {
     let result;
     beforeEach(() => {
       result = transformBusinessTypeEnum("invalid");
@@ -66,7 +87,19 @@ describe("Function: transformCustomerTypeEnum", () => {
       expect(result).toBe(customerTypeEnum.END_CONSUMER.value.en);
     });
   });
-  describe("When given an ivalid enum key", () => {
+  describe("When given a valid enum key requested with welsh translation", () => {
+    let result;
+    beforeEach(() => {
+      result = transformCustomerTypeEnum(
+        customerTypeEnum.END_CONSUMER.key,
+        "cy"
+      );
+    });
+    it("should return the corresponding value.cy", () => {
+      expect(result).toBe(customerTypeEnum.END_CONSUMER.value.cy);
+    });
+  });
+  describe("When given an invalid enum key", () => {
     let result;
     beforeEach(() => {
       result = transformCustomerTypeEnum("invalid");
@@ -88,7 +121,19 @@ describe("Function: transformEstablishmentTypeEnum", () => {
       expect(result).toBe(establishmentTypeEnum.DOMESTIC.value.en);
     });
   });
-  describe("When given an ivalid enum key", () => {
+  describe("When given a valid enum key requested with welsh translation", () => {
+    let result;
+    beforeEach(() => {
+      result = transformEstablishmentTypeEnum(
+        establishmentTypeEnum.DOMESTIC.key,
+        "cy"
+      );
+    });
+    it("should return the corresponding value.cy", () => {
+      expect(result).toBe(establishmentTypeEnum.DOMESTIC.value.cy);
+    });
+  });
+  describe("When given an invalid enum key", () => {
     let result;
     beforeEach(() => {
       result = transformEstablishmentTypeEnum("invalid");
@@ -108,7 +153,16 @@ describe("Function: transformOperatorTypeEnum", () => {
       expect(result).toBe(operatorTypeEnum.COMPANY.value.en);
     });
   });
-  describe("When given an ivalid enum key", () => {
+  describe("When given a valid enum key requested with welsh translation", () => {
+    let result;
+    beforeEach(() => {
+      result = transformOperatorTypeEnum(operatorTypeEnum.COMPANY.key, "cy");
+    });
+    it("should return the corresponding value.cy", () => {
+      expect(result).toBe(operatorTypeEnum.COMPANY.value.cy);
+    });
+  });
+  describe("When given an invalid enum key", () => {
     let result;
     beforeEach(() => {
       result = transformOperatorTypeEnum("invalid");
@@ -128,7 +182,16 @@ describe("Function: transformWaterSupplyEnum", () => {
       expect(result).toBe(waterSupplyEnum.PUBLIC.value.en);
     });
   });
-  describe("When given an ivalid enum key", () => {
+  describe("When given a valid enum key requested with welsh translation", () => {
+    let result;
+    beforeEach(() => {
+      result = transformWaterSupplyEnum(waterSupplyEnum.PUBLIC.key, "cy");
+    });
+    it("should return the corresponding value.cy", () => {
+      expect(result).toBe(waterSupplyEnum.PUBLIC.value.cy);
+    });
+  });
+  describe("When given an invalid enum key", () => {
     let result;
     beforeEach(() => {
       result = transformWaterSupplyEnum("invalid");

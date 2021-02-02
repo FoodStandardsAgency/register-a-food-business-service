@@ -104,7 +104,7 @@ const createGreyLine = () => {
   return greyLineArray;
 };
 
-const createFsaRnBox = (fsarnNumber, lcInfo) => {
+const createFsaRnBox = (fsarnNumber, lcInfo, i18n) => {
   const fsaRnBox = [];
   const yPositionText = lcInfo.local_council ? 285 : 355;
   const yPositionNumber = lcInfo.local_council ? 320 : 390;
@@ -125,7 +125,9 @@ const createFsaRnBox = (fsarnNumber, lcInfo) => {
   fsaRnBox.push({
     text: [
       {
-        text: "The unique food business registration application reference is",
+        text: i18n.t(
+          "The unique food business registration application reference is"
+        ),
         color: "white",
         fontSize: 16
       }
@@ -142,30 +144,34 @@ const createFsaRnBox = (fsarnNumber, lcInfo) => {
   return fsaRnBox;
 };
 
-const createLcContactSection = (lcInfo) => {
+const createLcContactSection = (lcInfo, i18n) => {
   const lcContactSection = [];
   if (lcInfo.local_council) {
-    lcContactSection.push(createTitle(lcInfo.local_council, "h2"));
+    lcContactSection.push(createTitle(i18n.tLa(lcInfo.local_council), "h2"));
   } else {
-    lcContactSection.push(createTitle(lcInfo.local_council_hygiene, "h2"));
     lcContactSection.push(
-      createTitle("Responsible local council for food hygiene", "h3")
+      createTitle(i18n.tLa(lcInfo.local_council_hygiene), "h2")
+    );
+    lcContactSection.push(
+      createTitle(i18n.t("Responsible local council for food hygiene"), "h3")
     );
     lcContactSection.push(createNewSpace(1));
-    lcContactSection.push(createTitle(lcInfo.local_council_standards, "h2"));
     lcContactSection.push(
-      createTitle("Responsible local council for food standards", "h3")
+      createTitle(i18n.tLa(lcInfo.local_council_standards), "h2")
+    );
+    lcContactSection.push(
+      createTitle(i18n.t("Responsible local council for food standards"), "h3")
     );
   }
   return lcContactSection;
 };
 
-const createGuidanceLinksSection = (lcInfo) => {
+const createGuidanceLinksSection = (lcInfo, i18n) => {
   const guidanceLinksSectionNoSpaces = [];
   guidanceLinksSectionNoSpaces.push(
-    createTitle("Guidance links provided ", "bigger")
+    createTitle(i18n.t("Guidance links provided"), "bigger")
   );
-  if (lcInfo.country == "wales") {
+  if (lcInfo.country === "wales" || i18n.language() === "cy") {
     guidanceLinksSectionNoSpaces.push(createTitle("English", "h2"));
   }
   guidanceLinksSectionNoSpaces.push(
@@ -199,13 +205,16 @@ const createGuidanceLinksSection = (lcInfo) => {
         "h4"
       )
     );
-  } else if (lcInfo.country == "wales") {
+  } else if (lcInfo.country === "wales") {
     guidanceLinksSectionNoSpaces.push(
       createTitle(
         "Business support: https://www.businesswales.gov.wales/starting-up",
         "h4"
       )
     );
+  }
+
+  if (lcInfo.country === "wales" || i18n.language() === "cy") {
     guidanceLinksSectionNoSpaces.push(createTitle("Cymru", "h2"));
     guidanceLinksSectionNoSpaces.push(
       createTitle(

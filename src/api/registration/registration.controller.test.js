@@ -142,6 +142,8 @@ describe("registration controller", () => {
   const testConfigVersion = {
     notify_template_keys: { key1: "abc", key2: "xyz" }
   };
+  const testLanguage = "en";
+
   describe("Function: createNewRegistration", () => {
     beforeEach(() => {
       jest.clearAllMocks();
@@ -169,6 +171,7 @@ describe("registration controller", () => {
           result = await createNewRegistration(
             testRegistration,
             testLocalCouncilUrl,
+            testLanguage,
             testRegDataVersion
           );
         });
@@ -189,6 +192,7 @@ describe("registration controller", () => {
           result = await createNewRegistration(
             testRegistration,
             testLocalCouncilUrl,
+            testLanguage,
             testRegDataVersion
           );
         });
@@ -199,7 +203,8 @@ describe("registration controller", () => {
             {
               "fsa-rn": postRegistrationMetadata["fsa-rn"],
               reg_submission_date: postRegistrationMetadata.reg_submission_date,
-              directLcSubmission: false
+              directLcSubmission: false,
+              submission_language: "en"
             },
             testRegistration,
             exampleLcConfig,
@@ -235,6 +240,7 @@ describe("registration controller", () => {
         result = await createNewRegistration(
           testRegistration,
           testLocalCouncilUrl,
+          testLanguage,
           testRegDataVersion
         );
       });
@@ -263,6 +269,7 @@ describe("registration controller", () => {
         result = await createNewRegistration(
           testRegistration,
           testLocalCouncilUrl,
+          testLanguage,
           testRegDataVersion
         );
       });

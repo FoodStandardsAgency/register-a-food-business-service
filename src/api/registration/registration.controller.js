@@ -29,6 +29,7 @@ const { logEmitter } = require("../../services/logging.service");
 const createNewRegistration = async (
   registration,
   localCouncilUrl,
+  submission_language,
   regDataVersion
 ) => {
   logEmitter.emit(
@@ -86,7 +87,8 @@ const createNewRegistration = async (
     {
       "fsa-rn": postRegistrationMetadata["fsa-rn"],
       reg_submission_date: postRegistrationMetadata.reg_submission_date,
-      directLcSubmission: false
+      directLcSubmission: false,
+      submission_language: submission_language
     },
     registration,
     lcContactConfig,

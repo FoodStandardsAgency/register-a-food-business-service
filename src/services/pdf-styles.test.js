@@ -9,6 +9,9 @@ const {
   createGuidanceLinksSection
 } = require("./pdf-styles");
 
+const i18n = require("../utils/i18n/i18n");
+const i18nUtil = new i18n("en");
+
 describe("Function: createTitle", () => {
   let titleArray;
   beforeEach(() => {
@@ -91,9 +94,13 @@ describe("Function: createFsaRnBox", () => {
   let result;
   describe("When given single local council", () => {
     beforeEach(() => {
-      result = createFsaRnBox("123456", {
-        local_council: "cardiff"
-      });
+      result = createFsaRnBox(
+        "123456",
+        {
+          local_council: "cardiff"
+        },
+        i18nUtil
+      );
     });
 
     it("Should return the fsarn", () => {
@@ -111,10 +118,14 @@ describe("Function: createFsaRnBox", () => {
 
   describe("When given seperate hygeine and standards councils", () => {
     beforeEach(() => {
-      result = createFsaRnBox("123456", {
-        local_council_hygeine: "west-dorset",
-        local_council_standards: "dorset"
-      });
+      result = createFsaRnBox(
+        "123456",
+        {
+          local_council_hygeine: "west-dorset",
+          local_council_standards: "dorset"
+        },
+        i18nUtil
+      );
     });
 
     it("Should return the fsarn", () => {
@@ -136,7 +147,7 @@ describe("Function: createLcContactSection", () => {
   describe("When given a single council", () => {
     const lcInfo = { local_council: "City of Cardiff Council" };
     beforeEach(() => {
-      result = createLcContactSection(lcInfo);
+      result = createLcContactSection(lcInfo, i18nUtil);
     });
 
     it("Should return an array of length 1", () => {
@@ -150,7 +161,7 @@ describe("Function: createLcContactSection", () => {
       local_council_standards: "Standards Council"
     };
     beforeEach(() => {
-      result = createLcContactSection(lcInfo);
+      result = createLcContactSection(lcInfo, i18nUtil);
     });
 
     it("Should return an array of length greater than 1", () => {
@@ -164,7 +175,7 @@ describe("Function: createGuidanceLinksSections", () => {
   describe("When lcInfo.country is england", () => {
     const lcInfo = { country: "england" };
     beforeEach(() => {
-      result = createGuidanceLinksSection(lcInfo);
+      result = createGuidanceLinksSection(lcInfo, i18nUtil);
     });
 
     it("Should return an array of length 8", () => {
@@ -174,7 +185,7 @@ describe("Function: createGuidanceLinksSections", () => {
   describe("When lcInfo.country is wales", () => {
     const lcInfo = { country: "wales" };
     beforeEach(() => {
-      result = createGuidanceLinksSection(lcInfo);
+      result = createGuidanceLinksSection(lcInfo, i18nUtil);
     });
 
     it("Should return an array of length 24", () => {
@@ -184,7 +195,7 @@ describe("Function: createGuidanceLinksSections", () => {
   describe("When lcInfo.country is northern-ireland", () => {
     const lcInfo = { country: "northern-ireland" };
     beforeEach(() => {
-      result = createGuidanceLinksSection(lcInfo);
+      result = createGuidanceLinksSection(lcInfo, i18nUtil);
     });
 
     it("Should return an array of length 14", () => {
