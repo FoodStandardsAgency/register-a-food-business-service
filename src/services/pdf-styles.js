@@ -171,7 +171,7 @@ const createGuidanceLinksSection = (lcInfo, i18n) => {
   guidanceLinksSectionNoSpaces.push(
     createTitle(i18n.t("Guidance links provided"), "bigger")
   );
-  if (lcInfo.country == "wales") {
+  if (lcInfo.country === "wales" || i18n.language() === "cy") {
     guidanceLinksSectionNoSpaces.push(createTitle("English", "h2"));
   }
   guidanceLinksSectionNoSpaces.push(
@@ -205,13 +205,16 @@ const createGuidanceLinksSection = (lcInfo, i18n) => {
         "h4"
       )
     );
-  } else if (lcInfo.country == "wales") {
+  } else if (lcInfo.country === "wales") {
     guidanceLinksSectionNoSpaces.push(
       createTitle(
         "Business support: https://www.businesswales.gov.wales/starting-up",
         "h4"
       )
     );
+  }
+
+  if (lcInfo.country === "wales" || i18n.language() === "cy") {
     guidanceLinksSectionNoSpaces.push(createTitle("Cymru", "h2"));
     guidanceLinksSectionNoSpaces.push(
       createTitle(

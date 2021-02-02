@@ -6,18 +6,19 @@ const cyLocalAuthorities = require("./cy.localAuthorities.json");
 
 module.exports = class i18n {
   constructor(language) {
-    this.language = language;
+    this.lang = language;
     this.translations = language === "cy" ? cy : en;
     this.laTranslations =
       language === "cy" ? cyLocalAuthorities : enLocalAuthorities;
   }
+  language() { return this.lang; }
   t(key) {
     if (this.translations && this.translations[key]) {
       return this.translations[key];
     } else {
       logEmitter.emit(
         "warn",
-        `No ${this.language} translation found for key: ${key}`
+        `No ${this.lang} translation found for key: ${key}`
       );
     }
     return key;
@@ -28,7 +29,7 @@ module.exports = class i18n {
     } else {
       logEmitter.emit(
         "warn",
-        `No ${this.language} translation found for key: ${key}`
+        `No ${this.lang} translation found for key: ${key}`
       );
     }
     return key;
