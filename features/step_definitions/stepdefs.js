@@ -4,6 +4,8 @@ const { Given, When, Then, setDefaultTimeout } = require("cucumber");
 const {
   FRONT_END_NAME,
   FRONT_END_SECRET,
+  DIRECT_API_NAME,
+  DIRECT_API_SECRET,
   ADMIN_NAME,
   ADMIN_SECRET
 } = require("../../src/config");
@@ -12,22 +14,42 @@ setDefaultTimeout(60 * 1000);
 
 let apiUrl =
   "https://staging-register-a-food-business-service.azurewebsites.net";
-if (process.env.NODE_ENV === "local") {
-  apiUrl = process.env.API_URL ? process.env.API_URL : apiUrl;
-}
+
+apiUrl = process.env.API_URL ? process.env.API_URL : apiUrl;
+
+const directRegistrationFSARNs = [];
+const frontendRegistrationFSARNs = [];
 
 const sendRequest = async (body) => {
   const headers = {
     "Content-Type": "application/json",
     "api-secret": FRONT_END_SECRET,
     "client-name": FRONT_END_NAME,
-    "registration-data-version": "1.2.1"
+    "registration-data-version": "1.7.0"
   };
   const res = await fetch(`${apiUrl}/api/registration/createNewRegistration`, {
     method: "POST",
     headers,
     body: JSON.stringify(body)
   });
+  return res.json();
+};
+
+const sendDirectRequest = async (body) => {
+  const headers = {
+    "Content-Type": "application/json",
+    "api-secret": DIRECT_API_SECRET,
+    "client-name": DIRECT_API_NAME,
+    "registration-data-version": "1.7.0"
+  };
+  const res = await fetch(
+    `${apiUrl}/api/registration/v2/createNewDirectRegistration/cardiff`,
+    {
+      method: "POST",
+      headers,
+      body: JSON.stringify(body)
+    }
+  );
   return res.json();
 };
 
@@ -43,6 +65,21 @@ const getRequest = async (id) => {
   return res.json();
 };
 ////////
+
+const triggerNotificationTask = async () => {
+  const res = await fetch(`${apiUrl}/api/tasks/bulk/sendnotification`);
+  return res.json();
+};
+
+const triggerTascomiTask = async () => {
+  const res = await fetch(`${apiUrl}/api/tasks/bulk/createtascomiregistration`);
+  return res.json();
+};
+
+const triggerSaveToTemp = async () => {
+  const res = await fetch(`${apiUrl}/api/tasks/bulk/savetotempstore`);
+  return res.json();
+};
 
 Given("I have a new registration with all valid required fields", function () {
   this.registration = {
@@ -102,6 +139,49 @@ Given("I have a new registration with all valid required fields", function () {
 });
 
 Given(
+  "I have a new direct submission registration with all valid required fields",
+  function () {
+    this.registration = {
+      establishment: {
+        establishment_trading_name: "Itsu",
+        establishment_primary_number: "329857245",
+        establishment_secondary_number: "84345245",
+        establishment_email: "fsatestemail.valid@gmail.com",
+        establishment_opening_date: "2018-06-07",
+        operator: {
+          operator_first_name: "Fred",
+          operator_last_name: "Bloggs",
+          operator_postcode: "SW12 9RQ",
+          operator_address_line_1: "335",
+          operator_address_line_2: "Some St.",
+          operator_address_line_3: "Locality",
+          operator_town: "London",
+          operator_primary_number: "9827235",
+          operator_email: "fsatestemail.valid@gmail.com",
+          operator_type: "SOLETRADER"
+        },
+        premise: {
+          establishment_postcode: "SW12 9RQ",
+          establishment_address_line_1: "123",
+          establishment_address_line_2: "Street",
+          establishment_address_line_3: "Locality",
+          establishment_town: "London",
+          establishment_type: "DOMESTIC"
+        },
+        activities: {
+          customer_type: "END_CONSUMER",
+          business_type: "002",
+          import_export_activities: "NONE",
+          business_other_details: "Food business",
+          opening_days_irregular: "Open christmas",
+          water_supply: "PUBLIC"
+        }
+      }
+    };
+  }
+);
+
+Given(
   "I have a new establishment with some invalid required fields",
   function () {
     this.registration = {
@@ -158,6 +238,16 @@ Given("I have multiple conditional required fields", function () {
 
 When("I submit it to the backend", async function () {
   this.response = await sendRequest(this.registration);
+  if (this.response["fsa-rn"]) {
+    frontendRegistrationFSARNs.push(this.response["fsa-rn"]);
+  }
+});
+
+When("I submit it to the direct backend API", async function () {
+  this.response = await sendDirectRequest(this.registration);
+  if (this.response["fsa-rn"]) {
+    directRegistrationFSARNs.push(this.response["fsa-rn"]);
+  }
 });
 
 When("I submit my multiple fields to the backend", async function () {
@@ -187,6 +277,18 @@ When("I submit my multiple fields to the backend", async function () {
   this.response = await sendRequest(requestBody);
 });
 
+When("The send notifications task is triggered", async function () {
+  this.response = await triggerNotificationTask();
+});
+
+When("The tascomi task is triggered", async function () {
+  this.response = await triggerTascomiTask();
+});
+
+When("The save to temp store task is triggered", async function () {
+  this.res = await triggerSaveToTemp();
+});
+
 Then("I get a success response", async function () {
   assert.ok(this.response["fsa-rn"]);
 });
@@ -195,26 +297,40 @@ Then("I get an error response", async function () {
   assert.ok(this.response.userMessages);
 });
 
-Then(
-  "The non personal information is saved to the database",
-  async function () {
-    const id = this.response["fsa-rn"];
-    getRequest(id).then((response) => () => {
-      assert.equal(response.establishment.establishment_trading_name, "Itsu");
-    });
-  }
-);
-
-Then(
-  "The personal information is not saved to the database",
-  async function () {
-    const id = this.response["fsa-rn"];
-    getRequest(id).then((response) => () => {
-      assert.equal(response.establishment.operator_first_name, null);
-    });
-  }
-);
+Then("The information is saved to the database", async function () {
+  const id = this.response["fsa-rn"];
+  await getRequest(id).then((response) => () => {
+    assert.strictEqual(
+      response.establishment.establishment_trading_name,
+      "Itsu"
+    );
+    assert.strictEqual(
+      response.establishment.operator.operator_first_name,
+      "Fred"
+    );
+  });
+});
 
 Then("I receive a confirmation number", async function () {
   assert.ok(this.response["fsa-rn"]);
 });
+
+Then("It returns an array of attempted registrations", async function () {
+  assert.ok(this.response["attempted"]);
+});
+
+Then(
+  "Only front-end submission registrations are attempted",
+  async function () {
+    assert.ok(
+      frontendRegistrationFSARNs.every((rn) =>
+        this.response["attempted"].includes(rn)
+      )
+    );
+    assert.ok(
+      directRegistrationFSARNs.every(
+        (rn) => !this.response["attempted"].includes(rn)
+      )
+    );
+  }
+);

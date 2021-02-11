@@ -334,7 +334,7 @@ describe("RegistrationDb connector", () => {
           throw new Error("Failed");
         });
         try {
-          await createRegistration({}, "45");
+          await createRegistration({}, "45", false);
         } catch (err) {
           result = err;
         }
@@ -350,7 +350,7 @@ describe("RegistrationDb connector", () => {
         Registration.create.mockImplementation(() => {
           return new Promise((resolve) => resolve("success"));
         });
-        result = await createRegistration("fsa-rn", "cardiff");
+        result = await createRegistration("fsa-rn", "cardiff", true);
       });
 
       it("Should return the response", () => {
@@ -361,7 +361,8 @@ describe("RegistrationDb connector", () => {
         expect(Registration.create).toBeCalledWith(
           {
             fsa_rn: "fsa-rn",
-            council: "cardiff"
+            council: "cardiff",
+            direct_submission: true
           },
           {}
         );

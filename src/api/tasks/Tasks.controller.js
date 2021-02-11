@@ -167,18 +167,16 @@ const sendAllNotificationsForRegistrationsAction = async (
   let registrationsCollection = await CachedRegistrationsCollection(beCacheDb);
 
   //we have to do these 2 look ups as a workaround for azure cosmos shortcoming
-  let registrations = await findAllFailedNotificationsRegistrations(
-    registrationsCollection
-  );
+  let registrations = await findAllBlankRegistrations(registrationsCollection);
   registrations = await registrations.toArray();
 
-  let blankRegistrations = await findAllBlankRegistrations(
+  let failedRegistrations = await findAllFailedNotificationsRegistrations(
     registrationsCollection
   );
-  blankRegistrations = await blankRegistrations.toArray();
+  failedRegistrations = await failedRegistrations.toArray();
 
-  for (let i = 0; i < blankRegistrations.length; i++) {
-    registrations.push(blankRegistrations[i]);
+  for (let reg of failedRegistrations) {
+    registrations.push(reg);
   }
 
   let allLcConfigData = await getAllLocalCouncilConfig();

@@ -51,6 +51,14 @@ const errorHandler = (err, req, res, next) => {
         errorDetail.developerMessage = `${errorDetail.developerMessage} ${err.message}`;
       }
 
+      if (errorDetail.name === "supplierCouncilNotFound") {
+        errorDetail.developerMessage = `${errorDetail.developerMessage}`;
+      }
+
+      if (errorDetail.name === "doubleFail") {
+        errorDetail.developerMessage = `${errorDetail.developerMessage} ${err.message}`;
+      }
+
       if (errorDetail.name === "missingRequiredHeader") {
         errorDetail.developerMessage = `${errorDetail.developerMessage} ${err.message}`;
       }

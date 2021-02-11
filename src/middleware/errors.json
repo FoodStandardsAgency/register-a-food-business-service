@@ -1,5 +1,13 @@
 [
   {
+    "name": "doubleFail",
+    "code": "0",
+    "developerMessage":
+      "Double Mode Error. Raw error:",
+    "userMessages": "",
+    "statusCode": 400
+  },
+  {
     "name": "tascomiAuth",
     "code": "1",
     "developerMessage":
@@ -94,7 +102,7 @@
     "name": "localCouncilNotFound",
     "code": "13",
     "developerMessage":
-      "The local council url has not matched any records in the config database. Raw error:",
+      "The local council has not matched any records in the config database. Raw error:",
     "userMessages": "",
     "statusCode": 400
   },
@@ -111,6 +119,14 @@
     "code": "15",
     "developerMessage":
       "Required header missing in request. Please add and re-try request. Raw error:",
+    "userMessages": "",
+    "statusCode": 400
+  },
+  {
+    "name": "supplierCouncilNotFound",
+    "code": "16",
+    "developerMessage":
+      "The requested local-authorities must only contain authorized local authorities.",
     "userMessages": "",
     "statusCode": 400
   }

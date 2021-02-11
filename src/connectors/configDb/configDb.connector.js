@@ -156,6 +156,47 @@ const getAllLocalCouncilConfig = async () => {
   return allLcConfigData;
 };
 
+const getCouncilsForSupplier = async (url) => {
+  logEmitter.emit(
+    "functionCall",
+    "configDb.connector",
+    "getCouncilsForSupplier"
+  );
+
+  let councils = [];
+
+  try {
+    const supplierConfigCollection = await establishConnectionToMongo(
+      "supplierConfig"
+    );
+    const supplierConfig = await supplierConfigCollection.findOne({
+      supplier_url: url
+    });
+    councils = supplierConfig ? supplierConfig.local_council_urls : [];
+  } catch (err) {
+    logEmitter.emit(
+      "functionFail",
+      "configDb.connector",
+      "getCouncilsForSupplier",
+      err
+    );
+
+    const newError = new Error();
+    newError.name = "mongoConnectionError";
+    newError.message = err.message;
+
+    throw newError;
+  }
+
+  logEmitter.emit(
+    "functionSuccess",
+    "configDb.connector",
+    "getCouncilsForSupplier"
+  );
+
+  return councils;
+};
+
 const clearMongoConnection = () => {
   client = undefined;
   configDB = undefined;
@@ -179,5 +220,6 @@ module.exports = {
   addDeletedId,
   getConfigVersion,
   findCouncilByUrl,
-  findCouncilById
+  findCouncilById,
+  getCouncilsForSupplier
 };

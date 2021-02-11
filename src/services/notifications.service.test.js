@@ -27,6 +27,9 @@ const {
   waterSupplyEnum
 } = require("@slice-and-dice/register-a-food-business-validation");
 
+const i18n = require("../utils/i18n/i18n");
+const i18nUtil = new i18n("en");
+
 const exampleDeclaration = {
   declaration1: "Declaration"
 };
@@ -306,7 +309,8 @@ describe("Function: transformDataForNotify", () => {
       beforeEach(() => {
         result = transformDataForNotify(
           testRegistrationData,
-          testLcContactConfigSplitWithPhoneNumber
+          testLcContactConfigSplitWithPhoneNumber,
+          i18nUtil
         );
       });
 
@@ -314,14 +318,14 @@ describe("Function: transformDataForNotify", () => {
         const expectedFormat = {
           establishment_trading_name: "Itsu",
           operator_first_name: "Fred",
-          operator_type: operatorTypeEnum.COMPANY.value,
+          operator_type: operatorTypeEnum.COMPANY.value.en,
           establishment_postcode: "SW12 9RQ",
-          establishment_type: establishmentTypeEnum.COMMERCIAL.value,
+          establishment_type: establishmentTypeEnum.COMMERCIAL.value.en,
           establishment_opening_date: "30 Dec 2017",
-          customer_type: customerTypeEnum.END_CONSUMER.value,
-          business_type: businessTypeEnum["001"].value,
-          import_export_activities: importExportEnum.BOTH.value,
-          water_supply: waterSupplyEnum.PUBLIC.value,
+          customer_type: customerTypeEnum.END_CONSUMER.value.en,
+          business_type: businessTypeEnum["001"].value.en,
+          import_export_activities: importExportEnum.BOTH.value.en,
+          water_supply: waterSupplyEnum.PUBLIC.value.en,
           declaration1: "Declaration",
           reg_submission_date: "01 Dec 2018",
           local_council_hygiene: "Hygiene council name",
@@ -342,7 +346,8 @@ describe("Function: transformDataForNotify", () => {
       beforeEach(() => {
         result = transformDataForNotify(
           testRegistrationData,
-          testLcContactConfigCombinedWithPhoneNumber
+          testLcContactConfigCombinedWithPhoneNumber,
+          i18nUtil
         );
       });
 
@@ -350,14 +355,14 @@ describe("Function: transformDataForNotify", () => {
         const expectedFormat = {
           establishment_trading_name: "Itsu",
           operator_first_name: "Fred",
-          operator_type: operatorTypeEnum.COMPANY.value,
+          operator_type: operatorTypeEnum.COMPANY.value.en,
           establishment_postcode: "SW12 9RQ",
-          establishment_type: establishmentTypeEnum.COMMERCIAL.value,
+          establishment_type: establishmentTypeEnum.COMMERCIAL.value.en,
           establishment_opening_date: "30 Dec 2017",
-          customer_type: customerTypeEnum.END_CONSUMER.value,
-          business_type: businessTypeEnum["001"].value,
-          import_export_activities: importExportEnum.BOTH.value,
-          water_supply: waterSupplyEnum.PUBLIC.value,
+          customer_type: customerTypeEnum.END_CONSUMER.value.en,
+          business_type: businessTypeEnum["001"].value.en,
+          import_export_activities: importExportEnum.BOTH.value.en,
+          water_supply: waterSupplyEnum.PUBLIC.value.en,
           declaration1: "Declaration",
           reg_submission_date: "01 Dec 2018",
           local_council: "Hygiene and standards council name",
@@ -376,7 +381,8 @@ describe("Function: transformDataForNotify", () => {
       beforeEach(() => {
         result = transformDataForNotify(
           testRegistrationData,
-          testLcContactConfigCombined
+          testLcContactConfigCombined,
+          i18nUtil
         );
       });
 
@@ -384,14 +390,14 @@ describe("Function: transformDataForNotify", () => {
         const expectedFormat = {
           establishment_trading_name: "Itsu",
           operator_first_name: "Fred",
-          operator_type: operatorTypeEnum.COMPANY.value,
+          operator_type: operatorTypeEnum.COMPANY.value.en,
           establishment_postcode: "SW12 9RQ",
-          establishment_type: establishmentTypeEnum.COMMERCIAL.value,
+          establishment_type: establishmentTypeEnum.COMMERCIAL.value.en,
           establishment_opening_date: "30 Dec 2017",
-          customer_type: customerTypeEnum.END_CONSUMER.value,
-          business_type: businessTypeEnum["001"].value,
-          import_export_activities: importExportEnum.BOTH.value,
-          water_supply: waterSupplyEnum.PUBLIC.value,
+          customer_type: customerTypeEnum.END_CONSUMER.value.en,
+          business_type: businessTypeEnum["001"].value.en,
+          import_export_activities: importExportEnum.BOTH.value.en,
+          water_supply: waterSupplyEnum.PUBLIC.value.en,
           declaration1: "Declaration",
           reg_submission_date: "01 Dec 2018",
           local_council: "Hygiene and standards council name",
@@ -410,7 +416,8 @@ describe("Function: transformDataForNotify", () => {
       beforeEach(() => {
         result = transformDataForNotify(
           testRegistrationData,
-          testLcContactConfigSplit
+          testLcContactConfigSplit,
+          i18nUtil
         );
       });
 
@@ -418,14 +425,14 @@ describe("Function: transformDataForNotify", () => {
         const expectedFormat = {
           establishment_trading_name: "Itsu",
           operator_first_name: "Fred",
-          operator_type: operatorTypeEnum.COMPANY.value,
+          operator_type: operatorTypeEnum.COMPANY.value.en,
           establishment_postcode: "SW12 9RQ",
-          establishment_type: establishmentTypeEnum.COMMERCIAL.value,
+          establishment_type: establishmentTypeEnum.COMMERCIAL.value.en,
           establishment_opening_date: "30 Dec 2017",
-          customer_type: customerTypeEnum.END_CONSUMER.value,
-          business_type: businessTypeEnum["001"].value,
-          import_export_activities: importExportEnum.BOTH.value,
-          water_supply: waterSupplyEnum.PUBLIC.value,
+          customer_type: customerTypeEnum.END_CONSUMER.value.en,
+          business_type: businessTypeEnum["001"].value.en,
+          import_export_activities: importExportEnum.BOTH.value.en,
+          water_supply: waterSupplyEnum.PUBLIC.value.en,
           declaration1: "Declaration",
           reg_submission_date: "01 Dec 2018",
           local_council_hygiene: "Hygiene council name",
@@ -445,7 +452,8 @@ describe("Function: transformDataForNotify", () => {
       beforeEach(() => {
         result = transformDataForNotify(
           testRegistrationDataWithFalseEnums,
-          testLcContactConfigSplitWithPhoneNumber
+          testLcContactConfigSplitWithPhoneNumber,
+          i18nUtil
         );
       });
       it("should return the flattened data with two sets of council details and the enum values to be null", () => {
@@ -482,7 +490,8 @@ describe("Function: transformDataForNotify", () => {
       beforeEach(() => {
         result = transformDataForNotify(
           testRegistrationDataForPartnership,
-          testLcContactConfigSplitWithPhoneNumber
+          testLcContactConfigSplitWithPhoneNumber,
+          i18nUtil
         );
       });
 
@@ -490,16 +499,16 @@ describe("Function: transformDataForNotify", () => {
         const expectedFormat = {
           establishment_trading_name: "Itsu",
           operator_first_name: "Fred",
-          operator_type: operatorTypeEnum.PARTNERSHIP.value,
+          operator_type: operatorTypeEnum.PARTNERSHIP.value.en,
           main_contact: "Tom",
           partner_names: "Tom, Fred",
           establishment_postcode: "SW12 9RQ",
-          establishment_type: establishmentTypeEnum.COMMERCIAL.value,
+          establishment_type: establishmentTypeEnum.COMMERCIAL.value.en,
           establishment_opening_date: "30 Dec 2017",
-          customer_type: customerTypeEnum.END_CONSUMER.value,
-          business_type: businessTypeEnum["001"].value,
-          import_export_activities: importExportEnum.BOTH.value,
-          water_supply: waterSupplyEnum.PUBLIC.value,
+          customer_type: customerTypeEnum.END_CONSUMER.value.en,
+          business_type: businessTypeEnum["001"].value.en,
+          import_export_activities: importExportEnum.BOTH.value.en,
+          water_supply: waterSupplyEnum.PUBLIC.value.en,
           declaration1: "Declaration",
           reg_submission_date: today,
           local_council_hygiene: "Hygiene council name",
@@ -520,7 +529,8 @@ describe("Function: transformDataForNotify", () => {
       beforeEach(() => {
         result = transformDataForNotify(
           testRegistrationDataForPartnership,
-          testLcContactConfigCombinedWithPhoneNumber
+          testLcContactConfigCombinedWithPhoneNumber,
+          i18nUtil
         );
       });
 
@@ -528,16 +538,16 @@ describe("Function: transformDataForNotify", () => {
         const expectedFormat = {
           establishment_trading_name: "Itsu",
           operator_first_name: "Fred",
-          operator_type: operatorTypeEnum.PARTNERSHIP.value,
+          operator_type: operatorTypeEnum.PARTNERSHIP.value.en,
           main_contact: "Tom",
           partner_names: "Tom, Fred",
           establishment_postcode: "SW12 9RQ",
-          establishment_type: establishmentTypeEnum.COMMERCIAL.value,
+          establishment_type: establishmentTypeEnum.COMMERCIAL.value.en,
           establishment_opening_date: "30 Dec 2017",
-          customer_type: customerTypeEnum.END_CONSUMER.value,
-          business_type: businessTypeEnum["001"].value,
-          import_export_activities: importExportEnum.BOTH.value,
-          water_supply: waterSupplyEnum.PUBLIC.value,
+          customer_type: customerTypeEnum.END_CONSUMER.value.en,
+          business_type: businessTypeEnum["001"].value.en,
+          import_export_activities: importExportEnum.BOTH.value.en,
+          water_supply: waterSupplyEnum.PUBLIC.value.en,
           declaration1: "Declaration",
           reg_submission_date: today,
           local_council: "Hygiene and standards council name",
@@ -556,7 +566,8 @@ describe("Function: transformDataForNotify", () => {
       beforeEach(() => {
         result = transformDataForNotify(
           testRegistrationDataForPartnership,
-          testLcContactConfigCombined
+          testLcContactConfigCombined,
+          i18nUtil
         );
       });
 
@@ -564,16 +575,16 @@ describe("Function: transformDataForNotify", () => {
         const expectedFormat = {
           establishment_trading_name: "Itsu",
           operator_first_name: "Fred",
-          operator_type: operatorTypeEnum.PARTNERSHIP.value,
+          operator_type: operatorTypeEnum.PARTNERSHIP.value.en,
           main_contact: "Tom",
           partner_names: "Tom, Fred",
           establishment_postcode: "SW12 9RQ",
-          establishment_type: establishmentTypeEnum.COMMERCIAL.value,
+          establishment_type: establishmentTypeEnum.COMMERCIAL.value.en,
           establishment_opening_date: "30 Dec 2017",
-          customer_type: customerTypeEnum.END_CONSUMER.value,
-          business_type: businessTypeEnum["001"].value,
-          import_export_activities: importExportEnum.BOTH.value,
-          water_supply: waterSupplyEnum.PUBLIC.value,
+          customer_type: customerTypeEnum.END_CONSUMER.value.en,
+          business_type: businessTypeEnum["001"].value.en,
+          import_export_activities: importExportEnum.BOTH.value.en,
+          water_supply: waterSupplyEnum.PUBLIC.value.en,
           declaration1: "Declaration",
           reg_submission_date: today,
           local_council: "Hygiene and standards council name",
@@ -591,7 +602,8 @@ describe("Function: transformDataForNotify", () => {
       beforeEach(() => {
         result = transformDataForNotify(
           testRegistrationDataForPartnership,
-          testLcContactConfigSplit
+          testLcContactConfigSplit,
+          i18nUtil
         );
       });
 
@@ -599,16 +611,16 @@ describe("Function: transformDataForNotify", () => {
         const expectedFormat = {
           establishment_trading_name: "Itsu",
           operator_first_name: "Fred",
-          operator_type: operatorTypeEnum.PARTNERSHIP.value,
+          operator_type: operatorTypeEnum.PARTNERSHIP.value.en,
           main_contact: "Tom",
           partner_names: "Tom, Fred",
           establishment_postcode: "SW12 9RQ",
-          establishment_type: establishmentTypeEnum.COMMERCIAL.value,
+          establishment_type: establishmentTypeEnum.COMMERCIAL.value.en,
           establishment_opening_date: "30 Dec 2017",
-          customer_type: customerTypeEnum.END_CONSUMER.value,
-          business_type: businessTypeEnum["001"].value,
-          import_export_activities: importExportEnum.BOTH.value,
-          water_supply: waterSupplyEnum.PUBLIC.value,
+          customer_type: customerTypeEnum.END_CONSUMER.value.en,
+          business_type: businessTypeEnum["001"].value.en,
+          import_export_activities: importExportEnum.BOTH.value.en,
+          water_supply: waterSupplyEnum.PUBLIC.value.en,
           declaration1: "Declaration",
           reg_submission_date: today,
           local_council_hygiene: "Hygiene council name",

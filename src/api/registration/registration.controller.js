@@ -1,3 +1,4 @@
+const moment = require("moment");
 const { validate } = require("../../services/validation.service");
 const {
   getFullRegistrationByFsaRn,
@@ -10,19 +11,26 @@ const {
   cacheRegistration
 } = require("../../connectors/cacheDb/cacheDb.connector");
 
+const { getUprn } = require("../../connectors/address-lookup/address-matcher");
+
 const {
   findCouncilByUrl,
+  getCouncilsForSupplier,
   connectToConfigDb,
   LocalCouncilConfigDbCollection
 } = require("../../connectors/configDb/configDb.connector");
+
+const {
+  mapFromCollectionsRegistration
+} = require("../../utils/registrationMapper");
 
 const { logEmitter } = require("../../services/logging.service");
 
 const createNewRegistration = async (
   registration,
   localCouncilUrl,
-  regDataVersion,
-  sendResponse
+  submission_language,
+  regDataVersion
 ) => {
   logEmitter.emit(
     "functionCall",
@@ -78,7 +86,9 @@ const createNewRegistration = async (
     {},
     {
       "fsa-rn": postRegistrationMetadata["fsa-rn"],
-      reg_submission_date: postRegistrationMetadata.reg_submission_date
+      reg_submission_date: postRegistrationMetadata.reg_submission_date,
+      directLcSubmission: false,
+      submission_language: submission_language
     },
     registration,
     lcContactConfig,
@@ -101,13 +111,174 @@ const createNewRegistration = async (
     lc_config: lcContactConfig
   });
 
-  sendResponse(combinedResponse);
-
   logEmitter.emit(
     "functionSuccess",
     "registration.controller",
     "createNewRegistration"
   );
+
+  return combinedResponse;
+};
+
+const createNewDirectRegistration = async (registration, options) => {
+  logEmitter.emit(
+    "functionCall",
+    "registration.controller",
+    "createNewDirectRegistration"
+  );
+
+  if (registration === undefined) {
+    throw new Error("registration is undefined");
+  }
+
+  // Validate according to correct schema
+  const errors = validate(registration, true);
+  if (errors.length) {
+    const err = new Error();
+    err.name = "validationError";
+    err.validationErrors = errors;
+    throw err;
+  }
+
+  // Convert to correct format
+  const mappedRegistration = mapFromCollectionsRegistration(registration);
+
+  // RESOLUTION
+  const configDb = await connectToConfigDb();
+  const lcConfigCollection = await LocalCouncilConfigDbCollection(configDb);
+
+  if (options.requestedCouncil !== options.subscriber) {
+    // Check supplier authorized to access requested council
+    const validCouncils = await getCouncilsForSupplier(options.subscriber);
+    if (validCouncils.indexOf(options.requestedCouncil) < 0) {
+      const newError = new Error();
+      newError.name = "supplierCouncilNotFound";
+      logEmitter.emit(
+        "functionFail",
+        "registration.controller",
+        "createNewDirectRegistration",
+        newError
+      );
+      throw newError;
+    }
+  }
+
+  // Get Council details
+  const sourceCouncil = await findCouncilByUrl(
+    lcConfigCollection,
+    options.requestedCouncil
+  );
+  if (!sourceCouncil) {
+    const newError = new Error();
+    newError.name = "localCouncilNotFound";
+    newError.message = `Config for council ID "${options.requestedCouncil}" not found`;
+    logEmitter.emit(
+      "functionFail",
+      "registration.controller",
+      "createNewDirectRegistration",
+      newError
+    );
+    throw newError;
+  }
+
+  // Get UPRN of establishment and operator
+  const promises = [];
+  if (!mappedRegistration.establishment.operator.operator_uprn) {
+    promises.push(
+      getUprn(
+        mappedRegistration.establishment.operator.operator_address_line_1,
+        mappedRegistration.establishment.operator.operator_address_line_2,
+        mappedRegistration.establishment.operator.operator_postcode
+      ).then(
+        (result) =>
+          (mappedRegistration.establishment.operator.operator_uprn = result)
+      )
+    );
+  }
+
+  if (!mappedRegistration.establishment.premise.establishment_uprn) {
+    promises.push(
+      getUprn(
+        mappedRegistration.establishment.premise.establishment_address_line_1,
+        mappedRegistration.establishment.premise.establishment_address_line_2,
+        mappedRegistration.establishment.premise.establishment_postcode
+      ).then(
+        (result) =>
+          (mappedRegistration.establishment.premise.establishment_uprn = result)
+      )
+    );
+  }
+
+  //left here as legacy code
+  let lcContactConfig;
+  promises.push(
+    getLcContactConfig(sourceCouncil.local_council_url).then(
+      (result) => (lcContactConfig = result)
+    )
+  );
+
+  // Wait for asyncs to catch up
+  await Promise.allSettled(promises);
+
+  let hygieneCouncilCode;
+  if (lcContactConfig.hygieneAndStandards) {
+    hygieneCouncilCode = lcContactConfig.hygieneAndStandards.code;
+  } else {
+    hygieneCouncilCode = lcContactConfig.hygiene.code;
+  }
+
+  const regMetadata = {
+    "fsa-rn": registration.fsa_rn,
+    reg_submission_date: moment().format("YYYY-MM-DD"),
+    directLcSubmission: true
+  };
+
+  if (!regMetadata["fsa-rn"]) {
+    await getRegistrationMetaData(hygieneCouncilCode).then(
+      (result) => (regMetadata["fsa-rn"] = result["fsa-rn"])
+    );
+  }
+
+  const status = {
+    registration: null,
+    notifications: null
+  };
+
+  var supplierDetails = {};
+  if (options.requestedCouncil !== options.subscriber) {
+    supplierDetails = {
+      supplier_url: options.subscriber
+    };
+  }
+
+  const completeCacheRecord = Object.assign(
+    {},
+    regMetadata,
+    mappedRegistration,
+    lcContactConfig,
+    {
+      status: status
+    },
+    {
+      hygiene_council_code: hygieneCouncilCode,
+      local_council_url: sourceCouncil.local_council_url,
+      source_council_id: sourceCouncil._id,
+      api_version: options.apiVersion
+    },
+    supplierDetails
+  );
+
+  await cacheRegistration(completeCacheRecord);
+
+  const response = { "fsa-rn": regMetadata["fsa-rn"] };
+
+  logEmitter.emit(
+    "functionSuccess",
+    "registration.controller",
+    "createNewDirectRegistration"
+  );
+
+  return response;
 };
 
 const getRegistration = async (fsa_rn) => {
@@ -122,4 +293,9 @@ const deleteRegistration = async (fsa_rn) => {
   return response;
 };
 
-module.exports = { createNewRegistration, getRegistration, deleteRegistration };
+module.exports = {
+  createNewRegistration,
+  createNewDirectRegistration,
+  getRegistration,
+  deleteRegistration
+};

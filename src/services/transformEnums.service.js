@@ -9,38 +9,47 @@ const {
 
 // Functions that convert enums from keys to values.
 
-const transformEstablishmentTypeEnum = (establishmentType) => {
+const transformEstablishmentTypeEnum = (establishmentType, language) => {
+  const lang = language || "en";
   return establishmentTypeEnum[establishmentType]
-    ? establishmentTypeEnum[establishmentType].value
+    ? establishmentTypeEnum[establishmentType].value[lang]
     : null;
 };
 
-const transformOperatorTypeEnum = (operatorType) => {
+const transformOperatorTypeEnum = (operatorType, language) => {
+  const lang = language || "en";
   return operatorTypeEnum[operatorType]
-    ? operatorTypeEnum[operatorType].value
+    ? operatorTypeEnum[operatorType].value[lang]
     : null;
 };
 
-const transformWaterSupplyEnum = (waterSupply) => {
+const transformWaterSupplyEnum = (waterSupply, language) => {
+  const lang = language || "en";
   return waterSupplyEnum[waterSupply]
-    ? waterSupplyEnum[waterSupply].value
+    ? waterSupplyEnum[waterSupply].value[lang]
     : null;
 };
 
-const transformBusinessImportExportEnum = (importExportActivities) => {
+const transformBusinessImportExportEnum = (
+  importExportActivities,
+  language
+) => {
+  const lang = language || "en";
   return importExportEnum[importExportActivities]
-    ? importExportEnum[importExportActivities].value
+    ? importExportEnum[importExportActivities].value[lang]
     : null;
 };
 
-const transformCustomerTypeEnum = (customerType) => {
+const transformCustomerTypeEnum = (customerType, language) => {
+  const lang = language || "en";
   return customerTypeEnum[customerType]
-    ? customerTypeEnum[customerType].value
+    ? customerTypeEnum[customerType].value[lang]
     : null;
 };
 
-const transformBusinessTypeEnum = (id) => {
-  return businessTypeEnum[id] ? businessTypeEnum[id].value : null;
+const transformBusinessTypeEnum = (id, language) => {
+  const lang = language || "en";
+  return businessTypeEnum[id] ? businessTypeEnum[id].value[lang] : null;
 };
 
 module.exports = {
