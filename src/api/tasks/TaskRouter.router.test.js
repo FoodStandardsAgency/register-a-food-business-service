@@ -11,7 +11,7 @@ const {
   sendRegistrationToTascomiAction,
   sendNotificationsForRegistrationAction,
   sendAllOutstandingRegistrationsToTascomiAction,
-  sendAllNotificationsForRegistrationsAction,
+  sendAllNotificationsForRegistrationsAction
 } = require("./Tasks.controller");
 
 describe("/api/tasks route: ", () => {

@@ -16,7 +16,6 @@ const {
 const { logEmitter } = require("../../services/logging.service");
 const { statusEmitter } = require("../../services/statusEmitter.service");
 
-
 const sendTascomiRegistration = async (registration, localCouncil) => {
   // hack to reduce repair work needed
   let postRegistrationMetadata = registration;

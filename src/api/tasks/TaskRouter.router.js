@@ -8,7 +8,7 @@ const {
   sendRegistrationToTascomiAction,
   sendNotificationsForRegistrationAction,
   sendAllOutstandingRegistrationsToTascomiAction,
-  sendAllNotificationsForRegistrationsAction,
+  sendAllNotificationsForRegistrationsAction
 } = require("./Tasks.controller");
 
 // const { viewDeleteRegistrationAuth } = require("../../middleware/authHandler");
@@ -132,7 +132,7 @@ const TaskRouter = () => {
       "sendnotification/:fsaId"
     );
   });
-  
+
   return router;
 };
 

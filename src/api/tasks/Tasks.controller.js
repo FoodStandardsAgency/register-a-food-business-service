@@ -439,5 +439,5 @@ module.exports = {
   sendRegistrationToTascomiAction,
   sendNotificationsForRegistrationAction,
   sendAllOutstandingRegistrationsToTascomiAction,
-  sendAllNotificationsForRegistrationsAction,
+  sendAllNotificationsForRegistrationsAction
 };
