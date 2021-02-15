@@ -100,6 +100,10 @@ describe("registration controller", () => {
   };
 
   const postRegistrationMetadata = {
+    collected: false,
+    collected_at: 1,
+    createdAt: 1,
+    updatedAt: 1,
     reg_submission_date: 1,
     "fsa-rn": "AA1AAA-AA11AA-A1AAA1"
   };
@@ -191,6 +195,10 @@ describe("registration controller", () => {
             {},
             {
               "fsa-rn": postRegistrationMetadata["fsa-rn"],
+              collected: false,
+              collected_at: postRegistrationMetadata.collected_at,
+              createdAt: postRegistrationMetadata.createdAt,
+              updatedAt: postRegistrationMetadata.updatedAt,
               reg_submission_date: postRegistrationMetadata.reg_submission_date,
               directLcSubmission: false
             },

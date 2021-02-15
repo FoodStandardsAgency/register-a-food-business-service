@@ -1,4 +1,3 @@
-const moment = require("moment");
 const { validate } = require("../../services/validation.service");
 const {
   getFullRegistrationByFsaRn,
