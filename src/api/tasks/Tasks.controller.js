@@ -1,7 +1,6 @@
 "use strict";
 
 const { logEmitter, INFO, ERROR } = require("../../services/logging.service");
-const { statusEmitter } = require("../../services/statusEmitter.service");
 const { sendNotifications } = require("../../services/notifications.service");
 const { isEmpty } = require("lodash");
 const { success } = require("../../utils/express/response");
@@ -16,7 +15,6 @@ const {
   CachedRegistrationsCollection,
   findOneById,
   updateStatusInCache,
-  findAllOutstandingSavesToTempStore,
   findOutstandingTascomiRegistrationsFsaIds,
   findAllBlankRegistrations,
   findAllFailedNotificationsRegistrations
