@@ -27,6 +27,9 @@ const {
   waterSupplyEnum
 } = require("@slice-and-dice/register-a-food-business-validation");
 
+const i18n = require("../utils/i18n/i18n");
+const i18nUtil = new i18n("en");
+
 const exampleDeclaration = {
   declaration1: "Declaration"
 };
@@ -306,7 +309,8 @@ describe("Function: transformDataForNotify", () => {
       beforeEach(() => {
         result = transformDataForNotify(
           testRegistrationData,
-          testLcContactConfigSplitWithPhoneNumber
+          testLcContactConfigSplitWithPhoneNumber,
+          i18nUtil
         );
       });
 
@@ -342,7 +346,8 @@ describe("Function: transformDataForNotify", () => {
       beforeEach(() => {
         result = transformDataForNotify(
           testRegistrationData,
-          testLcContactConfigCombinedWithPhoneNumber
+          testLcContactConfigCombinedWithPhoneNumber,
+          i18nUtil
         );
       });
 
@@ -376,7 +381,8 @@ describe("Function: transformDataForNotify", () => {
       beforeEach(() => {
         result = transformDataForNotify(
           testRegistrationData,
-          testLcContactConfigCombined
+          testLcContactConfigCombined,
+          i18nUtil
         );
       });
 
@@ -410,7 +416,8 @@ describe("Function: transformDataForNotify", () => {
       beforeEach(() => {
         result = transformDataForNotify(
           testRegistrationData,
-          testLcContactConfigSplit
+          testLcContactConfigSplit,
+          i18nUtil
         );
       });
 
@@ -445,7 +452,8 @@ describe("Function: transformDataForNotify", () => {
       beforeEach(() => {
         result = transformDataForNotify(
           testRegistrationDataWithFalseEnums,
-          testLcContactConfigSplitWithPhoneNumber
+          testLcContactConfigSplitWithPhoneNumber,
+          i18nUtil
         );
       });
       it("should return the flattened data with two sets of council details and the enum values to be null", () => {
@@ -482,7 +490,8 @@ describe("Function: transformDataForNotify", () => {
       beforeEach(() => {
         result = transformDataForNotify(
           testRegistrationDataForPartnership,
-          testLcContactConfigSplitWithPhoneNumber
+          testLcContactConfigSplitWithPhoneNumber,
+          i18nUtil
         );
       });
 
@@ -520,7 +529,8 @@ describe("Function: transformDataForNotify", () => {
       beforeEach(() => {
         result = transformDataForNotify(
           testRegistrationDataForPartnership,
-          testLcContactConfigCombinedWithPhoneNumber
+          testLcContactConfigCombinedWithPhoneNumber,
+          i18nUtil
         );
       });
 
@@ -556,7 +566,8 @@ describe("Function: transformDataForNotify", () => {
       beforeEach(() => {
         result = transformDataForNotify(
           testRegistrationDataForPartnership,
-          testLcContactConfigCombined
+          testLcContactConfigCombined,
+          i18nUtil
         );
       });
 
@@ -591,7 +602,8 @@ describe("Function: transformDataForNotify", () => {
       beforeEach(() => {
         result = transformDataForNotify(
           testRegistrationDataForPartnership,
-          testLcContactConfigSplit
+          testLcContactConfigSplit,
+          i18nUtil
         );
       });
 

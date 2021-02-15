@@ -9,38 +9,47 @@ const {
 
 // Functions that convert enums from keys to values.
 
-const transformEstablishmentTypeEnum = (establishmentType) => {
+const transformEstablishmentTypeEnum = (establishmentType, language) => {
+  const lang = language || "en";
   return establishmentTypeEnum[establishmentType]
-    ? establishmentTypeEnum[establishmentType].value.en
+    ? establishmentTypeEnum[establishmentType].value[lang]
     : null;
 };
 
-const transformOperatorTypeEnum = (operatorType) => {
+const transformOperatorTypeEnum = (operatorType, language) => {
+  const lang = language || "en";
   return operatorTypeEnum[operatorType]
-    ? operatorTypeEnum[operatorType].value.en
+    ? operatorTypeEnum[operatorType].value[lang]
     : null;
 };
 
-const transformWaterSupplyEnum = (waterSupply) => {
+const transformWaterSupplyEnum = (waterSupply, language) => {
+  const lang = language || "en";
   return waterSupplyEnum[waterSupply]
-    ? waterSupplyEnum[waterSupply].value.en
+    ? waterSupplyEnum[waterSupply].value[lang]
     : null;
 };
 
-const transformBusinessImportExportEnum = (importExportActivities) => {
+const transformBusinessImportExportEnum = (
+  importExportActivities,
+  language
+) => {
+  const lang = language || "en";
   return importExportEnum[importExportActivities]
-    ? importExportEnum[importExportActivities].value.en
+    ? importExportEnum[importExportActivities].value[lang]
     : null;
 };
 
-const transformCustomerTypeEnum = (customerType) => {
+const transformCustomerTypeEnum = (customerType, language) => {
+  const lang = language || "en";
   return customerTypeEnum[customerType]
-    ? customerTypeEnum[customerType].value.en
+    ? customerTypeEnum[customerType].value[lang]
     : null;
 };
 
-const transformBusinessTypeEnum = (id) => {
-  return businessTypeEnum[id] ? businessTypeEnum[id].value.en : null;
+const transformBusinessTypeEnum = (id, language) => {
+  const lang = language || "en";
+  return businessTypeEnum[id] ? businessTypeEnum[id].value[lang] : null;
 };
 
 module.exports = {
