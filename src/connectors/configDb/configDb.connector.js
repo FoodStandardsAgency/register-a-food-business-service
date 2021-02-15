@@ -1,6 +1,6 @@
 const mongodb = require("mongodb");
 const { lcConfigCollectionDouble } = require("./configDb.double");
-const { CONFIGDB_URL } = require("../../config");
+const { COSMOSDB_URL } = require("../../config");
 const { logEmitter } = require("../../services/logging.service");
 const { statusEmitter } = require("../../services/statusEmitter.service");
 
@@ -19,7 +19,7 @@ const establishConnectionToMongo = async (collectionName) => {
     return lcConfigCollectionDouble;
   } else {
     if (configDB === undefined) {
-      client = await mongodb.MongoClient.connect(CONFIGDB_URL, {
+      client = await mongodb.MongoClient.connect(COSMOSDB_URL, {
         useNewUrlParser: true,
         useUnifiedTopology: true
       });
@@ -39,7 +39,7 @@ const connectToConfigDb = async () => {
     return lcConfigCollectionDouble;
   } else {
     if (configDB === undefined) {
-      client = await mongodb.MongoClient.connect(CONFIGDB_URL, {
+      client = await mongodb.MongoClient.connect(COSMOSDB_URL, {
         useNewUrlParser: true
       });
       configDB = client.db("register_a_food_business_config");

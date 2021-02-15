@@ -126,10 +126,10 @@ const insertCosmosRecord = async (reg) => {
       {},
       {
         "fsa-rn": fsa_rn,
-        collected: collected,
-        collected_at: collected_at,
         createdAt: createdAt,
         updatedAt: updatedAt,
+        collected: collected,
+        collected_at: collected_at,
         reg_submission_date: createdAt,
         direct_submission: direct_submission,
         establishment: {
@@ -138,7 +138,7 @@ const insertCosmosRecord = async (reg) => {
           premise: premise.dataValues,
           activities: activities.dataValues
         },
-        metadata: declaration.dataValues
+        declaration: declaration.dataValues
       },
       hygieneAndStandards,
       { status: status },
@@ -157,6 +157,7 @@ const insertCosmosRecord = async (reg) => {
       `Failed inserting PG Registration ID: ${reg.id} into BE Cache ${err.message}`
     );
     // Add migration status to PG
+    //Might need to change to upsert as some older mongo db records don't have all of these fields
   }
 };
 

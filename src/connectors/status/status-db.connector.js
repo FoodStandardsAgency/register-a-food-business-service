@@ -4,7 +4,7 @@
  */
 const mongodb = require("mongodb");
 const { statusCollectionDouble } = require("./status-db.double");
-const { CONFIGDB_URL } = require("../../config");
+const { COSMOSDB_URL } = require("../../config");
 const { logEmitter } = require("../../services/logging.service");
 
 let client;
@@ -36,7 +36,7 @@ const establishConnectionToMongo = async () => {
         if (client && client.topology !== undefined) {
           client.close();
         }
-        client = await mongodb.MongoClient.connect(CONFIGDB_URL, {
+        client = await mongodb.MongoClient.connect(COSMOSDB_URL, {
           useNewUrlParser: true
         });
       } catch (err) {
