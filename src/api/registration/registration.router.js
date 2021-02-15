@@ -129,10 +129,10 @@ const registrationRouter = () => {
           "createNewDirectRegistration",
           req.body
         );
-        statusEmitter.emit("incrementCount", "endToEndRegistrationsFailed");
+        statusEmitter.emit("incrementCount", "directRegistrationsFailed");
         statusEmitter.emit(
           "setStatus",
-          "mostRecentEndToEndRegistrationSucceeded",
+          "mostRecentDirectRegistrationSucceeded",
           false
         );
         logEmitter.emit(
