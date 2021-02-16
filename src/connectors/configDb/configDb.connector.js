@@ -1,6 +1,6 @@
 const mongodb = require("mongodb");
 const { lcConfigCollectionDouble } = require("./configDb.double");
-const { CONFIGDB_URL } = require("../../config");
+const { COSMOSDB_URL } = require("../../config");
 const { logEmitter } = require("../../services/logging.service");
 const { statusEmitter } = require("../../services/statusEmitter.service");
 
@@ -19,7 +19,7 @@ const establishConnectionToMongo = async (collectionName) => {
     return lcConfigCollectionDouble;
   } else {
     if (configDB === undefined) {
-      client = await mongodb.MongoClient.connect(CONFIGDB_URL, {
+      client = await mongodb.MongoClient.connect(COSMOSDB_URL, {
         useNewUrlParser: true,
         useUnifiedTopology: true
       });
@@ -39,10 +39,10 @@ const connectToConfigDb = async () => {
     return lcConfigCollectionDouble;
   } else {
     if (configDB === undefined) {
-      client = await mongodb.MongoClient.connect(CONFIGDB_URL, {
+      client = await mongodb.MongoClient.connect(COSMOSDB_URL, {
         useNewUrlParser: true
       });
-      configDB = client.db("register_a_food_business_config");
+      configDB = client.db("config");
     }
     return configDB;
   }
@@ -57,7 +57,7 @@ const disconnectConfigDb = async () => {
 const ConfigVersionCollection = async (database) =>
   await database.collection("configVersion");
 const LocalCouncilConfigDbCollection = async (database) =>
-  await database.collection("lcConfig");
+  await database.collection("localAuthorities");
 
 const getConfigVersion = async (regDataVersion) => {
   logEmitter.emit("functionCall", "configDb.connector", "getConfigVersion");
@@ -120,7 +120,9 @@ const getAllLocalCouncilConfig = async () => {
   );
 
   try {
-    const lcConfigCollection = await establishConnectionToMongo("lcConfig");
+    const lcConfigCollection = await establishConnectionToMongo(
+      "localAuthorities"
+    );
     const allLcConfigDataCursor = await lcConfigCollection.find({});
     allLcConfigData = allLcConfigDataCursor.toArray();
 

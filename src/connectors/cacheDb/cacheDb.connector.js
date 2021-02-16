@@ -1,5 +1,5 @@
 const mongodb = require("mongodb");
-const { CACHEDB_URL } = require("../../config");
+const { COSMOSDB_URL } = require("../../config");
 const { cachedRegistrationsDouble } = require("./cacheDb.double");
 const { logEmitter } = require("../../services/logging.service");
 const { statusEmitter } = require("../../services/statusEmitter.service");
@@ -17,14 +17,14 @@ const establishConnectionToMongo = async () => {
     return cachedRegistrationsDouble;
   } else {
     if (cacheDB === undefined) {
-      client = await mongodb.MongoClient.connect(CACHEDB_URL, {
+      client = await mongodb.MongoClient.connect(COSMOSDB_URL, {
         useNewUrlParser: true,
         useUnifiedTopology: true
       });
-      cacheDB = client.db("register_a_food_business_cache");
+      cacheDB = client.db("registrations");
     }
 
-    return cacheDB.collection("cachedRegistrations");
+    return cacheDB.collection("registrations");
   }
 };
 
@@ -38,12 +38,12 @@ const connectToBeCacheDb = async () => {
     return cachedRegistrationsDouble;
   } else {
     if (client === undefined) {
-      client = await mongodb.MongoClient.connect(CACHEDB_URL, {
+      client = await mongodb.MongoClient.connect(COSMOSDB_URL, {
         useNewUrlParser: true
       });
     }
 
-    return await client.db("register_a_food_business_cache");
+    return await client.db("registrations");
   }
 };
 
@@ -54,7 +54,7 @@ const disconnectCacheDb = async () => {
 };
 
 const CachedRegistrationsCollection = async (client) =>
-  await client.collection("cachedRegistrations");
+  await client.collection("registrations");
 
 const getDate = () => {
   return new Date().toLocaleString("en-GB", {

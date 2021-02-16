@@ -1,10 +1,6 @@
 require("dotenv").config();
 
 module.exports = {
-  POSTGRES_USER: process.env.POSTGRES_USER,
-  POSTGRES_PASS: process.env.POSTGRES_PASS,
-  POSTGRES_HOST: process.env.POSTGRES_HOST,
-  POSTGRES_DB: process.env.POSTGRES_DB,
   NOTIFY_KEY: process.env.NOTIFY_KEY,
   NOTIFY_TEMPLATE_ID_TEST: process.env.NOTIFY_TEMPLATE_ID_TEST,
   FRONT_END_NAME: process.env.FRONT_END_NAME,
@@ -13,8 +9,7 @@ module.exports = {
   DIRECT_API_SECRET: process.env.DIRECT_API_SECRET,
   ADMIN_NAME: process.env.ADMIN_NAME,
   ADMIN_SECRET: process.env.ADMIN_SECRET,
-  CONFIGDB_URL: process.env.CONFIGDB_URL,
-  CACHEDB_URL: process.env.CACHEDB_URL,
+  COSMOSDB_URL: process.env.COSMOSDB_URL,
   NOTIFY_STATUS_TEMPLATE: process.env.NOTIFY_STATUS_TEMPLATE,
   ENVIRONMENT_DESCRIPTION: process.env.ENVIRONMENT_DESCRIPTION,
   ADDRESS_API_URL_BASE: `https://ws.postcoder.com/pcw/${
