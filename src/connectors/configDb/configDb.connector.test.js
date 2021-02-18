@@ -139,7 +139,10 @@ describe("Function: getAllLocalCouncilConfig", () => {
           collection: () => ({
             find: () => ({ toArray: () => mockLocalCouncilConfig })
           })
-        })
+        }),
+        topology: {
+          isConnected: () => true
+        }
       }));
     });
 

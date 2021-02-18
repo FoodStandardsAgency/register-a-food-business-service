@@ -70,7 +70,10 @@ describe("Connector: cacheDb", () => {
             collection: () => ({
               insertOne: () => ({ insertedId: "1000" })
             })
-          })
+          }),
+          topology: {
+            isConnected: () => true
+          }
         }));
 
         response = await cacheRegistration({ reg: "data" });
@@ -80,7 +83,10 @@ describe("Connector: cacheDb", () => {
             collection: () => ({
               insertOne: () => ({ insertedId: "2000" })
             })
-          })
+          }),
+          topology: {
+            isConnected: () => true
+          }
         }));
 
         response = await cacheRegistration({ reg: "data" });

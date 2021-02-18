@@ -156,7 +156,6 @@ describe("Function: establishConnectionToCosmos", () => {
         close: () => closeConnection()
       }));
       result1 = await establishConnectionToCosmos("dbName", "collection");
-      clearCosmosConnection();
       result2 = await establishConnectionToCosmos("dbName", "collection");
     });
 

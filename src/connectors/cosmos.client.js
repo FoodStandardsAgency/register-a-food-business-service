@@ -38,13 +38,10 @@ const establishConnectionToCosmos = async (dbName, collectionName) => {
         if (client && client.topology !== undefined) {
           client.close();
         }
-        if (DB === undefined) {
-          client = await mongodb.MongoClient.connect(COSMOSDB_URL, {
-            useNewUrlParser: true,
-            useUnifiedTopology: true
-          });
-          DB = client.db(dbName);
-        }
+        client = await mongodb.MongoClient.connect(COSMOSDB_URL, {
+          useNewUrlParser: true,
+          useUnifiedTopology: true
+        });
       } catch (err) {
         logEmitter.emit(
           "functionFail",
@@ -55,6 +52,7 @@ const establishConnectionToCosmos = async (dbName, collectionName) => {
         throw err;
       }
     }
+    DB = client.db(dbName);
     let collection = DB.collection(collectionName);
     logEmitter.emit(
       "functionSuccess",
