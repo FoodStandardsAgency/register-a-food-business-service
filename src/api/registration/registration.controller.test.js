@@ -21,14 +21,15 @@ jest.mock("../../connectors/cacheDb/cacheDb.connector", () => ({
 jest.mock("../../connectors/configDb/configDb.connector", () => ({
   getConfigVersion: jest.fn(),
   findCouncilByUrl: jest.fn(),
-  findCouncilById: jest.fn(),
-  getCouncilsForSupplier: jest.fn(),
-  connectToConfigDb: jest.fn(),
-  LocalCouncilConfigDbCollection: jest.fn()
+  getCouncilsForSupplier: jest.fn()
 }));
 
 jest.mock("../../connectors/address-lookup/address-matcher", () => ({
   getUprn: jest.fn()
+}));
+
+jest.mock("../../connectors/cosmos.client", () => ({
+  establishConnectionToCosmos: jest.fn()
 }));
 
 const {
@@ -55,6 +56,9 @@ const {
 } = require("../../connectors/configDb/configDb.connector");
 
 const { getUprn } = require("../../connectors/address-lookup/address-matcher");
+const {
+  establishConnectionToCosmos
+} = require("../../connectors/cosmos.client");
 
 const exampleLCUrl = "example-council-url";
 
@@ -500,6 +504,7 @@ describe("registration controller", () => {
         validate.mockImplementation(() => {
           return [];
         });
+        establishConnectionToCosmos.mockImplementation(() => {});
         findCouncilByUrl.mockImplementation(() => null);
         try {
           result = await createNewDirectRegistration(

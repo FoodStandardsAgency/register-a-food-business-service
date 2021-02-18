@@ -1,7 +1,5 @@
 const { validate } = require("../../services/validation.service");
 const {
-  getFullRegistrationByFsaRn,
-  deleteRegistrationByFsaRn,
   getRegistrationMetaData,
   getLcContactConfig
 } = require("./registration.service");
@@ -14,10 +12,12 @@ const { getUprn } = require("../../connectors/address-lookup/address-matcher");
 
 const {
   findCouncilByUrl,
-  getCouncilsForSupplier,
-  connectToConfigDb,
-  LocalCouncilConfigDbCollection
+  getCouncilsForSupplier
 } = require("../../connectors/configDb/configDb.connector");
+
+const {
+  establishConnectionToCosmos
+} = require("../../connectors/cosmos.client");
 
 const {
   mapFromCollectionsRegistration
@@ -50,8 +50,10 @@ const createNewRegistration = async (
   }
 
   // RESOLUTION
-  let configDb = await connectToConfigDb();
-  const lcConfigCollection = await LocalCouncilConfigDbCollection(configDb);
+  const lcConfigCollection = await establishConnectionToCosmos(
+    "config",
+    "localAuthorities"
+  );
 
   const sourceCouncil = await findCouncilByUrl(
     lcConfigCollection,
@@ -147,8 +149,10 @@ const createNewDirectRegistration = async (registration, options) => {
   const mappedRegistration = mapFromCollectionsRegistration(registration);
 
   // RESOLUTION
-  const configDb = await connectToConfigDb();
-  const lcConfigCollection = await LocalCouncilConfigDbCollection(configDb);
+  const lcConfigCollection = await establishConnectionToCosmos(
+    "config",
+    "localAuthorities"
+  );
 
   if (options.requestedCouncil !== options.subscriber) {
     // Check supplier authorized to access requested council
@@ -288,21 +292,7 @@ const createNewDirectRegistration = async (registration, options) => {
   return response;
 };
 
-const getRegistration = async (fsa_rn) => {
-  const response = await getFullRegistrationByFsaRn(fsa_rn);
-
-  return response;
-};
-
-const deleteRegistration = async (fsa_rn) => {
-  const response = await deleteRegistrationByFsaRn(fsa_rn);
-
-  return response;
-};
-
 module.exports = {
   createNewRegistration,
-  createNewDirectRegistration,
-  getRegistration,
-  deleteRegistration
+  createNewDirectRegistration
 };
