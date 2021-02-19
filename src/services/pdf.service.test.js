@@ -4,6 +4,8 @@ const {
   convertKeyToDisplayName,
   convertBoolToString
 } = require("./pdf.service");
+const i18n = require("../utils/i18n/i18n");
+const i18nUtil = new i18n("en");
 describe("Pdf Service: ", () => {
   let result;
 
@@ -381,7 +383,7 @@ describe("Pdf Service: ", () => {
       };
 
       beforeEach(async () => {
-        result = await pdfGenerator(mockPdfData);
+        result = await pdfGenerator(mockPdfData, i18nUtil);
       });
 
       it("should return a base64 string", () => {
@@ -443,7 +445,7 @@ describe("Pdf Service: ", () => {
       };
 
       beforeEach(async () => {
-        result = await pdfGenerator(mockPdfData);
+        result = await pdfGenerator(mockPdfData, i18nUtil);
       });
 
       it("should return a base64 string", () => {

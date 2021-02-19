@@ -36,6 +36,7 @@ const registrationRouter = () => {
         const response = await registrationController.createNewRegistration(
           req.body.registration,
           req.body.local_council_url,
+          req.body.submission_language,
           regDataVersion
         );
         statusEmitter.emit("incrementCount", "userRegistrationsSucceeded");
@@ -128,10 +129,10 @@ const registrationRouter = () => {
           "createNewDirectRegistration",
           req.body
         );
-        statusEmitter.emit("incrementCount", "endToEndRegistrationsFailed");
+        statusEmitter.emit("incrementCount", "directRegistrationsFailed");
         statusEmitter.emit(
           "setStatus",
-          "mostRecentEndToEndRegistrationSucceeded",
+          "mostRecentDirectRegistrationSucceeded",
           false
         );
         logEmitter.emit(

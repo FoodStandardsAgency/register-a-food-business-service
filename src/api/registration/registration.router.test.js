@@ -23,7 +23,8 @@ describe("registration router", () => {
     router = registrationRouter();
     testRegistration = {
       registration: "reg",
-      local_council_url: "example-council-url"
+      local_council_url: "example-council-url",
+      submission_language: "en"
     };
   });
 
