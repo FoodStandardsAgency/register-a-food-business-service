@@ -3,6 +3,10 @@ const {
 } = require("../src/connectors/cacheDb/cacheDb.connector");
 const connectToDb = require("../src/db/db");
 const getRegistrationByFsaRn = require("../src/connectors/registrationDb/registrationDb");
+const { logEmitter } = require("../src/services/logging.service");
+
+let successfulDeletions = [];
+let faieldDeletions = [];
 
 const deleteTestRegistrationsFromCosmos = async () => {
   const beCache = await establishConnectionToMongo();
@@ -20,10 +24,19 @@ const deleteTestRegistrationsFromCosmos = async () => {
           "info",
           `Successfully removed BE Cache FSA-RN: ${rec["fsa-rn"]}`
         );
+        successfulDeletions.push(rec["fsa-rn"]);
       });
     }
   });
   await Promise.allSettled(promises);
+  logEmitter.emit(
+    "info",
+    `Successfully deleted registrations from Cosmos: ${successfulDeletions}`
+  );
+  logEmitter.emit(
+    "info",
+    `Failed to delete following registrations from Cosmos: ${faieldDeletions}`
+  );
 };
 
 const removeCosmosRecord = async (record) => {
@@ -35,6 +48,7 @@ const removeCosmosRecord = async (record) => {
       "info",
       `Failed to remove BE Cache FSA-RN: ${record["fsa-rn"]} ${err.message}`
     );
+    faieldDeletions.push(record["fsa-rn"]);
   }
 };
 

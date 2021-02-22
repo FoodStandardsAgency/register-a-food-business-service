@@ -9,11 +9,11 @@ const { statusEmitter } = require("./statusEmitter.service");
 const { sendSingleEmail } = require("../connectors/notify/notify.connector");
 const { pdfGenerator, transformDataForPdf } = require("./pdf.service");
 const {
-  establishConnectionToMongo,
   getStatus,
   updateStatus,
   updateNotificationOnSent
 } = require("../connectors/cacheDb/cacheDb.connector");
+const { establishConnectionToCosmos } = require("../connectors/cosmos.client");
 const { has, isArrayLikeObject } = require("lodash");
 const {
   transformBusinessImportExportEnum,
@@ -183,7 +183,10 @@ const sendEmails = async (
 
   let success = true;
   let lastSentStatus;
-  let cachedRegistrations = await establishConnectionToMongo();
+  let cachedRegistrations = await establishConnectionToCosmos(
+    "registrations",
+    "registrations"
+  );
   let status = await getStatus(cachedRegistrations, fsaId);
 
   try {
@@ -370,7 +373,10 @@ const initialiseNotificationsStatusIfNotSet = async (fsaId, emailsToSend) => {
     "addNotificationToStatus"
   );
   try {
-    let cachedRegistrations = await establishConnectionToMongo();
+    let cachedRegistrations = await establishConnectionToCosmos(
+      "registrations",
+      "registrations"
+    );
     let status = await getStatus(cachedRegistrations, fsaId);
 
     if (

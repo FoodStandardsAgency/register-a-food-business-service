@@ -1,4 +1,5 @@
 const moment = require("moment");
+const mongodb = require("mongodb");
 const fetch = require("node-fetch");
 const HttpsProxyAgent = require("https-proxy-agent");
 const promiseRetry = require("promise-retry");
@@ -18,13 +19,7 @@ const {
   getDeclarationByRegId,
   getOperatorByEstablishmentId,
   getPremiseByEstablishmentId,
-  getActivitiesByEstablishmentId,
-  destroyRegistrationById,
-  destroyEstablishmentByRegId,
-  destroyDeclarationByRegId,
-  destroyOperatorByEstablishmentId,
-  destroyPremiseByEstablishmentId,
-  destroyActivitiesByEstablishmentId
+  getActivitiesByEstablishmentId
 } = require("../../connectors/registrationDb/registrationDb");
 
 const {
@@ -33,9 +28,7 @@ const {
 } = require("../../connectors/tascomi/tascomi.connector");
 
 const {
-  getAllLocalCouncilConfig,
-  addDeletedId,
-  mongodb
+  getAllLocalCouncilConfig
 } = require("../../connectors/configDb/configDb.connector");
 
 const { logEmitter } = require("../../services/logging.service");
@@ -160,32 +153,6 @@ const getFullRegistrationByFsaRn = async (fsa_rn) => {
     premise,
     declaration
   };
-};
-
-const deleteRegistrationByFsaRn = async (fsa_rn) => {
-  logEmitter.emit(
-    "functionCall",
-    "registration.service",
-    "deleteFullRegistrationByFsaRn"
-  );
-  const registration = await getRegistrationByFsaRn(fsa_rn);
-  if (!registration) {
-    return `No registration found for fsa_rn: ${fsa_rn}`;
-  }
-  const establishment = await getEstablishmentByRegId(registration.id);
-  await destroyDeclarationByRegId(registration.id);
-  await destroyOperatorByEstablishmentId(establishment.id);
-  await destroyActivitiesByEstablishmentId(establishment.id);
-  await destroyPremiseByEstablishmentId(establishment.id);
-  await destroyEstablishmentByRegId(registration.id);
-  await destroyRegistrationById(registration.id);
-  await addDeletedId(fsa_rn);
-  logEmitter.emit(
-    "functionSuccess",
-    "registration.service",
-    "deleteFullRegistrationByFsaRn"
-  );
-  return "Registration succesfully deleted";
 };
 
 const sendTascomiRegistration = async (registration, localCouncil) => {
@@ -589,7 +556,6 @@ const getLcAuth = async (localCouncilUrl) => {
 module.exports = {
   saveRegistration,
   getFullRegistrationByFsaRn,
-  deleteRegistrationByFsaRn,
   sendTascomiRegistration,
   getRegistrationMetaData,
   getLcContactConfig,
