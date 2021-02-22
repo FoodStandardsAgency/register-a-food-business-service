@@ -69,25 +69,11 @@ const {
   createPartner,
   createActivities,
   createPremise,
-  createDeclaration,
-  getRegistrationByFsaRn,
-  getEstablishmentByRegId,
-  getDeclarationByRegId,
-  getOperatorByEstablishmentId,
-  getPremiseByEstablishmentId,
-  getActivitiesByEstablishmentId,
-  destroyRegistrationById,
-  destroyEstablishmentByRegId,
-  destroyDeclarationByRegId,
-  destroyOperatorByEstablishmentId,
-  destroyPremiseByEstablishmentId,
-  destroyActivitiesByEstablishmentId
+  createDeclaration
 } = require("../../connectors/registrationDb/registrationDb");
 
 const {
   saveRegistration,
-  getFullRegistrationByFsaRn,
-  deleteRegistrationByFsaRn,
   sendTascomiRegistration,
   getRegistrationMetaData,
   getLcContactConfig,
