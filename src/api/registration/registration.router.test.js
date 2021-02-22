@@ -212,44 +212,4 @@ describe("registration router", () => {
       });
     });
   });
-
-  describe("Get to /:fsa_rn", () => {
-    beforeEach(() => {
-      handler = router.get.mock.calls[0][2];
-    });
-
-    describe("when making a valid request", () => {
-      beforeEach(async () => {
-        await handler({ params: { fsa_rn: "1" } }, { send });
-      });
-
-      it("should call res.send", () => {
-        expect(send).toBeCalled();
-      });
-
-      it("should call getRegistration", () => {
-        expect(registrationController.getRegistration).toBeCalled();
-      });
-    });
-  });
-
-  describe("Delete to /:fsa_rn", () => {
-    beforeEach(() => {
-      handler = router.delete.mock.calls[0][2];
-    });
-
-    describe("when making a valid request", () => {
-      beforeEach(async () => {
-        await handler({ params: { fsa_rn: "1" } }, { send });
-      });
-
-      it("should call res.send", () => {
-        expect(send).toBeCalled();
-      });
-
-      it("should call getRegistration", () => {
-        expect(registrationController.deleteRegistration).toBeCalled();
-      });
-    });
-  });
 });

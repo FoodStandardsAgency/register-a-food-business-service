@@ -34,9 +34,11 @@ jest.mock("../../connectors/address-lookup/address-matcher", () => ({
   getUprn: jest.fn()
 }));
 
+jest.mock("../../connectors/cosmos.client", () => ({
+  establishConnectionToCosmos: jest.fn()
+}));
+
 const {
-  getFullRegistrationByFsaRn,
-  deleteRegistrationByFsaRn,
   getRegistrationMetaData,
   getLcContactConfig,
   getLcAuth
@@ -50,9 +52,7 @@ const {
 
 const {
   createNewRegistration,
-  createNewDirectRegistration,
-  getRegistration,
-  deleteRegistration
+  createNewDirectRegistration
 } = require("./registration.controller");
 
 const {
@@ -526,36 +526,6 @@ describe("registration controller", () => {
         } catch (err) {
           expect(err.message).toBe("registration is undefined");
         }
-      });
-    });
-  });
-
-  describe("Function: getRegistration", () => {
-    describe("when given an id", () => {
-      beforeEach(async () => {
-        getFullRegistrationByFsaRn.mockImplementation(() => {
-          return "response";
-        });
-        result = await getRegistration();
-      });
-
-      it("should return the result of getFullRegistrationById", () => {
-        expect(result).toEqual("response");
-      });
-    });
-  });
-
-  describe("Function: deleteRegistration", () => {
-    describe("when given an fsa_rn", () => {
-      beforeEach(async () => {
-        deleteRegistrationByFsaRn.mockImplementation(() => {
-          return "response";
-        });
-        result = await deleteRegistration();
-      });
-
-      it("should return the result of deleteRegistrationById", () => {
-        expect(result).toEqual("response");
       });
     });
   });
