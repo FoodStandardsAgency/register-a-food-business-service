@@ -1,51 +1,61 @@
 require("dotenv").config();
-const connectToDb = require("../src/db/db");
+const { connectToDb, closeConnection } = require("../src/db/db");
 const { logEmitter } = require("../src/services/logging.service");
 const {
   getEstablishmentByRegId,
   getOperatorByEstablishmentId,
   getPremiseByEstablishmentId,
   getActivitiesByEstablishmentId,
-  getDeclarationByRegId
+  getDeclarationByRegId,
+  getAllPartnersByOperatorId,
+  getAllRegistrations
 } = require("../src/connectors/registrationDb/registrationDb");
 const {
   getLcContactConfig
 } = require("../src/api/registration/registration.service");
 const {
-  findCouncilByUrl,
-  establishConnectionToMongo
+  findCouncilByUrl
 } = require("../src/connectors/configDb/configDb.connector");
+const {
+  establishConnectionToCosmos,
+  clearCosmosConnection
+} = require("../src/connectors/cosmos.client");
 
-const migrateMissingRecordsToCosmos = async (queryInterface, sequelize) => {
+let beCache;
+let insertedRecords = [];
+let failedRecords = [];
+
+const migrateMissingRecordsToCosmos = async () => {
   await connectToDb();
-  const beCache = await establishConnectionToMongo;
+  beCache = await establishConnectionToCosmos("registrations", "registrations");
 
-  await queryInterface.sequelize
-    .query(`SELECT * FROM registrations."registrations"`, {
-      type: queryInterface.sequelize.QueryTypes.SELECT
-    })
-    .then(async (regs) => {
-      const promises = regs.map(async (reg) => {
-        console.log(reg);
-        const record = beCache.find({ "fsa-rn": reg.dataValues.fsa_rn });
+  await getAllRegistrations().then(async (regs) => {
+    const promises = regs.map(async (reg) => {
+      const record = await beCache.findOne(
+        { "fsa-rn": reg.dataValues.fsa_rn },
+        { projection: { _id: 0, "fsa-rn": 1 } }
+      );
 
-        if (!record) {
-          await insertCosmosRecord(reg).then(() => {
-            logEmitter.emit(
-              "info",
-              `Successfully inserted Registration ID: ${reg.id} into BE Cache`
-            );
-          }); // update migration status
-        }
-      });
-      await Promise.allSettled(promises);
+      if (!record) {
+        await insertCosmosRecord(reg); // update migration status
+      }
     });
+    await Promise.allSettled(promises);
+  });
+  logEmitter.emit(
+    "info",
+    `Successfully inserted ${insertedRecords.length} Postgres registrations inserted into Cosmos: ${insertedRecords}`
+  );
+  logEmitter.emit(
+    "info",
+    `Failed to insert ${failedRecords.length} Postgres registrations into Cosmos: ${failedRecords}`
+  );
 };
 
 const insertCosmosRecord = async (reg) => {
   logEmitter.emit(
     "info",
-    `Inserting PG Registration ID: ${reg.id} into BE Cache`
+    `Inserting PG Registration ID: ${reg.dataValues.fsa_rn} into BE Cache`
   );
   try {
     const {
@@ -57,13 +67,23 @@ const insertCosmosRecord = async (reg) => {
       direct_submission
     } = reg.dataValues;
 
-    const establishment = await getEstablishmentByRegId(reg.id);
-    const operator = await getOperatorByEstablishmentId(establishment.id);
-    const premise = await getPremiseByEstablishmentId(establishment.id);
-    const activities = await getActivitiesByEstablishmentId(establishment.id);
-    const declaration = await getDeclarationByRegId(reg.id);
+    const establishment = await getEstablishmentByRegId(reg.dataValues.id);
+    const operator = await getOperatorByEstablishmentId(
+      establishment.dataValues.id
+    );
+    const partners = await getAllPartnersByOperatorId(operator.dataValues.id);
+    const premise = await getPremiseByEstablishmentId(
+      establishment.dataValues.id
+    );
+    const activities = await getActivitiesByEstablishmentId(
+      establishment.dataValues.id
+    );
+    const declaration = await getDeclarationByRegId(reg.dataValues.id);
 
-    const lcConfigCollection = await establishConnectionToMongo("lcConfig");
+    const lcConfigCollection = await establishConnectionToCosmos(
+      "config",
+      "localAuthorities"
+    );
     const hygieneAndStandards = await getLcContactConfig(
       reg.dataValues.council
     );
@@ -133,12 +153,16 @@ const insertCosmosRecord = async (reg) => {
         reg_submission_date: createdAt,
         direct_submission: direct_submission,
         establishment: {
-          establishment_details: establishment.dataValues,
-          operator: operator.dataValues,
-          premise: premise.dataValues,
-          activities: activities.dataValues
+          establishment_details: cleanRecord(establishment.dataValues),
+          operator: Object.assign({}, cleanRecord(operator.dataValues), {
+            partners: partners.map((partner) => {
+              return partner.dataValues;
+            })
+          }),
+          premise: cleanRecord(premise.dataValues),
+          activities: cleanRecord(activities.dataValues)
         },
-        declaration: declaration.dataValues
+        metadata: cleanRecord(declaration.dataValues)
       },
       hygieneAndStandards,
       { status: status },
@@ -149,18 +173,34 @@ const insertCosmosRecord = async (reg) => {
         registration_data_version: "2.0.1"
       }
     );
+    delete completeCacheRecord.establishment.establishment_details.id;
+    delete completeCacheRecord.establishment.operator.id;
 
     await beCache.insertOne(completeCacheRecord);
+    insertedRecords.push(reg.dataValues.fsa_rn);
   } catch (err) {
+    failedRecords.push(reg.dataValues.fsa_rn);
     logEmitter.emit(
       "info",
-      `Failed inserting PG Registration ID: ${reg.id} into BE Cache ${err.message}`
+      `Failed inserting PG Registration ID: ${reg.dataValues.fsa_rn} into BE Cache ${err.message}`
     );
     // Add migration status to PG
     //Might need to change to upsert as some older mongo db records don't have all of these fields
   }
 };
-
-module.exports = {
-  migrateMissingRecordsToCosmos
+//Remove null value fields
+const cleanRecord = (record) => {
+  return Object.fromEntries(
+    Object.entries(record).filter(([key, value]) => value != null)
+  );
 };
+
+migrateMissingRecordsToCosmos()
+  .then(() => {
+    clearCosmosConnection();
+    closeConnection();
+    logEmitter.emit("info", "Successfully finished migrate to cosmos script");
+  })
+  .catch(() => {
+    logEmitter.emit("info", "Failed to run migrate to cosmos script");
+  });

@@ -118,6 +118,46 @@ const modelFindOne = async (query, model, functionName, transaction = null) => {
   }
 };
 
+const modelFindAll = async (query, model, functionName, transaction = null) => {
+  logEmitter.emit("functionCall", "registration.connector.js", functionName);
+
+  let t = Object.assign({}, query, { transaction });
+  try {
+    const response = await model.findAll(t);
+    logEmitter.emit(
+      "functionSuccess",
+      "registration.connector.js",
+      functionName
+    );
+    return response;
+  } catch (err) {
+    logEmitter.emit(
+      "functionFail",
+      "registration.connector.js",
+      "registrationFindAll",
+      err
+    );
+    throw err;
+  }
+};
+
+const getAllRegistrations = async () => {
+  return modelFindAll({}, Registration, "getAllRegistrations");
+};
+
+const getAllPartnersByOperatorId = async (id) => {
+  return modelFindAll(
+    {
+      where: { operatorId: id },
+      attributes: {
+        exclude: ["createdAt", "updatedAt", "id", "operatorId"]
+      }
+    },
+    Partner,
+    "getAllPartners"
+  );
+};
+
 const getRegistrationById = async (id) => {
   return modelFindOne(
     { where: { id: id } },
@@ -137,7 +177,12 @@ const getRegistrationByFsaRn = async (fsa_rn, transaction) => {
 
 const getEstablishmentByRegId = async (id) => {
   return modelFindOne(
-    { where: { registrationId: id } },
+    {
+      where: { registrationId: id },
+      attributes: {
+        exclude: ["createdAt", "updatedAt", "registrationId"]
+      }
+    },
     Establishment,
     "getEstablishmentByRegId"
   );
@@ -145,7 +190,12 @@ const getEstablishmentByRegId = async (id) => {
 
 const getDeclarationByRegId = async (id) => {
   return modelFindOne(
-    { where: { registrationId: id } },
+    {
+      where: { registrationId: id },
+      attributes: {
+        exclude: ["id", "registrationId", "createdAt", "updatedAt"]
+      }
+    },
     Declaration,
     "getDeclarationByRegId"
   );
@@ -153,7 +203,18 @@ const getDeclarationByRegId = async (id) => {
 
 const getOperatorByEstablishmentId = async (id) => {
   return modelFindOne(
-    { where: { establishmentId: id } },
+    {
+      where: { establishmentId: id },
+      // include: [
+      //   {
+      //     model: Partner,
+      //     as: "partners"
+      //   }
+      // ],
+      attributes: {
+        exclude: ["establishmentId", "createdAt", "updatedAt"]
+      }
+    },
     Operator,
     "getOperatorByEstablishmentId"
   );
@@ -161,7 +222,12 @@ const getOperatorByEstablishmentId = async (id) => {
 
 const getPremiseByEstablishmentId = async (id) => {
   return modelFindOne(
-    { where: { establishmentId: id } },
+    {
+      where: { establishmentId: id },
+      attributes: {
+        exclude: ["id", "establishmentId", "createdAt", "updatedAt"]
+      }
+    },
     Premise,
     "getPremiseByEstablishmentId"
   );
@@ -169,7 +235,12 @@ const getPremiseByEstablishmentId = async (id) => {
 
 const getActivitiesByEstablishmentId = async (id) => {
   return modelFindOne(
-    { where: { establishmentId: id } },
+    {
+      where: { establishmentId: id },
+      attributes: {
+        exclude: ["id", "establishmentId", "createdAt", "updatedAt"]
+      }
+    },
     Activities,
     "getActivitiesByEstablishmentId"
   );
@@ -265,5 +336,7 @@ module.exports = {
   destroyDeclarationByRegId,
   destroyOperatorByEstablishmentId,
   destroyPremiseByEstablishmentId,
-  destroyActivitiesByEstablishmentId
+  destroyActivitiesByEstablishmentId,
+  getAllPartnersByOperatorId,
+  getAllRegistrations
 };

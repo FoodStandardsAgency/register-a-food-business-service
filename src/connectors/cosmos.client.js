@@ -64,6 +64,7 @@ const establishConnectionToCosmos = async (dbName, collectionName) => {
 };
 
 const clearCosmosConnection = () => {
+  client && client.close();
   client = undefined;
   DB = undefined;
 };

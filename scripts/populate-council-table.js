@@ -2,27 +2,19 @@ require("dotenv").config();
 const mongodb = require("mongodb");
 const { logEmitter } = require("../src/services/logging.service");
 const { Council, connectToDb, closeConnection } = require("../src/db/db");
-
-let client;
-let configDB;
-let lcConfigCollection;
-
-const establishConnectionToMongo = async () => {
-  client = await mongodb.MongoClient.connect(process.env.CONFIGDB_URL, {
-    useNewUrlParser: true
-  });
-
-  configDB = client.db("register_a_food_business_config");
-
-  lcConfigCollection = configDB.collection("lcConfig");
-};
+const {
+  establishConnectionToCosmos
+} = require("../src/connectors/cosmos.client");
 
 const getLocalCouncils = async () => {
   let localCouncils = null;
   logEmitter.emit("functionCall", "populate-council-table", "getLocalCouncils");
 
   try {
-    await establishConnectionToMongo();
+    lcConfigCollection = await establishConnectionToCosmos(
+      "config",
+      "localAuthorities"
+    );
 
     localCouncils = await lcConfigCollection
       .find({
@@ -34,7 +26,7 @@ const getLocalCouncils = async () => {
       .toArray();
 
     if (localCouncils !== null) {
-      localCouncils = localCouncils.map(res => ({
+      localCouncils = localCouncils.map((res) => ({
         competent_authority_id: res._id,
         local_council_full_name: res.local_council,
         local_council_url: res.local_council_url
@@ -65,13 +57,13 @@ const modelCreate = async (data, model, transaction) => {
   return response;
 };
 
-const populateCouncils = async transaction => {
+const populateCouncils = async (transaction) => {
   await connectToDb();
   const data = await getLocalCouncils();
   const promises = [];
   console.log(data);
   try {
-    data.forEach(async record => {
+    data.forEach(async (record) => {
       promises.push(modelCreate(record, Council, transaction));
     });
     await Promise.all(promises);
@@ -85,7 +77,6 @@ const populateCouncils = async transaction => {
 
     throw err;
   }
-  client.close();
   //await closeConnection();
 
   logEmitter.emit(
