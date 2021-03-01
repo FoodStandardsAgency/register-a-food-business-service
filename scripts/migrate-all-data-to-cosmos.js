@@ -92,55 +92,52 @@ const insertCosmosRecord = async (reg) => {
       reg.dataValues.council
     );
 
-    const status = {
-      notifications: [
-        {
-          time: createdAt,
-          sent: true,
-          type: "LC",
-          address: hygieneAndStandards.hygiene
-            ? hygieneAndStandards.hygiene.local_council_notify_emails
-            : hygieneAndStandards.hygieneAndStandards.local_council
-                .notify_emails
-        },
-        hygieneAndStandards.standards
-          ? {
+    const notifications = [
+      {
+        time: createdAt,
+        sent: true,
+        type: "LC",
+        address: hygieneAndStandards.hygiene
+          ? hygieneAndStandards.hygiene.local_council_notify_emails
+          : hygieneAndStandards.hygieneAndStandards.local_council.notify_emails
+      },
+      hygieneAndStandards.standards
+        ? {
+            time: createdAt,
+            sent: true,
+            type: "LC",
+            address: hygieneAndStandards.standards.local_council_notify_emails
+          }
+        : [],
+      {
+        time: createdAt,
+        sent: true,
+        type: "FBO",
+        address: operator.dataValues.operator_email
+          ? operator.dataValues.operator_email
+          : operator.dataValues.contact_representative_email
+      },
+      declaration.dataValues.feedback1
+        ? [
+            {
               time: createdAt,
               sent: true,
-              type: "LC",
-              address: hygieneAndStandards.standards.local_council_notify_emails
+              type: "FBO_FB",
+              address: operator.dataValues.operator_email
+                ? operator.dataValues.operator_email
+                : operator.dataValues.contact_representative_email
+            },
+            {
+              time: createdAt,
+              sent: true,
+              type: "FD_FB",
+              address: (process.env.NODE_ENV = "prod"
+                ? "FutureDelivery@food.gov.uk"
+                : "fsatestemail.valid@gmail.com")
             }
-          : [],
-        {
-          time: createdAt,
-          sent: true,
-          type: "FBO",
-          address: operator.dataValues.operator_email
-            ? operator.dataValues.operator_email
-            : operator.dataValues.contact_representative_email
-        },
-        declaration.dataValues.feedback1
-          ? [
-              {
-                time: createdAt,
-                sent: true,
-                type: "FBO_FB",
-                address: operator.dataValues.operator_email
-                  ? operator.dataValues.operator_email
-                  : operator.dataValues.contact_representative_email
-              },
-              {
-                time: createdAt,
-                sent: true,
-                type: "FD_FB",
-                address: (process.env.NODE_ENV = "prod"
-                  ? "FutureDelivery@food.gov.uk"
-                  : "fsatestemail.valid@gmail.com")
-              }
-            ]
-          : []
-      ]
-    };
+          ]
+        : []
+    ];
 
     const completeCacheRecord = Object.assign(
       {},
@@ -154,18 +151,22 @@ const insertCosmosRecord = async (reg) => {
         direct_submission: direct_submission,
         establishment: {
           establishment_details: cleanRecord(establishment.dataValues),
-          operator: Object.assign({}, cleanRecord(operator.dataValues), {
-            partners: partners.map((partner) => {
-              return partner.dataValues;
-            })
-          }),
+          operator: Object.assign(
+            {},
+            cleanRecord(operator.dataValues),
+            partners[0] && {
+              partners: partners.map((partner) => {
+                return partner.dataValues;
+              })
+            }
+          ),
           premise: cleanRecord(premise.dataValues),
           activities: cleanRecord(activities.dataValues)
         },
         metadata: cleanRecord(declaration.dataValues)
       },
       hygieneAndStandards,
-      { status: status },
+      { status: { notifications: notifications.flat() } },
       {
         hygiene_council_code: _id,
         local_council_url: reg.dataValues.council,
