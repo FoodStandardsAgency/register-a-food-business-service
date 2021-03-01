@@ -2,19 +2,13 @@ jest.mock("mongodb");
 jest.mock("./configDb/configDb.double");
 
 const mongodb = require("mongodb");
-const {
-  establishConnectionToCosmos,
-  clearCosmosConnection
-} = require("./cosmos.client");
+const { establishConnectionToCosmos } = require("./cosmos.client");
 const { cachedRegistrationsDouble } = require("./cacheDb/cacheDb.double");
 const { lcConfigCollectionDouble } = require("./configDb/configDb.double");
 const { statusCollectionDouble } = require("./status/status-db.double");
 
 describe("Function: establishConnectionToCosmos", () => {
   let result;
-  beforeEach(async () => {
-    clearCosmosConnection();
-  });
   describe("When: connection to mongo is successful", () => {
     beforeEach(async () => {
       mongodb.MongoClient.connect.mockImplementation(() => ({

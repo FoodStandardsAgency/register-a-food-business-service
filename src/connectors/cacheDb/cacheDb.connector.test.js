@@ -7,7 +7,6 @@ const {
   updateStatusInCache,
   updateNotificationOnSent
 } = require("./cacheDb.connector");
-const { clearCosmosConnection } = require("../cosmos.client");
 
 describe("Connector: cacheDb", () => {
   let response;
@@ -20,7 +19,6 @@ describe("Connector: cacheDb", () => {
     describe("given the request is successful", () => {
       beforeEach(async () => {
         process.env.DOUBLE_MODE = false;
-        clearCosmosConnection();
         mongodb.MongoClient.connect.mockImplementation(async () => ({
           db: () => ({
             collection: () => ({
@@ -39,7 +37,6 @@ describe("Connector: cacheDb", () => {
     describe("given the request throws an error", () => {
       beforeEach(async () => {
         process.env.DOUBLE_MODE = false;
-        clearCosmosConnection();
         mongodb.MongoClient.connect.mockImplementation(() => ({
           db: () => ({
             collection: () => ({
@@ -64,7 +61,6 @@ describe("Connector: cacheDb", () => {
     describe("given two requests without clearing the mongo connection", () => {
       beforeEach(async () => {
         process.env.DOUBLE_MODE = false;
-        clearCosmosConnection();
         mongodb.MongoClient.connect.mockImplementation(async () => ({
           db: () => ({
             collection: () => ({
@@ -114,7 +110,6 @@ describe("Connector: cacheDb", () => {
       let result;
       beforeEach(async () => {
         process.env.DOUBLE_MODE = false;
-        clearCosmosConnection();
         mongodb.MongoClient.connect.mockImplementation(async () => ({
           db: () => ({
             collection: () => ({
@@ -140,7 +135,6 @@ describe("Connector: cacheDb", () => {
       let result;
       beforeEach(async () => {
         process.env.DOUBLE_MODE = false;
-        clearCosmosConnection();
         mongodb.MongoClient.connect.mockImplementation(async () => ({
           db: () => ({
             collection: () => ({
@@ -236,7 +230,6 @@ describe("Connector: cacheDb", () => {
       let result;
       beforeEach(async () => {
         process.env.DOUBLE_MODE = false;
-        clearCosmosConnection();
         mongodb.MongoClient.connect.mockImplementation(async () => ({
           db: () => ({
             collection: () => ({
@@ -262,7 +255,6 @@ describe("Connector: cacheDb", () => {
       let result;
       beforeEach(async () => {
         process.env.DOUBLE_MODE = false;
-        clearCosmosConnection();
         mongodb.MongoClient.connect.mockImplementation(async () => ({
           db: () => ({
             collection: () => ({

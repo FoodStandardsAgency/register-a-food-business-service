@@ -32,7 +32,6 @@ describe("Function: getConfigVersion", () => {
   describe("given the request is successful", () => {
     beforeEach(async () => {
       process.env.DOUBLE_MODE = false;
-      clearCosmosConnection();
       mongodb.MongoClient.connect.mockImplementation(() => ({
         db: () => ({
           collection: () => ({
@@ -50,7 +49,6 @@ describe("Function: getConfigVersion", () => {
   describe("given the request throws an error", () => {
     beforeEach(async () => {
       process.env.DOUBLE_MODE = false;
-      clearCosmosConnection();
       mongodb.MongoClient.connect.mockImplementation(() => {
         throw new Error("example mongo error");
       });
@@ -73,7 +71,6 @@ describe("Function: getAllLocalCouncilConfig", () => {
   describe("given the request throws an error", () => {
     beforeEach(async () => {
       process.env.DOUBLE_MODE = false;
-      clearCosmosConnection();
       mongodb.MongoClient.connect.mockImplementation(() => {
         throw new Error("example mongo error");
       });
@@ -96,7 +93,6 @@ describe("Function: getAllLocalCouncilConfig", () => {
   describe("given the request is successful", () => {
     beforeEach(() => {
       process.env.DOUBLE_MODE = false;
-      clearCosmosConnection();
       mongodb.MongoClient.connect.mockImplementation(() => ({
         db: () => ({
           collection: () => ({
@@ -116,7 +112,6 @@ describe("Function: getAllLocalCouncilConfig", () => {
   describe("when running in double mode", () => {
     beforeEach(() => {
       process.env.DOUBLE_MODE = true;
-      clearCosmosConnection();
       lcConfigCollectionDouble.find.mockImplementation(() => ({
         toArray: () => mockLocalCouncilConfig
       }));
@@ -132,7 +127,6 @@ describe("Function: getAllLocalCouncilConfig", () => {
   describe("given the request is run more than once during this process (populated cache)", () => {
     beforeEach(() => {
       process.env.DOUBLE_MODE = false;
-      clearCosmosConnection();
       mongodb.MongoClient.connect.mockClear();
       mongodb.MongoClient.connect.mockImplementation(() => ({
         db: () => ({
@@ -148,7 +142,7 @@ describe("Function: getAllLocalCouncilConfig", () => {
 
     it("returns the correct value", async () => {
       // clear the cache
-      clearCosmosConnection();
+      // closeCosmosConnection();
 
       // run one request
       await expect(getAllLocalCouncilConfig()).resolves.toEqual(
@@ -203,7 +197,6 @@ describe("Function: getCouncilsForSupplier", () => {
 
   describe("given the request is successful", () => {
     beforeEach(() => {
-      clearCosmosConnection();
       mongodb.MongoClient.connect.mockImplementation(() => ({
         db: () => ({
           collection: () => ({
