@@ -1,6 +1,6 @@
 const {
   establishConnectionToCosmos,
-  clearCosmosConnection
+  closeCosmosConnection
 } = require("../src/connectors/cosmos.client");
 const {
   getRegistrationByFsaRn
@@ -84,7 +84,7 @@ const updateFields = async (rec) => {
 
 updateFieldsInCosmos()
   .then(() => {
-    clearCosmosConnection();
+    closeCosmosConnection();
     closeConnection();
     logEmitter.emit(
       "info",

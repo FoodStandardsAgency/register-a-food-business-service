@@ -64,9 +64,18 @@ const establishConnectionToCosmos = async (dbName, collectionName) => {
 };
 
 const clearCosmosConnection = () => {
+  client = undefined;
+  DB = undefined;
+};
+
+const closeCosmosConnection = () => {
   client && client.close();
   client = undefined;
   DB = undefined;
 };
 
-module.exports = { establishConnectionToCosmos, clearCosmosConnection };
+module.exports = {
+  establishConnectionToCosmos,
+  clearCosmosConnection,
+  closeCosmosConnection
+};

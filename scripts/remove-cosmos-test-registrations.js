@@ -1,6 +1,6 @@
 const {
   establishConnectionToCosmos,
-  clearCosmosConnection
+  closeCosmosConnection
 } = require("../src/connectors/cosmos.client");
 const { connectToDb, closeConnection } = require("../src/db/db");
 const {
@@ -55,7 +55,7 @@ const removeCosmosRecord = async (record) => {
 
 deleteTestRegistrationsFromCosmos()
   .then(() => {
-    clearCosmosConnection();
+    closeCosmosConnection();
     closeConnection();
     logEmitter.emit(
       "info",

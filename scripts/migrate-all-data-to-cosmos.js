@@ -18,7 +18,7 @@ const {
 } = require("../src/connectors/configDb/configDb.connector");
 const {
   establishConnectionToCosmos,
-  clearCosmosConnection
+  closeCosmosConnection
 } = require("../src/connectors/cosmos.client");
 
 let beCache;
@@ -197,7 +197,7 @@ const cleanRecord = (record) => {
 
 migrateMissingRecordsToCosmos()
   .then(() => {
-    clearCosmosConnection();
+    closeCosmosConnection();
     closeConnection();
     logEmitter.emit("info", "Successfully finished migrate to cosmos script");
   })

@@ -1,6 +1,6 @@
 const {
   establishConnectionToCosmos,
-  clearCosmosConnection
+  closeCosmosConnection
 } = require("../src/connectors/cosmos.client");
 const { logEmitter } = require("../src/services/logging.service");
 
@@ -89,7 +89,7 @@ const updateDates = async () => {
 
 updateDates()
   .then(() => {
-    clearCosmosConnection();
+    closeCosmosConnection();
     logEmitter.emit("info", "Successfully finished update dates script");
   })
   .catch(() => {
