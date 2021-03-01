@@ -27,37 +27,35 @@ const updateDates = async () => {
         {
           reg_submission_date: new Date(rec.reg_submission_date)
         },
-        rec.status.notifications
-          ? ({
-              "status.notifications.0.time": new Date(
-                rec.status.notifications[0].time
-              ),
-              "status.notifications.1.time": new Date(
-                rec.status.notifications[1].time
+        {
+          "status.notifications.0.time": new Date(
+            rec.status.notifications[0].time
+          ),
+          "status.notifications.1.time": new Date(
+            rec.status.notifications[1].time
+          )
+        },
+        rec.status.notifications[2]
+          ? {
+              "status.notifications.2.time": new Date(
+                rec.status.notifications[2].time
               )
-            },
-            rec.status.notifications[2]
-              ? {
-                  "status.notifications.2.time": new Date(
-                    rec.status.notifications[2].time
-                  )
-                }
-              : [],
-            rec.status.notifications[3]
-              ? {
-                  "status.notifications.3.time": new Date(
-                    rec.status.notifications[3].time
-                  )
-                }
-              : [],
-            rec.status.notifications[4]
-              ? {
-                  "status.notifications.4.time": new Date(
-                    rec.status.notifications[4].time
-                  )
-                }
-              : [])
-          : {}
+            }
+          : [],
+        rec.status.notifications[3]
+          ? {
+              "status.notifications.3.time": new Date(
+                rec.status.notifications[3].time
+              )
+            }
+          : [],
+        rec.status.notifications[4]
+          ? {
+              "status.notifications.4.time": new Date(
+                rec.status.notifications[4].time
+              )
+            }
+          : []
       );
 
       await beCache.updateOne(
