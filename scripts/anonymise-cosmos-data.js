@@ -108,6 +108,6 @@ anonymiseData()
     );
     logEmitter.emit("info", "Successfully finished anonymise script");
   })
-  .catch(() => {
-    logEmitter.emit("info", "Failed to run anonymise script");
+  .catch((err) => {
+    logEmitter.emit("info", `Failed to run anonymise script: ${err.message}`);
   });
