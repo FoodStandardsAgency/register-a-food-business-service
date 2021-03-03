@@ -30,7 +30,7 @@
     "migrate": "sequelize db:migrate",
     "migrate:local": "export NODE_ENV=local && sequelize db:migrate",
     "cosmos-migrations": "node scripts/remove-cosmos-test-registrations && node scripts/migrate-all-data-to-cosmos && node scripts/update-fields-in-cosmos && node scripts/update-date-strings-to-dates",
-    "cosmos-migrations:local": "export NODE_ENV=local && node scripts/remove-cosmos-test-registrations && node scripts/migrate-all-data-to-cosmos && node scripts/update-fields-in-cosmos && node scripts/update-date-strings-to-dates",
+    "cosmos-migrations:local": "export NODE_ENV=local && node scripts/remove-cosmos-test-registrations && node scripts/migrate-all-data-to-cosmos && node scripts/update-fields-in-cosmos && node scripts/update-date-strings-to-dates && node scripts/rename-metadata-to-declaration.js && node scripts/add-submission-language.js",
     "anonymise-cosmos-data": "node scripts/anonymise-cosmos-data.js",
     "jsdoc": "rm -rf ./docs/jsdoc && jsdoc -r ./src -d ./docs/jsdoc"
   },

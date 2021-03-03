@@ -163,7 +163,7 @@ const insertCosmosRecord = async (reg) => {
           premise: cleanRecord(premise.dataValues),
           activities: cleanRecord(activities.dataValues)
         },
-        metadata: cleanRecord(declaration.dataValues)
+        declaration: cleanRecord(declaration.dataValues)
       },
       hygieneAndStandards,
       { status: { notifications: notifications.flat() } },
