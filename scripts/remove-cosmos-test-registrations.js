@@ -54,10 +54,6 @@ const deleteTestRegistrationsFromCosmos = async () => {
     });
 
     logEmitter.emit("info", `${response.deletedCount} test records deleted`);
-    logEmitter.emit(
-      "info",
-      `${testRecords - response.deletedCount} test records not deleted`
-    );
   } catch (err) {
     logEmitter.emit("info", `Remove test registrations failed - ${err}`);
   }

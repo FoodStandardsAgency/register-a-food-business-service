@@ -8,7 +8,8 @@ const {
   getActivitiesByEstablishmentId,
   getDeclarationByRegId,
   getAllPartnersByOperatorId,
-  getAllRegistrations
+  getAllRegistrationRNs,
+  getRegistrationByFsaRn
 } = require("../src/connectors/registrationDb/registrationDb");
 const {
   getLcContactConfig
@@ -22,26 +23,49 @@ const {
 } = require("../src/connectors/cosmos.client");
 
 let beCache;
-let insertedRecords = [];
+let missingRecords = [];
 let failedRecords = [];
+let insertedRecords = [];
 
 const migrateMissingRecordsToCosmos = async () => {
   await connectToDb();
   beCache = await establishConnectionToCosmos("registrations", "registrations");
 
-  await getAllRegistrations().then(async (regs) => {
-    const promises = regs.map(async (reg) => {
-      const record = await beCache.findOne(
-        { "fsa-rn": reg.dataValues.fsa_rn },
-        { projection: { _id: 0, "fsa-rn": 1 } }
-      );
+  //Find all FSA-RN from each database.
+  const cosmosRecords = await beCache
+    .find({}, { projection: { _id: 0, "fsa-rn": 1 } })
+    .toArray();
+  const cosmosRecordNumbers = cosmosRecords.map((rec) => {
+    return rec["fsa-rn"];
+  });
 
-      if (!record) {
-        await insertCosmosRecord(reg); // update migration status
-      }
+  await connectToDb();
+  const pgRegistrations = await getAllRegistrationRNs();
+  const pgRegistrationNumbers = pgRegistrations.map((reg) => {
+    return reg.dataValues["fsa_rn"];
+  });
+
+  // Find records that aren't in PG (test records).
+  missingRecords = pgRegistrationNumbers.filter((record) => {
+    return cosmosRecordNumbers.indexOf(record) < 0;
+  });
+
+  logEmitter.emit(
+    "info",
+    `Missing records from cosmos: ${missingRecords.length} - ${missingRecords}`
+  );
+
+  // Insert missing records in batches until all have been attempted
+  while (missingRecords.length > 0) {
+    const promises = missingRecords.slice(0, 50).map(async (reg) => {
+      await insertCosmosRecord(reg);
+      missingRecords = missingRecords.filter((rec) => {
+        return rec !== reg;
+      });
     });
     await Promise.allSettled(promises);
-  });
+  }
+
   logEmitter.emit(
     "info",
     `Successfully inserted ${insertedRecords.length} Postgres registrations inserted into Cosmos: ${insertedRecords}`
@@ -52,18 +76,14 @@ const migrateMissingRecordsToCosmos = async () => {
   );
 };
 
-const insertCosmosRecord = async (reg) => {
-  logEmitter.emit(
-    "info",
-    `Inserting PG Registration ID: ${reg.dataValues.fsa_rn} into BE Cache`
-  );
+const insertCosmosRecord = async (fsaRn) => {
   try {
+    const reg = await getRegistrationByFsaRn(fsaRn);
     const {
       fsa_rn,
       collected,
       collected_at,
       createdAt,
-      updatedAt,
       direct_submission
     } = reg.dataValues;
 
@@ -143,8 +163,6 @@ const insertCosmosRecord = async (reg) => {
       {},
       {
         "fsa-rn": fsa_rn,
-        createdAt: createdAt,
-        updatedAt: updatedAt,
         collected: collected,
         collected_at: collected_at,
         reg_submission_date: createdAt,
@@ -181,12 +199,6 @@ const insertCosmosRecord = async (reg) => {
     insertedRecords.push(reg.dataValues.fsa_rn);
   } catch (err) {
     failedRecords.push(reg.dataValues.fsa_rn);
-    logEmitter.emit(
-      "info",
-      `Failed inserting PG Registration ID: ${reg.dataValues.fsa_rn} into BE Cache ${err.message}`
-    );
-    // Add migration status to PG
-    //Might need to change to upsert as some older mongo db records don't have all of these fields
   }
 };
 //Remove null value fields
