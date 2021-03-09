@@ -28,52 +28,73 @@ let failedRecords = [];
 let insertedRecords = [];
 
 const migrateMissingRecordsToCosmos = async () => {
-  await connectToDb();
-  beCache = await establishConnectionToCosmos("registrations", "registrations");
+  try {
+    missingRecords = await findMissingRecords();
 
-  //Find all FSA-RN from each database.
-  const cosmosRecords = await beCache
-    .find({}, { projection: { _id: 0, "fsa-rn": 1 } })
-    .toArray();
-  const cosmosRecordNumbers = cosmosRecords.map((rec) => {
-    return rec["fsa-rn"];
-  });
-
-  await connectToDb();
-  const pgRegistrations = await getAllRegistrationRNs();
-  const pgRegistrationNumbers = pgRegistrations.map((reg) => {
-    return reg.dataValues["fsa_rn"];
-  });
-
-  // Find records that aren't in PG (test records).
-  missingRecords = pgRegistrationNumbers.filter((record) => {
-    return cosmosRecordNumbers.indexOf(record) < 0;
-  });
-
-  logEmitter.emit(
-    "info",
-    `Missing records from cosmos: ${missingRecords.length} - ${missingRecords}`
-  );
-
-  // Insert missing records in batches until all have been attempted
-  while (missingRecords.length > 0) {
-    const promises = missingRecords.slice(0, 50).map(async (reg) => {
-      await insertCosmosRecord(reg);
-      missingRecords = missingRecords.filter((rec) => {
-        return rec !== reg;
+    logEmitter.emit(
+      "info",
+      `Records missing from cosmos: ${missingRecords.length} - ${missingRecords}`
+    );
+    // Insert missing records in batches until all have been attempted
+    while (missingRecords.length > 0) {
+      const promises = missingRecords.slice(0, 50).map(async (reg) => {
+        await insertCosmosRecord(reg);
+        missingRecords = missingRecords.filter((rec) => {
+          return rec !== reg;
+        });
       });
-    });
-    await Promise.allSettled(promises);
-  }
+      await Promise.allSettled(promises);
+    }
 
-  logEmitter.emit(
-    "info",
-    `Successfully inserted ${insertedRecords.length} Postgres registrations inserted into Cosmos: ${insertedRecords}`
-  );
-  logEmitter.emit(
-    "info",
-    `Failed to insert ${failedRecords.length} Postgres registrations into Cosmos: ${failedRecords}`
-  );
+    logEmitter.emit(
+      "info",
+      `Successfully inserted ${insertedRecords.length} Postgres registrations inserted into Cosmos: ${insertedRecords}`
+    );
+    logEmitter.emit(
+      "info",
+      `Failed to insert ${failedRecords.length} Postgres registrations into Cosmos: ${failedRecords}`
+    );
+    const remainingMissingRecords = await findMissingRecords();
+    logEmitter.emit(
+      "info",
+      `Records still missing from cosmos: ${remainingMissingRecords.length} - ${remainingMissingRecords}`
+    );
+  } catch (err) {
+    logEmitter.emit("info", `Insert missing records to cosmos failed - ${err}`);
+  }
+};
+
+const findMissingRecords = async () => {
+  try {
+    await connectToDb();
+    beCache = await establishConnectionToCosmos(
+      "registrations",
+      "registrations"
+    );
+
+    //Find all FSA-RN from each database.
+    const cosmosRecords = await beCache
+      .find({}, { projection: { _id: 0, "fsa-rn": 1 } })
+      .toArray();
+    const cosmosRecordNumbers = cosmosRecords.map((rec) => {
+      return rec["fsa-rn"];
+    });
+
+    await connectToDb();
+    const pgRegistrations = await getAllRegistrationRNs();
+    const pgRegistrationNumbers = pgRegistrations.map((reg) => {
+      return reg.dataValues["fsa_rn"];
+    });
+
+    // Find records that aren't in PG (test records).
+    recordsMissing = pgRegistrationNumbers.filter((record) => {
+      return cosmosRecordNumbers.indexOf(record) < 0;
+    });
+
+    return recordsMissing;
+  } catch (err) {
+    logEmitter.emit("info", `findMissingRecords failed - ${err}`);
+  }
 };
 
 const insertCosmosRecord = async (fsaRn) => {

@@ -22,6 +22,25 @@ const triggerSaveToTemp = async () => {
 
 const deleteTestRegistrationsFromCosmos = async () => {
   try {
+    const testRecords = await findTestRegistrations();
+    //Delete all test registrations from cosmos
+    const response = await beCache.deleteMany({
+      "fsa-rn": { $in: testRecords }
+    });
+
+    logEmitter.emit("info", `${response.deletedCount} test records deleted`);
+    const testRecordsRemaining = await findTestRegistrations();
+    logEmitter.emit(
+      "info",
+      `Test records remaining in cosmos: ${testRecordsRemaining.length} - ${testRecordsRemaining}`
+    );
+  } catch (err) {
+    logEmitter.emit("info", `Remove test registrations failed - ${err}`);
+  }
+};
+
+const findTestRegistrations = async () => {
+  try {
     beCache = await establishConnectionToCosmos(
       "registrations",
       "registrations"
@@ -48,14 +67,9 @@ const deleteTestRegistrationsFromCosmos = async () => {
       "info",
       `Test registrations found in cosmos: ${testRecords.length} - ${testRecords}`
     );
-    //Delete all test registrations from cosmos
-    const response = await beCache.deleteMany({
-      "fsa-rn": { $in: testRecords }
-    });
-
-    logEmitter.emit("info", `${response.deletedCount} test records deleted`);
+    return testRecords;
   } catch (err) {
-    logEmitter.emit("info", `Remove test registrations failed - ${err}`);
+    logEmitter.emit("info", `findTestRegistrations failed - ${err}`);
   }
 };
 
