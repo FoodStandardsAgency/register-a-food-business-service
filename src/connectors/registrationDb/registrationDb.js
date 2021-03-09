@@ -145,6 +145,16 @@ const getAllRegistrations = async () => {
   return modelFindAll({}, Registration, "getAllRegistrations");
 };
 
+const getAllRegistrationRNs = async () => {
+  return modelFindAll(
+    {
+      attributes: ["fsa_rn"]
+    },
+    Registration,
+    "getAllRegistrationRNs"
+  );
+};
+
 const getAllPartnersByOperatorId = async (id) => {
   return modelFindAll(
     {
@@ -338,5 +348,6 @@ module.exports = {
   destroyPremiseByEstablishmentId,
   destroyActivitiesByEstablishmentId,
   getAllPartnersByOperatorId,
-  getAllRegistrations
+  getAllRegistrations,
+  getAllRegistrationRNs
 };

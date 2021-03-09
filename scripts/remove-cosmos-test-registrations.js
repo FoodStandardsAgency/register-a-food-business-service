@@ -4,63 +4,75 @@ const {
 } = require("../src/connectors/cosmos.client");
 const { connectToDb, closeConnection } = require("../src/db/db");
 const {
-  getRegistrationByFsaRn
+  getAllRegistrationRNs
 } = require("../src/connectors/registrationDb/registrationDb");
 const { logEmitter } = require("../src/services/logging.service");
+const fetch = require("node-fetch");
 
-let successfulDeletions = [];
-let failedDeletions = [];
 let beCache;
 
-const deleteTestRegistrationsFromCosmos = async () => {
-  beCache = await establishConnectionToCosmos("registrations", "registrations");
+let apiUrl = "http://localhost:4000";
 
-  const records = await beCache.find({}).toArray();
+apiUrl = process.env.API_URL ? process.env.API_URL : apiUrl;
 
-  await connectToDb();
-
-  // Find records that aren't in PG (test records) and remove them from Cosmos.
-  const promises = records.map(async (rec) => {
-    const registration = await getRegistrationByFsaRn(rec["fsa-rn"]);
-    if (!registration) {
-      await removeCosmosRecord(rec);
-    }
-  });
-  await Promise.all(promises);
-  logEmitter.emit(
-    "info",
-    `Successfully deleted ${successfulDeletions.length} registrations from Cosmos: ${successfulDeletions}`
-  );
-  logEmitter.emit(
-    "info",
-    `Failed to delete ${failedDeletions.length} registrations from Cosmos: ${failedDeletions}`
-  );
-  return;
+const triggerSaveToTemp = async () => {
+  const res = await fetch(`${apiUrl}/api/tasks/bulk/savetotempstore`);
+  return res.json();
 };
 
-const removeCosmosRecord = async (record) => {
-  logEmitter.emit("info", `Removing BE Cache FSA-RN: ${record["fsa-rn"]}`);
+const deleteTestRegistrationsFromCosmos = async () => {
   try {
-    await beCache.deleteOne({ "fsa-rn": record["fsa-rn"] });
-    successfulDeletions.push(record["fsa-rn"]);
-    return;
-  } catch (err) {
+    beCache = await establishConnectionToCosmos(
+      "registrations",
+      "registrations"
+    );
+    //Find all FSA-RN from each database.
+    const cosmosRecords = await beCache
+      .find({}, { projection: { _id: 0, "fsa-rn": 1 } })
+      .toArray();
+    const cosmosRecordNumbers = cosmosRecords.map((rec) => {
+      return rec["fsa-rn"];
+    });
+
+    await connectToDb();
+    const pgRegistrations = await getAllRegistrationRNs();
+    const pgRegistrationNumbers = pgRegistrations.map((reg) => {
+      return reg.dataValues["fsa_rn"];
+    });
+
+    // Find records that aren't in PG (test records).
+    const testRecords = cosmosRecordNumbers.filter((record) => {
+      return pgRegistrationNumbers.indexOf(record) < 0;
+    });
     logEmitter.emit(
       "info",
-      `Failed to remove BE Cache FSA-RN: ${record["fsa-rn"]} ${err.message}`
+      `Test registrations found in cosmos: ${testRecords.length} - ${testRecords}`
     );
-    failedDeletions.push(record["fsa-rn"]);
+    //Delete all test registrations from cosmos
+    const response = await beCache.deleteMany({
+      "fsa-rn": { $in: testRecords }
+    });
+
+    logEmitter.emit("info", `${response.deletedCount} test records deleted`);
+    logEmitter.emit(
+      "info",
+      `${testRecords - response.deletedCount} test records not deleted`
+    );
+  } catch (err) {
+    logEmitter.emit("info", `Remove test registrations failed - ${err}`);
   }
 };
 
-deleteTestRegistrationsFromCosmos()
+triggerSaveToTemp()
   .then(() => {
-    closeCosmosConnection();
-    closeConnection();
-    logEmitter.emit(
-      "info",
-      "Successfully finished remove test registrations script"
-    );
+    deleteTestRegistrationsFromCosmos().then(() => {
+      closeCosmosConnection();
+      closeConnection();
+      logEmitter.emit(
+        "info",
+        "Successfully finished remove test registrations script"
+      );
+    });
   })
   .catch(() => {
     logEmitter.emit("info", "Failed to run remove test registrations script");
