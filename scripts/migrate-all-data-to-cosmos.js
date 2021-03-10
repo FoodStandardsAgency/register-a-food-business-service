@@ -38,14 +38,14 @@ const migrateMissingRecordsToCosmos = async () => {
     // Insert missing records in batches until all have been attempted
     while (missingRecords.length > 0) {
       const promises = missingRecords.slice(0, 50).map(async (reg) => {
+        missingRecords = missingRecords.filter((rec) => {
+          return rec !== reg;
+        });
         const response = await insertCosmosRecord(reg);
         logEmitter.emit(
           "info",
           `Insert record response - ${JSON.stringify(response)}`
         );
-        missingRecords = missingRecords.filter((rec) => {
-          return rec !== reg;
-        });
       });
       await Promise.allSettled(promises);
     }
