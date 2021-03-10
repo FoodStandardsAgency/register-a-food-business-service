@@ -226,6 +226,7 @@ const insertCosmosRecord = async (fsaRn) => {
   } catch (err) {
     logEmitter.emit("info", `Failed to insert record - ${err}`);
     failedRecords.push(reg.dataValues.fsa_rn);
+    throw err;
   }
 };
 //Remove null value fields
