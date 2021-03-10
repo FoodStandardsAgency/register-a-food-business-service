@@ -38,7 +38,11 @@ const migrateMissingRecordsToCosmos = async () => {
     // Insert missing records in batches until all have been attempted
     while (missingRecords.length > 0) {
       const promises = missingRecords.slice(0, 50).map(async (reg) => {
-        await insertCosmosRecord(reg);
+        const response = await insertCosmosRecord(reg);
+        logEmitter.emit(
+          "info",
+          `Insert record response - ${JSON.stringify(response)}`
+        );
         missingRecords = missingRecords.filter((rec) => {
           return rec !== reg;
         });
@@ -216,9 +220,11 @@ const insertCosmosRecord = async (fsaRn) => {
     delete completeCacheRecord.establishment.establishment_details.id;
     delete completeCacheRecord.establishment.operator.id;
 
-    await beCache.insertOne(completeCacheRecord);
+    const repsonse = await beCache.insertOne(completeCacheRecord);
     insertedRecords.push(reg.dataValues.fsa_rn);
+    return repsonse.result;
   } catch (err) {
+    logEmitter.emit("info", `Failed to insert record - ${err}`);
     failedRecords.push(reg.dataValues.fsa_rn);
   }
 };
