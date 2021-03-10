@@ -84,7 +84,7 @@ const updateFields = async (rec) => {
         $set: {
           collected: collected,
           collected_at: collected_at,
-          direct_submission: direct_submission
+          directLcSubmission: direct_submission
         },
         $unset: {
           "status.registration": ""
