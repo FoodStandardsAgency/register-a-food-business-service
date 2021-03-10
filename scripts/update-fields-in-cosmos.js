@@ -12,46 +12,56 @@ let beCache;
 let recordsToUpdate = [];
 
 const updateFieldsInCosmos = async () => {
-  //Find records that need updating in cosmos
-  recordsToUpdate = await findRecordsToUpdate();
-  //Log registration numbers of records needing to be updated
-  fsaRns = recordsToUpdate.map((reg) => {
-    return reg["fsa-rn"];
-  });
-  logEmitter.emit(
-    "info",
-    `Updating fields of ${fsaRns.length} records in Cosmos - ${fsaRns}`
-  );
-  //Update records in cosmos from fields in PG
-  await connectToDb();
-  while (recordsToUpdate.length > 0) {
-    const promises = recordsToUpdate.slice(0, 50).map(async (reg) => {
-      recordsToUpdate = recordsToUpdate.filter((rec) => {
-        return rec !== reg;
-      });
-      await updateFields(reg);
+  try {
+    beCache = await establishConnectionToCosmos(
+      "registrations",
+      "registrations"
+    );
+    //Find records that need updating in cosmos
+    recordsToUpdate = await findRecordsToUpdate();
+    //Log registration numbers of records needing to be updated
+    const fsaRns = recordsToUpdate.map((reg) => {
+      return reg["fsa-rn"];
     });
-    await Promise.allSettled(promises);
+    logEmitter.emit(
+      "info",
+      `Updating fields of ${fsaRns.length} records in Cosmos - ${fsaRns}`
+    );
+    //Update records in cosmos from fields in PG
+    await connectToDb();
+    while (recordsToUpdate.length > 0) {
+      const promises = recordsToUpdate.slice(0, 50).map(async (reg) => {
+        recordsToUpdate = recordsToUpdate.filter((rec) => {
+          return rec !== reg;
+        });
+        await updateFields(reg);
+      });
+      await Promise.allSettled(promises);
+    }
+    // Log any registration numbers that failed to update.
+    const remainingRecordsToUpdate = await findRecordsToUpdate();
+    const remainingFsaRns = remainingRecordsToUpdate.map((reg) => {
+      return reg["fsa-rn"];
+    });
+    logEmitter.emit(
+      "info",
+      ` ${remainingFsaRns.length} records still needing to be updated: ${remainingFsaRns}`
+    );
+  } catch (err) {
+    logEmitter.emit("info", `updateFieldsInCosmos failed - ${err}`);
   }
-  // Log any registration numbers that failed to update.
-  const remainingRecordsToUpdate = await findRecordsToUpdate();
-  const remainingFsaRns = remainingRecordsToUpdate.map((reg) => {
-    return reg["fsa-rn"];
-  });
-  logEmitter.emit(
-    "info",
-    ` ${remainingFsaRns.length} records still needing to be updated: ${remainingFsaRns}`
-  );
 };
 
 const findRecordsToUpdate = async () => {
-  beCache = await establishConnectionToCosmos("registrations", "registrations");
+  try {
+    const recordsToUpdate = await beCache
+      .find({ collected: { $exists: false } })
+      .toArray();
 
-  const recordsToUpdate = await beCache
-    .find({ collected: { $exists: false } })
-    .toArray();
-
-  return recordsToUpdate;
+    return recordsToUpdate;
+  } catch (err) {
+    logEmitter.emit("info", `findsRecordsToUpdate (fields) failed - ${err}`);
+  }
 };
 
 const updateFields = async (rec) => {
@@ -64,8 +74,6 @@ const updateFields = async (rec) => {
   const {
     collected,
     collected_at,
-    createdAt,
-    updatedAt,
     direct_submission
   } = registration.dataValues;
 
@@ -76,8 +84,6 @@ const updateFields = async (rec) => {
         $set: {
           collected: collected,
           collected_at: collected_at,
-          createdAt: createdAt,
-          updatedAt: updatedAt,
           direct_submission: direct_submission
         },
         $unset: {
@@ -87,7 +93,7 @@ const updateFields = async (rec) => {
     );
     logEmitter.emit(
       "info",
-      `Insert record response - ${JSON.stringify(response.result)}`
+      `Update record fields response - ${JSON.stringify(response.result)}`
     );
   } catch (err) {
     logEmitter.emit(

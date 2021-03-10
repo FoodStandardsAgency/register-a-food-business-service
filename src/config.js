@@ -13,9 +13,7 @@ module.exports = {
   DIRECT_API_SECRET: process.env.DIRECT_API_SECRET,
   ADMIN_NAME: process.env.ADMIN_NAME,
   ADMIN_SECRET: process.env.ADMIN_SECRET,
-  CONFIGDB_URL: process.env.CONFIGDB_URL,
   COSMOSDB_URL: process.env.COSMOSDB_URL,
-  CACHEDB_URL: process.env.CACHEDB_URL,
   NOTIFY_STATUS_TEMPLATE: process.env.NOTIFY_STATUS_TEMPLATE,
   ENVIRONMENT_DESCRIPTION: process.env.ENVIRONMENT_DESCRIPTION,
   ADDRESS_API_URL_BASE: `https://ws.postcoder.com/pcw/${
