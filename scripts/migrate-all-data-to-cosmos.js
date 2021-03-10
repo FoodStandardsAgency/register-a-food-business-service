@@ -24,8 +24,6 @@ const {
 
 let beCache;
 let missingRecords = [];
-let failedRecords = [];
-let insertedRecords = [];
 
 const migrateMissingRecordsToCosmos = async () => {
   try {
@@ -49,15 +47,6 @@ const migrateMissingRecordsToCosmos = async () => {
       });
       await Promise.allSettled(promises);
     }
-
-    logEmitter.emit(
-      "info",
-      `Successfully inserted ${insertedRecords.length} Postgres registrations inserted into Cosmos: ${insertedRecords}`
-    );
-    logEmitter.emit(
-      "info",
-      `Failed to insert ${failedRecords.length} Postgres registrations into Cosmos: ${failedRecords}`
-    );
     const remainingMissingRecords = await findMissingRecords();
     logEmitter.emit(
       "info",
@@ -221,12 +210,9 @@ const insertCosmosRecord = async (fsaRn) => {
     delete completeCacheRecord.establishment.operator.id;
 
     const repsonse = await beCache.insertOne(completeCacheRecord);
-    insertedRecords.push(reg.dataValues.fsa_rn);
     return repsonse.result;
   } catch (err) {
     logEmitter.emit("info", `Failed to insert record - ${err}`);
-    failedRecords.push(reg.dataValues.fsa_rn);
-    throw err;
   }
 };
 //Remove null value fields
@@ -242,6 +228,8 @@ migrateMissingRecordsToCosmos()
     closeConnection();
     logEmitter.emit("info", "Successfully finished migrate to cosmos script");
   })
-  .catch(() => {
-    logEmitter.emit("info", "Failed to run migrate to cosmos script");
+  .catch((err) => {
+    closeCosmosConnection();
+    closeConnection();
+    logEmitter.emit(`info", "Failed to run migrate to cosmos script - ${err}`);
   });

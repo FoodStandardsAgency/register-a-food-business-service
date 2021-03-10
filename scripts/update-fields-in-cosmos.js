@@ -9,34 +9,49 @@ const { connectToDb, closeConnection } = require("../src/db/db");
 const { logEmitter } = require("../src/services/logging.service");
 
 let beCache;
-let recordsUpdated = [];
-let recordsFailedToUpdate = [];
+let recordsToUpdate = [];
 
 const updateFieldsInCosmos = async () => {
+  //Find records that need updating in cosmos
+  recordsToUpdate = await findRecordsToUpdate();
+  //Log registration numbers of records needing to be updated
+  fsaRns = recordsToUpdate.map((reg) => {
+    return reg["fsa-rn"];
+  });
+  logEmitter.emit(
+    "info",
+    `Updating fields of ${fsaRns.length} records in Cosmos - ${fsaRns}`
+  );
+  //Update records in cosmos from fields in PG
+  await connectToDb();
+  while (recordsToUpdate.length > 0) {
+    const promises = recordsToUpdate.slice(0, 50).map(async (reg) => {
+      recordsToUpdate = recordsToUpdate.filter((rec) => {
+        return rec !== reg;
+      });
+      await updateFields(reg);
+    });
+    await Promise.allSettled(promises);
+  }
+  // Log any registration numbers that failed to update.
+  const remainingRecordsToUpdate = await findRecordsToUpdate();
+  const remainingFsaRns = remainingRecordsToUpdate.map((reg) => {
+    return reg["fsa-rn"];
+  });
+  logEmitter.emit(
+    "info",
+    ` ${remainingFsaRns.length} records still needing to be updated: ${remainingFsaRns}`
+  );
+};
+
+const findRecordsToUpdate = async () => {
   beCache = await establishConnectionToCosmos("registrations", "registrations");
 
-  const records = await beCache
+  const recordsToUpdate = await beCache
     .find({ collected: { $exists: false } })
     .toArray();
-  logEmitter.emit(
-    "info",
-    `Updating fields of ${records.length} records in Cosmos`
-  );
 
-  await connectToDb();
-
-  const promises = records.map(async (rec) => {
-    await updateFields(rec);
-  });
-  await Promise.allSettled(promises);
-  logEmitter.emit(
-    "info",
-    `Successfully updated fields of ${recordsUpdated.length} records in cosmos: ${recordsUpdated}`
-  );
-  logEmitter.emit(
-    "info",
-    `Failed to update fields of ${recordsFailedToUpdate.length} records in cosmos: ${recordsFailedToUpdate}`
-  );
+  return recordsToUpdate;
 };
 
 const updateFields = async (rec) => {
@@ -46,7 +61,6 @@ const updateFields = async (rec) => {
     logEmitter.emit("info", `No registration found in PG for ${rec["fsa-rn"]}`);
     return;
   }
-
   const {
     collected,
     collected_at,
@@ -55,9 +69,8 @@ const updateFields = async (rec) => {
     direct_submission
   } = registration.dataValues;
 
-  logEmitter.emit("info", `Updating BE Cache FSA-RN: ${rec["fsa-rn"]}`);
   try {
-    await beCache.updateOne(
+    const response = await beCache.updateOne(
       { "fsa-rn": rec["fsa-rn"] },
       {
         $set: {
@@ -72,12 +85,14 @@ const updateFields = async (rec) => {
         }
       }
     );
-    recordsUpdated.push(rec["fsa-rn"]);
-  } catch (err) {
-    recordsFailedToUpdate.push(rec["fsa-rn"]);
     logEmitter.emit(
       "info",
-      `Failed to update BE Cache FSA-RN: ${rec["fsa-rn"]} ${err.message}`
+      `Insert record response - ${JSON.stringify(response.result)}`
+    );
+  } catch (err) {
+    logEmitter.emit(
+      "info",
+      `Failed to update record: ${rec["fsa-rn"]} ${err.message}`
     );
   }
 };
@@ -91,6 +106,11 @@ updateFieldsInCosmos()
       "Successfully finished update cosmos fields script"
     );
   })
-  .catch(() => {
-    logEmitter.emit("info", "Failed to run update cosmos fields script");
+  .catch((err) => {
+    closeCosmosConnection();
+    closeConnection();
+    logEmitter.emit(
+      "info",
+      `Failed to run update cosmos fields script - ${err}`
+    );
   });

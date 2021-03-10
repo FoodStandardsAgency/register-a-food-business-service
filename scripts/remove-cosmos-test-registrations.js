@@ -84,6 +84,11 @@ triggerSaveToTemp()
       );
     });
   })
-  .catch(() => {
-    logEmitter.emit("info", "Failed to run remove test registrations script");
+  .catch((err) => {
+    closeCosmosConnection();
+    closeConnection();
+    logEmitter.emit(
+      "info",
+      `Failed to run remove test registrations script - ${err}`
+    );
   });
