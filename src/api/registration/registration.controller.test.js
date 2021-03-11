@@ -208,7 +208,7 @@ describe("registration controller", () => {
               createdAt: postRegistrationMetadata.createdAt,
               updatedAt: postRegistrationMetadata.updatedAt,
               reg_submission_date: postRegistrationMetadata.reg_submission_date,
-              directLcSubmission: false,
+              direct_submission: false,
               submission_language: "en"
             },
             testRegistration,
