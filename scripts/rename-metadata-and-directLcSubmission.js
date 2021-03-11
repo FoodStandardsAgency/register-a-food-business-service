@@ -66,5 +66,6 @@ renameToDeclaration()
     });
   })
   .catch((err) => {
+    closeCosmosConnection();
     logEmitter.emit("info", `Failed to run rename metadata script - ${err}`);
   });

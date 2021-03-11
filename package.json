@@ -36,6 +36,7 @@
     "update-cosmos-fields": "node scripts/update-fields-in-cosmos",
     "update-dates": "node scripts/update-date-strings-to-dates",
     "rename-fields": "node scripts/rename-metadata-and-directLcSubmission",
+    "add-submission-language": "node scripts/add-submission-language",
     "anonymise-cosmos-data": "node scripts/anonymise-cosmos-data.js",
     "jsdoc": "rm -rf ./docs/jsdoc && jsdoc -r ./src -d ./docs/jsdoc"
   },
