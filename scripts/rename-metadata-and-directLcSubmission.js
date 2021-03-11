@@ -78,7 +78,7 @@ const renameDirectSubmission = async () => {
     const directLcSubmissionFsaRns = getFsaRns(directLcSubmissionRecords);
     logEmitter.emit(
       "info",
-      `${directLcSubmissionFsaRns.length} records containing irectLcSubmission - ${directLcSubmissionFsaRns}`
+      `${directLcSubmissionFsaRns.length} records containing directLcSubmission - ${directLcSubmissionFsaRns}`
     );
 
     while (directLcSubmissionRecords.length > 0) {
