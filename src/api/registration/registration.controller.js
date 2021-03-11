@@ -91,8 +91,6 @@ const createNewRegistration = async (
       direct_submission: false,
       collected: false,
       collected_at: null,
-      createdAt: postRegistrationMetadata.reg_submission_date,
-      updatedAt: postRegistrationMetadata.reg_submission_date,
       submission_language: submission_language
     },
     registration,
@@ -239,9 +237,7 @@ const createNewDirectRegistration = async (registration, options) => {
     reg_submission_date: new Date(),
     direct_submission: true,
     collected: true,
-    collected_at: new Date(),
-    createdAt: new Date(),
-    updatedAt: new Date()
+    collected_at: new Date()
   };
 
   if (!regMetadata["fsa-rn"]) {
