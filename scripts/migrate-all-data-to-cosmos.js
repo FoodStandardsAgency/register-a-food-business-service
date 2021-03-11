@@ -180,7 +180,7 @@ const insertCosmosRecord = async (fsaRn) => {
         collected: collected,
         collected_at: collected_at,
         reg_submission_date: createdAt,
-        directLcSubmission: direct_submission,
+        direct_submission: direct_submission,
         establishment: {
           establishment_details: cleanRecord(establishment.dataValues),
           operator: Object.assign(

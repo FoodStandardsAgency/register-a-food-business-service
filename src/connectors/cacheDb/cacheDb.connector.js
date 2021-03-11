@@ -126,9 +126,9 @@ const findAllFailedNotificationsRegistrations = async (
         },
         {
           $or: [
-            { directLcSubmission: { $exists: false } },
-            { directLcSubmission: null },
-            { directLcSubmission: false }
+            { direct_submission: { $exists: false } },
+            { direct_submission: null },
+            { direct_submission: false }
           ]
         }
       ]
@@ -149,9 +149,9 @@ const findAllBlankRegistrations = async (cachedRegistrations, limit = 100) => {
         },
         {
           $or: [
-            { directLcSubmission: { $exists: false } },
-            { directLcSubmission: null },
-            { directLcSubmission: false }
+            { direct_submission: { $exists: false } },
+            { direct_submission: null },
+            { direct_submission: false }
           ]
         }
       ]
@@ -171,9 +171,9 @@ const findOutstandingTascomiRegistrationsFsaIds = async (
         { "status.tascomi.complete": { $ne: true } },
         {
           $or: [
-            { directLcSubmission: { $exists: false } },
-            { directLcSubmission: null },
-            { directLcSubmission: false }
+            { direct_submission: { $exists: false } },
+            { direct_submission: null },
+            { direct_submission: false }
           ]
         }
       ]

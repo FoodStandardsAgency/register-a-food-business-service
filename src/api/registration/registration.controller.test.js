@@ -203,7 +203,7 @@ describe("registration controller", () => {
             {
               "fsa-rn": postRegistrationMetadata["fsa-rn"],
               reg_submission_date: postRegistrationMetadata.reg_submission_date,
-              directLcSubmission: false,
+              direct_submission: false,
               submission_language: "en"
             },
             testRegistration,

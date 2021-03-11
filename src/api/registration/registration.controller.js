@@ -90,7 +90,7 @@ const createNewRegistration = async (
     {
       "fsa-rn": postRegistrationMetadata["fsa-rn"],
       reg_submission_date: postRegistrationMetadata.reg_submission_date,
-      directLcSubmission: false,
+      direct_submission: false,
       submission_language: submission_language
     },
     registration,
@@ -235,7 +235,7 @@ const createNewDirectRegistration = async (registration, options) => {
   const regMetadata = {
     "fsa-rn": registration.fsa_rn,
     reg_submission_date: moment().format("YYYY-MM-DD"),
-    directLcSubmission: true
+    direct_submission: true
   };
 
   if (!regMetadata["fsa-rn"]) {

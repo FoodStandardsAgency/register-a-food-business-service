@@ -54,7 +54,7 @@ const saveRegistration = async (registration, fsa_rn, council) => {
     reg = await createRegistration(
       fsa_rn,
       council,
-      registration.directLcSubmission
+      registration.direct_submission
     );
 
     establishment = await createEstablishment(
