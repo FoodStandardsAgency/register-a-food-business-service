@@ -32,10 +32,9 @@ const renameToDeclaration = async () => {
       "registrations"
     );
     metadataRecords = await findRecords({ metadata: { $exists: true } });
-    const metadataFsaRns = getFsaRns(metadataRecords);
     logEmitter.emit(
       "info",
-      `${metadataFsaRns.length} records containing metadata - ${metadataFsaRns}`
+      `${metadataRecords.length} records containing metadata`
     );
 
     while (metadataRecords.length > 0) {
@@ -75,10 +74,9 @@ const renameDirectSubmission = async () => {
     directLcSubmissionRecords = await findRecords({
       directLcSubmission: { $exists: true }
     });
-    const directLcSubmissionFsaRns = getFsaRns(directLcSubmissionRecords);
     logEmitter.emit(
       "info",
-      `${directLcSubmissionFsaRns.length} records containing directLcSubmission - ${directLcSubmissionFsaRns}`
+      `${directLcSubmissionRecords.length} records containing directLcSubmission`
     );
 
     while (directLcSubmissionRecords.length > 0) {

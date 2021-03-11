@@ -65,7 +65,7 @@ const findTestRegistrations = async () => {
     });
     logEmitter.emit(
       "info",
-      `Test registrations found in cosmos: ${testRecords.length} - ${testRecords}`
+      `Test registrations found in cosmos: ${testRecords.length}`
     );
     return testRecords;
   } catch (err) {

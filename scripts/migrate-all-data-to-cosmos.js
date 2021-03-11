@@ -31,7 +31,7 @@ const migrateMissingRecordsToCosmos = async () => {
 
     logEmitter.emit(
       "info",
-      `Records missing from cosmos: ${missingRecords.length} - ${missingRecords}`
+      `Records missing from cosmos: ${missingRecords.length}`
     );
     // Insert missing records in batches until all have been attempted
     while (missingRecords.length > 0) {

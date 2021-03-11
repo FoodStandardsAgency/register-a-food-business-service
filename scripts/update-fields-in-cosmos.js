@@ -19,13 +19,10 @@ const updateFieldsInCosmos = async () => {
     );
     //Find records that need updating in cosmos
     recordsToUpdate = await findRecordsToUpdate();
-    //Log registration numbers of records needing to be updated
-    const fsaRns = recordsToUpdate.map((reg) => {
-      return reg["fsa-rn"];
-    });
+
     logEmitter.emit(
       "info",
-      `Updating fields of ${fsaRns.length} records in Cosmos - ${fsaRns}`
+      `Updating fields of ${recordsToUpdate.length} records in Cosmos`
     );
     //Update records in cosmos from fields in PG
     await connectToDb();

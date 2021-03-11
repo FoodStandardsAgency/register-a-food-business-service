@@ -21,10 +21,9 @@ const addSubmissionLanguage = async () => {
     missingLanguageRecords = await findRecords({
       submission_language: { $exists: false }
     });
-    const missingFsaRns = getFsaRns(missingLanguageRecords);
     logEmitter.emit(
       "info",
-      `${missingFsaRns.length} records missing submission language - ${missingFsaRns}`
+      `${missingLanguageRecords.length} records missing submission language`
     );
 
     while (missingLanguageRecords.length > 0) {

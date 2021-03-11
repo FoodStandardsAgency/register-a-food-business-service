@@ -15,13 +15,10 @@ const updateDates = async () => {
     );
     //Find records that need updating in cosmos
     recordsToUpdate = await findRecordsToUpdate();
-    //Log registration numbers of records needing to be updated
-    const fsaRns = recordsToUpdate.map((rec) => {
-      return rec["fsa-rn"];
-    });
+
     logEmitter.emit(
       "info",
-      `Updating fields of ${fsaRns.length} records in cosmos - ${fsaRns}`
+      `Updating fields of ${recordsToUpdate.length} records in cosmos`
     );
     //Update records in cosmos
     while (recordsToUpdate.length > 0) {
