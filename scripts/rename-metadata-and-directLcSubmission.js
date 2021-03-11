@@ -5,27 +5,59 @@ const {
 const { logEmitter } = require("../src/services/logging.service");
 
 let beCache;
+let metadataRecords = [];
+let directLcSubmissionRecords = [];
+
+const findRecords = async (query) => {
+  try {
+    const records = await beCache.find(query).toArray();
+
+    return records;
+  } catch (err) {
+    logEmitter.emit("info", `findRecords(${query}) failed - ${err}`);
+  }
+};
+
+const getFsaRns = (records) => {
+  const fsaRns = records.map((rec) => {
+    return rec["fsa-rn"];
+  });
+  return fsaRns;
+};
 
 const renameToDeclaration = async () => {
-  beCache = await establishConnectionToCosmos("registrations", "registrations");
   try {
-    const response = await beCache.updateMany(
-      { metadata: { $exists: true } },
-      { $rename: { metadata: "declaration" } }
+    beCache = await establishConnectionToCosmos(
+      "registrations",
+      "registrations"
     );
+    metadataRecords = await findRecords({ metadata: { $exists: true } });
+    const metadataFsaRns = getFsaRns(metadataRecords);
     logEmitter.emit(
       "info",
-      `Renamed metadata of ${response.result.nModified} records`
+      `${metadataFsaRns.length} records containing metadata - ${metadataFsaRns}`
     );
-    const remainingRecordsToUpdate = await beCache
-      .find({ metadata: { $exists: true } })
-      .toArray();
-    const remaingFsaRns = remainingRecordsToUpdate.map((rec) => {
-      return rec["fsa-rn"];
+
+    while (metadataRecords.length > 0) {
+      const promises = metadataRecords.slice(0, 50).map(async (rec) => {
+        metadataRecords = metadataRecords.filter((reg) => {
+          return reg !== rec;
+        });
+        await beCache.updateOne(
+          { "fsa-rn": rec["fsa-rn"] },
+          { $rename: { metadata: "declaration" } }
+        );
+      });
+      await Promise.allSettled(promises);
+    }
+
+    const remainingMetadataRecords = await findRecords({
+      metadata: { $exists: true }
     });
+    const remainingFsaRns = getFsaRns(remainingMetadataRecords);
     logEmitter.emit(
       "info",
-      `${remaingFsaRns.length} records reminaing with metadata - ${remaingFsaRns}`
+      `${remainingFsaRns.length} records still containing metadata - ${remainingFsaRns}`
     );
   } catch (err) {
     logEmitter.emit("info", `Failed to rename records metadata: ${err}`);
@@ -33,28 +65,52 @@ const renameToDeclaration = async () => {
 };
 
 const renameDirectSubmission = async () => {
-  beCache = await establishConnectionToCosmos("registrations", "registrations");
+  // $rename will unset both the new and old names and then set the new one again.
+  // So any documents containg direct_submission and directLcSubmission will be corrected.
   try {
-    let response = await beCache.updateMany(
-      { directLcSubmission: { $exists: true } },
-      { $rename: { directLcSubmission: "direct_submission" } }
+    beCache = await establishConnectionToCosmos(
+      "registrations",
+      "registrations"
     );
-    logEmitter.emit(
-      "info",
-      `Renamed direct submission of ${response.result.nModified} records`
-    );
-    const remainingRecordsToUpdate = await beCache
-      .find({ directLcSubmission: { $exists: true } })
-      .toArray();
-    const remaingFsaRns = remainingRecordsToUpdate.map((rec) => {
-      return rec["fsa-rn"];
+    directLcSubmissionRecords = await findRecords({
+      directLcSubmission: { $exists: true }
     });
+    const directLcSubmissionFsaRns = getFsaRns(directLcSubmissionRecords);
     logEmitter.emit(
       "info",
-      `${remaingFsaRns.length} records reminaing with directLcSubmission - ${remaingFsaRns}`
+      `${directLcSubmissionFsaRns.length} records containing irectLcSubmission - ${directLcSubmissionFsaRns}`
+    );
+
+    while (directLcSubmissionRecords.length > 0) {
+      const promises = directLcSubmissionRecords
+        .slice(0, 50)
+        .map(async (rec) => {
+          directLcSubmissionRecords = directLcSubmissionRecords.filter(
+            (reg) => {
+              return reg !== rec;
+            }
+          );
+          await beCache.updateOne(
+            { "fsa-rn": rec["fsa-rn"] },
+            { $rename: { directLcSubmission: "direct_submission" } }
+          );
+        });
+      await Promise.allSettled(promises);
+    }
+
+    const remainingDirectLcSubmissionRecords = await findRecords({
+      directLcSubmission: { $exists: true }
+    });
+    const remainingFsaRns = getFsaRns(remainingDirectLcSubmissionRecords);
+    logEmitter.emit(
+      "info",
+      `${remainingFsaRns.length} records still containing directLcSubmission - ${remainingFsaRns}`
     );
   } catch (err) {
-    logEmitter.emit("info", `Failed to rename records metadata: ${err}`);
+    logEmitter.emit(
+      "info",
+      `Failed to rename records directLcSubmission: ${err}`
+    );
   }
 };
 
@@ -62,10 +118,10 @@ renameToDeclaration()
   .then(() => {
     renameDirectSubmission().then(() => {
       closeCosmosConnection();
-      logEmitter.emit("info", "Successfully finished rename metadata script");
+      logEmitter.emit("info", "Successfully finished rename script");
     });
   })
   .catch((err) => {
     closeCosmosConnection();
-    logEmitter.emit("info", `Failed to run rename metadata script - ${err}`);
+    logEmitter.emit("info", `Failed to run rename script - ${err}`);
   });
