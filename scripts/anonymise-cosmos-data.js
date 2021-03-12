@@ -6,19 +6,36 @@ const {
 const { logEmitter } = require("../src/services/logging.service");
 
 let beCache;
-let recordsAnonymised = [];
+let registrations = [];
 let recordsFailedToAnonymise = [];
+let recordsModifiedCount = 0;
 
 const anonymiseData = async () => {
-  beCache = await establishConnectionToCosmos("registrations", "registrations");
+  try {
+    beCache = await establishConnectionToCosmos(
+      "registrations",
+      "registrations"
+    );
 
-  const registrations = await beCache.find({}).toArray();
+    registrations = await beCache.find({}).toArray();
 
-  const promises = registrations.map(async (reg) => {
-    await anonymiseFields(reg);
-  });
-
-  return Promise.allSettled(promises);
+    while (registrations.length > 0) {
+      const promises = registrations.map(async (reg) => {
+        registrations = registrations.filter((rec) => {
+          return rec !== reg;
+        });
+        await anonymiseFields(reg);
+      });
+      await Promise.allSettled(promises);
+    }
+    logEmitter.emit("info", `Anonymised ${recordsModifiedCount} records`);
+    logEmitter.emit(
+      "info",
+      `Failed to anonymise ${recordsFailedToAnonymise.length} records - ${recordsFailedToAnonymise}`
+    );
+  } catch (err) {
+    logEmitter.emit("info", `Failed to anonymise records - ${err}`);
+  }
 };
 
 const anonymiseFields = async (reg) => {
@@ -30,6 +47,13 @@ const anonymiseFields = async (reg) => {
 
     const setObject = Object.assign(
       {},
+      reg.establishment.operator.operator_address_line_1 && {
+        "establishment.operator.operator_address_line_1": `10 ${randomName(6)}`,
+        "establishment.operator.operator_address_line_2": `${randomName(6)}`,
+        "establishment.operator.operator_address_line_3": `${randomName(6)}`,
+        "establishment.operator.operator_town": `${randomName(6)}`,
+        "establishment.operator.operator_postcode": `${randomPostcode()}`
+      },
       reg.establishment.operator.operator_first_name && {
         "establishment.operator.operator_first_name": randomName(6),
         "establishment.operator.operator_last_name": randomName(6),
@@ -52,18 +76,18 @@ const anonymiseFields = async (reg) => {
       }
     );
 
-    await beCache.updateOne(
+    const result = await beCache.updateOne(
       { "fsa-rn": reg["fsa-rn"] },
       {
         $set: setObject
       }
     );
-    recordsAnonymised.push(reg["fsa-rn"]);
+    recordsModifiedCount += result.modifiedCount;
   } catch (err) {
     recordsFailedToAnonymise.push(reg["fsa-rn"]);
     logEmitter.emit(
       "info",
-      `Failed to anonymise BE Cache FSA-RN: ${reg["fsa-rn"]} date fields ${err.message}`
+      `Failed to anonymise FSA-RN: ${reg["fsa-rn"]} - ${err.message}`
     );
   }
 };
@@ -87,6 +111,21 @@ const randomName = (length) => {
   return result;
 };
 
+const randomPostcode = () => {
+  var result = "";
+  var characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+  var charactersLength = characters.length;
+  for (var i = 0; i < 7; i++) {
+    result +=
+      i === 2 || i === 4
+        ? `${Math.floor(Math.random() * 9)}`
+        : i === 3
+        ? " "
+        : characters.charAt(Math.floor(Math.random() * charactersLength));
+  }
+  return result;
+};
+
 randomPhoneNumber = () => {
   result = "";
   for (var i = 0; i < 11; i++) {
@@ -98,14 +137,6 @@ randomPhoneNumber = () => {
 anonymiseData()
   .then(() => {
     closeCosmosConnection();
-    logEmitter.emit(
-      "info",
-      `Successfully updated dates of ${recordsAnonymised.length} records in cosmos`
-    );
-    logEmitter.emit(
-      "info",
-      `Dates of ${recordsFailedToAnonymise.length} records failed to update in cosmos: ${recordsFailedToAnonymise}`
-    );
     logEmitter.emit("info", "Successfully finished anonymise script");
   })
   .catch((err) => {
