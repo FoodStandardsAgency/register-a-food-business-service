@@ -139,17 +139,17 @@ const renameAddressFields = async () => {
           {
             $rename: {
               "establishment.operator.operator_first_line":
-                "operator_address_line_1",
+                "establishment.operator.operator_address_line_1",
               "establishment.operator.operator_street":
-                "operator_address_line_2",
+                "establishment.operator.operator_address_line_2",
               "establishment.operator.operator_dependent_locality":
-                "operator_address_line_3",
+                "establishment.operator.operator_address_line_3",
               "establishment.premise.establishment_first_line":
-                "establishment_address_line_1",
+                "establishment.premise.establishment_address_line_1",
               "establishment.premise.establishment_street":
-                "establishment_address_line_2",
+                "establishment.premise.establishment_address_line_2",
               "establishment.premise.establishment_dependent_locality":
-                "establishment_address_line_3"
+                "establishment.premise.establishment_address_line_3"
             }
           }
         );
