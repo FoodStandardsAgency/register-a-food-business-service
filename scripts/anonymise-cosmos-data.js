@@ -19,6 +19,8 @@ const anonymiseData = async () => {
 
     registrations = await beCache.find({}).toArray();
 
+    logEmitter.emit("info", "Anonymising data in cosmos...");
+
     while (registrations.length > 0) {
       const promises = registrations.map(async (reg) => {
         registrations = registrations.filter((rec) => {
