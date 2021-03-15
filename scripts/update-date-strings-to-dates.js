@@ -23,7 +23,7 @@ const updateDates = async () => {
     //Update records in cosmos
     logEmitter.emit("info", "Updating dates in cosmos...");
     while (recordsToUpdate.length > 0) {
-      const promises = recordsToUpdate.map(async (rec) => {
+      const promises = recordsToUpdate.slice(0, 50).map(async (rec) => {
         recordsToUpdate = recordsToUpdate.filter((reg) => {
           return reg !== rec;
         });
