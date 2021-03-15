@@ -2,13 +2,6 @@ const { logEmitter } = require("../../services/logging.service");
 const { statusEmitter } = require("../../services/statusEmitter.service");
 const { establishConnectionToCosmos } = require("../cosmos.client");
 
-const getDate = () => {
-  return new Date().toLocaleString("en-GB", {
-    hour12: false,
-    timeZone: "Europe/London"
-  });
-};
-
 const cacheRegistration = async (registration) => {
   logEmitter.emit("functionCall", "cacheDb.connector", "cacheRegistration");
   try {
@@ -69,7 +62,7 @@ const updateStatusInCache = async (fsa_rn, property, value) => {
     const status = await getStatus(cachedRegistrations, fsa_rn);
 
     status[property] = {
-      time: getDate(),
+      time: new Date(),
       complete: value
     };
 
@@ -234,7 +227,7 @@ const updateNotificationOnSent = (
     "updateNotificationOnSent"
   );
   let { type, address } = emailsToSend[index];
-  date = date === null ? getDate() : date;
+  date = date === null ? new Date() : date;
   status.notifications[index].address = address;
   status.notifications[index].type = type;
   status.notifications[index].time = date;
