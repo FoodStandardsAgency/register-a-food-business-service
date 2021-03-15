@@ -36,7 +36,7 @@ const renameToDeclaration = async () => {
       "info",
       `${metadataRecords.length} records containing metadata`
     );
-
+    logEmitter.emit("info", "Renaming metadata to declaration in cosmos...");
     while (metadataRecords.length > 0) {
       const promises = metadataRecords.slice(0, 50).map(async (rec) => {
         metadataRecords = metadataRecords.filter((reg) => {
@@ -78,7 +78,7 @@ const renameDirectSubmission = async () => {
       "info",
       `${directLcSubmissionRecords.length} records containing directLcSubmission`
     );
-
+    logEmitter.emit("info", "Renaming directLcSubmission in cosmos...");
     while (directLcSubmissionRecords.length > 0) {
       const promises = directLcSubmissionRecords
         .slice(0, 50)
@@ -128,7 +128,7 @@ const renameAddressFields = async () => {
       "info",
       `${addressRecords.length} records containing old address fields`
     );
-
+    logEmitter.emit("info", "Renaming address fields in cosmos...");
     while (addressRecords.length > 0) {
       const promises = addressRecords.slice(0, 50).map(async (rec) => {
         addressRecords = addressRecords.filter((reg) => {

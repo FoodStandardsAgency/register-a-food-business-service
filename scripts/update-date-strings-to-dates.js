@@ -21,6 +21,7 @@ const updateDates = async () => {
       `Updating fields of ${recordsToUpdate.length} records in cosmos`
     );
     //Update records in cosmos
+    logEmitter.emit("info", "Updating dates in cosmos...");
     while (recordsToUpdate.length > 0) {
       const promises = recordsToUpdate.map(async (rec) => {
         recordsToUpdate = recordsToUpdate.filter((reg) => {
@@ -93,15 +94,11 @@ const updateRecordDates = async (rec) => {
         : []
     );
 
-    const response = await beCache.updateOne(
+    await beCache.updateOne(
       { "fsa-rn": rec["fsa-rn"] },
       {
         $set: setObject
       }
-    );
-    logEmitter.emit(
-      "info",
-      `Update record dates response - ${JSON.stringify(response.result)}`
     );
   } catch (err) {
     logEmitter.emit(

@@ -25,7 +25,7 @@ const addSubmissionLanguage = async () => {
       "info",
       `${missingLanguageRecords.length} records missing submission language`
     );
-
+    logEmitter.emit("info", "Updating records with submission language...");
     while (missingLanguageRecords.length > 0) {
       const promises = missingLanguageRecords.slice(0, 50).map(async (rec) => {
         missingLanguageRecords = missingLanguageRecords.filter((reg) => {
