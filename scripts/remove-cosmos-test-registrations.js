@@ -24,11 +24,17 @@ const deleteTestRegistrationsFromCosmos = async () => {
   try {
     const testRecords = await findTestRegistrations();
     //Delete all test registrations from cosmos
-    const response = await beCache.deleteMany({
-      "fsa-rn": { $in: testRecords }
-    });
+    logEmitter.emit("info", "Deleting test records...");
 
-    logEmitter.emit("info", `${response.deletedCount} test records deleted`);
+    while (testRecords > 0) {
+      const promises = testRecords.slice(0, 50).map(async (reg) => {
+        testRecords = testRecords.filter((rec) => {
+          return rec !== reg;
+        });
+        await beCache.deleteOne({ "fsa-rn": reg["fsa-rn"] });
+      });
+      await Promise.allSettled(promises);
+    }
     const testRecordsRemaining = await findTestRegistrations();
     logEmitter.emit(
       "info",
