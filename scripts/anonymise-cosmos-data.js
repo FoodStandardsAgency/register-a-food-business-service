@@ -22,7 +22,7 @@ const anonymiseData = async () => {
     logEmitter.emit("info", "Anonymising data in cosmos...");
 
     while (registrations.length > 0) {
-      const promises = registrations.slice(0, 50).map(async (reg) => {
+      const promises = registrations.slice(0, 10).map(async (reg) => {
         registrations = registrations.filter((rec) => {
           return rec !== reg;
         });
