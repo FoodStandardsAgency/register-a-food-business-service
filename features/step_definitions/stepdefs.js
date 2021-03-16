@@ -76,11 +76,6 @@ const triggerTascomiTask = async () => {
   return res.json();
 };
 
-const triggerSaveToTemp = async () => {
-  const res = await fetch(`${apiUrl}/api/tasks/bulk/savetotempstore`);
-  return res.json();
-};
-
 Given("I have a new registration with all valid required fields", function () {
   this.registration = {
     registration: {
@@ -283,10 +278,6 @@ When("The send notifications task is triggered", async function () {
 
 When("The tascomi task is triggered", async function () {
   this.response = await triggerTascomiTask();
-});
-
-When("The save to temp store task is triggered", async function () {
-  this.res = await triggerSaveToTemp();
 });
 
 Then("I get a success response", async function () {
