@@ -115,7 +115,8 @@ Given("I have a new registration with all valid required fields", function () {
         declaration3: "Declaration"
       }
     },
-    local_council_url: "west-dorset"
+    local_council_url: "west-dorset",
+    submission_language: "en"
   };
 });
 
