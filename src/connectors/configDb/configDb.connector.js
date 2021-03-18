@@ -12,7 +12,7 @@ const getConfigVersion = async (regDataVersion) => {
   try {
     const configVersionCollection = await establishConnectionToCosmos(
       "config",
-      "configVersion"
+      "version"
     );
     const configVersionData = await configVersionCollection.findOne({
       _id: regDataVersion

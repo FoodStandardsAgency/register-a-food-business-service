@@ -357,10 +357,7 @@ const multiSendRegistrationToTascomi = async (
 
 const getConfig = async (configVersion) => {
   logEmitter.emit("functionCall", "Tasks.controller", "getConfig");
-  let configCollection = await establishConnectionToCosmos(
-    "config",
-    "configVersion"
-  );
+  let configCollection = await establishConnectionToCosmos("config", "version");
   logEmitter.emit("functionSuccess", "Tasks.controller", "getConfig");
   return await configCollection.findOne({ _id: configVersion });
 };
