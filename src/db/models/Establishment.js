@@ -12,7 +12,7 @@ module.exports = (sequelize, DataTypes) => {
       establishment_primary_number: { type: DataTypes.STRING },
       establishment_secondary_number: { type: DataTypes.STRING },
       establishment_email: { type: DataTypes.STRING },
-      establishment_web_address: { type: DataTypes.STRING },
+      establishment_web_address: { type: DataTypes.STRING }
     },
     {
       schema: "registrations"
