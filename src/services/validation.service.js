@@ -32,6 +32,7 @@ const errorMessages = {
   establishment_primary_number: "Invalid establishment primary number",
   establishment_secondary_number: "Invalid establishment secondary number",
   establishment_email: "Invalid establishment email",
+  establishment_web_address: "Invalid establishment web address",
   establishment_trading_name: "Invalid establishment trading name",
   establishment_opening_date: "Invalid establishment opening date",
   customer_type: "Invalid customer type",

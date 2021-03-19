@@ -16,6 +16,7 @@ const mapFromCollectionsRegistration = (reg) => {
         establishment_secondary_number:
           reg.establishment.establishment_secondary_number,
         establishment_email: reg.establishment.establishment_email,
+        establishment_web_address: reg.establishment.establishment_web_address,
         establishment_opening_date: reg.establishment.establishment_opening_date
       },
       operator: reg.establishment.operator,

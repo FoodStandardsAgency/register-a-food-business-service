@@ -90,6 +90,7 @@ Given("I have a new registration with all valid required fields", function () {
           establishment_primary_number: "329857245",
           establishment_secondary_number: "84345245",
           establishment_email: "fsatestemail.valid@gmail.com",
+          establishment_web_address: "test.com",
           establishment_opening_date: "2018-06-07"
         },
         operator: {
@@ -147,6 +148,7 @@ Given(
         establishment_primary_number: "329857245",
         establishment_secondary_number: "84345245",
         establishment_email: "fsatestemail.valid@gmail.com",
+        establishment_web_address: "test.com",
         establishment_opening_date: "2018-06-07",
         operator: {
           operator_first_name: "Fred",
@@ -192,6 +194,7 @@ Given(
             establishment_primary_number: "349785766",
             establishment_secondary_number: "84345245",
             establishment_email: "dfg",
+            establishment_web_address: "test.com",
             establishment_opening_date: "2018-06-07"
           },
           operator: {

@@ -105,6 +105,7 @@ const createFoodBusinessRegistration = async (
       premise_secondary_number:
         establishmentDetails.establishment_secondary_number,
       premise_email: establishmentDetails.establishment_email,
+      premise_web_address: establishmentDetails.establishment_web_address,
       opening_date: establishmentDetails.establishment_opening_date,
       owner_firstname: operatorDetails.operator_first_name,
       owner_surname: operatorDetails.operator_last_name,

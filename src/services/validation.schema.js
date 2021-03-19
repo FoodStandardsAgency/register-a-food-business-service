@@ -25,7 +25,8 @@ const {
   validateOpeningHours,
   validateWaterSupply,
   validateOperatorType,
-  validateEstablishmentType
+  validateEstablishmentType,
+  validateWebAddress
 } = require("@slice-and-dice/register-a-food-business-validation");
 
 const schema = {
@@ -53,6 +54,10 @@ const schema = {
               establishment_email: {
                 type: "string",
                 validation: validateEmail
+              },
+              establishment_web_address: {
+                type: "string",
+                validation: validateWebAddress
               },
               establishment_opening_date: {
                 type: "string",
