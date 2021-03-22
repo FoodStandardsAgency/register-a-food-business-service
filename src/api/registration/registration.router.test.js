@@ -7,9 +7,7 @@ jest.mock("express", () => ({
 }));
 jest.mock("./registration.controller", () => ({
   createNewRegistration: jest.fn(),
-  createNewDirectRegistration: jest.fn(),
-  getRegistration: jest.fn(),
-  deleteRegistration: jest.fn()
+  createNewDirectRegistration: jest.fn()
 }));
 jest.mock("../../services/statusEmitter.service");
 const registrationController = require("./registration.controller");
