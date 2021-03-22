@@ -1,6 +1,4 @@
 const {
-  ADMIN_NAME,
-  ADMIN_SECRET,
   FRONT_END_NAME,
   FRONT_END_SECRET,
   DIRECT_API_NAME,
@@ -84,12 +82,4 @@ const createRegistrationAuth = (req, res, next) => {
   next();
 };
 
-const viewDeleteRegistrationAuth = (req, res, next) => {
-  const secrets = {
-    [ADMIN_NAME]: ADMIN_SECRET
-  };
-  authHandler(req, res, secrets);
-  next();
-};
-
-module.exports = { createRegistrationAuth, viewDeleteRegistrationAuth };
+module.exports = { createRegistrationAuth };

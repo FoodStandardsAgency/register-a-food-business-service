@@ -481,6 +481,9 @@ describe("RegistrationDb connector", () => {
       it("Should call the findOne model with query", () => {
         expect(Establishment.findOne).toBeCalledWith({
           where: { registrationId: "45" },
+          attributes: {
+            exclude: ["createdAt", "updatedAt", "registrationId"]
+          },
           transaction: null
         });
       });
@@ -520,6 +523,9 @@ describe("RegistrationDb connector", () => {
       it("Should call the findOne model with query", () => {
         expect(Declaration.findOne).toBeCalledWith({
           where: { registrationId: "45" },
+          attributes: {
+            exclude: ["id", "registrationId", "createdAt", "updatedAt"]
+          },
           transaction: null
         });
       });
@@ -559,6 +565,9 @@ describe("RegistrationDb connector", () => {
       it("Should call the findOne model with query", () => {
         expect(Operator.findOne).toBeCalledWith({
           where: { establishmentId: "45" },
+          attributes: {
+            exclude: ["establishmentId", "createdAt", "updatedAt"]
+          },
           transaction: null
         });
       });
@@ -598,6 +607,9 @@ describe("RegistrationDb connector", () => {
       it("Should call the findOne model with query", () => {
         expect(Premise.findOne).toBeCalledWith({
           where: { establishmentId: "45" },
+          attributes: {
+            exclude: ["id", "establishmentId", "createdAt", "updatedAt"]
+          },
           transaction: null
         });
       });
@@ -637,6 +649,9 @@ describe("RegistrationDb connector", () => {
       it("Should call the findOne model with query", () => {
         expect(Activities.findOne).toBeCalledWith({
           where: { establishmentId: "45" },
+          attributes: {
+            exclude: ["id", "establishmentId", "createdAt", "updatedAt"]
+          },
           transaction: null
         });
       });

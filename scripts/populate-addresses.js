@@ -9,27 +9,21 @@ const {
   connectToDb,
   closeConnection
 } = require("../src/db/db");
+const {
+  establishConnectionToCosmos
+} = require("../src/connectors/cosmos.client");
 
-let client;
-let cacheDB;
 let registrationsCollection;
-
-const establishConnectionToMongo = async () => {
-  client = await mongodb.MongoClient.connect(process.env.CACHEDB_URL, {
-    useNewUrlParser: true
-  });
-
-  cacheDB = client.db("register_a_food_business_cache");
-
-  registrationsCollection = cacheDB.collection("cachedRegistrations");
-};
 
 const getRegistrations = async () => {
   let registrations = null;
   logEmitter.emit("functionCall", "populate-addresses", "getRegistrations");
 
   try {
-    await establishConnectionToMongo();
+    registrationsCollection = await establishConnectionToCosmos(
+      "registrations",
+      "registrations"
+    );
 
     registrations = await registrationsCollection
       .find({
@@ -59,7 +53,7 @@ const logError = (text, err) => {
   console.log(text + " (" + err + ")");
 };
 
-const populateAddresses = async transaction => {
+const populateAddresses = async (transaction) => {
   await connectToDb();
   const data = await getRegistrations();
 
@@ -154,7 +148,6 @@ const populateAddresses = async transaction => {
     }
   }
 
-  client.close();
   await closeConnection();
 
   logEmitter.emit("functionSuccess", "populate-addresses", "populateAddresses");
