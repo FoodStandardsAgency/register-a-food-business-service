@@ -18,7 +18,7 @@ const updateDates = async () => {
 
     logEmitter.emit(
       "info",
-      `Updating fields of ${recordsToUpdate.length} records in cosmos`
+      `Updating date fields of ${recordsToUpdate.length} records in cosmos`
     );
     //Update records in cosmos
     logEmitter.emit("info", "Updating dates in cosmos...");
@@ -48,7 +48,12 @@ const updateDates = async () => {
 const findRecordsToUpdate = async () => {
   try {
     const records = await beCache
-      .find({ reg_submission_date: { $type: 2 } })
+      .find({
+        $or: [
+          { reg_submission_date: { $type: 2 } },
+          { collected_at: { $type: 2 } }
+        ]
+      })
       .toArray();
 
     return records;
@@ -61,36 +66,45 @@ const updateRecordDates = async (rec) => {
   try {
     const setObject = Object.assign(
       {
-        reg_submission_date: new Date(rec.reg_submission_date)
+        reg_submission_date: new Date(rec.reg_submission_date),
+        collected_at: new Date(rec.collected_at)
       },
-      {
-        "status.notifications.0.time": new Date(
-          rec.status.notifications[0].time
-        ),
-        "status.notifications.1.time": new Date(
-          rec.status.notifications[1].time
-        )
-      },
-      rec.status.notifications[2]
-        ? {
-            "status.notifications.2.time": new Date(
-              rec.status.notifications[2].time
-            )
-          }
-        : [],
-      rec.status.notifications[3]
-        ? {
-            "status.notifications.3.time": new Date(
-              rec.status.notifications[3].time
-            )
-          }
-        : [],
-      rec.status.notifications[4]
-        ? {
-            "status.notifications.4.time": new Date(
-              rec.status.notifications[4].time
-            )
-          }
+      rec.status.notifications
+        ? (rec.status.notifications[0]
+            ? {
+                "status.notifications.0.time": new Date(
+                  rec.status.notifications[0].time
+                )
+              }
+            : [],
+          rec.status.notifications[1]
+            ? {
+                "status.notifications.1.time": new Date(
+                  rec.status.notifications[1].time
+                )
+              }
+            : [],
+          rec.status.notifications[2]
+            ? {
+                "status.notifications.2.time": new Date(
+                  rec.status.notifications[2].time
+                )
+              }
+            : [],
+          rec.status.notifications[3]
+            ? {
+                "status.notifications.3.time": new Date(
+                  rec.status.notifications[3].time
+                )
+              }
+            : [],
+          rec.status.notifications[4]
+            ? {
+                "status.notifications.4.time": new Date(
+                  rec.status.notifications[4].time
+                )
+              }
+            : [])
         : []
     );
 
