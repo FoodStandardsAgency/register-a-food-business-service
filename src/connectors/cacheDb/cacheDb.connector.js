@@ -95,16 +95,6 @@ const updateStatusInCache = async (fsa_rn, property, value) => {
   }
 };
 
-const findAllOutstandingSavesToTempStore = async (
-  cachedRegistrations,
-  limit = 100
-) => {
-  return await cachedRegistrations
-    .find({ "status.registration.complete": { $ne: true } })
-    .sort({ reg_submission_date: 1 })
-    .limit(limit);
-};
-
 const findAllFailedNotificationsRegistrations = async (
   cachedRegistrations,
   limit = 100
@@ -243,7 +233,6 @@ const updateNotificationOnSent = (
 };
 
 module.exports = {
-  findAllOutstandingSavesToTempStore,
   findAllFailedNotificationsRegistrations,
   findAllBlankRegistrations,
   findOutstandingTascomiRegistrationsFsaIds,
