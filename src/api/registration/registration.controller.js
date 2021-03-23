@@ -75,7 +75,6 @@ const createNewRegistration = async (
   );
 
   const status = {
-    registration: null,
     notifications: null
   };
   if (sourceCouncil.auth) {
