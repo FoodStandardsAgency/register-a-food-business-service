@@ -212,7 +212,6 @@ describe("registration controller", () => {
 
             {
               status: {
-                registration: null,
                 notifications: null
               }
             },
