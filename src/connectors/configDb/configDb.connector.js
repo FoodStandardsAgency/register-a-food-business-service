@@ -119,7 +119,7 @@ const getCouncilsForSupplier = async (url) => {
   try {
     const supplierConfigCollection = await establishConnectionToCosmos(
       "config",
-      "supplierConfig"
+      "suppliers"
     );
     const supplierConfig = await supplierConfigCollection.findOne({
       supplier_url: url
