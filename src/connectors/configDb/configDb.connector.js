@@ -1,70 +1,18 @@
-const mongodb = require("mongodb");
-const { lcConfigCollectionDouble } = require("./configDb.double");
-const { CONFIGDB_URL } = require("../../config");
 const { logEmitter } = require("../../services/logging.service");
 const { statusEmitter } = require("../../services/statusEmitter.service");
-
-let client = undefined;
-let configDB = undefined;
+const {
+  establishConnectionToCosmos
+} = require("../../connectors/cosmos.client");
 
 let allLcConfigData;
-
-const establishConnectionToMongo = async (collectionName) => {
-  if (process.env.DOUBLE_MODE === "true") {
-    logEmitter.emit(
-      "doubleMode",
-      "configDb.connector",
-      "establishConnectionToMongo"
-    );
-    return lcConfigCollectionDouble;
-  } else {
-    if (configDB === undefined) {
-      client = await mongodb.MongoClient.connect(CONFIGDB_URL, {
-        useNewUrlParser: true,
-        useUnifiedTopology: true
-      });
-      configDB = client.db("register_a_food_business_config");
-    }
-    return configDB.collection(collectionName);
-  }
-};
-
-const connectToConfigDb = async () => {
-  if (process.env.DOUBLE_MODE === "true") {
-    logEmitter.emit(
-      "doubleMode",
-      "configDb.connector",
-      "establishConnectionToMongo"
-    );
-    return lcConfigCollectionDouble;
-  } else {
-    if (configDB === undefined) {
-      client = await mongodb.MongoClient.connect(CONFIGDB_URL, {
-        useNewUrlParser: true
-      });
-      configDB = client.db("register_a_food_business_config");
-    }
-    return configDB;
-  }
-};
-
-const disconnectConfigDb = async () => {
-  if (client) {
-    client.close();
-  }
-};
-
-const ConfigVersionCollection = async (database) =>
-  await database.collection("configVersion");
-const LocalCouncilConfigDbCollection = async (database) =>
-  await database.collection("lcConfig");
 
 const getConfigVersion = async (regDataVersion) => {
   logEmitter.emit("functionCall", "configDb.connector", "getConfigVersion");
 
   try {
-    const configVersionCollection = await establishConnectionToMongo(
-      "configVersion"
+    const configVersionCollection = await establishConnectionToCosmos(
+      "config",
+      "version"
     );
     const configVersionData = await configVersionCollection.findOne({
       _id: regDataVersion
@@ -120,7 +68,10 @@ const getAllLocalCouncilConfig = async () => {
   );
 
   try {
-    const lcConfigCollection = await establishConnectionToMongo("lcConfig");
+    const lcConfigCollection = await establishConnectionToCosmos(
+      "config",
+      "localAuthorities"
+    );
     const allLcConfigDataCursor = await lcConfigCollection.find({});
     allLcConfigData = allLcConfigDataCursor.toArray();
 
@@ -166,8 +117,9 @@ const getCouncilsForSupplier = async (url) => {
   let councils = [];
 
   try {
-    const supplierConfigCollection = await establishConnectionToMongo(
-      "supplierConfig"
+    const supplierConfigCollection = await establishConnectionToCosmos(
+      "config",
+      "suppliers"
     );
     const supplierConfig = await supplierConfigCollection.findOne({
       supplier_url: url
@@ -197,27 +149,8 @@ const getCouncilsForSupplier = async (url) => {
   return councils;
 };
 
-const clearMongoConnection = () => {
-  client = undefined;
-  configDB = undefined;
-};
-
-const addDeletedId = async (id) => {
-  const deletedIdsCollection = await establishConnectionToMongo("deletedIds");
-
-  return deletedIdsCollection.insertOne({ id: id });
-};
-
 module.exports = {
-  mongodb,
-  establishConnectionToMongo,
-  connectToConfigDb,
-  disconnectConfigDb,
-  LocalCouncilConfigDbCollection,
-  ConfigVersionCollection,
   getAllLocalCouncilConfig,
-  clearMongoConnection,
-  addDeletedId,
   getConfigVersion,
   findCouncilByUrl,
   findCouncilById,

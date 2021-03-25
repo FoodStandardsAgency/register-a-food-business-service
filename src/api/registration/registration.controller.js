@@ -1,8 +1,5 @@
-const moment = require("moment");
 const { validate } = require("../../services/validation.service");
 const {
-  getFullRegistrationByFsaRn,
-  deleteRegistrationByFsaRn,
   getRegistrationMetaData,
   getLcContactConfig
 } = require("./registration.service");
@@ -15,10 +12,12 @@ const { getUprn } = require("../../connectors/address-lookup/address-matcher");
 
 const {
   findCouncilByUrl,
-  getCouncilsForSupplier,
-  connectToConfigDb,
-  LocalCouncilConfigDbCollection
+  getCouncilsForSupplier
 } = require("../../connectors/configDb/configDb.connector");
+
+const {
+  establishConnectionToCosmos
+} = require("../../connectors/cosmos.client");
 
 const {
   mapFromCollectionsRegistration
@@ -51,8 +50,10 @@ const createNewRegistration = async (
   }
 
   // RESOLUTION
-  let configDb = await connectToConfigDb();
-  const lcConfigCollection = await LocalCouncilConfigDbCollection(configDb);
+  const lcConfigCollection = await establishConnectionToCosmos(
+    "config",
+    "localAuthorities"
+  );
 
   const sourceCouncil = await findCouncilByUrl(
     lcConfigCollection,
@@ -74,7 +75,6 @@ const createNewRegistration = async (
   );
 
   const status = {
-    registration: null,
     notifications: null
   };
   if (sourceCouncil.auth) {
@@ -87,7 +87,9 @@ const createNewRegistration = async (
     {
       "fsa-rn": postRegistrationMetadata["fsa-rn"],
       reg_submission_date: postRegistrationMetadata.reg_submission_date,
-      directLcSubmission: false,
+      direct_submission: false,
+      collected: false,
+      collected_at: null,
       submission_language: submission_language
     },
     registration,
@@ -144,8 +146,10 @@ const createNewDirectRegistration = async (registration, options) => {
   const mappedRegistration = mapFromCollectionsRegistration(registration);
 
   // RESOLUTION
-  const configDb = await connectToConfigDb();
-  const lcConfigCollection = await LocalCouncilConfigDbCollection(configDb);
+  const lcConfigCollection = await establishConnectionToCosmos(
+    "config",
+    "localAuthorities"
+  );
 
   if (options.requestedCouncil !== options.subscriber) {
     // Check supplier authorized to access requested council
@@ -229,8 +233,10 @@ const createNewDirectRegistration = async (registration, options) => {
 
   const regMetadata = {
     "fsa-rn": registration.fsa_rn,
-    reg_submission_date: moment().format("YYYY-MM-DD"),
-    directLcSubmission: true
+    reg_submission_date: new Date(),
+    direct_submission: true,
+    collected: true,
+    collected_at: new Date()
   };
 
   if (!regMetadata["fsa-rn"]) {
@@ -281,21 +287,7 @@ const createNewDirectRegistration = async (registration, options) => {
   return response;
 };
 
-const getRegistration = async (fsa_rn) => {
-  const response = await getFullRegistrationByFsaRn(fsa_rn);
-
-  return response;
-};
-
-const deleteRegistration = async (fsa_rn) => {
-  const response = await deleteRegistrationByFsaRn(fsa_rn);
-
-  return response;
-};
-
 module.exports = {
   createNewRegistration,
-  createNewDirectRegistration,
-  getRegistration,
-  deleteRegistration
+  createNewDirectRegistration
 };

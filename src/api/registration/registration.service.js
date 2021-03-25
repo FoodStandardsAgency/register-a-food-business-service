@@ -1,31 +1,7 @@
-const moment = require("moment");
 const fetch = require("node-fetch");
 const HttpsProxyAgent = require("https-proxy-agent");
 const promiseRetry = require("promise-retry");
-const { isEmpty } = require("lodash");
 const { INFO } = require("../../services/logging.service");
-const {
-  // managedTransaction,
-  createRegistration,
-  createEstablishment,
-  createOperator,
-  createActivities,
-  createPremise,
-  createPartner,
-  createDeclaration,
-  getRegistrationByFsaRn,
-  getEstablishmentByRegId,
-  getDeclarationByRegId,
-  getOperatorByEstablishmentId,
-  getPremiseByEstablishmentId,
-  getActivitiesByEstablishmentId,
-  destroyRegistrationById,
-  destroyEstablishmentByRegId,
-  destroyDeclarationByRegId,
-  destroyOperatorByEstablishmentId,
-  destroyPremiseByEstablishmentId,
-  destroyActivitiesByEstablishmentId
-} = require("../../connectors/registrationDb/registrationDb");
 
 const {
   createFoodBusinessRegistration,
@@ -34,159 +10,11 @@ const {
 
 const {
   getAllLocalCouncilConfig,
-  addDeletedId,
   mongodb
 } = require("../../connectors/configDb/configDb.connector");
 
 const { logEmitter } = require("../../services/logging.service");
 const { statusEmitter } = require("../../services/statusEmitter.service");
-
-const saveRegistration = async (registration, fsa_rn, council) => {
-  logEmitter.emit("functionCall", "registration.service", "saveRegistration");
-
-  const transaction = async (transaction) => {
-    let reg;
-    let operator;
-    let activities;
-    let premise;
-    let establishment;
-
-    let pgReg = await getRegistrationByFsaRn(fsa_rn, transaction);
-    if (!isEmpty(pgReg)) {
-      throw new Error(
-        `Registration with fsa id '${fsa_rn}' already exists in temp-store`
-      );
-    }
-
-    reg = await createRegistration(
-      fsa_rn,
-      council,
-      registration.directLcSubmission
-    );
-
-    establishment = await createEstablishment(
-      registration.establishment.establishment_details,
-      reg.id,
-      transaction
-    );
-
-    operator = await createOperator(
-      registration.establishment.operator,
-      establishment.id,
-      transaction
-    );
-
-    activities = await createActivities(
-      registration.establishment.activities,
-      establishment.id,
-      transaction
-    );
-
-    premise = await createPremise(
-      registration.establishment.premise,
-      establishment.id,
-      transaction
-    );
-    let partnerIds = [];
-    let partner;
-    let partnerIndex;
-
-    for (partnerIndex in registration.establishment.operator.partners) {
-      partner = await createPartner(
-        registration.establishment.operator.partners[partnerIndex],
-        operator.id,
-        transaction
-      );
-      partnerIds.push(partner.id);
-    }
-
-    const declaration = await createDeclaration(
-      registration.declaration,
-      reg.id,
-      transaction
-    );
-
-    statusEmitter.emit("incrementCount", "storeRegistrationsInDbSucceeded");
-    statusEmitter.emit(
-      "setStatus",
-      "mostRecentStoreRegistrationInDbSucceeded",
-      true
-    );
-
-    return {
-      regId: reg.id,
-      establishmentId: establishment.id,
-      operatorId: operator.id,
-      activitiesId: activities.id,
-      premiseId: premise.id,
-      partnerIds,
-      declarationId: declaration.id
-    };
-  };
-
-  logEmitter.emit(
-    "functionSuccess",
-    "registration.service",
-    "saveRegistration"
-  );
-  return transaction();
-};
-
-const getFullRegistrationByFsaRn = async (fsa_rn) => {
-  logEmitter.emit(
-    "functionCall",
-    "registration.service",
-    "getFullRegistrationByFsaRn"
-  );
-  const registration = await getRegistrationByFsaRn(fsa_rn);
-  if (!registration) {
-    return `No registration found for fsa_rn: ${fsa_rn}`;
-  }
-  const establishment = await getEstablishmentByRegId(registration.id);
-  const declaration = await getDeclarationByRegId(registration.id);
-  const operator = await getOperatorByEstablishmentId(establishment.id);
-  const activities = await getActivitiesByEstablishmentId(establishment.id);
-  const premise = await getPremiseByEstablishmentId(establishment.id);
-  logEmitter.emit(
-    "functionSuccess",
-    "registration.service",
-    "getFullRegistrationByFsaRn"
-  );
-  return {
-    registration,
-    establishment,
-    operator,
-    activities,
-    premise,
-    declaration
-  };
-};
-
-const deleteRegistrationByFsaRn = async (fsa_rn) => {
-  logEmitter.emit(
-    "functionCall",
-    "registration.service",
-    "deleteFullRegistrationByFsaRn"
-  );
-  const registration = await getRegistrationByFsaRn(fsa_rn);
-  if (!registration) {
-    return `No registration found for fsa_rn: ${fsa_rn}`;
-  }
-  const establishment = await getEstablishmentByRegId(registration.id);
-  await destroyDeclarationByRegId(registration.id);
-  await destroyOperatorByEstablishmentId(establishment.id);
-  await destroyActivitiesByEstablishmentId(establishment.id);
-  await destroyPremiseByEstablishmentId(establishment.id);
-  await destroyEstablishmentByRegId(registration.id);
-  await destroyRegistrationById(registration.id);
-  await addDeletedId(fsa_rn);
-  logEmitter.emit(
-    "functionSuccess",
-    "registration.service",
-    "deleteFullRegistrationByFsaRn"
-  );
-  return "Registration succesfully deleted";
-};
 
 const sendTascomiRegistration = async (registration, localCouncil) => {
   // hack to reduce repair work needed
@@ -254,12 +82,12 @@ const getRegistrationMetaData = async (councilCode) => {
 
     return {
       "fsa-rn": oId.toString(),
-      reg_submission_date: moment().format("YYYY-MM-DD")
+      reg_submission_date: new Date()
     };
   }
 
   const typeCode = process.env.NODE_ENV === "production" ? "001" : "000";
-  const reg_submission_date = moment().format("YYYY-MM-DD");
+  const reg_submission_date = new Date();
   let fsa_rn;
 
   try {
@@ -587,9 +415,6 @@ const getLcAuth = async (localCouncilUrl) => {
 };
 
 module.exports = {
-  saveRegistration,
-  getFullRegistrationByFsaRn,
-  deleteRegistrationByFsaRn,
   sendTascomiRegistration,
   getRegistrationMetaData,
   getLcContactConfig,

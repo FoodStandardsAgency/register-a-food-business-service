@@ -3,9 +3,6 @@ jest.mock("../../services/validation.service", () => ({
 }));
 
 jest.mock("./registration.service", () => ({
-  saveRegistration: jest.fn(),
-  getFullRegistrationByFsaRn: jest.fn(),
-  deleteRegistrationByFsaRn: jest.fn(),
   sendTascomiRegistration: jest.fn(),
   getRegistrationMetaData: jest.fn(),
   getLcContactConfig: jest.fn(),
@@ -24,19 +21,18 @@ jest.mock("../../connectors/cacheDb/cacheDb.connector", () => ({
 jest.mock("../../connectors/configDb/configDb.connector", () => ({
   getConfigVersion: jest.fn(),
   findCouncilByUrl: jest.fn(),
-  findCouncilById: jest.fn(),
-  getCouncilsForSupplier: jest.fn(),
-  connectToConfigDb: jest.fn(),
-  LocalCouncilConfigDbCollection: jest.fn()
+  getCouncilsForSupplier: jest.fn()
 }));
 
 jest.mock("../../connectors/address-lookup/address-matcher", () => ({
   getUprn: jest.fn()
 }));
 
+jest.mock("../../connectors/cosmos.client", () => ({
+  establishConnectionToCosmos: jest.fn()
+}));
+
 const {
-  getFullRegistrationByFsaRn,
-  deleteRegistrationByFsaRn,
   getRegistrationMetaData,
   getLcContactConfig,
   getLcAuth
@@ -50,9 +46,7 @@ const {
 
 const {
   createNewRegistration,
-  createNewDirectRegistration,
-  getRegistration,
-  deleteRegistration
+  createNewDirectRegistration
 } = require("./registration.controller");
 
 const {
@@ -62,6 +56,9 @@ const {
 } = require("../../connectors/configDb/configDb.connector");
 
 const { getUprn } = require("../../connectors/address-lookup/address-matcher");
+const {
+  establishConnectionToCosmos
+} = require("../../connectors/cosmos.client");
 
 const exampleLCUrl = "example-council-url";
 
@@ -107,6 +104,8 @@ describe("registration controller", () => {
   };
 
   const postRegistrationMetadata = {
+    collected: false,
+    collected_at: 1,
     reg_submission_date: 1,
     "fsa-rn": "AA1AAA-AA11AA-A1AAA1"
   };
@@ -202,8 +201,10 @@ describe("registration controller", () => {
             {},
             {
               "fsa-rn": postRegistrationMetadata["fsa-rn"],
+              collected: false,
+              collected_at: postRegistrationMetadata.collected_at,
               reg_submission_date: postRegistrationMetadata.reg_submission_date,
-              directLcSubmission: false,
+              direct_submission: false,
               submission_language: "en"
             },
             testRegistration,
@@ -211,7 +212,6 @@ describe("registration controller", () => {
 
             {
               status: {
-                registration: null,
                 notifications: null
               }
             },
@@ -499,6 +499,7 @@ describe("registration controller", () => {
         validate.mockImplementation(() => {
           return [];
         });
+        establishConnectionToCosmos.mockImplementation(() => {});
         findCouncilByUrl.mockImplementation(() => null);
         try {
           result = await createNewDirectRegistration(
@@ -526,36 +527,6 @@ describe("registration controller", () => {
         } catch (err) {
           expect(err.message).toBe("registration is undefined");
         }
-      });
-    });
-  });
-
-  describe("Function: getRegistration", () => {
-    describe("when given an id", () => {
-      beforeEach(async () => {
-        getFullRegistrationByFsaRn.mockImplementation(() => {
-          return "response";
-        });
-        result = await getRegistration();
-      });
-
-      it("should return the result of getFullRegistrationById", () => {
-        expect(result).toEqual("response");
-      });
-    });
-  });
-
-  describe("Function: deleteRegistration", () => {
-    describe("when given an fsa_rn", () => {
-      beforeEach(async () => {
-        deleteRegistrationByFsaRn.mockImplementation(() => {
-          return "response";
-        });
-        result = await deleteRegistration();
-      });
-
-      it("should return the result of deleteRegistrationById", () => {
-        expect(result).toEqual("response");
       });
     });
   });

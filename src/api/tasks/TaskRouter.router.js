@@ -7,10 +7,8 @@ const { logEmitter } = require("../../services/logging.service");
 const {
   sendRegistrationToTascomiAction,
   sendNotificationsForRegistrationAction,
-  saveRegistrationToTempStoreAction,
   sendAllOutstandingRegistrationsToTascomiAction,
-  sendAllNotificationsForRegistrationsAction,
-  saveAllOutstandingRegistrationsToTempStoreAction
+  sendAllNotificationsForRegistrationsAction
 } = require("./Tasks.controller");
 
 // const { viewDeleteRegistrationAuth } = require("../../middleware/authHandler");
@@ -132,64 +130,6 @@ const TaskRouter = () => {
       "functionSuccess",
       "TaskRouter.router",
       "sendnotification/:fsaId"
-    );
-  });
-
-  //SAVE IN POSTGRES
-  router.get("/savetotempstore/:fsaId", async (req, res) => {
-    logEmitter.emit(
-      "functionCall",
-      "TaskRouter.router",
-      "savetotempstore/:fsaId"
-    );
-    const { fsaId = null } = req.params;
-    try {
-      await saveRegistrationToTempStoreAction(fsaId, req, res);
-    } catch (e) {
-      logEmitter.emit(
-        "functionFail",
-        "TaskRouter.router",
-        "savetotempstore/:fsaId"
-      );
-      await fail(406, res, e.message);
-      throw e;
-    }
-    logEmitter.emit(
-      "functionSuccess",
-      "TaskRouter.router",
-      "savetotempstore/:fsaId"
-    );
-  });
-
-  router.get("/bulk/savetotempstore", async (req, res) => {
-    logEmitter.emit(
-      "functionCall",
-      "TaskRouter.router",
-      "bulk/savetotempstore"
-    );
-    let dryrun = !!req.query.dryrun;
-    let throttle = req.query && req.query.throttle ? req.query.throttle : 500;
-
-    try {
-      await saveAllOutstandingRegistrationsToTempStoreAction(
-        req,
-        res,
-        dryrun,
-        throttle
-      );
-    } catch (e) {
-      logEmitter.emit(
-        "functionFail",
-        "TaskRouter.router",
-        "bulk/savetotempstore"
-      );
-      await fail(406, res, e.message);
-      throw e;
-    }
-    logEmitter.emit(
-      "functionSuccess",
-      "TaskRouter.router",
-      "bulk/savetotempstore"
     );
   });
 

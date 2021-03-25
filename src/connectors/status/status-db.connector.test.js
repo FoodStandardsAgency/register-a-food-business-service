@@ -5,18 +5,17 @@ jest.mock("mongodb");
 const {
   getStoredStatus,
   updateStoredStatus,
-  getEmailDistribution,
-  clearMongoConnection
+  getEmailDistribution
 } = require("./status-db.connector");
 const storedStatusMock = require("../../__mocks__/storedStatusMock.json");
 const mongodb = require("mongodb");
 const { statusCollectionDouble } = require("./status-db.double");
+const { clearCosmosConnection } = require("../cosmos.client");
 const testArray = ["test@test.com"];
 const testEmailDistributionObject = {
   _id: "emailDistribution",
-  emailAddresses: testArray
+  emailAddresses: ["test@test.com"]
 };
-
 describe("Function: getStoredStatus", () => {
   let result;
   describe("When: connection to mongo is successful", () => {
@@ -38,6 +37,7 @@ describe("Function: getStoredStatus", () => {
 
   describe("Given: the request throws an error", () => {
     beforeEach(async () => {
+      clearCosmosConnection();
       process.env.DOUBLE_MODE = false;
       mongodb.MongoClient.connect.mockImplementation(() => {
         throw new Error("example mongo error");
@@ -60,6 +60,7 @@ describe("Function: getStoredStatus", () => {
     const closeConnection = jest.fn();
     let result1, result2;
     beforeEach(async () => {
+      clearCosmosConnection();
       mongodb.MongoClient.connect.mockImplementation(() => ({
         db: () => ({
           collection: () => ({
@@ -87,6 +88,7 @@ describe("Function: getStoredStatus", () => {
     const closeConnection = jest.fn();
     let result1, result2;
     beforeEach(async () => {
+      clearCosmosConnection();
       mongodb.MongoClient.connect.mockImplementation(() => ({
         db: () => ({
           collection: () => ({
@@ -128,7 +130,7 @@ describe("Function: getStoredStatus", () => {
     let result1, result2;
     beforeEach(async () => {
       process.env.DOUBLE_MODE = false;
-      clearMongoConnection("TWO CALLS");
+      clearCosmosConnection();
       mongodb.MongoClient.connect.mockImplementation(() => ({
         db: () => ({
           collection: () => ({
@@ -158,7 +160,7 @@ describe("Function: getStoredStatus", () => {
 describe("Function: updateStoredStatus", () => {
   let result;
   beforeEach(async () => {
-    clearMongoConnection();
+    clearCosmosConnection();
     mongodb.MongoClient.connect.mockImplementation(() => ({
       db: () => ({
         collection: () => ({
@@ -176,6 +178,7 @@ describe("Function: updateStoredStatus", () => {
 
   describe("Given: the request throws an error", () => {
     beforeEach(async () => {
+      clearCosmosConnection();
       process.env.DOUBLE_MODE = false;
       mongodb.MongoClient.connect.mockImplementation(() => {
         throw new Error("example mongo error");
@@ -216,6 +219,7 @@ describe("Function: getEmailDistribution", () => {
 
   describe("Given: the request throws an error", () => {
     beforeEach(async () => {
+      clearCosmosConnection();
       process.env.DOUBLE_MODE = false;
       mongodb.MongoClient.connect.mockImplementation(() => {
         throw new Error("example mongo error");

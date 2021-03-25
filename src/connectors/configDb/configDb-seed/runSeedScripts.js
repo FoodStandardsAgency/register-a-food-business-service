@@ -29,7 +29,7 @@ const establishConnectionToMongo = async (configDbUrl) => {
     useNewUrlParser: true
   });
 
-  const configDB = client.db("register_a_food_business_config");
+  const configDB = client.db("config");
   return configDB;
 };
 

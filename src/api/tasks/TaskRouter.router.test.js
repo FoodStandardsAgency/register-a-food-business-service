@@ -10,10 +10,8 @@ const { TaskRouter } = require("./TaskRouter.router");
 const {
   sendRegistrationToTascomiAction,
   sendNotificationsForRegistrationAction,
-  saveRegistrationToTempStoreAction,
   sendAllOutstandingRegistrationsToTascomiAction,
-  sendAllNotificationsForRegistrationsAction,
-  saveAllOutstandingRegistrationsToTempStoreAction
+  sendAllNotificationsForRegistrationsAction
 } = require("./Tasks.controller");
 
 describe("/api/tasks route: ", () => {
@@ -95,46 +93,6 @@ describe("/api/tasks route: ", () => {
     });
   });
 
-  describe("GET to /bulk/savetotempstore", () => {
-    beforeEach(() => {
-      router = TaskRouter();
-      saveAllOutstandingRegistrationsToTempStoreAction.mockImplementation(
-        () => {}
-      );
-      handler = router.get.mock.calls[5][1];
-
-      req = { query: {} };
-      res = {
-        send: jest.fn()
-      };
-      handler(req, res);
-    });
-
-    it("Should call saveAllOutstandingRegistrationsToTempStoreAction", () => {
-      expect(
-        saveAllOutstandingRegistrationsToTempStoreAction
-      ).toHaveBeenLastCalledWith(req, res, false, 500);
-    });
-
-    it("Should call saveAllOutstandingRegistrationsToTempStoreAction with dryrun true", () => {
-      router = TaskRouter();
-      saveAllOutstandingRegistrationsToTempStoreAction.mockImplementation(
-        () => {}
-      );
-      handler = router.get.mock.calls[5][1];
-
-      req = { query: { dryrun: true, throttle: 3000 } };
-      res = {
-        send: jest.fn()
-      };
-      handler(req, res);
-
-      expect(
-        saveAllOutstandingRegistrationsToTempStoreAction
-      ).toHaveBeenLastCalledWith(req, res, true, 3000);
-    });
-  });
-
   describe("GET to /createtascomiregistration", () => {
     let fsaId = "test";
     beforeEach(() => {
@@ -172,28 +130,6 @@ describe("/api/tasks route: ", () => {
 
     it("Should call sendNotificationsForRegistrationAction", () => {
       expect(sendNotificationsForRegistrationAction).toHaveBeenLastCalledWith(
-        fsaId,
-        req,
-        res
-      );
-    });
-  });
-
-  describe("GET to /savetotempstore", () => {
-    let fsaId = "test";
-    beforeEach(() => {
-      router = TaskRouter();
-      saveRegistrationToTempStoreAction.mockImplementation(() => {});
-      handler = router.get.mock.calls[4][1];
-      req = { params: { fsaId } };
-      res = {
-        send: jest.fn()
-      };
-      handler(req, res);
-    });
-
-    it("Should call sendNotificationsForRegistrationAction", () => {
-      expect(saveRegistrationToTempStoreAction).toHaveBeenLastCalledWith(
         fsaId,
         req,
         res
