@@ -13,12 +13,21 @@ jest.mock("./submissions/submissions.router", () => ({
   submissionsRouter: jest.fn()
 }));
 
-// jest.mock("./collections/collections.router", () => {
-//   collectionsRouter: jest.fn();
-// });
+jest.mock("./collections/collections.router", () => ({
+  collectionsRouter: jest.fn()
+}));
+
+jest.mock("./collections-v2/collections.v2.router", () => ({
+  collectionsV2Router: jest.fn()
+}));
 
 jest.mock("./status/status.router", () => ({
   statusRouter: jest.fn()
+}));
+
+jest.mock("swagger-ui-express", () => ({
+  serve: jest.fn(),
+  setup: jest.fn()
 }));
 
 const { routers } = require("./routers");

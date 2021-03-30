@@ -1,4 +1,6 @@
-const { transformRegForCollection } = require("./collectionsTransform.service");
+const {
+  transformRegForCollections
+} = require("./collectionsTransform.service");
 
 const fullRegistration = {
   "fsa-rn": "PQQK8Q-SN9N8C-4ADETF",
@@ -104,11 +106,11 @@ let result;
 
 describe("Function: transformRegistration", () => {
   beforeEach(() => {
-    result = transformRegForCollection(shortRegistration);
+    result = transformRegForCollections(shortRegistration);
   });
   describe("given a registration with establishment and metadata supplied", () => {
     beforeEach(() => {
-      result = transformRegForCollection(fullRegistration);
+      result = transformRegForCollections(fullRegistration);
     });
     it("should return the establishment object with the correct structure", () => {
       expect(result.establishment.establishment_details).not.toBeDefined();
@@ -152,7 +154,7 @@ describe("Function: transformRegistration", () => {
   });
   describe("given a registration without establishment or metadata supplied", () => {
     beforeEach(() => {
-      result = transformRegForCollection(shortRegistration);
+      result = transformRegForCollections(shortRegistration);
     });
     it("should return empty establishment and metadata objects", () => {
       expect(result.establishment).toEqual({});
@@ -163,7 +165,7 @@ describe("Function: transformRegistration", () => {
     beforeEach(() => {
       shortRegistration.hygiene = {};
       shortRegistration.hygiene.local_council = "West Dorset Council";
-      result = transformRegForCollection(shortRegistration);
+      result = transformRegForCollections(shortRegistration);
     });
     afterEach(() => {
       delete shortRegistration.hygiene;
@@ -174,7 +176,7 @@ describe("Function: transformRegistration", () => {
   });
   describe("given there is not a seperate standards council", () => {
     beforeEach(() => {
-      result = transformRegForCollection(shortRegistration);
+      result = transformRegForCollections(shortRegistration);
     });
     it("should populate council from hygieneAndStandards.local_council", () => {
       expect(result.council).toBe(
@@ -184,7 +186,7 @@ describe("Function: transformRegistration", () => {
   });
   describe("given collected_at is populated", () => {
     beforeEach(() => {
-      result = transformRegForCollection(shortRegistration);
+      result = transformRegForCollections(shortRegistration);
     });
     it("should convert it to an ISO String", () => {
       expect(result.collected_at).toBe("2018-10-30T14:51:47.303Z");
@@ -192,7 +194,7 @@ describe("Function: transformRegistration", () => {
   });
   describe("given the collected_at is null", () => {
     beforeEach(() => {
-      result = transformRegForCollection(fullRegistration);
+      result = transformRegForCollections(fullRegistration);
     });
     it("should convert it to an ISO String", () => {
       expect(result.collected_at).toBeNull();
