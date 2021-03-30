@@ -246,7 +246,6 @@ const createNewDirectRegistration = async (registration, options) => {
   }
 
   const status = {
-    registration: null,
     notifications: null
   };
 
