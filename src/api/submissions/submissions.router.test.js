@@ -5,20 +5,20 @@ jest.mock("express", () => ({
     delete: jest.fn()
   }))
 }));
-jest.mock("./registration.controller", () => ({
+jest.mock("./submissions.controller", () => ({
   createNewRegistration: jest.fn(),
   createNewDirectRegistration: jest.fn()
 }));
 jest.mock("../../services/statusEmitter.service");
-const registrationController = require("./registration.controller");
-const { registrationRouter } = require("./registration.router");
-const { doubleResponse } = require("./registration.double");
-describe("registration router", () => {
+const submissionsController = require("./submissions.controller");
+const { submissionsRouter } = require("./submissions.router");
+const { doubleResponse } = require("./submissions.double");
+describe("submissions router", () => {
   let router, send, handler, status, testRegistration;
   beforeEach(() => {
     send = jest.fn();
     status = jest.fn();
-    router = registrationRouter();
+    router = submissionsRouter();
     testRegistration = {
       registration: "reg",
       local_council_url: "example-council-url",
@@ -54,7 +54,7 @@ describe("registration router", () => {
     describe("when an error is thrown", () => {
       let next;
       beforeEach(async () => {
-        registrationController.createNewRegistration.mockImplementation(() => {
+        submissionsController.createNewRegistration.mockImplementation(() => {
           throw new Error("reg error");
         });
         status.mockImplementation(() => ({
@@ -103,7 +103,7 @@ describe("registration router", () => {
       });
 
       it("should call createNewRegistration", () => {
-        expect(registrationController.createNewDirectRegistration).toBeCalled();
+        expect(submissionsController.createNewDirectRegistration).toBeCalled();
       });
 
       it("should call res.send", () => {
@@ -114,7 +114,7 @@ describe("registration router", () => {
     describe("when an error is thrown", () => {
       let next;
       beforeEach(async () => {
-        registrationController.createNewDirectRegistration.mockImplementation(
+        submissionsController.createNewDirectRegistration.mockImplementation(
           () => {
             throw new Error("reg error");
           }
@@ -164,7 +164,7 @@ describe("registration router", () => {
 
       it("should not call registrationController", () => {
         expect(
-          registrationController.createNewDirectRegistration
+          submissionsController.createNewDirectRegistration
         ).not.toHaveBeenCalled();
       });
 
@@ -197,7 +197,7 @@ describe("registration router", () => {
 
       it("should not call registrationController", () => {
         expect(
-          registrationController.createNewDirectRegistration
+          submissionsController.createNewDirectRegistration
         ).not.toHaveBeenCalled();
       });
 

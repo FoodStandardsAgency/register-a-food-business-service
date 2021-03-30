@@ -2,7 +2,7 @@ const { validate } = require("../../services/validation.service");
 const {
   getRegistrationMetaData,
   getLcContactConfig
-} = require("./registration.service");
+} = require("./submissions.service");
 
 const {
   cacheRegistration
@@ -33,7 +33,7 @@ const createNewRegistration = async (
 ) => {
   logEmitter.emit(
     "functionCall",
-    "registration.controller",
+    "submissions.controller",
     "createNewRegistration"
   );
 
@@ -115,7 +115,7 @@ const createNewRegistration = async (
 
   logEmitter.emit(
     "functionSuccess",
-    "registration.controller",
+    "submissions.controller",
     "createNewRegistration"
   );
 
@@ -125,7 +125,7 @@ const createNewRegistration = async (
 const createNewDirectRegistration = async (registration, options) => {
   logEmitter.emit(
     "functionCall",
-    "registration.controller",
+    "submissions.controller",
     "createNewDirectRegistration"
   );
 
@@ -159,7 +159,7 @@ const createNewDirectRegistration = async (registration, options) => {
       newError.name = "supplierCouncilNotFound";
       logEmitter.emit(
         "functionFail",
-        "registration.controller",
+        "submissions.controller",
         "createNewDirectRegistration",
         newError
       );
@@ -178,7 +178,7 @@ const createNewDirectRegistration = async (registration, options) => {
     newError.message = `Config for council ID "${options.requestedCouncil}" not found`;
     logEmitter.emit(
       "functionFail",
-      "registration.controller",
+      "submissions.controller",
       "createNewDirectRegistration",
       newError
     );
@@ -280,7 +280,7 @@ const createNewDirectRegistration = async (registration, options) => {
 
   logEmitter.emit(
     "functionSuccess",
-    "registration.controller",
+    "submissions.controller",
     "createNewDirectRegistration"
   );
 

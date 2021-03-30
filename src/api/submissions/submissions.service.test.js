@@ -41,7 +41,7 @@ const {
   getRegistrationMetaData,
   getLcContactConfig,
   getLcAuth
-} = require("./registration.service");
+} = require("./submissions.service");
 
 const {
   updateStatusInCache

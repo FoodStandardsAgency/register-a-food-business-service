@@ -2,7 +2,7 @@ jest.mock("../../services/validation.service", () => ({
   validate: jest.fn()
 }));
 
-jest.mock("./registration.service", () => ({
+jest.mock("./submissions.service", () => ({
   sendTascomiRegistration: jest.fn(),
   getRegistrationMetaData: jest.fn(),
   getLcContactConfig: jest.fn(),
@@ -36,7 +36,7 @@ const {
   getRegistrationMetaData,
   getLcContactConfig,
   getLcAuth
-} = require("./registration.service");
+} = require("./submissions.service");
 
 const { validate } = require("../../services/validation.service");
 
@@ -47,7 +47,7 @@ const {
 const {
   createNewRegistration,
   createNewDirectRegistration
-} = require("./registration.controller");
+} = require("./submissions.controller");
 
 const {
   getConfigVersion,

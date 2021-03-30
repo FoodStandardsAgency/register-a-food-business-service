@@ -10,10 +10,7 @@ const {
 } = require("@slice-and-dice/register-a-food-business-validation");
 
 const {
-  transformBusinessTypeEnum,
-  transformCustomerTypeEnum,
-  transformOperatorTypeEnum,
-  transformWaterSupplyEnum
+  transformEnumsForService
 } = require("../../services/transformEnums.service");
 
 const TASCOMI_SKIPPING = "skipping";
@@ -81,18 +78,8 @@ const createFoodBusinessRegistration = async (
         }))
       : [];
 
-    operatorDetails.operator_type = transformOperatorTypeEnum(
-      operatorDetails.operator_type
-    );
-    activitiesDetails.customer_type = transformCustomerTypeEnum(
-      activitiesDetails.customer_type
-    );
-    activitiesDetails.business_type = transformBusinessTypeEnum(
-      activitiesDetails.business_type
-    );
-    activitiesDetails.water_supply = transformWaterSupplyEnum(
-      activitiesDetails.water_supply
-    );
+    transformEnumsForService(operatorDetails);
+    transformEnumsForService(activitiesDetails);
     const requestData = {
       fsa_rn: postRegistrationMetadata["fsa-rn"],
       fsa_council_id: postRegistrationMetadata.hygiene_council_code,
