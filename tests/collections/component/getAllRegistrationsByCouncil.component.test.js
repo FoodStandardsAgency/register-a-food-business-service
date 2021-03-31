@@ -3,9 +3,9 @@ const request = require("request-promise-native");
 const { logEmitter } = require("../../../src/services/logging.service");
 const mockRegistrationData = require("./mock-registration-data.json");
 
-const baseUrl = process.env.COMPONENT_TEST_BASE_URL || "http://localhost:4000";
-const url = `${baseUrl}/api/registrations/cardiff`;
-const submitUrl = process.env.SERVICE_BASE_URL;
+const baseUrl = process.env.API_URL || "http://localhost:4000";
+const url = `${baseUrl}/api/collections/cardiff`;
+// const submitUrl = process.env.SERVICE_BASE_URL;
 let submitResponses = [];
 
 jest.setTimeout(30000);
@@ -14,7 +14,7 @@ const frontendSubmitRegistration = async () => {
   try {
     for (let index in mockRegistrationData) {
       const requestOptions = {
-        uri: `${submitUrl}/api/registration/createNewRegistration`,
+        uri: `${baseUrl}/api/submissions/createNewRegistration`,
         method: "POST",
         json: true,
         body: mockRegistrationData[index],
@@ -39,7 +39,7 @@ const frontendSubmitRegistration = async () => {
   }
 };
 
-describe("GET to /api/registrations/:lc", () => {
+describe("GET to /api/collections/:lc", () => {
   beforeAll(async () => {
     await frontendSubmitRegistration();
   });
@@ -87,7 +87,7 @@ describe("GET to /api/registrations/:lc", () => {
 
     it("should return the options validation error", () => {
       expect(response.statusCode).toBe(400);
-      expect(response.error.errorCode).toBe("3");
+      expect(response.error.errorCode).toBe("17");
       expect(response.error.developerMessage).toBe(
         "One of the supplied options is invalid"
       );

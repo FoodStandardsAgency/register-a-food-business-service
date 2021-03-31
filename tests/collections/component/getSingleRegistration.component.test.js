@@ -3,9 +3,9 @@ const request = require("request-promise-native");
 const { logEmitter } = require("../../../src/services/logging.service");
 const mockRegistrationData = require("./mock-registration-data.json");
 
-const baseUrl = process.env.COMPONENT_TEST_BASE_URL || "http://localhost:4000";
-const url = `${baseUrl}/api/registrations/cardiff`;
-const submitUrl = process.env.SERVICE_BASE_URL;
+const baseUrl = process.env.API_URL || "http://localhost:4000";
+const url = `${baseUrl}/api/collections/cardiff`;
+// const submitUrl = process.env.SERVICE_BASE_URL;
 let submitResponse;
 
 jest.setTimeout(30000);
@@ -13,7 +13,7 @@ jest.setTimeout(30000);
 const frontendSubmitRegistration = async () => {
   try {
     const requestOptions = {
-      uri: `${submitUrl}/api/registration/createNewRegistration`,
+      uri: `${baseUrl}/api/submissions/createNewRegistration`,
       method: "POST",
       json: true,
       body: mockRegistrationData[0],
@@ -37,7 +37,7 @@ const frontendSubmitRegistration = async () => {
   }
 };
 
-describe("GET to /api/registrations/:lc/:fsa_rn", () => {
+describe("GET to /api/collections/:lc/:fsa_rn", () => {
   beforeAll(async () => {
     submitResponse = await frontendSubmitRegistration();
   });
@@ -74,8 +74,11 @@ describe("GET to /api/registrations/:lc/:fsa_rn", () => {
     });
 
     it("should return the getRegistrationNotFound error", () => {
-      expect(response.error).toBeDefined();
-      expect(response.error.statusCode).toBe(404);
+      expect(response.statusCode).toBe(404);
+      expect(response.error.errorCode).toBe("19");
+      expect(response.error.developerMessage).toBe(
+        "The registration application reference specified could not be found for the council requested. Please check this reference is definitely associated with this council"
+      );
     });
   });
 
@@ -98,7 +101,7 @@ describe("GET to /api/registrations/:lc/:fsa_rn", () => {
 
     it("should return the options validation error", () => {
       expect(response.statusCode).toBe(400);
-      expect(response.error.errorCode).toBe("3");
+      expect(response.error.errorCode).toBe("17");
       expect(response.error.developerMessage).toBe(
         "One of the supplied options is invalid"
       );

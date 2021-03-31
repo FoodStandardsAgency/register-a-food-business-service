@@ -3,9 +3,9 @@ require("dotenv").config();
 const { logEmitter } = require("../../../src/services/logging.service");
 const mockRegistrationData = require("./mock-registration-data.json");
 
-const baseUrl = process.env.COMPONENT_TEST_BASE_URL || "http://localhost:4000";
-const url = `${baseUrl}/api/registrations/the-vale-of-glamorgan`;
-const submitUrl = process.env.SERVICE_BASE_URL;
+const baseUrl = process.env.API_URL || "http://localhost:4000";
+const url = `${baseUrl}/api/collections/the-vale-of-glamorgan`;
+// const submitUrl = process.env.SERVICE_BASE_URL;
 let submitResponse;
 
 jest.setTimeout(30000);
@@ -13,7 +13,7 @@ jest.setTimeout(30000);
 const frontendSubmitRegistration = async () => {
   try {
     const requestOptions = {
-      uri: `${submitUrl}/api/registration/createNewRegistration`,
+      uri: `${baseUrl}/api/submissions/createNewRegistration`,
       method: "POST",
       json: true,
       body: mockRegistrationData[1],
@@ -36,7 +36,7 @@ const frontendSubmitRegistration = async () => {
     );
   }
 };
-describe("PUT to /api/registrations/:lc/:fsa_rn", () => {
+describe("PUT to /api/collections/:lc/:fsa_rn", () => {
   beforeAll(async () => {
     submitResponse = await frontendSubmitRegistration();
   });
@@ -65,7 +65,11 @@ describe("PUT to /api/registrations/:lc/:fsa_rn", () => {
     beforeEach(async () => {
       const requestOptions = {
         uri: `${url}/1234253`,
-        json: true
+        json: true,
+        method: "PUT",
+        body: {
+          collected: true
+        }
       };
       try {
         await request(requestOptions);
@@ -75,8 +79,11 @@ describe("PUT to /api/registrations/:lc/:fsa_rn", () => {
     });
 
     it("should return the getRegistrationNotFound error", () => {
-      expect(response.error).toBeDefined();
-      expect(response.error.statusCode).toBe(404);
+      expect(response.statusCode).toBe(404);
+      expect(response.error.errorCode).toBe("18");
+      expect(response.error.developerMessage).toBe(
+        "The registration application reference specified could not be found for the council requested. Please check this reference is definitely associated with this council"
+      );
     });
   });
 
@@ -99,7 +106,7 @@ describe("PUT to /api/registrations/:lc/:fsa_rn", () => {
 
     it("should return the options validation error", () => {
       expect(response.statusCode).toBe(400);
-      expect(response.error.errorCode).toBe("3");
+      expect(response.error.errorCode).toBe("17");
       expect(response.error.developerMessage).toBe(
         "One of the supplied options is invalid"
       );
