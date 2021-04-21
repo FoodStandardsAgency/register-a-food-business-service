@@ -33,7 +33,7 @@ const deleteTestRegistrationsFromCosmos = async () => {
       testRecords = testRecords.filter((rec) => {
         return testRecordBatch.indexOf(rec) < 0;
       });
-      return beCache.deleteMany({ "fsa-rn": { $in: testRecordBatch } });
+      await beCache.deleteMany({ "fsa-rn": { $in: testRecordBatch } });
     }
 
     const testRecordsRemaining = await findTestRegistrations(beCache);
