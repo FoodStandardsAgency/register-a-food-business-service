@@ -29,14 +29,13 @@ const deleteTestRegistrationsFromCosmos = async () => {
     logEmitter.emit("info", "Deleting test records...");
 
     while (testRecords > 0) {
-      const promises = testRecords.slice(0, 50).map(async (reg) => {
-        testRecords = testRecords.filter((rec) => {
-          return rec !== reg;
-        });
-        return beCache.deleteOne({ "fsa-rn": reg["fsa-rn"] });
+      let testRecordBatch = testRecords.slice(0, 50);
+      testRecords = testRecords.filter((rec) => {
+        return testRecordBatch.indexOf(rec) < 0;
       });
-      await Promise.allSettled(promises);
+      return beCache.deleteMany({ "fsa-rn": { $in: testRecordBatch } });
     }
+
     const testRecordsRemaining = await findTestRegistrations(beCache);
     logEmitter.emit(
       "info",
