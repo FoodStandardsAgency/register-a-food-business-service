@@ -28,26 +28,12 @@ const deleteTestRegistrationsFromCosmos = async () => {
     //Delete all test registrations from cosmos
     logEmitter.emit("info", "Deleting test records...");
 
-    while (testRecords > 0) {
-      let testRecordBatch = testRecords.slice(0, 50);
-      testRecords = testRecords.filter((rec) => {
-        return testRecordBatch.indexOf(rec) < 0;
-      });
-      const deleteResult = await beCache.deleteMany({
-        "fsa-rn": { $in: testRecordBatch }
-      });
-      if (deleteResult.deletedCount) {
-        logEmitter.emit(
-          "info",
-          `Test registrations deleted from batch - ${deleteResult.deletedCount}`
-        );
-      } else {
-        logEmitter.emit(
-          "info",
-          `Test registrations delete resulr - ${deleteResult}`
-        );
-      }
-    }
+    const response = await beCache.deleteMany({
+      "fsa-rn": { $in: testRecords }
+    });
+    logEmitter.emit("info", "Deleting test records...");
+
+    logEmitter.emit("info", `${response.deletedCount} test records deleted`);
 
     const testRecordsRemaining = await findTestRegistrations(beCache);
     logEmitter.emit(
