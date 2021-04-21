@@ -9,8 +9,6 @@ const {
 const { logEmitter } = require("../src/services/logging.service");
 const fetch = require("node-fetch");
 
-let beCache;
-
 let apiUrl = "http://localhost:4000";
 
 apiUrl = process.env.API_URL ? process.env.API_URL : apiUrl;
@@ -22,7 +20,11 @@ const triggerSaveToTemp = async () => {
 
 const deleteTestRegistrationsFromCosmos = async () => {
   try {
-    const testRecords = await findTestRegistrations();
+    const beCache = await establishConnectionToCosmos(
+      "registrations",
+      "registrations"
+    );
+    const testRecords = await findTestRegistrations(beCache);
     //Delete all test registrations from cosmos
     logEmitter.emit("info", "Deleting test records...");
 
@@ -31,11 +33,11 @@ const deleteTestRegistrationsFromCosmos = async () => {
         testRecords = testRecords.filter((rec) => {
           return rec !== reg;
         });
-        await beCache.deleteOne({ "fsa-rn": reg["fsa-rn"] });
+        return beCache.deleteOne({ "fsa-rn": reg["fsa-rn"] });
       });
       await Promise.allSettled(promises);
     }
-    const testRecordsRemaining = await findTestRegistrations();
+    const testRecordsRemaining = await findTestRegistrations(beCache);
     logEmitter.emit(
       "info",
       `Test records remaining in cosmos: ${testRecordsRemaining.length} - ${testRecordsRemaining}`
@@ -45,12 +47,8 @@ const deleteTestRegistrationsFromCosmos = async () => {
   }
 };
 
-const findTestRegistrations = async () => {
+const findTestRegistrations = async (beCache) => {
   try {
-    beCache = await establishConnectionToCosmos(
-      "registrations",
-      "registrations"
-    );
     //Find all FSA-RN from each database.
     const cosmosRecords = await beCache
       .find({}, { projection: { _id: 0, "fsa-rn": 1 } })
