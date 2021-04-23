@@ -88,10 +88,12 @@ const updateFields = async (rec) => {
         }
       }
     );
-    logEmitter.emit(
-      "info",
-      `Update record fields response - ${JSON.stringify(response.result)}`
-    );
+    if (response.modifiedCount == 0) {
+      logEmitter.emit(
+        "info",
+        `Update record fields failed - ${JSON.stringify(response.result)}`
+      );
+    }
   } catch (err) {
     logEmitter.emit(
       "info",
