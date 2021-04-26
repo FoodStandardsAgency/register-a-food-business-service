@@ -106,7 +106,6 @@ const updateRecordDates = async (rec) => {
           }
         : []
     );
-    console.log(notificationsObject);
     const setObject = Object.assign(
       {
         reg_submission_date: new Date(rec.reg_submission_date),
