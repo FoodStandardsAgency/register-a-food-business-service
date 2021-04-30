@@ -1,72 +1,14 @@
-const mongodb = require("mongodb");
-const { CACHEDB_URL } = require("../../config");
-const { cachedRegistrationsDouble } = require("./cacheDb.double");
 const { logEmitter } = require("../../services/logging.service");
 const { statusEmitter } = require("../../services/statusEmitter.service");
-
-let client = undefined;
-let cacheDB = undefined;
-
-const establishConnectionToMongo = async () => {
-  if (process.env.DOUBLE_MODE === "true") {
-    logEmitter.emit(
-      "doubleMode",
-      "cacheDb.connector",
-      "getAllLocalCouncilConfig"
-    );
-    return cachedRegistrationsDouble;
-  } else {
-    if (cacheDB === undefined) {
-      client = await mongodb.MongoClient.connect(CACHEDB_URL, {
-        useNewUrlParser: true,
-        useUnifiedTopology: true
-      });
-      cacheDB = client.db("register_a_food_business_cache");
-    }
-
-    return cacheDB.collection("cachedRegistrations");
-  }
-};
-
-const connectToBeCacheDb = async () => {
-  if (process.env.DOUBLE_MODE === "true") {
-    logEmitter.emit(
-      "doubleMode",
-      "cacheDb.connector",
-      "getAllLocalCouncilConfig"
-    );
-    return cachedRegistrationsDouble;
-  } else {
-    if (client === undefined) {
-      client = await mongodb.MongoClient.connect(CACHEDB_URL, {
-        useNewUrlParser: true
-      });
-    }
-
-    return await client.db("register_a_food_business_cache");
-  }
-};
-
-const disconnectCacheDb = async () => {
-  if (client) {
-    client.close();
-  }
-};
-
-const CachedRegistrationsCollection = async (client) =>
-  await client.collection("cachedRegistrations");
-
-const getDate = () => {
-  return new Date().toLocaleString("en-GB", {
-    hour12: false,
-    timeZone: "Europe/London"
-  });
-};
+const { establishConnectionToCosmos } = require("../cosmos.client");
 
 const cacheRegistration = async (registration) => {
   logEmitter.emit("functionCall", "cacheDb.connector", "cacheRegistration");
   try {
-    const cachedRegistrations = await establishConnectionToMongo();
+    const cachedRegistrations = await establishConnectionToCosmos(
+      "registrations",
+      "registrations"
+    );
     const response = await cachedRegistrations.insertOne(registration);
 
     statusEmitter.emit("incrementCount", "storeRegistrationsInCacheSucceeded");
@@ -113,11 +55,14 @@ const cacheRegistration = async (registration) => {
 const updateStatusInCache = async (fsa_rn, property, value) => {
   logEmitter.emit("functionCall", "cacheDb.connector", "updateStatusInCache");
   try {
-    const cachedRegistrations = await establishConnectionToMongo();
+    const cachedRegistrations = await establishConnectionToCosmos(
+      "registrations",
+      "registrations"
+    );
     const status = await getStatus(cachedRegistrations, fsa_rn);
 
     status[property] = {
-      time: getDate(),
+      time: new Date(),
       complete: value
     };
 
@@ -150,16 +95,6 @@ const updateStatusInCache = async (fsa_rn, property, value) => {
   }
 };
 
-const findAllOutstandingSavesToTempStore = async (
-  cachedRegistrations,
-  limit = 100
-) => {
-  return await cachedRegistrations
-    .find({ "status.registration.complete": { $ne: true } })
-    .sort({ reg_submission_date: 1 })
-    .limit(limit);
-};
-
 const findAllFailedNotificationsRegistrations = async (
   cachedRegistrations,
   limit = 100
@@ -174,9 +109,9 @@ const findAllFailedNotificationsRegistrations = async (
         },
         {
           $or: [
-            { directLcSubmission: { $exists: false } },
-            { directLcSubmission: null },
-            { directLcSubmission: false }
+            { direct_submission: { $exists: false } },
+            { direct_submission: null },
+            { direct_submission: false }
           ]
         }
       ]
@@ -197,9 +132,9 @@ const findAllBlankRegistrations = async (cachedRegistrations, limit = 100) => {
         },
         {
           $or: [
-            { directLcSubmission: { $exists: false } },
-            { directLcSubmission: null },
-            { directLcSubmission: false }
+            { direct_submission: { $exists: false } },
+            { direct_submission: null },
+            { direct_submission: false }
           ]
         }
       ]
@@ -219,9 +154,9 @@ const findOutstandingTascomiRegistrationsFsaIds = async (
         { "status.tascomi.complete": { $ne: true } },
         {
           $or: [
-            { directLcSubmission: { $exists: false } },
-            { directLcSubmission: null },
-            { directLcSubmission: false }
+            { direct_submission: { $exists: false } },
+            { direct_submission: null },
+            { direct_submission: false }
           ]
         }
       ]
@@ -282,7 +217,7 @@ const updateNotificationOnSent = (
     "updateNotificationOnSent"
   );
   let { type, address } = emailsToSend[index];
-  date = date === null ? getDate() : date;
+  date = date === null ? new Date() : date;
   status.notifications[index].address = address;
   status.notifications[index].type = type;
   status.notifications[index].time = date;
@@ -297,25 +232,14 @@ const updateNotificationOnSent = (
   return status;
 };
 
-const clearMongoConnection = () => {
-  client = undefined;
-  cacheDB = undefined;
-};
-
 module.exports = {
-  findAllOutstandingSavesToTempStore,
   findAllFailedNotificationsRegistrations,
   findAllBlankRegistrations,
   findOutstandingTascomiRegistrationsFsaIds,
   cacheRegistration,
-  clearMongoConnection,
   updateStatusInCache,
   updateNotificationOnSent,
-  establishConnectionToMongo,
   findOneById,
-  CachedRegistrationsCollection,
-  connectToBeCacheDb,
-  disconnectCacheDb,
   getStatus,
   updateStatus
 };

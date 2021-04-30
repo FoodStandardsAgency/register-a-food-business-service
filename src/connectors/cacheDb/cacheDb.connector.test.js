@@ -4,7 +4,6 @@ jest.mock("../../services/statusEmitter.service");
 const mongodb = require("mongodb");
 const {
   cacheRegistration,
-  clearMongoConnection,
   updateStatusInCache,
   updateNotificationOnSent
 } = require("./cacheDb.connector");
@@ -20,7 +19,6 @@ describe("Connector: cacheDb", () => {
     describe("given the request is successful", () => {
       beforeEach(async () => {
         process.env.DOUBLE_MODE = false;
-        clearMongoConnection();
         mongodb.MongoClient.connect.mockImplementation(async () => ({
           db: () => ({
             collection: () => ({
@@ -39,7 +37,6 @@ describe("Connector: cacheDb", () => {
     describe("given the request throws an error", () => {
       beforeEach(async () => {
         process.env.DOUBLE_MODE = false;
-        clearMongoConnection();
         mongodb.MongoClient.connect.mockImplementation(() => ({
           db: () => ({
             collection: () => ({
@@ -64,13 +61,15 @@ describe("Connector: cacheDb", () => {
     describe("given two requests without clearing the mongo connection", () => {
       beforeEach(async () => {
         process.env.DOUBLE_MODE = false;
-        clearMongoConnection();
         mongodb.MongoClient.connect.mockImplementation(async () => ({
           db: () => ({
             collection: () => ({
               insertOne: () => ({ insertedId: "1000" })
             })
-          })
+          }),
+          topology: {
+            isConnected: () => true
+          }
         }));
 
         response = await cacheRegistration({ reg: "data" });
@@ -80,7 +79,10 @@ describe("Connector: cacheDb", () => {
             collection: () => ({
               insertOne: () => ({ insertedId: "2000" })
             })
-          })
+          }),
+          topology: {
+            isConnected: () => true
+          }
         }));
 
         response = await cacheRegistration({ reg: "data" });
@@ -108,7 +110,6 @@ describe("Connector: cacheDb", () => {
       let result;
       beforeEach(async () => {
         process.env.DOUBLE_MODE = false;
-        clearMongoConnection();
         mongodb.MongoClient.connect.mockImplementation(async () => ({
           db: () => ({
             collection: () => ({
@@ -134,7 +135,6 @@ describe("Connector: cacheDb", () => {
       let result;
       beforeEach(async () => {
         process.env.DOUBLE_MODE = false;
-        clearMongoConnection();
         mongodb.MongoClient.connect.mockImplementation(async () => ({
           db: () => ({
             collection: () => ({
@@ -230,7 +230,6 @@ describe("Connector: cacheDb", () => {
       let result;
       beforeEach(async () => {
         process.env.DOUBLE_MODE = false;
-        clearMongoConnection();
         mongodb.MongoClient.connect.mockImplementation(async () => ({
           db: () => ({
             collection: () => ({
@@ -256,7 +255,6 @@ describe("Connector: cacheDb", () => {
       let result;
       beforeEach(async () => {
         process.env.DOUBLE_MODE = false;
-        clearMongoConnection();
         mongodb.MongoClient.connect.mockImplementation(async () => ({
           db: () => ({
             collection: () => ({

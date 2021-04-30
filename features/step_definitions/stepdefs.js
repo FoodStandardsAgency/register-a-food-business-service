@@ -5,9 +5,7 @@ const {
   FRONT_END_NAME,
   FRONT_END_SECRET,
   DIRECT_API_NAME,
-  DIRECT_API_SECRET,
-  ADMIN_NAME,
-  ADMIN_SECRET
+  DIRECT_API_SECRET
 } = require("../../src/config");
 
 setDefaultTimeout(60 * 1000);
@@ -25,7 +23,7 @@ const sendRequest = async (body) => {
     "Content-Type": "application/json",
     "api-secret": FRONT_END_SECRET,
     "client-name": FRONT_END_NAME,
-    "registration-data-version": "1.7.0"
+    "registration-data-version": "2.1.0"
   };
   const res = await fetch(`${apiUrl}/api/registration/createNewRegistration`, {
     method: "POST",
@@ -52,18 +50,6 @@ const sendDirectRequest = async (body) => {
   );
   return res.json();
 };
-
-const getRequest = async (id) => {
-  const headers = {
-    "Content-Type": "application/json",
-    "api-secret": ADMIN_SECRET,
-    "client-name": ADMIN_NAME
-  };
-  const res = await fetch(`${apiUrl}/api/registration/${id}`, {
-    headers
-  });
-  return res.json();
-};
 ////////
 
 const triggerNotificationTask = async () => {
@@ -73,11 +59,6 @@ const triggerNotificationTask = async () => {
 
 const triggerTascomiTask = async () => {
   const res = await fetch(`${apiUrl}/api/tasks/bulk/createtascomiregistration`);
-  return res.json();
-};
-
-const triggerSaveToTemp = async () => {
-  const res = await fetch(`${apiUrl}/api/tasks/bulk/savetotempstore`);
   return res.json();
 };
 
@@ -134,7 +115,8 @@ Given("I have a new registration with all valid required fields", function () {
         declaration3: "Declaration"
       }
     },
-    local_council_url: "west-dorset"
+    local_council_url: "west-dorset",
+    submission_language: "en"
   };
 });
 
@@ -285,30 +267,12 @@ When("The tascomi task is triggered", async function () {
   this.response = await triggerTascomiTask();
 });
 
-When("The save to temp store task is triggered", async function () {
-  this.res = await triggerSaveToTemp();
-});
-
 Then("I get a success response", async function () {
   assert.ok(this.response["fsa-rn"]);
 });
 
 Then("I get an error response", async function () {
   assert.ok(this.response.userMessages);
-});
-
-Then("The information is saved to the database", async function () {
-  const id = this.response["fsa-rn"];
-  await getRequest(id).then((response) => () => {
-    assert.strictEqual(
-      response.establishment.establishment_trading_name,
-      "Itsu"
-    );
-    assert.strictEqual(
-      response.establishment.operator.operator_first_name,
-      "Fred"
-    );
-  });
 });
 
 Then("I receive a confirmation number", async function () {

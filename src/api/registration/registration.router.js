@@ -1,9 +1,6 @@
 const { Router } = require("express");
 const registrationController = require("./registration.controller");
-const {
-  createRegistrationAuth,
-  viewDeleteRegistrationAuth
-} = require("../../middleware/authHandler");
+const { createRegistrationAuth } = require("../../middleware/authHandler");
 const { logEmitter } = require("../../services/logging.service");
 const { statusEmitter } = require("../../services/statusEmitter.service");
 const { registrationDouble } = require("./registration.double");
@@ -129,10 +126,10 @@ const registrationRouter = () => {
           "createNewDirectRegistration",
           req.body
         );
-        statusEmitter.emit("incrementCount", "endToEndRegistrationsFailed");
+        statusEmitter.emit("incrementCount", "directRegistrationsFailed");
         statusEmitter.emit(
           "setStatus",
-          "mostRecentEndToEndRegistrationSucceeded",
+          "mostRecentDirectRegistrationSucceeded",
           false
         );
         logEmitter.emit(
@@ -145,36 +142,6 @@ const registrationRouter = () => {
       }
     }
   );
-
-  router.get("/:fsa_rn", viewDeleteRegistrationAuth, async (req, res) => {
-    logEmitter.emit("functionCall", "registration.router", "viewRegistration");
-    const response = await registrationController.getRegistration(
-      req.params.fsa_rn
-    );
-    logEmitter.emit(
-      "functionSuccess",
-      "registration.router",
-      "viewRegistration"
-    );
-    res.send(response);
-  });
-
-  router.delete("/:fsa_rn", viewDeleteRegistrationAuth, async (req, res) => {
-    logEmitter.emit(
-      "functionCall",
-      "registration.router",
-      "deleteRegistration"
-    );
-    const response = await registrationController.deleteRegistration(
-      req.params.fsa_rn
-    );
-    logEmitter.emit(
-      "functionSuccess",
-      "registration.router",
-      "deleteRegistration"
-    );
-    res.send(response);
-  });
 
   return router;
 };

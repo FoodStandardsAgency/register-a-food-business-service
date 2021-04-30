@@ -9,7 +9,6 @@ const { statusEmitter } = require("./statusEmitter.service");
 const { sendSingleEmail } = require("../connectors/notify/notify.connector");
 const { pdfGenerator, transformDataForPdf } = require("./pdf.service");
 const {
-  establishConnectionToMongo,
   getStatus,
   updateStatus,
   updateNotificationOnSent
@@ -24,6 +23,7 @@ const {
   transformWaterSupplyEnum
 } = require("./transformEnums.service");
 const i18n = require("../utils/i18n/i18n");
+const { establishConnectionToCosmos } = require("../connectors/cosmos.client");
 /**
  * Function that converts the data into format for Notify and creates a new object
  *
@@ -183,7 +183,10 @@ const sendEmails = async (
 
   let success = true;
   let lastSentStatus;
-  let cachedRegistrations = await establishConnectionToMongo();
+  let cachedRegistrations = await establishConnectionToCosmos(
+    "registrations",
+    "registrations"
+  );
   let status = await getStatus(cachedRegistrations, fsaId);
 
   try {
@@ -370,7 +373,10 @@ const initialiseNotificationsStatusIfNotSet = async (fsaId, emailsToSend) => {
     "addNotificationToStatus"
   );
   try {
-    let cachedRegistrations = await establishConnectionToMongo();
+    let cachedRegistrations = await establishConnectionToCosmos(
+      "registrations",
+      "registrations"
+    );
     let status = await getStatus(cachedRegistrations, fsaId);
 
     if (
