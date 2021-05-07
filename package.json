@@ -27,8 +27,8 @@
     "format:verify": "prettier --list-different '{src,tests}/**/*.js'",
     "format": "prettier --write '{src,tests}/**/*.js'",
     "seed:configdb": "node src/connectors/configDb/configDb-seed/runSeedScripts",
-    "migrate": "sequelize db:migrate",
-    "migrate:local": "export NODE_ENV=local && sequelize db:migrate",
+    "migrate": "node scripts/insert-missing-LC-emails",
+    "migrate:local": "export NODE_ENV=local && node scripts/insert-missing-LC-emails",
     "jsdoc": "rm -rf ./docs/jsdoc && jsdoc -r ./src -d ./docs/jsdoc"
   },
   "repository": {
