@@ -2,16 +2,14 @@
   {
     "name": "doubleFail",
     "code": "0",
-    "developerMessage":
-      "Double Mode Error. Raw error:",
+    "developerMessage": "Double Mode Error. Raw error:",
     "userMessages": "",
     "statusCode": 400
   },
   {
     "name": "tascomiAuth",
     "code": "1",
-    "developerMessage":
-      "Authentication with Tascomi API failed, have you supplied the application with the correct keys?",
+    "developerMessage": "Authentication with Tascomi API failed, have you supplied the application with the correct keys?",
     "userMessages": "",
     "statusCode": 500
   },
@@ -25,40 +23,35 @@
   {
     "name": "validationError",
     "code": "3",
-    "developerMessage":
-      "Validation error, check request body vs validation schema",
+    "developerMessage": "Validation error, check request body vs validation schema",
     "userMessages": "",
     "statusCode": 400
   },
   {
     "name": "SequelizeConnectionError",
     "code": "4",
-    "developerMessage":
-      "Could not make connection to Sequelize, check authentication rules on database and credentials provided to app",
+    "developerMessage": "Could not make connection to Sequelize, check authentication rules on database and credentials provided to app",
     "userMessages": "",
     "statusCode": 500
   },
   {
     "name": "notifyMissingKey",
     "code": "5",
-    "developerMessage":
-      "Key for notify service missing, check credentials provided to app",
+    "developerMessage": "Key for notify service missing, check credentials provided to app",
     "userMessages": "",
     "statusCode": 500
   },
   {
     "name": "notifyInvalidTemplate",
     "code": "6",
-    "developerMessage":
-      "Notify template ID is not valid, check credentials provided to app. Raw error:",
+    "developerMessage": "Notify template ID is not valid, check credentials provided to app. Raw error:",
     "userMessages": "",
     "statusCode": 500
   },
   {
     "name": "notifyMissingPersonalisation",
     "code": "7",
-    "developerMessage":
-      "Notify personalisation is missing, check data sent to Notify API. Raw error:",
+    "developerMessage": "Notify personalisation is missing, check data sent to Notify API. Raw error:",
     "userMessages": "",
     "statusCode": 500
   },
@@ -93,41 +86,54 @@
   {
     "name": "mongoConnectionError",
     "code": "12",
-    "developerMessage":
-      "MongoDB (Azure CosmosDB) connection failed, check credentials provided to app and status of database. Raw error:",
+    "developerMessage": "MongoDB (Azure CosmosDB) connection failed, check credentials provided to app and status of database. Raw error:",
     "userMessages": "",
     "statusCode": 500
   },
   {
     "name": "localCouncilNotFound",
     "code": "13",
-    "developerMessage":
-      "The local council has not matched any records in the config database. Raw error:",
+    "developerMessage": "The local council has not matched any records in the config database. Raw error:",
     "userMessages": "",
     "statusCode": 400
   },
   {
     "name": "fsaRnFetchError",
     "code": "14",
-    "developerMessage":
-      "Fetch to the FSA-RN generator service failed, check status of service and authentication. Raw error:",
+    "developerMessage": "Fetch to the FSA-RN generator service failed, check status of service and authentication. Raw error:",
     "userMessages": "",
     "statusCode": 500
   },
   {
     "name": "missingRequiredHeader",
     "code": "15",
-    "developerMessage":
-      "Required header missing in request. Please add and re-try request. Raw error:",
+    "developerMessage": "Required header missing in request. Please add and re-try request. Raw error:",
     "userMessages": "",
     "statusCode": 400
   },
   {
     "name": "supplierCouncilNotFound",
     "code": "16",
-    "developerMessage":
-      "The requested local-authorities must only contain authorized local authorities.",
+    "developerMessage": "The requested local-authorities must only contain authorized local authorities.",
     "userMessages": "",
     "statusCode": 400
+  },
+  {
+    "name": "optionsValidationError",
+    "code": "17",
+    "developerMessage": "One of the supplied options is invalid",
+    "statusCode": 400
+  },
+  {
+    "name": "updateRegistrationNotFoundError",
+    "code": "18",
+    "developerMessage": "The registration application reference specified could not be found for the council requested. Please check this reference is definitely associated with this council",
+    "statusCode": 404
+  },
+  {
+    "name": "getRegistrationNotFoundError",
+    "code": "19",
+    "developerMessage": "The registration application reference specified could not be found for the council requested. Please check this reference is definitely associated with this council",
+    "statusCode": 404
   }
 ]

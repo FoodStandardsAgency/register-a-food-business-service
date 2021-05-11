@@ -14,14 +14,7 @@ const {
   updateNotificationOnSent
 } = require("../connectors/cacheDb/cacheDb.connector");
 const { has, isArrayLikeObject } = require("lodash");
-const {
-  transformBusinessImportExportEnum,
-  transformBusinessTypeEnum,
-  transformCustomerTypeEnum,
-  transformEstablishmentTypeEnum,
-  transformOperatorTypeEnum,
-  transformWaterSupplyEnum
-} = require("./transformEnums.service");
+const { transformEnumsForService } = require("./transformEnums.service");
 const i18n = require("../utils/i18n/i18n");
 const { establishConnectionToCosmos } = require("../connectors/cosmos.client");
 /**
@@ -130,30 +123,7 @@ const transformDataForNotify = (registration, lcContactConfig, i18n) => {
   flattenedData.establishment_postcode_FD = flattenedData.establishment_postcode
     .replace(" ", "")
     .slice(0, -3);
-  flattenedData.operator_type = transformOperatorTypeEnum(
-    flattenedData.operator_type,
-    registration.submission_language
-  );
-  flattenedData.establishment_type = transformEstablishmentTypeEnum(
-    flattenedData.establishment_type,
-    registration.submission_language
-  );
-  flattenedData.customer_type = transformCustomerTypeEnum(
-    flattenedData.customer_type,
-    registration.submission_language
-  );
-  flattenedData.business_type = transformBusinessTypeEnum(
-    flattenedData.business_type,
-    registration.submission_language
-  );
-  flattenedData.import_export_activities = transformBusinessImportExportEnum(
-    flattenedData.import_export_activities,
-    registration.submission_language
-  );
-  flattenedData.water_supply = transformWaterSupplyEnum(
-    flattenedData.water_supply,
-    registration.submission_language
-  );
+  transformEnumsForService(flattenedData, registration.submission_language);
   flattenedData.declaration1 = i18n.t(flattenedData.declaration1);
   flattenedData.declaration2 = i18n.t(flattenedData.declaration2);
   flattenedData.declaration3 = i18n.t(flattenedData.declaration3);

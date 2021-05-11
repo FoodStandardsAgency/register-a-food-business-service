@@ -8,5 +8,5 @@ npm config set -g registry https://registry.npmjs.org/ && \
 npm config set -g '//registry.npmjs.org/:_authToken' "${NPM_TOKEN}" && \
 npm config ls --long
 
-node src/db/check-connection.js && npm run migrate:local
+node src/db/check-connection.js
 npm run local:start

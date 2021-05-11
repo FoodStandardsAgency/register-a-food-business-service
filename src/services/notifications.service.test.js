@@ -456,19 +456,19 @@ describe("Function: transformDataForNotify", () => {
           i18nUtil
         );
       });
-      it("should return the flattened data with two sets of council details and the enum values to be null", () => {
+      it("should return the flattened data with two sets of council details and the enums unchanged", () => {
         const expectedFormat = {
           establishment_trading_name: "Itsu",
           operator_first_name: "Fred",
-          operator_type: null,
+          operator_type: "Test",
           establishment_postcode: "SW12 9RQ",
           establishment_postcode_FD: "SW12",
-          establishment_type: null,
+          establishment_type: "Test",
           establishment_opening_date: "30 Dec 2017",
-          customer_type: null,
-          business_type: null,
-          import_export_activities: null,
-          water_supply: null,
+          customer_type: "Test",
+          business_type: "Test",
+          import_export_activities: "Test",
+          water_supply: "Test",
           declaration1: "Declaration",
           example: "value",
           local_council_hygiene: "Hygiene council name",

@@ -25,7 +25,7 @@ const sendRequest = async (body) => {
     "client-name": FRONT_END_NAME,
     "registration-data-version": "2.1.0"
   };
-  const res = await fetch(`${apiUrl}/api/registration/createNewRegistration`, {
+  const res = await fetch(`${apiUrl}/api/submissions/createNewRegistration`, {
     method: "POST",
     headers,
     body: JSON.stringify(body)
@@ -41,7 +41,7 @@ const sendDirectRequest = async (body) => {
     "registration-data-version": "1.7.0"
   };
   const res = await fetch(
-    `${apiUrl}/api/registration/v2/createNewDirectRegistration/cardiff`,
+    `${apiUrl}/api/submissions/v2/createNewDirectRegistration/cardiff`,
     {
       method: "POST",
       headers,
