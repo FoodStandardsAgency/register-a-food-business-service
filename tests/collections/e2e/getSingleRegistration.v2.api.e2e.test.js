@@ -68,8 +68,6 @@ describe("Get single registration through API", () => {
   });
 
   describe("Given supplier and invalid requested council", () => {
-    let response;
-
     it("Should return the appropriate error", async () => {
       const requestOptions = {
         uri: `${supplierUrl}/${availableRegistrations[0].fsa_rn}?env=${process.env.NODE_ENV}&local-authority=invalid`,
@@ -80,7 +78,7 @@ describe("Get single registration through API", () => {
       };
 
       try {
-        response = await request(requestOptions);
+        await request(requestOptions);
       } catch (e) {
         expect(e.statusCode).toBe(400);
         expect(e.message).toContain(

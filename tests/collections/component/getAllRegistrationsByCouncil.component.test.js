@@ -157,7 +157,7 @@ describe("GET to /api/collections/:lc", () => {
     });
 
     it("should return the double mode response", () => {
-      expect(response.length).toBe(1);
+      expect(response).toHaveLength(1);
       expect(response[0].establishment.establishment_trading_name).toBe("Itsu");
     });
   });

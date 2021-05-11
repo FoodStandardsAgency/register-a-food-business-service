@@ -5,7 +5,7 @@ const {
   getRegistration,
   getRegistrations,
   updateRegistration
-} = require("../../src/api/registrations-v2/registrations.v2.controller");
+} = require("../../src/api/collections-v2/collections.v2.controller");
 
 const { clearCosmosConnection } = require("../../src/connectors/cosmos.client");
 
