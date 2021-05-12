@@ -2,7 +2,10 @@ const mongodb = require("mongodb");
 const { COSMOSDB_URL } = require("../config");
 const { logEmitter } = require("../services/logging.service");
 const { cachedRegistrationsDouble } = require("./cacheDb/cacheDb.double");
-const { lcConfigCollectionDouble } = require("./configDb/configDb.double");
+const {
+  lcConfigCollectionDouble,
+  supplierCollectionDouble
+} = require("./configDb/configDb.double");
 const { statusCollectionDouble } = require("./status/status-db.double");
 
 let client = undefined;
@@ -19,7 +22,11 @@ const establishConnectionToCosmos = async (dbName, collectionName) => {
       case "registrations":
         return cachedRegistrationsDouble;
       case "config":
-        return lcConfigCollectionDouble;
+        return collectionName === "localAuthorities"
+          ? lcConfigCollectionDouble
+          : collectionName === "suppliers"
+          ? supplierCollectionDouble
+          : {};
       case "status":
         return statusCollectionDouble;
       default:

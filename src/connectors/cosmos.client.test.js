@@ -4,7 +4,10 @@ jest.mock("./configDb/configDb.double");
 const mongodb = require("mongodb");
 const { establishConnectionToCosmos } = require("./cosmos.client");
 const { cachedRegistrationsDouble } = require("./cacheDb/cacheDb.double");
-const { lcConfigCollectionDouble } = require("./configDb/configDb.double");
+const {
+  lcConfigCollectionDouble,
+  supplierCollectionDouble
+} = require("./configDb/configDb.double");
 const { statusCollectionDouble } = require("./status/status-db.double");
 
 describe("Function: establishConnectionToCosmos", () => {
@@ -124,8 +127,14 @@ describe("Function: establishConnectionToCosmos", () => {
         establishConnectionToCosmos("registrations", "collection")
       ).resolves.toEqual(cachedRegistrationsDouble);
       await expect(
-        establishConnectionToCosmos("config", "collection")
+        establishConnectionToCosmos("config", "localAuthorities")
       ).resolves.toEqual(lcConfigCollectionDouble);
+      await expect(
+        establishConnectionToCosmos("config", "suppliers")
+      ).resolves.toEqual(supplierCollectionDouble);
+      await expect(
+        establishConnectionToCosmos("config", "collection")
+      ).resolves.toEqual({});
       await expect(
         establishConnectionToCosmos("status", "collection")
       ).resolves.toEqual(statusCollectionDouble);

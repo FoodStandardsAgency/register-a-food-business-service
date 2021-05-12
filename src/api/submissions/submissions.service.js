@@ -22,7 +22,7 @@ const sendTascomiRegistration = async (registration, localCouncil) => {
 
   logEmitter.emit(
     "functionCall",
-    "registration.service",
+    "submissions.service",
     "sendTascomiRegistration"
   );
 
@@ -63,7 +63,7 @@ const sendTascomiRegistration = async (registration, localCouncil) => {
 
   logEmitter.emit(
     "functionSuccess",
-    "registration.service",
+    "submissions.service",
     "sendTascomiRegistration"
   );
 
@@ -73,7 +73,7 @@ const sendTascomiRegistration = async (registration, localCouncil) => {
 const getRegistrationMetaData = async (councilCode) => {
   logEmitter.emit(
     "functionCall",
-    "registration.service",
+    "submissions.service",
     "getRegistrationMetaData"
   );
 
@@ -107,7 +107,7 @@ const getRegistrationMetaData = async (councilCode) => {
     statusEmitter.emit("setStatus", "mostRecentFsaRnCallSucceeded", true);
     logEmitter.emit(
       "functionSuccess",
-      "registration.service",
+      "submissions.service",
       "getRegistrationMetaData"
     );
     return {
@@ -119,7 +119,7 @@ const getRegistrationMetaData = async (councilCode) => {
     statusEmitter.emit("setStatus", "mostRecentFsaRnCallSucceeded", false);
     logEmitter.emit(
       "functionFail",
-      "registrationService",
+      "submissions.service",
       "getRegistrationMetaData",
       err
     );
@@ -138,7 +138,7 @@ const getLcContactConfigFromArray = async (
 ) => {
   logEmitter.emit(
     "functionCall",
-    "registration.service",
+    "submissions.service",
     "getLcContactConfigFromArray"
   );
 
@@ -188,7 +188,7 @@ const getLcContactConfigFromArray = async (
 
           logEmitter.emit(
             "functionSuccess",
-            "registration.service",
+            "submissions.service",
             "getLcContactConfigFromArray"
           );
 
@@ -199,7 +199,7 @@ const getLcContactConfigFromArray = async (
           newError.message = `A separate standards council config with the code "${urlLcConfig.separate_standards_council}" was expected for "${localCouncilUrl}" but does not exist`;
           logEmitter.emit(
             "functionFail",
-            "registration.service",
+            "submissions.service",
             "getLcContactConfigFromArray",
             newError
           );
@@ -225,7 +225,7 @@ const getLcContactConfigFromArray = async (
 
         logEmitter.emit(
           "functionSuccess",
-          "registration.service",
+          "submissions.service",
           "getLcContactConfigFromArray"
         );
 
@@ -237,7 +237,7 @@ const getLcContactConfigFromArray = async (
       newError.message = `Config for "${localCouncilUrl}" not found`;
       logEmitter.emit(
         "functionFail",
-        "registration.service",
+        "submissions.service",
         "getLcContactConfigFromArray",
         newError
       );
@@ -249,7 +249,7 @@ const getLcContactConfigFromArray = async (
     newError.message = "Local council URL is undefined";
     logEmitter.emit(
       "functionFail",
-      "registration.service",
+      "submissions.service",
       "getLcContactConfigFromArray",
       newError
     );
@@ -258,7 +258,7 @@ const getLcContactConfigFromArray = async (
 };
 
 const getLcContactConfig = async (localCouncilUrl) => {
-  logEmitter.emit("functionCall", "registration.service", "getLcContactConfig");
+  logEmitter.emit("functionCall", "submissions.service", "getLcContactConfig");
 
   if (localCouncilUrl) {
     const allLcConfigData = await getAllLocalCouncilConfig();
@@ -306,7 +306,7 @@ const getLcContactConfig = async (localCouncilUrl) => {
 
           logEmitter.emit(
             "functionSuccess",
-            "registration.service",
+            "submissions.service",
             "getLcContactConfig"
           );
 
@@ -317,7 +317,7 @@ const getLcContactConfig = async (localCouncilUrl) => {
           newError.message = `A separate standards council config with the code "${urlLcConfig.separate_standards_council}" was expected for "${localCouncilUrl}" but does not exist`;
           logEmitter.emit(
             "functionFail",
-            "registration.service",
+            "submissions.service",
             "getLcContactConfig",
             newError
           );
@@ -343,7 +343,7 @@ const getLcContactConfig = async (localCouncilUrl) => {
 
         logEmitter.emit(
           "functionSuccess",
-          "registration.service",
+          "submissions.service",
           "getLcContactConfig"
         );
 
@@ -355,7 +355,7 @@ const getLcContactConfig = async (localCouncilUrl) => {
       newError.message = `Config for "${localCouncilUrl}" not found`;
       logEmitter.emit(
         "functionFail",
-        "registration.service",
+        "submissions.service",
         "getLcContactConfig",
         newError
       );
@@ -367,7 +367,7 @@ const getLcContactConfig = async (localCouncilUrl) => {
     newError.message = "Local council URL is undefined";
     logEmitter.emit(
       "functionFail",
-      "registration.service",
+      "submissions.service",
       "getLcContactConfig",
       newError
     );
@@ -376,7 +376,7 @@ const getLcContactConfig = async (localCouncilUrl) => {
 };
 
 const getLcAuth = async (localCouncilUrl) => {
-  logEmitter.emit("functionCall", "registration.service", "getLcAuth");
+  logEmitter.emit("functionCall", "submissions.service", "getLcAuth");
 
   if (localCouncilUrl) {
     const allLcConfigData = await getAllLocalCouncilConfig();
@@ -386,7 +386,7 @@ const getLcAuth = async (localCouncilUrl) => {
     );
 
     if (urlLcConfig) {
-      logEmitter.emit("functionSuccess", "registration.service", "getLcAuth");
+      logEmitter.emit("functionSuccess", "submissions.service", "getLcAuth");
       return urlLcConfig.auth;
     } else {
       const newError = new Error();
@@ -394,7 +394,7 @@ const getLcAuth = async (localCouncilUrl) => {
       newError.message = `Config for "${localCouncilUrl}" not found`;
       logEmitter.emit(
         "functionFail",
-        "registration.service",
+        "submissions.service",
         "getLcAuth",
         newError
       );
@@ -406,7 +406,7 @@ const getLcAuth = async (localCouncilUrl) => {
     newError.message = "Local council URL is undefined";
     logEmitter.emit(
       "functionFail",
-      "registration.service",
+      "submissions.service",
       "getLcAuth",
       newError
     );
