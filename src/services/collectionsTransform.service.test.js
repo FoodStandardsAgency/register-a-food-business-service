@@ -1,6 +1,4 @@
-const {
-  transformRegForCollections
-} = require("./collectionsTransform.service");
+const { transformRegForCollection } = require("./collectionsTransform.service");
 
 const fullRegistration = {
   "fsa-rn": "PQQK8Q-SN9N8C-4ADETF",
@@ -12,7 +10,7 @@ const fullRegistration = {
       establishment_trading_name: "Itsu",
       establishment_opening_date: "2018-06-07",
       establishment_primary_number: "329857245",
-      establishment_secondary_number: "84345245",
+      establishment_secondary_number: "",
       establishment_email: "django@email.com"
     },
     operator: {
@@ -50,14 +48,14 @@ const fullRegistration = {
       opening_day_thursday: true,
       opening_day_friday: true,
       opening_day_saturday: true,
-      opening_day_sunday: true,
+      opening_day_sunday: false,
       opening_hours_monday: "9:30 - 19:00",
       opening_hours_tuesday: "09:30 - 19:00",
       opening_hours_wednesday: "9:30am - 7pm",
       opening_hours_thursday: "0930 - 1900",
       opening_hours_friday: "9:30 to 19:00",
       opening_hours_saturday: "09:30 to 19:00",
-      opening_hours_sunday: "From 9:30 to 19:00"
+      opening_hours_sunday: null
     },
     premise: {
       establishment_address_line_1: "12",
@@ -106,11 +104,11 @@ let result;
 
 describe("Function: transformRegistration", () => {
   beforeEach(() => {
-    result = transformRegForCollections(shortRegistration);
+    result = transformRegForCollection(shortRegistration);
   });
   describe("given a registration with establishment and metadata supplied", () => {
     beforeEach(() => {
-      result = transformRegForCollections(fullRegistration);
+      result = transformRegForCollection(fullRegistration);
     });
     it("should return the establishment object with the correct structure", () => {
       expect(result.establishment.establishment_details).not.toBeDefined();
@@ -142,19 +140,37 @@ describe("Function: transformRegistration", () => {
       expect(result.metadata).toBe(fullRegistration.declaration);
     });
     it("should return supplied establishment fields populated and the rest as null", () => {
-      const fields = Object.keys(fullRegistration.establishment.activities);
+      const fields = Object.keys(fullRegistration.establishment.premise);
       fields.forEach((field) => {
-        fullRegistration.establishment.activities[field]
-          ? expect(result.establishment.activities[field]).toBe(
-              fullRegistration.establishment.activities[field]
+        fullRegistration.establishment.premise[field]
+          ? expect(result.establishment.premise[field]).toBe(
+              fullRegistration.establishment.premise[field]
             )
-          : expect(result.establishment.activities[field]).toBeNull();
+          : expect(result.establishment.premise[field]).toBeNull();
       });
+    });
+  });
+  describe("given partners isn't populated", () => {
+    beforeEach(() => {
+      result = transformRegForCollection(fullRegistration);
+    });
+    it("should return an empty array", () => {
+      expect(result.establishment.operator.partners).toStrictEqual([]);
+    });
+  });
+  describe("given opening days are false", () => {
+    beforeEach(() => {
+      result = transformRegForCollection(fullRegistration);
+    });
+    it("should return the opening days as false, not null", () => {
+      expect(result.establishment.activities.opening_day_sunday).toStrictEqual(
+        false
+      );
     });
   });
   describe("given a registration without establishment or metadata supplied", () => {
     beforeEach(() => {
-      result = transformRegForCollections(shortRegistration);
+      result = transformRegForCollection(shortRegistration);
     });
     it("should return empty establishment and metadata objects", () => {
       expect(result.establishment).toEqual({});
@@ -165,7 +181,7 @@ describe("Function: transformRegistration", () => {
     beforeEach(() => {
       shortRegistration.hygiene = {};
       shortRegistration.hygiene.local_council = "West Dorset Council";
-      result = transformRegForCollections(shortRegistration);
+      result = transformRegForCollection(shortRegistration);
     });
     afterEach(() => {
       delete shortRegistration.hygiene;
@@ -176,7 +192,7 @@ describe("Function: transformRegistration", () => {
   });
   describe("given there is not a seperate standards council", () => {
     beforeEach(() => {
-      result = transformRegForCollections(shortRegistration);
+      result = transformRegForCollection(shortRegistration);
     });
     it("should populate council from hygieneAndStandards.local_council", () => {
       expect(result.council).toBe(
@@ -186,7 +202,7 @@ describe("Function: transformRegistration", () => {
   });
   describe("given collected_at is populated", () => {
     beforeEach(() => {
-      result = transformRegForCollections(shortRegistration);
+      result = transformRegForCollection(shortRegistration);
     });
     it("should convert it to an ISO String", () => {
       expect(result.collected_at).toBe("2018-10-30T14:51:47.303Z");
@@ -194,9 +210,9 @@ describe("Function: transformRegistration", () => {
   });
   describe("given the collected_at is null", () => {
     beforeEach(() => {
-      result = transformRegForCollections(fullRegistration);
+      result = transformRegForCollection(fullRegistration);
     });
-    it("should convert it to an ISO String", () => {
+    it("should stay null", () => {
       expect(result.collected_at).toBeNull();
     });
   });

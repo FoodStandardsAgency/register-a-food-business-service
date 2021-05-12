@@ -83,30 +83,41 @@ const transformRegForCollections = (registration) => {
       let premise = {};
 
       establishment_keys.forEach((key) => {
-        establishment[key] = registration.establishment.establishment_details[
-          key
-        ]
-          ? registration.establishment.establishment_details[key]
-          : null;
+        establishment[key] =
+          registration.establishment.establishment_details[key] ||
+          registration.establishment.establishment_details[key] === "" ||
+          registration.establishment.establishment_details[key] === false
+            ? registration.establishment.establishment_details[key]
+            : null;
       });
+
       operator_keys.forEach((key) => {
-        operator[key] = registration.establishment.operator[key]
-          ? registration.establishment.operator[key]
-          : key === "partners"
-          ? []
-          : null;
+        operator[key] =
+          registration.establishment.operator[key] ||
+          registration.establishment.operator[key] === "" ||
+          registration.establishment.operator[key] === false
+            ? registration.establishment.operator[key]
+            : key === "partners"
+            ? []
+            : null;
       });
 
       activities_keys.forEach((key) => {
-        activities[key] = registration.establishment.activities[key]
-          ? registration.establishment.activities[key]
-          : null;
+        activities[key] =
+          registration.establishment.activities[key] ||
+          registration.establishment.activities[key] === "" ||
+          registration.establishment.activities[key] === false
+            ? registration.establishment.activities[key]
+            : null;
       });
 
       premise_keys.forEach((key) => {
-        premise[key] = registration.establishment.premise[key]
-          ? registration.establishment.premise[key]
-          : null;
+        premise[key] =
+          registration.establishment.premise[key] ||
+          registration.establishment.premise[key] === "" ||
+          registration.establishment.premise[key] === false
+            ? registration.establishment.premise[key]
+            : null;
       });
 
       Object.assign(
