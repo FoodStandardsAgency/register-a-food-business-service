@@ -5,7 +5,7 @@ const mockRegistrationData = require("./mock-registration-data.json");
 
 const baseUrl = process.env.COMPONENT_TEST_BASE_URL || "http://localhost:4000";
 const url = `${baseUrl}/api/collections/cardiff`;
-// const submitUrl = process.env.SERVICE_BASE_URL;
+const submitUrl = process.env.SERVICE_BASE_URL || "http://localhost:4000";
 let submitResponses = [];
 
 jest.setTimeout(30000);
@@ -14,7 +14,7 @@ const frontendSubmitRegistration = async () => {
   try {
     for (let index in mockRegistrationData) {
       const requestOptions = {
-        uri: `${baseUrl}/api/submissions/createNewRegistration`,
+        uri: `${submitUrl}/api/submissions/createNewRegistration`,
         method: "POST",
         json: true,
         body: mockRegistrationData[index],
