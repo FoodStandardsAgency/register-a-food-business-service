@@ -3,7 +3,7 @@ const request = require("request-promise-native");
 const { logEmitter } = require("../../../src/services/logging.service");
 const mockRegistrationData = require("./mock-registration-data.json");
 
-const baseUrl = process.env.API_URL || "http://localhost:4000";
+const baseUrl = process.env.COMPONENT_TEST_BASE_URL || "http://localhost:4000";
 const url = `${baseUrl}/api/collections/cardiff`;
 // const submitUrl = process.env.SERVICE_BASE_URL;
 let submitResponse;
