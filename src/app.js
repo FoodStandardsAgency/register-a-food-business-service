@@ -1,6 +1,4 @@
 const cls = require("cls-hooked");
-const packageJson = require("../package.json");
-
 const appInsights = require("applicationinsights");
 if (
   "APPINSIGHTS_INSTRUMENTATIONKEY" in process.env &&
