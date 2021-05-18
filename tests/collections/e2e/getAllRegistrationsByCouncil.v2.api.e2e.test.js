@@ -113,9 +113,7 @@ describe("Retrieve all registrations through API", () => {
         await request(requestOptions);
       } catch (e) {
         expect(e.statusCode).toBe(400);
-        expect(e.message).toContain(
-          "requested local-authorities must only contain authorized local authorities"
-        );
+        expect(e.message).toContain("One of the supplied options is invalid");
       }
     });
   });
@@ -202,11 +200,10 @@ describe("Retrieve all registrations through API", () => {
 
     it("should return the options validation error", () => {
       expect(response.statusCode).toBe(400);
-      expect(response.error.errorCode).toBe("3");
+      expect(response.error.errorCode).toBe("17");
       expect(response.error.developerMessage).toBe(
         "One of the supplied options is invalid"
       );
-      expect(response.error.rawError).toBe("new option must be a boolean");
     });
   });
 });
