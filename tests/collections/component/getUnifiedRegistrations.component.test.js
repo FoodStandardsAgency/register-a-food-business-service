@@ -160,7 +160,7 @@ describe("GET to /api/collections/unified", () => {
 
     it("should return the options validation error", () => {
       expect(response.statusCode).toBe(400);
-      expect(response.error.errorCode).toBe("17");
+      expect(response.error.errorCode).toBe("3");
       expect(response.error.developerMessage).toBe(
         "One of the supplied options is invalid"
       );
@@ -183,7 +183,7 @@ describe("GET to /api/collections/unified", () => {
 
     it("should return the options validation error", () => {
       expect(response.statusCode).toBe(400);
-      expect(response.error.errorCode).toBe("17");
+      expect(response.error.errorCode).toBe("3");
       expect(response.error.developerMessage).toBe(
         "One of the supplied options is invalid"
       );

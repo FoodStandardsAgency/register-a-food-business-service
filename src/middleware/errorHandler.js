@@ -65,7 +65,7 @@ const errorHandler = (err, req, res, next) => {
 
       if (errorDetail.name === "optionsValidationError") {
         errorDetail.rawError = err.rawError;
-      } 
+      }
 
       if (res) {
         res.status(errorDetail.statusCode);
