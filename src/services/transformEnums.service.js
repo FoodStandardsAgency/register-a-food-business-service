@@ -63,10 +63,11 @@ const applyEnumTransformsForCollections = (registration, transform) => {
         customerTypeEnum,
         registration.establishment.activities.customer_type
       );
-      registration.establishment.activities.import_export_activities = transform(
-        importExportEnum,
-        registration.establishment.activities.import_export_activities
-      );
+      registration.establishment.activities.import_export_activities =
+        transform(
+          importExportEnum,
+          registration.establishment.activities.import_export_activities
+        );
       registration.establishment.activities.water_supply = transform(
         waterSupplyEnum,
         registration.establishment.activities.water_supply
@@ -75,9 +76,10 @@ const applyEnumTransformsForCollections = (registration, transform) => {
         businessTypeEnum,
         registration.establishment.activities.business_type
       );
-      registration.establishment.activities.business_type = transformV2BusinessTypeString(
-        registration.establishment.activities.business_type
-      );
+      registration.establishment.activities.business_type =
+        transformV2BusinessTypeString(
+          registration.establishment.activities.business_type
+        );
     }
   }
 };
