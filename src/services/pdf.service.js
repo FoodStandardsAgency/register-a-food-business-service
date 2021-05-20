@@ -47,11 +47,10 @@ const transformDataForPdf = (registrationData, lcContactConfig) => {
       ? registrationData.submission_language
       : "en"
   );
-  registrationData.establishment.establishment_details.establishment_opening_date =
-    moment(
-      registrationData.establishment.establishment_details
-        .establishment_opening_date
-    ).format("DD MMM YYYY");
+  registrationData.establishment.establishment_details.establishment_opening_date = moment(
+    registrationData.establishment.establishment_details
+      .establishment_opening_date
+  ).format("DD MMM YYYY");
 
   registrationData.reg_submission_date = moment(
     registrationData.reg_submission_date

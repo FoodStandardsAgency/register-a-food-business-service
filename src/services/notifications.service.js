@@ -85,11 +85,10 @@ const transformDataForNotify = (registration, lcContactConfig, i18n) => {
   moment.locale(
     registration.submission_language ? registration.submission_language : "en"
   );
-  registrationClone.establishment.establishment_details.establishment_opening_date =
-    moment(
-      registrationClone.establishment.establishment_details
-        .establishment_opening_date
-    ).format("DD MMM YYYY");
+  registrationClone.establishment.establishment_details.establishment_opening_date = moment(
+    registrationClone.establishment.establishment_details
+      .establishment_opening_date
+  ).format("DD MMM YYYY");
 
   registrationClone.reg_submission_date = moment(
     registrationClone.reg_submission_date
