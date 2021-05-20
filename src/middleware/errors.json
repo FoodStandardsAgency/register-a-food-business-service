@@ -28,32 +28,22 @@
     "statusCode": 400
   },
   {
-    "name": "SequelizeConnectionError",
+    "name": "optionsValidationError",
+    "code": "3",
+    "developerMessage": "One of the supplied options is invalid",
+    "statusCode": 400
+  },
+  {
+    "name": "updateRegistrationNotFoundError",
     "code": "4",
-    "developerMessage": "Could not make connection to Sequelize, check authentication rules on database and credentials provided to app",
-    "userMessages": "",
-    "statusCode": 500
+    "developerMessage": "The registration application reference specified could not be found for the council requested. Please check this reference is definitely associated with this council",
+    "statusCode": 404
   },
   {
-    "name": "notifyMissingKey",
+    "name": "getRegistrationNotFoundError",
     "code": "5",
-    "developerMessage": "Key for notify service missing, check credentials provided to app",
-    "userMessages": "",
-    "statusCode": 500
-  },
-  {
-    "name": "notifyInvalidTemplate",
-    "code": "6",
-    "developerMessage": "Notify template ID is not valid, check credentials provided to app. Raw error:",
-    "userMessages": "",
-    "statusCode": 500
-  },
-  {
-    "name": "notifyMissingPersonalisation",
-    "code": "7",
-    "developerMessage": "Notify personalisation is missing, check data sent to Notify API. Raw error:",
-    "userMessages": "",
-    "statusCode": 500
+    "developerMessage": "The registration application reference specified could not be found for the council requested. Please check this reference is definitely associated with this council",
+    "statusCode": 404
   },
   {
     "name": "clientSecretNotFound",
@@ -118,22 +108,34 @@
     "userMessages": "",
     "statusCode": 400
   },
+
+
   {
-    "name": "optionsValidationError",
-    "code": "17",
-    "developerMessage": "One of the supplied options is invalid",
-    "statusCode": 400
+    "name": "SequelizeConnectionError",
+    "code": "94",
+    "developerMessage": "Could not make connection to Sequelize, check authentication rules on database and credentials provided to app",
+    "userMessages": "",
+    "statusCode": 500
   },
   {
-    "name": "updateRegistrationNotFoundError",
-    "code": "18",
-    "developerMessage": "The registration application reference specified could not be found for the council requested. Please check this reference is definitely associated with this council",
-    "statusCode": 404
+    "name": "notifyMissingKey",
+    "code": "95",
+    "developerMessage": "Key for notify service missing, check credentials provided to app",
+    "userMessages": "",
+    "statusCode": 500
   },
   {
-    "name": "getRegistrationNotFoundError",
-    "code": "19",
-    "developerMessage": "The registration application reference specified could not be found for the council requested. Please check this reference is definitely associated with this council",
-    "statusCode": 404
+    "name": "notifyInvalidTemplate",
+    "code": "96",
+    "developerMessage": "Notify template ID is not valid, check credentials provided to app. Raw error:",
+    "userMessages": "",
+    "statusCode": 500
+  },
+  {
+    "name": "notifyMissingPersonalisation",
+    "code": "97",
+    "developerMessage": "Notify personalisation is missing, check data sent to Notify API. Raw error:",
+    "userMessages": "",
+    "statusCode": 500
   }
 ]

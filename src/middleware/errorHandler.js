@@ -62,12 +62,19 @@ const errorHandler = (err, req, res, next) => {
       if (errorDetail.name === "missingRequiredHeader") {
         errorDetail.developerMessage = `${errorDetail.developerMessage} ${err.message}`;
       }
+
+      if (errorDetail.name === "optionsValidationError") {
+        errorDetail.rawError = err.rawError;
+      } 
+
       if (res) {
         res.status(errorDetail.statusCode);
         res.send({
           errorCode: errorDetail.code,
           developerMessage: errorDetail.developerMessage,
-          userMessages: errorDetail.userMessages
+          userMessages: errorDetail.userMessages,
+          statusCode: errorDetail.statusCode,
+          rawError: errorDetail.rawError || undefined
         });
       }
     } else {
