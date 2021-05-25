@@ -111,13 +111,6 @@
 
 
   {
-    "name": "SequelizeConnectionError",
-    "code": "94",
-    "developerMessage": "Could not make connection to Sequelize, check authentication rules on database and credentials provided to app",
-    "userMessages": "",
-    "statusCode": 500
-  },
-  {
     "name": "notifyMissingKey",
     "code": "95",
     "developerMessage": "Key for notify service missing, check credentials provided to app",

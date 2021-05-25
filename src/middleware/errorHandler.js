@@ -9,9 +9,9 @@
 // 2 - TascomiRefNumber failure
 // 3 - validation error
 // 4 - sequelizeConnectionError
-// 5 - notifyMissingKey
-// 6 - notifyInvalidTemplate
-// 7 - notifyMissingPersonalisation
+// 95 - notifyMissingKey
+// 96 - notifyInvalidTemplate
+// 97 - notifyMissingPersonalisation
 // 8 - mongoConnectionError
 
 const { logger } = require("../services/winston");
