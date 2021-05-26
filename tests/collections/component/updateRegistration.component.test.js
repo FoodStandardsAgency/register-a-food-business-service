@@ -80,7 +80,7 @@ describe("PUT to /api/collections/:lc/:fsa_rn", () => {
 
     it("should return the getRegistrationNotFound error", () => {
       expect(response.statusCode).toBe(404);
-      expect(response.error.errorCode).toBe("18");
+      expect(response.error.errorCode).toBe("4");
       expect(response.error.developerMessage).toBe(
         "The registration application reference specified could not be found for the council requested. Please check this reference is definitely associated with this council"
       );
@@ -106,7 +106,7 @@ describe("PUT to /api/collections/:lc/:fsa_rn", () => {
 
     it("should return the options validation error", () => {
       expect(response.statusCode).toBe(400);
-      expect(response.error.errorCode).toBe("17");
+      expect(response.error.errorCode).toBe("3");
       expect(response.error.developerMessage).toBe(
         "One of the supplied options is invalid"
       );

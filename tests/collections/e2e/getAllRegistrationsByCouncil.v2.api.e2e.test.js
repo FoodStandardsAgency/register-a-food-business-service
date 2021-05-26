@@ -200,10 +200,11 @@ describe("Retrieve all registrations through API", () => {
 
     it("should return the options validation error", () => {
       expect(response.statusCode).toBe(400);
-      expect(response.error.errorCode).toBe("17");
+      expect(response.error.errorCode).toBe("3");
       expect(response.error.developerMessage).toBe(
         "One of the supplied options is invalid"
       );
+      expect(response.error.rawError).toBe("new option must be a boolean");
     });
   });
 });
