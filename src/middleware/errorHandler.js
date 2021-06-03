@@ -9,9 +9,9 @@
 // 2 - TascomiRefNumber failure
 // 3 - validation error
 // 4 - sequelizeConnectionError
-// 5 - notifyMissingKey
-// 6 - notifyInvalidTemplate
-// 7 - notifyMissingPersonalisation
+// 95 - notifyMissingKey
+// 96 - notifyInvalidTemplate
+// 97 - notifyMissingPersonalisation
 // 8 - mongoConnectionError
 
 const { logger } = require("../services/winston");
@@ -62,12 +62,19 @@ const errorHandler = (err, req, res, next) => {
       if (errorDetail.name === "missingRequiredHeader") {
         errorDetail.developerMessage = `${errorDetail.developerMessage} ${err.message}`;
       }
+
+      if (errorDetail.name === "optionsValidationError") {
+        errorDetail.rawError = err.rawError;
+      }
+
       if (res) {
         res.status(errorDetail.statusCode);
         res.send({
           errorCode: errorDetail.code,
           developerMessage: errorDetail.developerMessage,
-          userMessages: errorDetail.userMessages
+          userMessages: errorDetail.userMessages,
+          statusCode: errorDetail.statusCode,
+          rawError: errorDetail.rawError || undefined
         });
       }
     } else {

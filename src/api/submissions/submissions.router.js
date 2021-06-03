@@ -1,11 +1,11 @@
 const { Router } = require("express");
-const registrationController = require("./registration.controller");
+const submissionsController = require("./submissions.controller");
 const { createRegistrationAuth } = require("../../middleware/authHandler");
 const { logEmitter } = require("../../services/logging.service");
 const { statusEmitter } = require("../../services/statusEmitter.service");
-const { registrationDouble } = require("./registration.double");
+const { registrationDouble } = require("./submissions.double");
 
-const registrationRouter = () => {
+const submissionsRouter = () => {
   const router = Router();
 
   router.post(
@@ -14,7 +14,7 @@ const registrationRouter = () => {
     async (req, res, next) => {
       logEmitter.emit(
         "functionCall",
-        "registration.router",
+        "submissions.router",
         "createNewRegistration"
       );
       try {
@@ -30,7 +30,7 @@ const registrationRouter = () => {
           throw missingHeaderError;
         }
 
-        const response = await registrationController.createNewRegistration(
+        const response = await submissionsController.createNewRegistration(
           req.body.registration,
           req.body.local_council_url,
           req.body.submission_language,
@@ -50,7 +50,7 @@ const registrationRouter = () => {
         );
         logEmitter.emit(
           "functionSuccess",
-          "registration.router",
+          "submissions.router",
           "createNewRegistration"
         );
 
@@ -58,7 +58,7 @@ const registrationRouter = () => {
       } catch (err) {
         logEmitter.emit(
           "errorWith",
-          "registration.router",
+          "submissions.router",
           "createNewRegistration",
           req.body.registration
         );
@@ -70,7 +70,7 @@ const registrationRouter = () => {
         );
         logEmitter.emit(
           "functionFail",
-          "registration.router",
+          "submissions.router",
           "createNewRegistration",
           err
         );
@@ -85,7 +85,7 @@ const registrationRouter = () => {
     async (req, res, next) => {
       logEmitter.emit(
         "functionCall",
-        "registration.router",
+        "submissions.router",
         "createNewDirectRegistration"
       );
       try {
@@ -102,7 +102,7 @@ const registrationRouter = () => {
         if (req.headers["double-mode"]) {
           response = registrationDouble(req.headers["double-mode"]);
         } else {
-          response = await registrationController.createNewDirectRegistration(
+          response = await submissionsController.createNewDirectRegistration(
             req.body,
             options
           );
@@ -115,14 +115,14 @@ const registrationRouter = () => {
         );
         logEmitter.emit(
           "functionSuccess",
-          "registration.router",
+          "submissions.router",
           "createNewDirectRegistration"
         );
         res.send(response);
       } catch (err) {
         logEmitter.emit(
           "errorWith",
-          "registration.router",
+          "submissions.router",
           "createNewDirectRegistration",
           req.body
         );
@@ -134,7 +134,7 @@ const registrationRouter = () => {
         );
         logEmitter.emit(
           "functionFail",
-          "registration.router",
+          "submissions.router",
           "createNewDirectRegistration",
           err
         );
@@ -146,4 +146,4 @@ const registrationRouter = () => {
   return router;
 };
 
-module.exports = { registrationRouter };
+module.exports = { submissionsRouter };

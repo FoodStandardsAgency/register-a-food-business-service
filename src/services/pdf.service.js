@@ -18,14 +18,7 @@ const {
   createGuidanceLinksSection
 } = require("./pdf-styles");
 
-const {
-  transformBusinessImportExportEnum,
-  transformBusinessTypeEnum,
-  transformCustomerTypeEnum,
-  transformEstablishmentTypeEnum,
-  transformOperatorTypeEnum,
-  transformWaterSupplyEnum
-} = require("./transformEnums.service");
+const { transformEnumsForService } = require("./transformEnums.service");
 
 /**
  * Function that does data manipulation to return an object with data in the needed format
@@ -63,30 +56,9 @@ const transformDataForPdf = (registrationData, lcContactConfig) => {
     registrationData.reg_submission_date
   ).format("DD MMM YYYY");
 
-  operator.operator_type = transformOperatorTypeEnum(
-    operator.operator_type,
-    registrationData.submission_language
-  );
-  premise.establishment_type = transformEstablishmentTypeEnum(
-    premise.establishment_type,
-    registrationData.submission_language
-  );
-  activities.customer_type = transformCustomerTypeEnum(
-    activities.customer_type,
-    registrationData.submission_language
-  );
-  activities.business_type = transformBusinessTypeEnum(
-    activities.business_type,
-    registrationData.submission_language
-  );
-  activities.import_export_activities = transformBusinessImportExportEnum(
-    activities.import_export_activities,
-    registrationData.submission_language
-  );
-  activities.water_supply = transformWaterSupplyEnum(
-    activities.water_supply,
-    registrationData.submission_language
-  );
+  transformEnumsForService(operator, registrationData.submission_language);
+  transformEnumsForService(premise, registrationData.submission_language);
+  transformEnumsForService(activities, registrationData.submission_language);
 
   const pdfData = {
     operator,

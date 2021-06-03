@@ -8,7 +8,7 @@ const { success } = require("../../utils/express/response");
 const {
   sendTascomiRegistration,
   getLcContactConfigFromArray
-} = require("../registration/registration.service");
+} = require("../submissions/submissions.service");
 
 const {
   findOneById,
