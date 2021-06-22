@@ -13,7 +13,7 @@ describe("Get single registration through API", () => {
   let availableRegistrations;
   beforeAll(async () => {
     const requestOptions = {
-      uri: `${cardiffUrl}?env=${process.env.NODE_ENV}`,
+      uri: `${cardiffUrl}?env=${process.env.ENVIRONMENT_DESCRIPTION}`,
       json: true,
       headers: {
         "Ocp-Apim-Subscription-Key": cardiffAPIKey
@@ -26,7 +26,7 @@ describe("Get single registration through API", () => {
     let response;
     beforeEach(async () => {
       const update = {
-        uri: `${cardiffUrl}/${availableRegistrations[0].fsa_rn}?env=${process.env.NODE_ENV}`,
+        uri: `${cardiffUrl}/${availableRegistrations[0].fsa_rn}?env=${process.env.ENVIRONMENT_DESCRIPTION}`,
         json: true,
         method: "get",
         headers: {
@@ -49,7 +49,7 @@ describe("Get single registration through API", () => {
     let response;
     beforeEach(async () => {
       const requestOptions = {
-        uri: `${supplierUrl}/${availableRegistrations[0].fsa_rn}?env=${process.env.NODE_ENV}&local-authority=${supplierValidCouncils}`,
+        uri: `${supplierUrl}/${availableRegistrations[0].fsa_rn}?env=${process.env.ENVIRONMENT_DESCRIPTION}&local-authority=${supplierValidCouncils}`,
         json: true,
         headers: {
           "Ocp-Apim-Subscription-Key": supplierAPIKey
@@ -70,7 +70,7 @@ describe("Get single registration through API", () => {
   describe("Given supplier and invalid requested council", () => {
     it("Should return the appropriate error", async () => {
       const requestOptions = {
-        uri: `${supplierUrl}/${availableRegistrations[0].fsa_rn}?env=${process.env.NODE_ENV}&local-authority=invalid`,
+        uri: `${supplierUrl}/${availableRegistrations[0].fsa_rn}?env=${process.env.ENVIRONMENT_DESCRIPTION}&local-authority=invalid`,
         json: true,
         headers: {
           "Ocp-Apim-Subscription-Key": supplierAPIKey
@@ -93,7 +93,7 @@ describe("Get single registration through API", () => {
     beforeEach(async () => {
       const requestOptions = {
         method: "put",
-        uri: `${cardiffUrl}/${availableRegistrations[0].fsa_rn}?env=${process.env.NODE_ENV}`,
+        uri: `${cardiffUrl}/${availableRegistrations[0].fsa_rn}?env=${process.env.ENVIRONMENT_DESCRIPTION}`,
         json: true,
         headers: {
           "Ocp-Apim-Subscription-Key": "incorrectKey"

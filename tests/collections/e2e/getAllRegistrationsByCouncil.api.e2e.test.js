@@ -11,7 +11,7 @@ describe("Retrieve all registrations through API", () => {
     let response;
     beforeEach(async () => {
       const requestOptions = {
-        uri: `${cardiffUrl}?env=${process.env.NODE_ENV}`,
+        uri: `${cardiffUrl}?env=${process.env.ENVIRONMENT_DESCRIPTION}`,
         json: true,
         resolveWithFullResponse: true,
         headers: {
@@ -33,7 +33,7 @@ describe("Retrieve all registrations through API", () => {
     let response;
     beforeEach(async () => {
       const requestOptions = {
-        uri: `${baseUrl}incorrectAuthority?env=${process.env.NODE_ENV}`,
+        uri: `${baseUrl}incorrectAuthority?env=${process.env.ENVIRONMENT_DESCRIPTION}`,
         json: true,
         headers: {
           "Ocp-Apim-Subscription-Key": cardiffAPIKey
@@ -57,7 +57,7 @@ describe("Retrieve all registrations through API", () => {
     let response;
     beforeEach(async () => {
       const requestOptions = {
-        uri: `${cardiffUrl}?env=${process.env.NODE_ENV}`,
+        uri: `${cardiffUrl}?env=${process.env.ENVIRONMENT_DESCRIPTION}`,
         json: true,
         headers: {
           "Ocp-Apim-Subscription-Key": "incorrectKey"
@@ -78,7 +78,7 @@ describe("Retrieve all registrations through API", () => {
     let response;
     beforeEach(async () => {
       const requestOptions = {
-        uri: `${cardiffUrl}?env=${process.env.NODE_ENV}`,
+        uri: `${cardiffUrl}?env=${process.env.ENVIRONMENT_DESCRIPTION}`,
         json: true
       };
       await request(requestOptions).catch(function (body) {
@@ -98,7 +98,7 @@ describe("Retrieve all registrations through API", () => {
     let response;
     beforeEach(async () => {
       const requestOptions = {
-        uri: `${cardiffUrl}?new=alskdfj&env=${process.env.NODE_ENV}`,
+        uri: `${cardiffUrl}?new=alskdfj&env=${process.env.ENVIRONMENT_DESCRIPTION}`,
         json: true,
         headers: {
           "Ocp-Apim-Subscription-Key": cardiffAPIKey
