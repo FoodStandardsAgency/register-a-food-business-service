@@ -1,5 +1,3 @@
-process.env.NODE_ENV;
-
 require("dotenv").config();
 const request = require("request-promise-native");
 
@@ -17,7 +15,7 @@ describe("Retrieve all registrations through API", () => {
       after.setDate(after.getDate() - 7);
       const requestOptions = {
         uri: `${unifiedUrl}?before=${before.toISOString()}&after=${after.toISOString()}&env=${
-          process.env.NODE_ENV
+          process.env.ENVIRONMENT_DESCRIPTION
         }`,
         json: true,
         resolveWithFullResponse: true,
@@ -44,7 +42,7 @@ describe("Retrieve all registrations through API", () => {
       after.setDate(after.getDate() - 5);
       const requestOptions = {
         uri: `${unifiedUrl}?before=${before.toISOString()}&after=${after.toISOString()}&env=${
-          process.env.NODE_ENV
+          process.env.ENVIRONMENT_DESCRIPTION
         }`,
         json: true,
         resolveWithFullResponse: true,
@@ -72,7 +70,7 @@ describe("Retrieve all registrations through API", () => {
       after.setDate(after.getDate() - 5);
       const requestOptions = {
         uri: `${unifiedUrl}?before=${before.toISOString()}&after=${after.toISOString()}&env=${
-          process.env.NODE_ENV
+          process.env.ENVIRONMENT_DESCRIPTION
         }`,
         json: true
       };
@@ -96,7 +94,7 @@ describe("Retrieve all registrations through API", () => {
       const before = new Date();
       const requestOptions = {
         uri: `${unifiedUrl}?before=${before.toISOString()}&after=dfgdfggfgf&env=${
-          process.env.NODE_ENV
+          process.env.ENVIRONMENT_DESCRIPTION
         }`,
         json: true,
         headers: {

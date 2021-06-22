@@ -64,7 +64,7 @@ describe("Submit a single registration through the API as a council", () => {
     beforeAll(async () => {
       //Submit registration to registration API.
       const postRequestOptions = {
-        uri: `${highgardenUrl}?env=${process.env.NODE_ENV}`,
+        uri: `${highgardenUrl}?env=${process.env.ENVIRONMENT_DESCRIPTION}`,
         json: true,
         method: "post",
         headers: {
@@ -75,7 +75,7 @@ describe("Submit a single registration through the API as a council", () => {
       postResponse = await request(postRequestOptions);
       //Retrieve registration from collections service
       const getRequestOptions = {
-        uri: `${highgardenUrl}/${postResponse["fsa-rn"]}?env=${process.env.NODE_ENV}`,
+        uri: `${highgardenUrl}/${postResponse["fsa-rn"]}?env=${process.env.ENVIRONMENT_DESCRIPTION}`,
         json: true,
         method: "get",
         headers: {
@@ -108,7 +108,7 @@ describe("Submit a single registration through the API as a council", () => {
     let response;
     beforeEach(async () => {
       const requestOptions = {
-        uri: `${highgardenUrl}?env=${process.env.NODE_ENV}`,
+        uri: `${highgardenUrl}?env=${process.env.ENVIRONMENT_DESCRIPTION}`,
         json: true,
         method: "post",
         headers: {
@@ -132,7 +132,7 @@ describe("Submit a single registration through the API as a council", () => {
     const purbeckUrl = `${baseUrl}purbeck`;
     beforeEach(async () => {
       const requestOptions = {
-        uri: `${purbeckUrl}?env=${process.env.NODE_ENV}`,
+        uri: `${purbeckUrl}?env=${process.env.ENVIRONMENT_DESCRIPTION}`,
         json: true,
         method: "post",
         headers: {
@@ -157,7 +157,7 @@ describe("Submit a single registration through the API as a council", () => {
     let response;
     beforeEach(async () => {
       const requestOptions = {
-        uri: `${highgardenUrl}?env=${process.env.NODE_ENV}`,
+        uri: `${highgardenUrl}?env=${process.env.ENVIRONMENT_DESCRIPTION}`,
         json: true,
         method: "post",
         headers: {
