@@ -92,12 +92,13 @@ const transformRegForCollections = (registration) => {
       });
 
       operator_keys.forEach((key) => {
+        key === "operator_company_house_number" ? id = "operator_companies_house_number": id = key;
         operator[key] =
-          registration.establishment.operator[key] ||
-          registration.establishment.operator[key] === "" ||
-          registration.establishment.operator[key] === false
-            ? registration.establishment.operator[key]
-            : key === "partners"
+          registration.establishment.operator[id] ||
+          registration.establishment.operator[id] === "" ||
+          registration.establishment.operator[id] === false
+            ? registration.establishment.operator[id]
+            : id === "partners"
             ? []
             : null;
       });
