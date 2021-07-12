@@ -90,6 +90,7 @@ const transformRegForCollections = (registration) => {
     });
 
     operator_keys.forEach((key) => {
+      var id;
       key === "operator_company_house_number"
         ? (id = "operator_companies_house_number")
         : (id = key);
