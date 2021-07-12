@@ -5,6 +5,8 @@ const mockRegistrationData = require("./mock-registration-data.json");
 
 const baseUrl = process.env.COMPONENT_TEST_BASE_URL || "http://localhost:4000";
 const url = `${baseUrl}/api/collections/cardiff`;
+const v1Url = `${baseUrl}/api/v1/collections/cardiff`;
+const v2Url = `${baseUrl}/api/v2/collections/cardiff`;
 const submitUrl = process.env.SERVICE_BASE_URL || "http://localhost:4000";
 let submitResponse;
 
@@ -113,6 +115,186 @@ describe("GET to /api/collections/:lc/:fsa_rn", () => {
     beforeEach(async () => {
       const requestOptions = {
         uri: `${url}`,
+        json: true,
+        headers: {
+          "double-mode": "single"
+        }
+      };
+      response = await request(requestOptions);
+    });
+
+    it("should return the double mode response", () => {
+      expect(response.establishment.establishment_trading_name).toBe("Itsu");
+    });
+  });
+});
+
+describe("GET to /api/v1/collections/:lc/:fsa_rn", () => {
+  beforeAll(async () => {
+    submitResponse = await frontendSubmitRegistration();
+  });
+  describe("Given no extra parameters", () => {
+    let response;
+    beforeEach(async () => {
+      const requestOptions = {
+        uri: `${v1Url}/${submitResponse["fsa-rn"]}`,
+        json: true
+      };
+      response = await request(requestOptions);
+    });
+
+    it("should return all the full details of that registration", () => {
+      expect(response.establishment.establishment_trading_name).toBe(
+        "Blanda Inc"
+      );
+      expect(response.metadata).toBeDefined();
+    });
+  });
+
+  describe("Given council or fsa_rn which cannot be found", () => {
+    let response;
+    beforeEach(async () => {
+      const requestOptions = {
+        uri: `${v1Url}/1234253`,
+        json: true
+      };
+      try {
+        await request(requestOptions);
+      } catch (err) {
+        response = err;
+      }
+    });
+
+    it("should return the getRegistrationNotFound error", () => {
+      expect(response.statusCode).toBe(404);
+      expect(response.error.errorCode).toBe("5");
+      expect(response.error.developerMessage).toBe(
+        "The registration application reference specified could not be found for the council requested. Please check this reference is definitely associated with this council"
+      );
+    });
+  });
+
+  describe("Given invalid parameters", () => {
+    let response;
+    beforeEach(async () => {
+      const requestOptions = {
+        uri: `${v1Url}/1234253`,
+        json: true,
+        headers: {
+          "double-mode": "invalid double mode"
+        }
+      };
+      try {
+        await request(requestOptions);
+      } catch (err) {
+        response = err;
+      }
+    });
+
+    it("should return the options validation error", () => {
+      expect(response.statusCode).toBe(400);
+      expect(response.error.errorCode).toBe("3");
+      expect(response.error.developerMessage).toBe(
+        "One of the supplied options is invalid"
+      );
+    });
+  });
+
+  describe("Given 'double-mode' header", () => {
+    let response;
+    beforeEach(async () => {
+      const requestOptions = {
+        uri: `${v1Url}`,
+        json: true,
+        headers: {
+          "double-mode": "single"
+        }
+      };
+      response = await request(requestOptions);
+    });
+
+    it("should return the double mode response", () => {
+      expect(response.establishment.establishment_trading_name).toBe("Itsu");
+    });
+  });
+});
+
+describe("GET to /api/v2/collections/:lc/:fsa_rn", () => {
+  beforeAll(async () => {
+    submitResponse = await frontendSubmitRegistration();
+  });
+  describe("Given no extra parameters", () => {
+    let response;
+    beforeEach(async () => {
+      const requestOptions = {
+        uri: `${v2Url}/${submitResponse["fsa-rn"]}`,
+        json: true
+      };
+      response = await request(requestOptions);
+    });
+
+    it("should return all the full details of that registration", () => {
+      expect(response.establishment.establishment_trading_name).toBe(
+        "Blanda Inc"
+      );
+      expect(response.metadata).toBeDefined();
+    });
+  });
+
+  describe("Given council or fsa_rn which cannot be found", () => {
+    let response;
+    beforeEach(async () => {
+      const requestOptions = {
+        uri: `${v2Url}/1234253`,
+        json: true
+      };
+      try {
+        await request(requestOptions);
+      } catch (err) {
+        response = err;
+      }
+    });
+
+    it("should return the getRegistrationNotFound error", () => {
+      expect(response.statusCode).toBe(404);
+      expect(response.error.errorCode).toBe("5");
+      expect(response.error.developerMessage).toBe(
+        "The registration application reference specified could not be found for the council requested. Please check this reference is definitely associated with this council"
+      );
+    });
+  });
+
+  describe("Given invalid parameters", () => {
+    let response;
+    beforeEach(async () => {
+      const requestOptions = {
+        uri: `${v2Url}/1234253`,
+        json: true,
+        headers: {
+          "double-mode": "invalid double mode"
+        }
+      };
+      try {
+        await request(requestOptions);
+      } catch (err) {
+        response = err;
+      }
+    });
+
+    it("should return the options validation error", () => {
+      expect(response.statusCode).toBe(400);
+      expect(response.error.errorCode).toBe("3");
+      expect(response.error.developerMessage).toBe(
+        "One of the supplied options is invalid"
+      );
+    });
+  });
+
+  describe("Given 'double-mode' header", () => {
+    let response;
+    beforeEach(async () => {
+      const requestOptions = {
+        uri: `${v2Url}`,
         json: true,
         headers: {
           "double-mode": "single"
