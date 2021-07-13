@@ -79,6 +79,7 @@ const transformRegForCollections = (registration) => {
     let operator = {};
     let activities = {};
     let premise = {};
+    let id;
 
     establishment_keys.forEach((key) => {
       establishment[key] =
@@ -90,7 +91,6 @@ const transformRegForCollections = (registration) => {
     });
 
     operator_keys.forEach((key) => {
-      var id;
       key === "operator_company_house_number"
         ? (id = "operator_companies_house_number")
         : (id = key);
