@@ -40,7 +40,7 @@ const transformRegForCollections = (registration) => {
         "contact_representative_number",
         "contact_representative_email",
         "partners",
-        "operator_company_house_number"
+        "operator_companies_house_number"
       ];
 
       const activities_keys = [
@@ -81,7 +81,6 @@ const transformRegForCollections = (registration) => {
       let operator = {};
       let activities = {};
       let premise = {};
-      let id;
 
       establishment_keys.forEach((key) => {
         establishment[key] =
@@ -93,18 +92,17 @@ const transformRegForCollections = (registration) => {
       });
 
       operator_keys.forEach((key) => {
-        key === "operator_company_house_number"
-          ? (id = "operator_companies_house_number")
-          : (id = key);
         operator[key] =
-          registration.establishment.operator[id] ||
-          registration.establishment.operator[id] === "" ||
-          registration.establishment.operator[id] === false
-            ? registration.establishment.operator[id]
-            : id === "partners"
+          registration.establishment.operator[key] ||
+          registration.establishment.operator[key] === "" ||
+          registration.establishment.operator[key] === false
+            ? registration.establishment.operator[key]
+            : key === "partners"
             ? []
             : null;
       });
+      operator["operator_company_house_number"] = operator["operator_companies_house_number"];
+      delete operator["operator_companies_house_number"];
 
       activities_keys.forEach((key) => {
         activities[key] =
