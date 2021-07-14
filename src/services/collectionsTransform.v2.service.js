@@ -101,7 +101,8 @@ const transformRegForCollections = (registration) => {
             ? []
             : null;
       });
-      operator["operator_company_house_number"] = operator["operator_companies_house_number"];
+      operator["operator_company_house_number"] =
+        operator["operator_companies_house_number"];
       delete operator["operator_companies_house_number"];
 
       activities_keys.forEach((key) => {
