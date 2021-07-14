@@ -1,10 +1,10 @@
-require("dotenv").config();
 const request = require("request-promise-native");
+require("dotenv").config();
 const { logEmitter } = require("../../../src/services/logging.service");
 const mockRegistrationData = require("./mock-registration-data.json");
 
 const baseUrl = process.env.COMPONENT_TEST_BASE_URL || "http://localhost:4000";
-const url = `${baseUrl}/api/collections/cardiff`;
+const url = `${baseUrl}/api/v2/collections/the-vale-of-glamorgan`;
 const submitUrl = process.env.SERVICE_BASE_URL || "http://localhost:4000";
 let submitResponse;
 
@@ -16,7 +16,7 @@ const frontendSubmitRegistration = async () => {
       uri: `${submitUrl}/api/submissions/createNewRegistration`,
       method: "POST",
       json: true,
-      body: mockRegistrationData[0],
+      body: mockRegistrationData[1],
       headers: {
         "Content-Type": "application/json",
         "client-name": process.env.FRONT_END_NAME,
@@ -36,8 +36,7 @@ const frontendSubmitRegistration = async () => {
     );
   }
 };
-
-describe("GET to /api/collections/:lc/:fsa_rn", () => {
+describe("PUT to /api/v2/collections/:lc/:fsa_rn", () => {
   beforeAll(async () => {
     submitResponse = await frontendSubmitRegistration();
   });
@@ -46,16 +45,18 @@ describe("GET to /api/collections/:lc/:fsa_rn", () => {
     beforeEach(async () => {
       const requestOptions = {
         uri: `${url}/${submitResponse["fsa-rn"]}`,
-        json: true
+        json: true,
+        method: "PUT",
+        body: {
+          collected: true
+        }
       };
       response = await request(requestOptions);
     });
 
-    it("should return all the full details of that registration", () => {
-      expect(response.establishment.establishment_trading_name).toBe(
-        "Blanda Inc"
-      );
-      expect(response.metadata).toBeDefined();
+    it("should return the fsa_rn and collected", () => {
+      expect(response.fsa_rn).toBeDefined();
+      expect(response.collected).toBe(true);
     });
   });
 
@@ -64,7 +65,11 @@ describe("GET to /api/collections/:lc/:fsa_rn", () => {
     beforeEach(async () => {
       const requestOptions = {
         uri: `${url}/1234253`,
-        json: true
+        json: true,
+        method: "PUT",
+        body: {
+          collected: true
+        }
       };
       try {
         await request(requestOptions);
@@ -75,7 +80,7 @@ describe("GET to /api/collections/:lc/:fsa_rn", () => {
 
     it("should return the getRegistrationNotFound error", () => {
       expect(response.statusCode).toBe(404);
-      expect(response.error.errorCode).toBe("5");
+      expect(response.error.errorCode).toBe("4");
       expect(response.error.developerMessage).toBe(
         "The registration application reference specified could not be found for the council requested. Please check this reference is definitely associated with this council"
       );
@@ -115,15 +120,14 @@ describe("GET to /api/collections/:lc/:fsa_rn", () => {
         uri: `${url}`,
         json: true,
         headers: {
-          "double-mode": "single"
+          "double-mode": "update"
         }
       };
       response = await request(requestOptions);
     });
 
     it("should return the double mode response", () => {
-      expect(response.establishment.establishment_trading_name).toBe("Itsu");
+      expect(response.fsa_rn).toBe("1234");
     });
   });
 });
-
