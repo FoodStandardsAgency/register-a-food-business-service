@@ -38,7 +38,7 @@ const transformRegForCollections = (registration) => {
       "contact_representative_number",
       "contact_representative_email",
       "partners",
-      "operator_company_house_number"
+      "operator_companies_house_number"
     ];
 
     const activities_keys = [
@@ -99,6 +99,9 @@ const transformRegForCollections = (registration) => {
           ? []
           : null;
     });
+    operator["operator_company_house_number"] =
+      operator["operator_companies_house_number"];
+    delete operator["operator_companies_house_number"];
 
     activities_keys.forEach((key) => {
       activities[key] =
