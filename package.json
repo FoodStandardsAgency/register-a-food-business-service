@@ -25,6 +25,7 @@
     "test:collections:api:e2e": "jest ./tests/collections/e2e/*.js --runInBand",
     "test:securityall": "snyk wizard",
     "test:security": "snyk wizard --severity-threshold=medium",
+    "add-lc-url": "node ./scripts/add-lc-url-to-registrations",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "format:verify": "prettier --list-different '{src,tests}/**/*.js'",
