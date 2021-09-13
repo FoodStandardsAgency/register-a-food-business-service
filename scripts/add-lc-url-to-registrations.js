@@ -19,24 +19,27 @@ const addLCUrls = async () => {
       `${recordsToUpdate.length} records missing local_council_url`
     );
 
-    while (recordsToUpdate.length > 0) {
-      const promises = recordsToUpdate.slice(0, 50).map(async (rec) => {
-        recordsToUpdate = recordsToUpdate.filter((reg) => {
-          return reg !== rec;
+    let URLDictionary = await getLCUrls();
+
+    for (var i = 0; i < recordsToUpdate.length; i += 50) {
+      const promises = recordsToUpdate
+        .slice(recordsToUpdate[i], recordsToUpdate[i + 50])
+        .map(async (rec) => {
+          let lcCode = rec.hygiene
+            ? rec.hygiene.code
+            : rec.hygieneAndStandards.code;
+          let lcUrl = URLDictionary.find((x) => x._id === lcCode)
+            .local_council_url;
+          await beCache.updateOne(
+            { "fsa-rn": rec["fsa-rn"] },
+            {
+              $set: { local_council_url: lcUrl }
+            }
+          );
         });
-        let lcCode = rec.hygiene
-          ? rec.hygiene.code
-          : rec.hygieneAndStandards.code;
-        let lcUrl = await findLcUrl(lcCode);
-        await beCache.updateOne(
-          { "fsa-rn": rec["fsa-rn"] },
-          {
-            $set: { local_council_url: lcUrl }
-          }
-        );
-      });
       await Promise.allSettled(promises);
     }
+
     // Log any remaining records tha are missing local_council_url
     const remainingRecordsToUpdate = await findMissingLCRegistrations(beCache);
     const remainingFSARNs = remainingRecordsToUpdate.map((rec) => {
@@ -69,19 +72,19 @@ const findMissingLCRegistrations = async (beCache) => {
   }
 };
 
-const findLcUrl = async (code) => {
+const getLCUrls = async () => {
   try {
-    logEmitter.emit("info", "findLcUrl called");
+    logEmitter.emit("info", "getLcUrls called");
     let lcConfigDb = await establishConnectionToCosmos(
       "config",
       "localAuthorities"
     );
-    let lcUrl = await lcConfigDb.distinct("local_council_url", {
-      _id: code
-    });
-    return lcUrl[0];
+    let lcUrls = await lcConfigDb
+      .aggregate([{ $project: { local_council_url: 1 } }])
+      .toArray();
+    return lcUrls;
   } catch (err) {
-    logEmitter.emit("info", `Failed to find lcUrl from lcConfigDb - ${err}`);
+    logEmitter.emit("info", `Failed to get lcUrls from lcConfigDb - ${err}`);
   }
 };
 
