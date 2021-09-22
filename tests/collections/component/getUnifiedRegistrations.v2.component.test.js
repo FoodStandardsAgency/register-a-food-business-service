@@ -57,12 +57,9 @@ describe("GET to /api/v2/collections/unified", () => {
       response = await request(requestOptions);
     });
 
-    it("should return all the new registrations", () => {
+    it("should return the two previously submitted registrations", () => {
       expect(Array.isArray(response)).toBe(true);
       expect(response.length).toBeGreaterThanOrEqual(2);
-      response.forEach((record) => {
-        expect(record.collected).toBe(false);
-      });
       expect(response.map((record) => record.fsa_rn)).toEqual(
         expect.arrayContaining(
           submitResponses.map((record) => record["fsa-rn"])
