@@ -15,7 +15,7 @@ describe("Retrieve all registrations through API", () => {
     let response;
     beforeEach(async () => {
       const requestOptions = {
-        uri: `${cardiffUrl}?env=${process.env.NODE_ENV}`,
+        uri: `${cardiffUrl}?env=${process.env.ENVIRONMENT_DESCRIPTION}`,
         json: true,
         resolveWithFullResponse: true,
         headers: {
@@ -37,7 +37,7 @@ describe("Retrieve all registrations through API", () => {
     let response;
     beforeEach(async () => {
       const requestOptions = {
-        uri: `${supplierUrl}?env=${process.env.NODE_ENV}&local-authorities=${supplierValidCouncil}`,
+        uri: `${supplierUrl}?env=${process.env.ENVIRONMENT_DESCRIPTION}&local-authorities=${supplierValidCouncil}`,
         json: true,
         resolveWithFullResponse: true,
         headers: {
@@ -59,7 +59,7 @@ describe("Retrieve all registrations through API", () => {
     let response;
     beforeEach(async () => {
       const requestOptions = {
-        uri: `${supplierUrl}?env=${process.env.NODE_ENV}`,
+        uri: `${supplierUrl}?env=${process.env.ENVIRONMENT_DESCRIPTION}`,
         json: true,
         resolveWithFullResponse: true,
         headers: {
@@ -81,7 +81,7 @@ describe("Retrieve all registrations through API", () => {
     let response;
     beforeEach(async () => {
       const requestOptions = {
-        uri: `${supplierUrl}?env=${process.env.NODE_ENV}&local-authorities=${supplierValidCouncils}`,
+        uri: `${supplierUrl}?env=${process.env.ENVIRONMENT_DESCRIPTION}&local-authorities=${supplierValidCouncils}`,
         json: true,
         resolveWithFullResponse: true,
         headers: {
@@ -102,7 +102,7 @@ describe("Retrieve all registrations through API", () => {
   describe("Given supplier and invalid requested council", () => {
     it("Should return the appropriate error", async () => {
       const requestOptions = {
-        uri: `${supplierUrl}?env=${process.env.NODE_ENV}&local-authorities=invalid`,
+        uri: `${supplierUrl}?env=${process.env.ENVIRONMENT_DESCRIPTION}&local-authorities=invalid`,
         json: true,
         resolveWithFullResponse: true,
         headers: {
@@ -122,7 +122,7 @@ describe("Retrieve all registrations through API", () => {
     let response;
     beforeEach(async () => {
       const requestOptions = {
-        uri: `${baseUrl}incorrectAuthority?env=${process.env.NODE_ENV}`,
+        uri: `${baseUrl}incorrectAuthority?env=${process.env.ENVIRONMENT_DESCRIPTION}`,
         json: true,
         headers: {
           "Ocp-Apim-Subscription-Key": cardiffAPIKey
@@ -146,7 +146,7 @@ describe("Retrieve all registrations through API", () => {
     let response;
     beforeEach(async () => {
       const requestOptions = {
-        uri: `${cardiffUrl}?env=${process.env.NODE_ENV}`,
+        uri: `${cardiffUrl}?env=${process.env.ENVIRONMENT_DESCRIPTION}`,
         json: true,
         headers: {
           "Ocp-Apim-Subscription-Key": "incorrectKey"
@@ -167,7 +167,7 @@ describe("Retrieve all registrations through API", () => {
     let response;
     beforeEach(async () => {
       const requestOptions = {
-        uri: `${cardiffUrl}?env=${process.env.NODE_ENV}`,
+        uri: `${cardiffUrl}?env=${process.env.ENVIRONMENT_DESCRIPTION}`,
         json: true
       };
       await request(requestOptions).catch(function (body) {
@@ -187,7 +187,7 @@ describe("Retrieve all registrations through API", () => {
     let response;
     beforeEach(async () => {
       const requestOptions = {
-        uri: `${cardiffUrl}?new=alskdfj&env=${process.env.NODE_ENV}`,
+        uri: `${cardiffUrl}?new=alskdfj&env=${process.env.ENVIRONMENT_DESCRIPTION}`,
         json: true,
         headers: {
           "Ocp-Apim-Subscription-Key": cardiffAPIKey

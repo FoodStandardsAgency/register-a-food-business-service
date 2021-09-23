@@ -1,6 +1,6 @@
 {
   "name": "register-a-food-business-service",
-  "version": "13.0.0",
+  "version": "13.1.0",
   "description": "",
   "main": "src/app.js",
   "engines": {
@@ -30,7 +30,7 @@
     "format:verify": "prettier --list-different '{src,tests}/**/*.js'",
     "format": "prettier --write '{src,tests}/**/*.js'",
     "seed:configdb": "node src/connectors/configDb/configDb-seed/runSeedScripts",
-    "migrate": "node scripts/insert-missing-LC-emails",
+    "migrate": "node ./scripts/add-lc-url-to-registrations",
     "migrate:local": "export NODE_ENV=local && node scripts/insert-missing-LC-emails",
     "jsdoc": "rm -rf ./docs/jsdoc && jsdoc -r ./src -d ./docs/jsdoc"
   },

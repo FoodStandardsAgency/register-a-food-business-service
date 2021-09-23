@@ -4,7 +4,7 @@ const { logEmitter } = require("../../../src/services/logging.service");
 const mockRegistrationData = require("./mock-registration-data.json");
 
 const baseUrl = process.env.COMPONENT_TEST_BASE_URL || "http://localhost:4000";
-const url = `${baseUrl}/api/collections/unified`;
+const url = `${baseUrl}/api/v2/collections/unified`;
 const submitUrl = process.env.SERVICE_BASE_URL || "http://localhost:4000";
 let submitResponses = [];
 
@@ -39,7 +39,7 @@ const frontendSubmitRegistration = async () => {
   }
 };
 
-describe("GET to /api/collections/unified", () => {
+describe("GET to /api/v2/collections/unified", () => {
   beforeAll(async () => {
     await frontendSubmitRegistration();
   });
