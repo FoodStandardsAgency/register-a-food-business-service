@@ -9,7 +9,7 @@
   "scripts": {
     "start": "node ./src/app.js",
     "local:start": "export $(grep -v '^#' .env | xargs -d '\n') && nodemon src/app.js",
-    "local:start:docker": "node src/db/check-connection.js && npm run migrate:local && nodemon src/app.js",
+    "local:start:docker": "nodemon --inspect src/app.js",
     "local:debug": "export $(grep -v '^#' .env | xargs -d '\n') && nodemon --inspect src/app.js",
     "test": "jest ./src --coverage",
     "test:unit:ci": "export TEST_TYPE=unit && jest ./src --coverage",
