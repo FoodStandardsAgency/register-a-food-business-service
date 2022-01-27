@@ -124,22 +124,24 @@ const createSingleSection = (title, sectionData, i18n) => {
     const answer = isValueBoolean
       ? convertBoolToString(sectionData[key])
       : sectionData[key];
-    if ((key == "establishment_email" || key == "operator_email") && answer.length >= 35)
-    {
+    if (
+      (key == "establishment_email" || key == "operator_email") &&
+      answer.length >= 35
+    ) {
       var answerWithBreak = "";
-      for(var i = 0; i < answer.length; ++i)
-      {
-          if(answer[i] == "@")
-          {
-              answerWithBreak += "\n";
-          }
-          answerWithBreak += answer[i];
+      for (var i = 0; i < answer.length; ++i) {
+        if (answer[i] == "@") {
+          answerWithBreak += "\n";
+        }
+        answerWithBreak += answer[i];
       }
-      const newLine = createSingleLine(i18n.t(displayKey), i18n.t(answerWithBreak))
+      const newLine = createSingleLine(
+        i18n.t(displayKey),
+        i18n.t(answerWithBreak)
+      );
       section = section.concat(newLine);
-    }
-    else {
-      const newLine = createSingleLine(i18n.t(displayKey), i18n.t(answer))
+    } else {
+      const newLine = createSingleLine(i18n.t(displayKey), i18n.t(answer));
       section = section.concat(newLine);
     }
   }
