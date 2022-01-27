@@ -136,7 +136,7 @@ const createSingleSection = (title, sectionData, i18n) => {
         }
         answerWithBreak += answer[i];
       }
-      newLine = createSingleLine(i18n.t(displayKey), i18n.t(answerWithBreak));
+      newLine = createSingleLine(i18n.t(displayKey), answerWithBreak);
     } else {
       newLine = createSingleLine(i18n.t(displayKey), i18n.t(answer));
     }
