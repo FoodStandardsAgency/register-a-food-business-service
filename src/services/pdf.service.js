@@ -124,6 +124,7 @@ const createSingleSection = (title, sectionData, i18n) => {
     const answer = isValueBoolean
       ? convertBoolToString(sectionData[key])
       : sectionData[key];
+    let newLine;
     if (
       (key == "establishment_email" || key == "operator_email") &&
       answer.length >= 35
@@ -135,15 +136,11 @@ const createSingleSection = (title, sectionData, i18n) => {
         }
         answerWithBreak += answer[i];
       }
-      const newLine = createSingleLine(
-        i18n.t(displayKey),
-        i18n.t(answerWithBreak)
-      );
-      section = section.concat(newLine);
+      newLine = createSingleLine(i18n.t(displayKey), i18n.t(answerWithBreak));
     } else {
-      const newLine = createSingleLine(i18n.t(displayKey), i18n.t(answer));
-      section = section.concat(newLine);
+      newLine = createSingleLine(i18n.t(displayKey), i18n.t(answer));
     }
+    section = section.concat(newLine);
   }
   return section;
 };
