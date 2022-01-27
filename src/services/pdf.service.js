@@ -15,7 +15,8 @@ const {
   createGreyLine,
   createFsaRnBox,
   createLcContactSection,
-  createGuidanceLinksSection
+  createGuidanceLinksSection,
+  createSingleLineEmail
 } = require("./pdf-styles");
 
 const { transformEnumsForService } = require("./transformEnums.service");
@@ -124,8 +125,24 @@ const createSingleSection = (title, sectionData, i18n) => {
     const answer = isValueBoolean
       ? convertBoolToString(sectionData[key])
       : sectionData[key];
-    const newLine = createSingleLine(i18n.t(displayKey), i18n.t(answer));
-    section = section.concat(newLine);
+    if ((key == "establishment_email" || key == "operator_email") && answer.length >= 35)
+    {
+      var answerWithBreak = "";
+      for(var i = 0; i < answer.length; ++i)
+      {
+          if(answer[i] == "@")
+          {
+              answerWithBreak += "\n";
+          }
+          answerWithBreak += answer[i];
+      }
+      const newLine = createSingleLine(i18n.t(displayKey), i18n.t(answerWithBreak))
+      section = section.concat(newLine);
+    }
+    else {
+      const newLine = createSingleLine(i18n.t(displayKey), i18n.t(answer))
+      section = section.concat(newLine);
+    }
   }
   return section;
 };
