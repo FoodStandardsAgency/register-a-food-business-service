@@ -15,8 +15,7 @@ const {
   createGreyLine,
   createFsaRnBox,
   createLcContactSection,
-  createGuidanceLinksSection,
-  createSingleLineEmail
+  createGuidanceLinksSection
 } = require("./pdf-styles");
 
 const { transformEnumsForService } = require("./transformEnums.service");
