@@ -68,7 +68,7 @@ const createHyperlinkTitle = (title, size, link) => {
         link: link,
         color: "blue",
         decoration: "underline",
-        decorationColor: 'blue'
+        decorationColor: "blue"
       }
     ]
   });
@@ -284,7 +284,11 @@ const createGuidanceLinksSection = (lcInfo, i18n) => {
       )
     );
     guidanceLinksSectionNoSpaces.push(
-      createHyperlinkTitle("Business support", "h4", "https://www.nibusinessinfo.co.uk/")
+      createHyperlinkTitle(
+        "Business support",
+        "h4",
+        "https://www.nibusinessinfo.co.uk/"
+      )
     );
   }
   const guidanceLinksSectiion = [];
@@ -297,11 +301,11 @@ const createGuidanceLinksSection = (lcInfo, i18n) => {
 
 const docDefinitionGenerator = (content, pdfData) => {
   const info = {
-    title: 'New food business registration record',
-    author: 'FSA',
+    title: "New food business registration record",
+    author: "FSA",
     subject: pdfData.metaData["fsa-rn"],
-    keywords: 'RAFB'
-   }
+    keywords: "RAFB"
+  };
   const docDefinition = {
     pageSize: "A4",
     info,
