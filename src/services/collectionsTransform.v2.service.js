@@ -16,6 +16,7 @@ const transformRegForCollections = (registration) => {
         "establishment_opening_date",
         "establishment_primary_number",
         "establishment_secondary_number",
+        "establishment_web_address",
         "establishment_email"
       ];
 

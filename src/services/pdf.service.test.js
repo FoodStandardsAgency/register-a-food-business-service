@@ -18,6 +18,7 @@ describe("Pdf Service: ", () => {
             establishment_primary_number: "329857245",
             establishment_secondary_number: "84345245",
             establishment_email: "django@email.com",
+            establishment_web_address: "test.com",
             establishment_opening_date: "2018-06-07"
           },
           operator: {
@@ -167,6 +168,7 @@ describe("Pdf Service: ", () => {
             establishment_primary_number: "329857245",
             establishment_secondary_number: "84345245",
             establishment_email: "django@email.com",
+            establishment_web_address: "test.com",
             establishment_opening_date: "2018-06-07"
           },
           operator: {
@@ -349,6 +351,7 @@ describe("Pdf Service: ", () => {
           establishment_primary_number: "329857245",
           establishment_secondary_number: "84345245",
           establishment_email: "django@email.com",
+          establishment_web_address: "test.com",
           establishment_opening_date: "2018-06-07",
           establishment_postcode: "SW12 9RQ",
           establishment_address_line_1: "123",
@@ -411,6 +414,7 @@ describe("Pdf Service: ", () => {
           establishment_primary_number: "329857245",
           establishment_secondary_number: "84345245",
           establishment_email: "django@email.com",
+          establishment_web_address: "test.com",
           establishment_opening_date: "2018-06-07",
           establishment_postcode: "SW12 9RQ",
           establishment_address_line_1: "123",

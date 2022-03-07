@@ -2,7 +2,7 @@
   "openapi": "3.0.1",
   "info": {
     "title": "Register a food business collections",
-    "version": "v2.1"
+    "version": "v3.0"
   },
   "servers": [
     {
@@ -485,6 +485,11 @@
             "maximum": 255,
             "type": "string",
             "description": "Uses [npm Validator](https://www.npmjs.com/package/validator) isEmail."
+          },
+          "establishment_web_address": {
+            "maximum": 255,
+            "type": "string",
+            "description": "Uses [npm Validator](https://www.npmjs.com/package/validator) isURL."
           },
           "establishment_opening_date": {
             "type": "string",
