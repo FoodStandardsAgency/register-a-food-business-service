@@ -127,6 +127,7 @@ const createSingleSection = (title, sectionData, i18n) => {
     const newLine = createSingleLine(i18n.t(displayKey), i18n.t(answer));
     section = section.concat(newLine);
   }
+  section.push(createNewSpace(5));
   return section;
 };
 
@@ -219,7 +220,7 @@ const pdfGenerator = (pdfData, i18n) => {
     const clonedFontDes = JSON.parse(JSON.stringify(fontDescriptors));
     const printer = new PdfPrinter(clonedFontDes);
     const content = createContent(pdfData, i18n);
-    const clonedDocDef = docDefinitionGenerator(content);
+    const clonedDocDef = docDefinitionGenerator(content, pdfData);
     const pdfMake = printer.createPdfKitDocument(clonedDocDef);
 
     const segmentsOfPdf = [];
