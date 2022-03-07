@@ -2,7 +2,7 @@
   "openapi": "3.0.1",
   "info": {
     "title": "Register a food business collections",
-    "version": "v2.1"
+    "version": "v3.0"
   },
   "servers": [
     {
