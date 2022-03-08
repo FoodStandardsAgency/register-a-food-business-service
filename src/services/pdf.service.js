@@ -124,7 +124,16 @@ const createSingleSection = (title, sectionData, i18n) => {
     const answer = isValueBoolean
       ? convertBoolToString(sectionData[key])
       : sectionData[key];
-    const newLine = createSingleLine(i18n.t(displayKey), i18n.t(answer));
+    let newLine;
+    if (
+      (key == "establishment_email" || key == "operator_email") &&
+      answer.length >= 35
+    ) {
+      var answerWithBreak = answer.replace("@", "@\n");
+      newLine = createSingleLine(i18n.t(displayKey), answerWithBreak);
+    } else {
+      newLine = createSingleLine(i18n.t(displayKey), i18n.t(answer));
+    }
     section = section.concat(newLine);
   }
   section.push(createNewSpace(5));
