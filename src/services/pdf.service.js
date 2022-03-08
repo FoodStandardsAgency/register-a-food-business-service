@@ -129,13 +129,7 @@ const createSingleSection = (title, sectionData, i18n) => {
       (key == "establishment_email" || key == "operator_email") &&
       answer.length >= 35
     ) {
-      var answerWithBreak = "";
-      for (var i = 0; i < answer.length; ++i) {
-        if (answer[i] == "@") {
-          answerWithBreak += "\n";
-        }
-        answerWithBreak += answer[i];
-      }
+      var answerWithBreak = answer.replace("@", "\n");
       newLine = createSingleLine(i18n.t(displayKey), answerWithBreak);
     } else {
       newLine = createSingleLine(i18n.t(displayKey), i18n.t(answer));
