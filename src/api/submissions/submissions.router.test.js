@@ -12,7 +12,6 @@ jest.mock("./submissions.controller", () => ({
 jest.mock("../../services/statusEmitter.service");
 const submissionsController = require("./submissions.controller");
 const { submissionsRouter } = require("./submissions.router");
-const { doubleResponse } = require("./submissions.double");
 describe("submissions router", () => {
   let router, send, handler, status, testRegistration;
   beforeEach(() => {
