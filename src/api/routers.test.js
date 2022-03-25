@@ -21,6 +21,10 @@ jest.mock("./collections-v2/collections.v2.router", () => ({
   collectionsV2Router: jest.fn()
 }));
 
+jest.mock("./collections-v3/collections.v3.router", () => ({
+  collectionsV3Router: jest.fn()
+}));
+
 jest.mock("./status/status.router", () => ({
   statusRouter: jest.fn()
 }));
@@ -50,12 +54,14 @@ describe("Function: routers", () => {
     expect(result.use.mock.calls[2][0]).toBe("/api/collections");
     expect(result.use.mock.calls[3][0]).toBe("/api/v1/collections");
     expect(result.use.mock.calls[4][0]).toBe("/api/v2/collections");
-    expect(result.use.mock.calls[5][0]).toBe("/api/status");
-    expect(result.use.mock.calls[6][0]).toBe("/api-docs");
-    expect(result.use.mock.calls[7][0]).toBe("/");
+    expect(result.use.mock.calls[5][0]).toBe("/api/v3/collections");
+    expect(result.use.mock.calls[6][0]).toBe("/api/status");
+    expect(result.use.mock.calls[7][0]).toBe("/api-docs");
+    expect(result.use.mock.calls[8][0]).toBe("/");
 
     expect(result.get.mock.calls[0][0]).toBe("/api-docs");
     expect(result.get.mock.calls[1][0]).toBe("/api-docs/v1");
     expect(result.get.mock.calls[2][0]).toBe("/api-docs/v2");
+    expect(result.get.mock.calls[3][0]).toBe("/api-docs/v3");
   });
 });

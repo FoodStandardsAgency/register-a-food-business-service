@@ -1,5 +1,5 @@
 jest.mock(
-  "../../connectors/registrationsDb-v2/registrationsDb.v2.connector",
+  "../../connectors/registrationsDb-v3/registrationsDb.v3.connector",
   () => ({
     getAllRegistrationsByCouncils: jest.fn(),
     getUnifiedRegistrations: jest.fn(),
@@ -11,34 +11,34 @@ jest.mock("../../connectors/configDb/configDb.connector", () => ({
   getCouncilsForSupplier: jest.fn()
 }));
 
-jest.mock("../../services/collectionsTransform.v2.service", () => ({
+jest.mock("../../services/collectionsTransform.v3.service", () => ({
   transformRegForCollections: jest.fn()
 }));
 
 jest.mock("../../services/logging.service");
-jest.mock("./collections.v2.service");
+jest.mock("./collections.v3.service");
 
-const { validateOptions } = require("./collections.v2.service");
+const { validateOptions } = require("./collections.v3.service");
 
 const {
   getAllRegistrationsByCouncils,
   getSingleRegistration,
   getUnifiedRegistrations,
   updateRegistrationCollectedByCouncil
-} = require("../../connectors/registrationsDb-v2/registrationsDb.v2.connector");
+} = require("../../connectors/registrationsDb-v3/registrationsDb.v3.connector");
 
 const {
   getRegistrationsByCouncil,
   getRegistration,
   getRegistrations,
   updateRegistration
-} = require("./collections.v2.controller");
+} = require("./collections.v3.controller");
 const {
   getCouncilsForSupplier
 } = require("../../connectors/configDb/configDb.connector");
 const {
   transformRegForCollections
-} = require("../../services/collectionsTransform.v2.service");
+} = require("../../services/collectionsTransform.v3.service");
 
 const localAuthorityOptions = {
   subscriber: "cardiff",
@@ -79,6 +79,7 @@ const fullRegistration = {
     establishment_primary_number: "329857245",
     establishment_secondary_number: "84345245",
     establishment_email: "django@email.com",
+    establishment_web_address: "test.com",
     operator: {
       operator_type: "SOLETRADER",
       operator_company_name: "name",
@@ -172,6 +173,7 @@ const transformedFullReg = {
     establishment_primary_number: "329857245",
     establishment_secondary_number: "84345245",
     establishment_email: "django@email.com",
+    establishment_web_address: "test.com",
     operator: {
       operator_type: "SOLETRADER",
       operator_company_name: "name",
@@ -244,7 +246,7 @@ const transformedShortReg = {
   metadata: {}
 };
 
-describe("registrations.v2.controller", () => {
+describe("registrations.v3.controller", () => {
   let result;
   describe("Function: getRegistrationsByCouncil", () => {
     describe("When given invalid getNewRegistrations option", () => {
