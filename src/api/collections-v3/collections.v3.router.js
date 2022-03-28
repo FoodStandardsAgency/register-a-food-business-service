@@ -7,7 +7,7 @@ const {
   updateRegistration
 } = require("./collections.v3.controller");
 
-const collectionsv3Router = () => {
+const collectionsV3Router = () => {
   const router = Router();
 
   router.get("/unified", async (req, res, next) => {
@@ -152,4 +152,4 @@ const collectionsv3Router = () => {
   return router;
 };
 
-module.exports = { collectionsv3Router };
+module.exports = { collectionsV3Router };

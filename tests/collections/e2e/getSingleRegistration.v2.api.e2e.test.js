@@ -2,7 +2,7 @@ require("dotenv").config();
 const request = require("request-promise-native");
 
 const baseUrl =
-  "https://integration-fsa-rof-gateway.azure-api.net/registrations/v2/";
+"https://integration-fsa-rof-gateway.azure-api.net/registrations/v2/";
 const cardiffUrl = `${baseUrl}cardiff`;
 const cardiffAPIKey = "b175199d420448fc87baa714e458ce6e";
 const supplierUrl = `${baseUrl}test-supplier`;
@@ -41,6 +41,7 @@ describe("Get single registration through API", () => {
       expect(response.establishment).toBeDefined();
       expect(response.establishment.operator).toBeDefined();
       expect(response.establishment.premise).toBeDefined();
+      expect(response.establishment.establishment_web_address).toBe(undefined);
       expect(response.metadata).toBeDefined();
     });
   });
@@ -89,27 +90,21 @@ describe("Get single registration through API", () => {
   });
 
   describe("Given invalid subscription key", () => {
-    let response;
-    beforeEach(async () => {
+    it("should return a subscription incorrect error", async () => {
       const requestOptions = {
-        method: "put",
+        method: "get",
         uri: `${cardiffUrl}/${availableRegistrations[0].fsa_rn}?env=${process.env.ENVIRONMENT_DESCRIPTION}`,
         json: true,
         headers: {
           "Ocp-Apim-Subscription-Key": "incorrectKey"
-        },
-        body: {
-          collected: true
         }
       };
-      await request(requestOptions).catch(function (body) {
-        response = body;
-      });
-    });
-
-    it("should return a subscription incorrect error", () => {
-      expect(response.statusCode).toBe(401);
-      expect(response.error.message).toContain("invalid subscription key.");
+      try {
+        await request(requestOptions);
+      } catch (e) {
+        expect(e.statusCode).toBe(401);
+        expect(e.message).toContain("invalid subscription key.");
+      }
     });
   });
 });
