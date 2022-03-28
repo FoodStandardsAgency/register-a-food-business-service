@@ -2,7 +2,7 @@ require("dotenv").config();
 const request = require("request-promise-native");
 
 const baseUrl =
-"https://integration-fsa-rof-gateway.azure-api.net/registrations/v2/";
+  "https://integration-fsa-rof-gateway.azure-api.net/registrations/v2/";
 const cardiffUrl = `${baseUrl}cardiff`;
 const cardiffAPIKey = "b175199d420448fc87baa714e458ce6e";
 const supplierUrl = `${baseUrl}test-supplier`;
