@@ -2,7 +2,7 @@ require("dotenv").config();
 const request = require("request-promise-native");
 
 const baseUrl =
-  "https://integration-fsa-rof-gateway.azure-api.net/registrations/v2/";
+  "https://integration-fsa-rof-gateway.azure-api.net/registrations/v3/";
 const cardiffUrl = `${baseUrl}cardiff`;
 const cardiffAPIKey = "b175199d420448fc87baa714e458ce6e";
 const supplierUrl = `${baseUrl}test-supplier`;
@@ -41,7 +41,7 @@ describe("Get single registration through API", () => {
       expect(response.establishment).toBeDefined();
       expect(response.establishment.operator).toBeDefined();
       expect(response.establishment.premise).toBeDefined();
-      expect(response.establishment.establishment_web_address).toBe(undefined);
+      expect(response.establishment.establishment_web_address).toBeDefined();
       expect(response.metadata).toBeDefined();
     });
   });

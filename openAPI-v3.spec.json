@@ -2,11 +2,11 @@
   "openapi": "3.0.1",
   "info": {
     "title": "Register a food business collections",
-    "version": "v1"
+    "version": "v3.0"
   },
   "servers": [
     {
-      "url": "https://fsa-rof-gateway.azure-api.net/registrations/v1"
+      "url": "https://fsa-rof-gateway.azure-api.net/registrations/v2"
     }
   ],
   "paths": {
@@ -67,19 +67,30 @@
         }
       }
     },
-    "/{lc}": {
+    "/{subscriber}": {
       "get": {
-        "summary": "Get registrations for local authority.",
-        "description": "Returns registrations from the supplied local authority. By default, results are filtered to exclude data marked as collected.",
+        "summary": "Get registrations for local authority or MIS provider.",
+        "description": "Returns registrations for the supplied local authority or MIS provider. By default, results are filtered to exclude data marked as collected.",
         "operationId": "get-registrations-for-local-authority",
         "parameters": [
           {
-            "name": "lc",
+            "name": "subscriber",
             "in": "path",
-            "description": "The local authority name.",
+            "description": "The local authority or MIS provider name.",
             "required": true,
             "schema": {
               "type": "string"
+            }
+          },
+          {
+            "name": "local-authorities",
+            "in": "query",
+            "description": "The local authorities for which to return data, if different to the organisation supplied in the subscriber parameter.",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
             }
           },
           {
@@ -150,18 +161,88 @@
             "description": "Internal server error."
           }
         }
+      },
+      "post": {
+        "summary": "Submit a single registration.",
+        "description": "Submits a single registration.",
+        "operationId": "submit-single-registration-for-local-authority",
+        "parameters": [
+          {
+            "name": "subscriber",
+            "in": "path",
+            "description": "The local authority or MIS provider name.",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "local-authority",
+            "in": "query",
+            "description": "The local authority for which to submit data, if different to the organisation supplied in the subscriber parameter.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "double-mode",
+            "in": "header",
+            "description": "Return a hard-coded test result according to the value specified instead of querying the database.",
+            "schema": {
+              "enum": ["success", "fail"],
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "The registration details to submit.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DirectRegistration"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "fsa_rn": {
+                      "description": "The registration application reference.",
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request."
+          },
+          "404": {
+            "description": "Resource not found."
+          },
+          "500": {
+            "description": "Internal server error."
+          }
+        }
       }
     },
-    "/{lc}/{fsa_rn}": {
+    "/{subscriber}/{fsa_rn}": {
       "get": {
         "summary": "Get a single registration in full.",
         "description": "Returns a single registration in full from the supplied registration application reference.",
         "operationId": "get-single-registration-for-local-authority",
         "parameters": [
           {
-            "name": "lc",
+            "name": "subscriber",
             "in": "path",
-            "description": "The local authority name.",
+            "description": "The local authority or MIS provider name.",
             "required": true,
             "schema": {
               "type": "string"
@@ -172,6 +253,14 @@
             "in": "path",
             "description": "The registration application reference.",
             "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "local-authority",
+            "in": "query",
+            "description": "The local authority for which to return data, if different to the organisation supplied in the subscriber parameter.",
             "schema": {
               "type": "string"
             }
@@ -214,9 +303,9 @@
         "operationId": "update-single-registration-for-local-authority",
         "parameters": [
           {
-            "name": "lc",
+            "name": "subscriber",
             "in": "path",
-            "description": "The local authority name.",
+            "description": "The local authority or MIS provider name.",
             "required": true,
             "schema": {
               "type": "string"
@@ -227,6 +316,14 @@
             "in": "path",
             "description": "The registration application reference.",
             "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "local-authority",
+            "in": "query",
+            "description": "The local authority for which to update data, if different to the organisation supplied in the subscriber parameter.",
             "schema": {
               "type": "string"
             }
@@ -300,25 +397,47 @@
             "$ref": "#/components/schemas/fsa_rn"
           },
           "council": {
-            "$ref": "#/components/schemas/council"
+            "type": "string",
+            "description": "The full name of the local authority."
           },
           "competent_authority_id": {
-            "$ref": "#/components/schemas/competent_authority_id"
+            "type": "integer",
+            "description": "The unique id for the local authority."
           },
           "local_council_url": {
-            "$ref": "#/components/schemas/local_council_url"
+            "type": "string",
+            "description": "The unique url for the local authority."
           },
           "collected": {
-            "$ref": "#/components/schemas/collected"
+            "type": "boolean",
+            "description": "Flag indicating whether this registration has been collected by the local authority or not."
           },
           "collected_at": {
-            "$ref": "#/components/schemas/collected_at"
+            "type": "string",
+            "description": "The date and time that the registration was collected."
           },
           "createdAt": {
-            "$ref": "#/components/schema/createdAt"
+            "type": "string",
+            "description": "The date and time that the registration was created."
           },
           "updatedAt": {
-            "$ref": "#/components/schema/updatedAt"
+            "type": "string",
+            "description": "The date and time that the registration was updated."
+          },
+          "establishment": {
+            "$ref": "#/components/schemas/Establishment"
+          },
+          "metadata": {
+            "$ref": "#/components/schemas/Metadata"
+          }
+        }
+      },
+      "DirectRegistration": {
+        "required": ["establishment"],
+        "type": "object",
+        "properties": {
+          "fsa_rn": {
+            "$ref": "#/components/schemas/fsa_rn"
           },
           "establishment": {
             "$ref": "#/components/schemas/Establishment"
@@ -334,57 +453,15 @@
         "type": "string",
         "description": "The unique registration application reference that identifies this registration."
       },
-      "council": {
-        "type": "string",
-        "description": "The full name of the local authority."
-      },
-      "competent_authority_id": {
-        "type": "integer",
-        "description": "The unique id for the local authority."
-      },
-      "local_council_url": {
-        "type": "string",
-        "description": "The unique url for the local authority."
-      },
-      "collected": {
-        "type": "boolean",
-        "description": "Flag indicating whether this registration has been collected by the local authority or not."
-      },
-      "collected_at": {
-        "type": "string",
-        "description": "The date and time that the registration was collected."
-      },
-      "createdAt": {
-        "type": "string",
-        "description": "The date and time that the registration was created."
-      },
-      "updatedAt": {
-        "type": "string",
-        "description": "The date and time that the registration was updated."
-      },
       "Establishment": {
-        "type": "object",
-        "properties": {
-          "establishment_details": {
-            "$ref": "#/components/schemas/EstablishmentDetails"
-          },
-          "operator": {
-            "$ref": "#/components/schemas/Operator"
-          },
-          "premise": {
-            "$ref": "#/components/schemas/Premise"
-          },
-          "activities": {
-            "$ref": "#/components/schemas/Activities"
-          }
-        }
-      },
-      "EstablishmentDetails": {
         "required": [
           "establishment_trading_name",
           "establishment_primary_number",
           "establishment_email",
-          "establishment_opening_date"
+          "establishment_opening_date",
+          "operator",
+          "premise",
+          "activities"
         ],
         "type": "object",
         "properties": {
@@ -409,19 +486,29 @@
             "type": "string",
             "description": "Uses [npm Validator](https://www.npmjs.com/package/validator) isEmail."
           },
+          "establishment_web_address": {
+            "maximum": 255,
+            "type": "string",
+            "description": "Uses [npm Validator](https://www.npmjs.com/package/validator) isURL."
+          },
           "establishment_opening_date": {
             "type": "string",
             "description": "Uses YYYY-MM-DD [npm Validator](https://www.npmjs.com/package/validator) isISO8601."
+          },
+          "operator": {
+            "$ref": "#/components/schemas/Operator"
+          },
+          "premise": {
+            "$ref": "#/components/schemas/Premise"
+          },
+          "activities": {
+            "$ref": "#/components/schemas/Activities"
           }
         }
       },
       "Operator": {
         "required": [
-          "operator_first_line",
           "operator_address_line_1",
-          "operator_primary_number",
-          "operator_secondary_number",
-          "operator_email",
           "operator_type",
           "operator_town",
           "operator_postcode"
@@ -431,12 +518,12 @@
           "operator_first_name": {
             "maximum": 255,
             "type": "string",
-            "description": "Required if operator_type is Sole trader', 'Partnership', or A person (registered by a representative)'."
+            "description": "Required if operator_type is 'SOLETRADER, 'PARTNERSHIP', or 'PERSON'."
           },
           "operator_last_name": {
             "maximum": 255,
             "type": "string",
-            "description": "Required if operator_type is 'Sole trader', 'Partnership', or A person (registered by a representative)'."
+            "description": "Required if operator_type is 'SOLETRADER, 'PARTNERSHIP', or 'PERSON'."
           },
           "operator_postcode": {
             "type": "string",
@@ -447,46 +534,31 @@
             "type": "string",
             "description": "Unique Property Reference Number."
           },
-          "operator_first_line": {
-            "maximum": 255,
-            "type": "string",
-            "description": "ASCII string."
-          },
-          "operator_street": {
-            "maximum": 255,
-            "type": "string",
-            "description": "ASCII string."
-          },
-          "operator_dependent_locality": {
-            "maximum": 255,
-            "type": "string",
-            "description": "ASCII string."
-          },
           "operator_address_line_1": {
             "maximum": 255,
             "type": "string",
-            "description": "ASCII string."
+            "description": "String."
           },
           "operator_address_line_2": {
             "maximum": 255,
             "type": "string",
-            "description": "ASCII string."
+            "description": "String."
           },
           "operator_address_line_3": {
             "maximum": 255,
             "type": "string",
-            "description": "ASCII string."
+            "description": "String."
           },
           "operator_town": {
             "maximum": 255,
             "type": "string",
-            "description": "ASCII string."
+            "description": "String."
           },
           "operator_primary_number": {
             "maximum": 20,
             "minimum": 5,
             "type": "string",
-            "description": "Numeric string. Blank spaces and + allowed."
+            "description": "Numeric string. Blank spaces and + allowed. Required if operator_type is 'SOLETRADER, 'PARTNERSHIP', or 'PERSON'."
           },
           "operator_secondary_number": {
             "maximum": 20,
@@ -497,54 +569,60 @@
           "operator_email": {
             "maximum": 255,
             "type": "string",
-            "description": "Uses [npm Validator](https://www.npmjs.com/package/validator) isEmail."
+            "description": "Uses [npm Validator](https://www.npmjs.com/package/validator) isEmail. Required if operator_type is 'SOLETRADER, 'PARTNERSHIP', or 'PERSON'."
           },
           "contact_representative_name": {
             "maximum": 255,
             "type": "string",
-            "description": "Required if operator_type is 'A company (registered by a representative)' or 'A charity (registered by a representative)'."
+            "description": "Required if operator_type is 'COMPANY' or 'CHARITY'."
           },
           "contact_representative_role": {
             "maximum": 255,
             "type": "string",
-            "description": "ASCII string - Required if operator_type is 'A company (registered by a representative)' or 'A charity (registered by a representative)'."
+            "description": "String - Required if operator_type is 'COMPANY' or 'CHARITY'."
           },
           "contact_representative_number": {
             "maximum": 20,
             "minimum": 5,
             "type": "string",
-            "description": "Numeric string. Blank spaces and + allowed - Required if operator_type is 'A company (registered by a representative)' or 'A charity (registered by a representative)'."
+            "description": "Numeric string. Blank spaces and + allowed - Required if operator_type is 'COMPANY' or 'CHARITY'."
           },
           "contact_representative_email": {
             "maximum": 255,
             "type": "string",
-            "description": "Uses [npm Validator](https://www.npmjs.com/package/validator) isEmail - Required if operator_type is 'A company (registered by a representative)' or 'A charity (registered by a representative)'."
+            "description": "Uses [npm Validator](https://www.npmjs.com/package/validator) isEmail - Required if operator_type is 'COMPANY' or 'CHARITY'."
           },
           "operator_type": {
             "type": "string",
-            "description": "Possible values: 'Sole trader', 'Partnership', 'A person (registered by a representative)' 'A company (registered by a representative)' or 'A charity (registered by a representative)'."
+            "enum": [
+              "SOLETRADER",
+              "PARTNERSHIP",
+              "PERSON",
+              "COMPANY",
+              "CHARITY"
+            ]
           },
           "operator_company_name": {
             "maximum": 255,
             "type": "string",
-            "description": "Required if operator_type is 'A company (registered by a representative)'."
+            "description": "Required if operator_type is 'COMPANY'."
           },
           "operator_company_house_number": {
             "maximum": 8,
             "minimum": 8,
             "type": "string",
-            "description": "Uses [npm Validator](https://www.npmjs.com/package/validator) isAlphanumeric (GB) - Required if operator_type is 'A company (registered by a representative)'."
+            "description": "Uses [npm Validator](https://www.npmjs.com/package/validator) isAlphanumeric (GB) - Required if operator_type is 'COMPANY'."
           },
           "operator_charity_name": {
             "maximum": 255,
             "type": "string",
-            "description": "Required if operator_type is 'A charity (registered by a representative)'."
+            "description": "Required if operator_type is 'CHARITY'."
           },
           "operator_charity_number": {
             "maximum": 8,
             "minimum": 8,
             "type": "string",
-            "description": "Uses [npm Validator](https://www.npmjs.com/package/validator) isAlphanumeric (GB), allows ''-'' -  Required if operator_type is 'A charity (registered by a representative)'."
+            "description": "Uses [npm Validator](https://www.npmjs.com/package/validator) isAlphanumeric (GB), allows ''-'' -  Required if operator_type is 'CHARITY'."
           },
           "partners": {
             "type": "array",
@@ -572,7 +650,6 @@
       "Premise": {
         "required": [
           "establishment_postcode",
-          "establishment_first_line",
           "establishment_address_line_1",
           "establishment_type",
           "establishment_town"
@@ -588,44 +665,29 @@
             "type": "string",
             "description": "Unique Property Reference Number."
           },
-          "establishment_first_line": {
-            "maximum": 255,
-            "type": "string",
-            "description": "ASCII string."
-          },
-          "establishment_street": {
-            "maximum": 255,
-            "type": "string",
-            "description": "ASCII string."
-          },
-          "establishment_dependent_locality": {
-            "maximum": 255,
-            "type": "string",
-            "description": "ASCII string."
-          },
           "establishment_address_line_1": {
             "maximum": 255,
             "type": "string",
-            "description": "ASCII string."
+            "description": "String."
           },
           "establishment_address_line_2": {
             "maximum": 255,
             "type": "string",
-            "description": "ASCII string."
+            "description": "String."
           },
           "establishment_address_line_3": {
             "maximum": 255,
             "type": "string",
-            "description": "ASCII string."
+            "description": "String."
           },
           "establishment_town": {
             "maximum": 255,
             "type": "string",
-            "description": "ASCII string."
+            "description": "String."
           },
           "establishment_type": {
             "type": "string",
-            "description": "Possible values: 'Place of business or commercial premises', 'Mobile or moveable premises', 'Home or domestic premises'."
+            "enum": ["COMMERCIAL", "MOBILE", "DOMESTIC"]
           }
         }
       },
@@ -640,22 +702,22 @@
         "properties": {
           "customer_type": {
             "type": "string",
-            "description": "Possible values: 'Other businesses', 'End consumer', 'End consumer and other businesses'."
+            "enum": ["OTHER_BUSINESSES", "END_CONSUMER", "BOTH"]
           },
           "business_type": {
             "type": "string",
-            "description": "Predetermined values, see separate document for full business type list."
+            "description": "Predetermined values, see https://data.food.gov.uk/codes/business/rafb/establishment-type for full business type list."
           },
           "business_type_search_term": {
             "type": "string"
           },
           "import_export_activities": {
             "type": "string",
-            "description": "Possible values: 'Directly import', 'Directly export', 'Directly import and export', 'None'."
+            "enum": ["IMPORT", "EXPORT", "BOTH", "NONE"]
           },
           "water_supply": {
             "type": "string",
-            "description": "Possible values: 'Public', 'Private', 'Public and private'."
+            "enum": ["PUBLIC", "PRIVATE", "BOTH"]
           },
           "business_other_details": {
             "maximum": 1500,
@@ -666,53 +728,67 @@
             "type": "string"
           },
           "opening_day_monday": {
-            "type": "boolean"
+            "type": "boolean",
+            "description": "Required if opening_days_irregular not populated"
           },
           "opening_day_tuesday": {
-            "type": "boolean"
+            "type": "boolean",
+            "description": "Required if opening_days_irregular not populated"
           },
           "opening_day_wednesday": {
-            "type": "boolean"
+            "type": "boolean",
+            "description": "Required if opening_days_irregular not populated"
           },
           "opening_day_thursday": {
-            "type": "boolean"
+            "type": "boolean",
+            "description": "Required if opening_days_irregular not populated"
           },
           "opening_day_friday": {
-            "type": "boolean"
+            "type": "boolean",
+            "description": "Required if opening_days_irregular not populated"
           },
           "opening_day_saturday": {
-            "type": "boolean"
+            "type": "boolean",
+            "description": "Required if opening_days_irregular not populated"
           },
           "opening_day_sunday": {
-            "type": "boolean"
+            "type": "boolean",
+            "description": "Required if opening_days_irregular not populated"
           },
           "opening_hours_monday": {
             "maximum": 50,
-            "type": "string"
+            "type": "string",
+            "description": "Required if 'opening_day_monday' is true."
           },
           "opening_hours_tuesday": {
             "maximum": 50,
-            "type": "string"
+            "type": "string",
+            "description": "Required if 'opening_day_tuesday' is true."
           },
           "opening_hours_wednesday": {
             "maximum": 50,
-            "type": "string"
+            "type": "string",
+            "description": "Required if 'opening_day_wednesday' is true."
           },
           "opening_hours_thursday": {
             "maximum": 50,
-            "type": "string"
+            "type": "string",
+            "description": "Required if 'opening_day_thursday' is true."
           },
           "opening_hours_friday": {
             "maximum": 50,
-            "type": "string"
+            "type": "string",
+            "description": "Required if 'opening_day_friday' is true."
           },
           "opening_hours_saturday": {
             "maximum": 50,
-            "type": "string"
+            "type": "string",
+            "description": "Required if 'opening_day_saturday' is true."
           },
           "opening_hours_sunday": {
             "maximum": 50,
-            "type": "string"
+            "type": "string",
+            "description": "Required if 'opening_day_sunday' is true."
           }
         }
       },
