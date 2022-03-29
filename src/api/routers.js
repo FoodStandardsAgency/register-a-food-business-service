@@ -26,7 +26,7 @@ const routers = () => {
   router.use("/api/status", statusRouter());
 
   router.use("/api-docs", swaggerUi.serve);
-  router.get("/api-docs", swaggerUi.setup(swaggerV2Document));
+  router.get("/api-docs", swaggerUi.setup(swaggerV3Document));
   router.get("/api-docs/v1", swaggerUi.setup(swaggerV1Document));
   router.get("/api-docs/v2", swaggerUi.setup(swaggerV2Document));
   router.get("/api-docs/v3", swaggerUi.setup(swaggerV3Document));
