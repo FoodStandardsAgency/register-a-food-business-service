@@ -22,7 +22,7 @@ const frontendSubmitRegistration = async () => {
           "Content-Type": "application/json",
           "client-name": process.env.FRONT_END_NAME,
           "api-secret": process.env.FRONT_END_SECRET,
-          "registration-data-version": "3.0.0"
+          "registration-data-version": "2.1.0"
         }
       };
 
