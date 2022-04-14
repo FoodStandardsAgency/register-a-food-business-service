@@ -48,7 +48,6 @@ const fullRegistration = {
     establishment_primary_number: "329857245",
     establishment_secondary_number: "84345245",
     establishment_email: "django@email.com",
-    establishment_web_address: "test.com",
     operator: {
       operator_type: "SOLETRADER",
       operator_company_name: "name",
@@ -142,7 +141,6 @@ const transformedFullReg = {
     establishment_primary_number: "329857245",
     establishment_secondary_number: "84345245",
     establishment_email: "django@email.com",
-    establishment_web_address: "test.com",
     operator: {
       operator_type: "SOLETRADER",
       operator_company_name: "name",

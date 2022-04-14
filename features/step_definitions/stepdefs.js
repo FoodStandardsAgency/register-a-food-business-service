@@ -8,7 +8,7 @@ const {
   DIRECT_API_SECRET
 } = require("../../src/config");
 
-setDefaultTimeout(60 * 1000);
+setDefaultTimeout(120 * 1000);
 
 let apiUrl =
   "https://staging-register-a-food-business-service.azurewebsites.net";

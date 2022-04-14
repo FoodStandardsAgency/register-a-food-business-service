@@ -194,9 +194,9 @@ const createGuidanceLinksSection = (lcInfo, i18n) => {
   }
   guidanceLinksSectionNoSpaces.push(
     createHyperlinkTitle(
-      "Guidance on food hygiene and how to run a safe food business",
+      "Guidance for new food businesses",
       "h4",
-      "https://www.food.gov.uk/business-guidance"
+      "https://www.food.gov.uk/register-a-food-business#support-for-new-food-businesses"
     )
   );
   guidanceLinksSectionNoSpaces.push(
