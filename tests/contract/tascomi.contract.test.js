@@ -50,6 +50,7 @@ describe("Tascomi contract: createFoodBusinessRegistration", () => {
             establishment_primary_number: "329857245",
             establishment_secondary_number: "84345245",
             establishment_email: "django@uk.ibm.com",
+            establishment_web_address: "test.com",
             establishment_opening_date: "2018-06-07"
           },
           operator: {

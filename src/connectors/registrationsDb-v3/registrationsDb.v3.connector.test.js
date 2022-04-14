@@ -5,10 +5,10 @@ const mongodb = require("mongodb");
 
 const {
   getUnifiedRegistrations,
-  getAllRegistrationsByCouncil,
+  getAllRegistrationsByCouncils,
   getSingleRegistration,
   updateRegistrationCollectedByCouncil
-} = require("./registrationsDb.connector");
+} = require("./registrationsDb.v3.connector");
 const { clearCosmosConnection } = require("../cosmos.client");
 
 const fullRegistration = {
@@ -237,7 +237,7 @@ describe("Function: getAllRegistrationsByCouncils", () => {
       });
 
       try {
-        await getAllRegistrationsByCouncil(
+        await getAllRegistrationsByCouncils(
           councils,
           newRegistrations,
           [],
@@ -274,7 +274,7 @@ describe("Function: getAllRegistrationsByCouncils", () => {
             })
           })
         }));
-        results = await getAllRegistrationsByCouncil(
+        results = await getAllRegistrationsByCouncils(
           councils,
           newRegistrations,
           [],
@@ -302,7 +302,7 @@ describe("Function: getAllRegistrationsByCouncils", () => {
             })
           })
         }));
-        results = await getAllRegistrationsByCouncil(
+        results = await getAllRegistrationsByCouncils(
           councils,
           newRegistrations,
           ["establishment", "metadata"],
@@ -330,7 +330,7 @@ describe("Function: getAllRegistrationsByCouncils", () => {
             })
           })
         }));
-        results = await getAllRegistrationsByCouncil(
+        results = await getAllRegistrationsByCouncils(
           councils,
           "false",
           [],

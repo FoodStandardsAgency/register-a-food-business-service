@@ -207,7 +207,10 @@ describe("Function: createGuidanceLinksSections", () => {
 describe("Function: docDefinitionGenerator", () => {
   let docDefinition;
   beforeEach(() => {
-    docDefinition = docDefinitionGenerator({ some: "content" });
+    docDefinition = docDefinitionGenerator(
+      { some: "content" },
+      { metaData: { "fsa-rn": "123455" } }
+    );
   });
 
   it("should define some default properties", () => {
