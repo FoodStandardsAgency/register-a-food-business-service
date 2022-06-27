@@ -1,12 +1,6 @@
 const fetch = require("node-fetch");
 const HttpsProxyAgent = require("https-proxy-agent");
-const promiseRetry = require("promise-retry");
 const { INFO } = require("../../services/logging.service");
-
-const {
-  createFoodBusinessRegistration,
-  createReferenceNumber
-} = require("../../connectors/tascomi/tascomi.connector");
 
 const {
   getAllLocalCouncilConfig,
@@ -18,7 +12,7 @@ const { statusEmitter } = require("../../services/statusEmitter.service");
 
 const sendTascomiRegistration = async (registration, localCouncil) => {
   // hack to reduce repair work needed
-  let postRegistrationMetadata = registration;
+  //let postRegistrationMetadata = registration;
 
   logEmitter.emit(
     "functionCall",
@@ -31,15 +25,8 @@ const sendTascomiRegistration = async (registration, localCouncil) => {
     return null;
   }
 
-  const auth = localCouncil.auth;
-  const reg = await promiseRetry({ retries: 3 }, (retry, number) => {
-    logEmitter.emit(INFO, `createdFoodBusinessRegistration attempt ${number}`);
-    return createFoodBusinessRegistration(
-      registration,
-      postRegistrationMetadata,
-      auth
-    ).catch(retry);
-  });
+  //const auth = localCouncil.auth;
+  const reg = {}; // Remove promise retry since this menthod not used
 
   let regParsed = JSON.parse(reg);
   let referenceIdInput = regParsed.id ? regParsed.id : null;
@@ -50,10 +37,7 @@ const sendTascomiRegistration = async (registration, localCouncil) => {
     throw err;
   }
 
-  const response = await promiseRetry({ retries: 3 }, (retry, number) => {
-    logEmitter.emit(INFO, `createdReferenceNumber attempt ${number}`);
-    return createReferenceNumber(referenceIdInput, auth).catch(retry);
-  });
+  const response = {}; // Remove promise retry since this menthod not used
 
   if (JSON.parse(response).id === 0) {
     const err = new Error("createReferenceNumber failed");
