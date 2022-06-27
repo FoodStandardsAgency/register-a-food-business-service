@@ -1,7 +1,5 @@
 const fetch = require("node-fetch");
 const HttpsProxyAgent = require("https-proxy-agent");
-const { INFO } = require("../../services/logging.service");
-
 const {
   getAllLocalCouncilConfig,
   mongodb

@@ -24,11 +24,6 @@ jest.mock("../../connectors/cacheDb/cacheDb.connector", () => ({
 }));
 
 const {
-  createFoodBusinessRegistration,
-  createReferenceNumber
-} = require("../../connectors/tascomi/tascomi.connector");
-
-const {
   getAllLocalCouncilConfig
 } = require("../../connectors/configDb/configDb.connector");
 
