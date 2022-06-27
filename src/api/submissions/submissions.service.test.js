@@ -37,115 +37,12 @@ const mockLocalCouncilConfig = require("../../connectors/configDb/mockLocalCounc
 const fetch = require("node-fetch");
 
 const {
-  sendTascomiRegistration,
   getRegistrationMetaData,
   getLcContactConfig,
   getLcAuth
 } = require("./submissions.service");
 
-const {
-  updateStatusInCache
-} = require("../../connectors/cacheDb/cacheDb.connector");
-
 let result;
-
-describe("Function: sendTascomiRegistration: ", () => {
-  let result;
-  let exampleCouncilAuthKey = {
-    url: "url",
-    public_key: "key",
-    private_key: "key"
-  };
-  let exampleLocalCouncil = {
-    local_council_url: "cardiff",
-    auth: exampleCouncilAuthKey
-  };
-  describe("When calls are successful", () => {
-    beforeEach(async () => {
-      jest.clearAllMocks();
-      createFoodBusinessRegistration.mockImplementation(
-        () => new Promise((resolve) => resolve('{ "id": "123"}'))
-      );
-      updateStatusInCache.mockImplementation(() => {});
-      createReferenceNumber.mockImplementation(
-        () =>
-          new Promise((resolve) =>
-            resolve('{ "id": "123", "online_reference": "0000123"}')
-          )
-      );
-      getAllLocalCouncilConfig.mockImplementation(() => []);
-      result = await sendTascomiRegistration(
-        { fsa_rn: "test" },
-        exampleLocalCouncil
-      );
-    });
-
-    it("should call createFoodBusinessRegistration", () => {
-      expect(createFoodBusinessRegistration).toBeCalled();
-    });
-
-    it("should call createReferenceNumber with result of previous call", () => {
-      expect(createReferenceNumber).toBeCalledWith(
-        "123",
-        exampleCouncilAuthKey
-      );
-    });
-
-    it("should return response of createReferenceNumber", () => {
-      expect(result).toBe('{ "id": "123", "online_reference": "0000123"}');
-    });
-
-    //this is done elsewhere now see controller ANW
-    // it("should update the tascomi status with true", () => {
-    //   expect(updateStatusInCache).toHaveBeenLastCalledWith(
-    //     123,
-    //     "tascomi",
-    //     true
-    //   );
-    // });
-  });
-
-  describe("When createReferenceNumber fails", () => {
-    beforeEach(async () => {
-      jest.clearAllMocks();
-      createFoodBusinessRegistration.mockImplementation(
-        () => new Promise((resolve) => resolve('{ "id": "123"}'))
-      );
-      createReferenceNumber.mockImplementation(
-        () => new Promise((reject) => reject('{ "id": 0 }'))
-      );
-      updateStatusInCache.mockImplementation(() => {});
-      getAllLocalCouncilConfig.mockImplementation(() => [
-        {
-          local_council_url: "cardiff",
-          auth: {
-            url: "url",
-            public_key: "key",
-            private_key: "key"
-          }
-        }
-      ]);
-      try {
-        await sendTascomiRegistration({ fsa_rn: "test" }, exampleLocalCouncil);
-      } catch (err) {
-        result = err;
-      }
-    });
-
-    it("Should throw tascomiRefNumber error", () => {
-      expect(result.name).toBe("tascomiRefNumber");
-    });
-
-    //this is done elsewhere controller
-    // it("Should update the tascomi status with fail", () => {
-    //   expect(updateStatusInCache).toHaveBeenLastCalledWith(
-    //     123,
-    //     "tascomi",
-    //     false
-    //   );
-    // });
-  });
-});
 
 describe("Function: getRegistrationMetaData: ", () => {
   let result;
