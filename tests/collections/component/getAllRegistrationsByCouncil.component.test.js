@@ -1,5 +1,5 @@
 require("dotenv").config();
-const request = require("request-promise-native");
+const fetch = require("node-fetch");
 const { logEmitter } = require("../../../src/services/logging.service");
 const mockRegistrationData = require("./mock-registration-data.json");
 
@@ -14,7 +14,6 @@ const frontendSubmitRegistration = async () => {
   try {
     for (let index in mockRegistrationData) {
       const requestOptions = {
-        uri: `${submitUrl}/api/submissions/createNewRegistration`,
         method: "POST",
         json: true,
         body: mockRegistrationData[index],
@@ -26,7 +25,10 @@ const frontendSubmitRegistration = async () => {
         }
       };
 
-      const response = await request(requestOptions);
+      const response = await fetch(
+        `${submitUrl}/api/submissions/createNewRegistration`,
+        requestOptions
+      );
       submitResponses.push(response);
     }
   } catch (err) {
@@ -48,10 +50,9 @@ describe("GET to /api/collections/:lc", () => {
     beforeEach(async () => {
       // await resetDB();
       const requestOptions = {
-        uri: url,
         json: true
       };
-      response = await request(requestOptions);
+      response = await fetch(url, requestOptions);
     });
 
     it("should return all the new registrations for that council including the one just submitted", () => {
@@ -75,11 +76,10 @@ describe("GET to /api/collections/:lc", () => {
     let response;
     beforeEach(async () => {
       const requestOptions = {
-        uri: `${url}?new=alskdfj`,
         json: true
       };
       try {
-        await request(requestOptions);
+        await fetch(`${url}?new=alskdfj`, requestOptions);
       } catch (err) {
         response = err;
       }
@@ -98,10 +98,9 @@ describe("GET to /api/collections/:lc", () => {
     let response;
     beforeEach(async () => {
       const requestOptions = {
-        uri: url,
         json: true
       };
-      response = await request(requestOptions);
+      response = await fetch(url, requestOptions);
     });
 
     it("should return on the summary information for the registrations", () => {
@@ -114,10 +113,12 @@ describe("GET to /api/collections/:lc", () => {
     let response;
     beforeEach(async () => {
       const requestOptions = {
-        uri: `${url}?fields=establishment,metadata`,
         json: true
       };
-      response = await request(requestOptions);
+      response = await fetch(
+        `${url}?fields=establishment,metadata`,
+        requestOptions
+      );
     });
 
     it("should return all the new registrations for that council", () => {
@@ -132,10 +133,9 @@ describe("GET to /api/collections/:lc", () => {
     let response;
     beforeEach(async () => {
       const requestOptions = {
-        uri: `${url}?new=false`,
         json: true
       };
-      response = await request(requestOptions);
+      response = await fetch(`${url}?new=false`, requestOptions);
     });
 
     it("should return all the registrations for the council", () => {
@@ -147,13 +147,12 @@ describe("GET to /api/collections/:lc", () => {
     let response;
     beforeEach(async () => {
       const requestOptions = {
-        uri: `${url}`,
         json: true,
         headers: {
           "double-mode": "success"
         }
       };
-      response = await request(requestOptions);
+      response = await fetch(`${url}`, requestOptions);
     });
 
     it("should return the double mode response", () => {
