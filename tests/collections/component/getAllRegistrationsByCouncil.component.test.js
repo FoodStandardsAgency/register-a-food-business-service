@@ -52,7 +52,7 @@ describe("GET to /api/collections/:lc", () => {
       const requestOptions = {
         json: true
       };
-      response = await fetch(url, requestOptions);
+      response = await fetch(url, requestOptions).json();
     });
 
     it("should return all the new registrations for that council including the one just submitted", () => {
