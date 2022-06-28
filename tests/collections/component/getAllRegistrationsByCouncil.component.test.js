@@ -16,7 +16,7 @@ const frontendSubmitRegistration = async () => {
       const requestOptions = {
         method: "POST",
         json: true,
-        body: mockRegistrationData[index],
+        body: JSON.stringify(mockRegistrationData[index]),
         headers: {
           "Content-Type": "application/json",
           "client-name": process.env.FRONT_END_NAME,
@@ -29,7 +29,7 @@ const frontendSubmitRegistration = async () => {
         `${submitUrl}/api/submissions/createNewRegistration`,
         requestOptions
       );
-      submitResponses.push(response);
+      submitResponses.push(await response.json());
     }
   } catch (err) {
     logEmitter.emit(
@@ -52,7 +52,8 @@ describe("GET to /api/collections/:lc", () => {
       const requestOptions = {
         json: true
       };
-      response = await fetch(url, requestOptions).json();
+      var res = await fetch(url, requestOptions);
+      response = await res.json();
     });
 
     it("should return all the new registrations for that council including the one just submitted", () => {
