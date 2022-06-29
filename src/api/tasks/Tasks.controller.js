@@ -184,15 +184,20 @@ const sendAllNotificationsForRegistrationsAction = async (
 
     if (!dryrun) {
       await multiSendNotifications(registration, allLcConfigData);
+
+      //sleep
+      await new Promise((resolve) => setTimeout(resolve, throttle));
+
+      logEmitter.emit(
+        INFO,
+        `Sent notifications for FSAId ${registration["fsa-rn"]}`
+      );
+    } else {
+      logEmitter.emit(
+        INFO,
+        `Pretended to send notifications for FSAId ${registration["fsa-rn"]}`
+      );
     }
-
-    //sleep
-    await new Promise((resolve) => setTimeout(resolve, throttle));
-
-    logEmitter.emit(
-      INFO,
-      `Sent notifications for FSAId ${registration["fsa-rn"]}`
-    );
   }
 
   logEmitter.emit(
