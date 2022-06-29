@@ -13,7 +13,6 @@ jest.setTimeout(30000);
 const frontendSubmitRegistration = async () => {
   try {
     const requestOptions = {
-      uri: `${submitUrl}/api/submissions/createNewRegistration`,
       method: "POST",
       json: true,
       body: JSON.stringify(mockRegistrationData[0]),
@@ -110,7 +109,6 @@ describe("GET to /api/v3/collections/:lc/:fsa_rn", () => {
     let response;
     beforeEach(async () => {
       const requestOptions = {
-        uri: `${url}`,
         json: true,
         headers: {
           "double-mode": "single"

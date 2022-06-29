@@ -73,7 +73,6 @@ describe("PUT to /api/v3/collections/:lc/:fsa_rn", () => {
     let response;
     beforeEach(async () => {
       const requestOptions = {
-        uri: `${url}/1234253`,
         json: true,
         method: "PUT",
         body: JSON.stringify({

@@ -109,7 +109,6 @@ describe("GET to /api/v2/collections/:lc/:fsa_rn", () => {
     let response;
     beforeEach(async () => {
       const requestOptions = {
-        uri: `${url}`,
         json: true,
         headers: {
           "double-mode": "single"

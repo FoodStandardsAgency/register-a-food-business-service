@@ -14,7 +14,6 @@ const frontendSubmitRegistration = async () => {
   try {
     for (let index in mockRegistrationData) {
       const requestOptions = {
-        uri: `${submitUrl}/api/submissions/createNewRegistration`,
         method: "POST",
         json: true,
         body: JSON.stringify(mockRegistrationData[index]),
