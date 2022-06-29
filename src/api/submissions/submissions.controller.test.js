@@ -150,31 +150,6 @@ describe("registration controller", () => {
       findCouncilByUrl.mockImplementation(() => exampleCouncil);
     });
     describe("when given valid data", () => {
-      describe("when auth object exists", () => {
-        beforeEach(async () => {
-          getLcAuth.mockImplementation(() => {
-            return {
-              url: "https://notactualtascomiurl/01/test/123",
-              public_key: "5353535535351",
-              private_key: "123435353453"
-            };
-          });
-          validate.mockImplementation(() => {
-            return [];
-          });
-          getRegistrationMetaData.mockImplementation(() => {
-            return postRegistrationMetadata;
-          });
-          getLcContactConfig.mockImplementation(() => exampleLcConfig);
-          getConfigVersion.mockImplementation(() => testConfigVersion);
-          result = await createNewRegistration(
-            testRegistration,
-            testLocalCouncilUrl,
-            testLanguage,
-            testRegDataVersion
-          );
-        });
-      });
       describe("when auth object does not exist", () => {
         beforeEach(async () => {
           getLcAuth.mockImplementation(() => {

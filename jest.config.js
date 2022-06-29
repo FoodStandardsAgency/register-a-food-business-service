@@ -1,4 +1,6 @@
-const { requestPromise } = require('jest-transform-stealthy-require/dist/presets');
+const {
+  requestPromise
+} = require("jest-transform-stealthy-require/dist/presets");
 
 module.exports = {
   transform: {
@@ -7,17 +9,17 @@ module.exports = {
   transformIgnorePatterns: [requestPromise.transformIgnorePattern],
   verbose: true,
   testEnvironment: "node",
-  setupFilesAfterEnv: [
-    "./tests/jestSetup.js"
-  ],
+  setupFilesAfterEnv: ["./tests/jestSetup.js"],
   reporters: [
     "default",
-    ["jest-junit", { outputName: `./reports/TEST-${process.env.TEST_TYPE}.xml` }]
+    [
+      "jest-junit",
+      { outputName: `./reports/TEST-${process.env.TEST_TYPE}.xml` }
+    ]
   ],
   coverageReporters: ["cobertura", "lcov", "json", "text"],
   moduleNameMapper: {
-    winston: "<rootDir>/src/__mocks__/winston.js",
-    events: "<rootDir>/src/__mocks__/events.js"
+    winston: "<rootDir>/src/__mocks__/winston.js"
   },
   collectCoverageFrom: [
     "**/*.js",
