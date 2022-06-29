@@ -1,4 +1,4 @@
-const request = require("request-promise-native");
+const fetch = require("node-fetch");
 require("dotenv").config();
 const { logEmitter } = require("../../../src/services/logging.service");
 const mockRegistrationData = require("./mock-registration-data.json");
@@ -13,10 +13,9 @@ jest.setTimeout(30000);
 const frontendSubmitRegistration = async () => {
   try {
     const requestOptions = {
-      uri: `${submitUrl}/api/submissions/createNewRegistration`,
       method: "POST",
       json: true,
-      body: mockRegistrationData[1],
+      body: JSON.stringify(mockRegistrationData[1]),
       headers: {
         "Content-Type": "application/json",
         "client-name": process.env.FRONT_END_NAME,
@@ -25,7 +24,11 @@ const frontendSubmitRegistration = async () => {
       }
     };
 
-    const response = await request(requestOptions);
+    const res = await fetch(
+      `${submitUrl}/api/submissions/createNewRegistration`,
+      requestOptions
+    );
+    const response = await res.json();
     return response;
   } catch (err) {
     logEmitter.emit(
@@ -44,14 +47,20 @@ describe("PUT to /api/collections/:lc/:fsa_rn", () => {
     let response;
     beforeEach(async () => {
       const requestOptions = {
-        uri: `${url}/${submitResponse["fsa-rn"]}`,
         json: true,
         method: "PUT",
-        body: {
+        body: JSON.stringify({
           collected: true
+        }),
+        headers: {
+          "Content-Type": "application/json"
         }
       };
-      response = await request(requestOptions);
+      const res = await fetch(
+        `${url}/${submitResponse["fsa-rn"]}`,
+        requestOptions
+      );
+      response = await res.json();
     });
 
     it("should return the fsa_rn and collected", () => {
@@ -67,21 +76,21 @@ describe("PUT to /api/collections/:lc/:fsa_rn", () => {
         uri: `${url}/1234253`,
         json: true,
         method: "PUT",
-        body: {
+        body: JSON.stringify({
           collected: true
+        }),
+        headers: {
+          "Content-Type": "application/json"
         }
       };
-      try {
-        await request(requestOptions);
-      } catch (err) {
-        response = err;
-      }
+      const res = await fetch(`${url}/1234253`, requestOptions);
+      response = await res.json();
     });
 
     it("should return the getRegistrationNotFound error", () => {
       expect(response.statusCode).toBe(404);
-      expect(response.error.errorCode).toBe("4");
-      expect(response.error.developerMessage).toBe(
+      expect(response.errorCode).toBe("4");
+      expect(response.developerMessage).toBe(
         "The registration application reference specified could not be found for the council requested. Please check this reference is definitely associated with this council"
       );
     });
@@ -91,23 +100,20 @@ describe("PUT to /api/collections/:lc/:fsa_rn", () => {
     let response;
     beforeEach(async () => {
       const requestOptions = {
-        uri: `${url}/1234253`,
         json: true,
         headers: {
+          "Content-Type": "application/json",
           "double-mode": "invalid double mode"
         }
       };
-      try {
-        await request(requestOptions);
-      } catch (err) {
-        response = err;
-      }
+      const res = await fetch(`${url}/1234253`, requestOptions);
+      response = await res.json();
     });
 
     it("should return the options validation error", () => {
       expect(response.statusCode).toBe(400);
-      expect(response.error.errorCode).toBe("3");
-      expect(response.error.developerMessage).toBe(
+      expect(response.errorCode).toBe("3");
+      expect(response.developerMessage).toBe(
         "One of the supplied options is invalid"
       );
     });
@@ -117,13 +123,14 @@ describe("PUT to /api/collections/:lc/:fsa_rn", () => {
     let response;
     beforeEach(async () => {
       const requestOptions = {
-        uri: `${url}`,
         json: true,
         headers: {
+          "Content-Type": "application/json",
           "double-mode": "update"
         }
       };
-      response = await request(requestOptions);
+      const res = await fetch(`${url}`, requestOptions);
+      response = await res.json();
     });
 
     it("should return the double mode response", () => {

@@ -1,5 +1,5 @@
 require("dotenv").config();
-const request = require("request-promise-native");
+const fetch = require("node-fetch");
 const { logEmitter } = require("../../../src/services/logging.service");
 const mockRegistrationData = require("./mock-registration-data.json");
 
@@ -16,7 +16,7 @@ const frontendSubmitRegistration = async () => {
       uri: `${submitUrl}/api/submissions/createNewRegistration`,
       method: "POST",
       json: true,
-      body: mockRegistrationData[0],
+      body: JSON.stringify(mockRegistrationData[0]),
       headers: {
         "Content-Type": "application/json",
         "client-name": process.env.FRONT_END_NAME,
@@ -25,8 +25,11 @@ const frontendSubmitRegistration = async () => {
       }
     };
 
-    const response = await request(requestOptions);
-    return response;
+    var response = await fetch(
+      `${submitUrl}/api/submissions/createNewRegistration`,
+      requestOptions
+    );
+    return await response.json();
   } catch (err) {
     logEmitter.emit(
       "functionFail",
@@ -45,10 +48,13 @@ describe("GET to /api/v3/collections/:lc/:fsa_rn", () => {
     let response;
     beforeEach(async () => {
       const requestOptions = {
-        uri: `${url}/${submitResponse["fsa-rn"]}`,
         json: true
       };
-      response = await request(requestOptions);
+      var res = await fetch(
+        `${url}/${submitResponse["fsa-rn"]}`,
+        requestOptions
+      );
+      response = await res.json();
     });
 
     it("should return all the full details of that registration", () => {
@@ -63,20 +69,16 @@ describe("GET to /api/v3/collections/:lc/:fsa_rn", () => {
     let response;
     beforeEach(async () => {
       const requestOptions = {
-        uri: `${url}/1234253`,
         json: true
       };
-      try {
-        await request(requestOptions);
-      } catch (err) {
-        response = err;
-      }
+      let res = await fetch(`${url}/1234253`, requestOptions);
+      response = await res.json();
     });
 
     it("should return the getRegistrationNotFound error", () => {
       expect(response.statusCode).toBe(404);
-      expect(response.error.errorCode).toBe("5");
-      expect(response.error.developerMessage).toBe(
+      expect(response.errorCode).toBe("5");
+      expect(response.developerMessage).toBe(
         "The registration application reference specified could not be found for the council requested. Please check this reference is definitely associated with this council"
       );
     });
@@ -86,23 +88,19 @@ describe("GET to /api/v3/collections/:lc/:fsa_rn", () => {
     let response;
     beforeEach(async () => {
       const requestOptions = {
-        uri: `${url}/1234253`,
         json: true,
         headers: {
           "double-mode": "invalid double mode"
         }
       };
-      try {
-        await request(requestOptions);
-      } catch (err) {
-        response = err;
-      }
+      let res = await fetch(`${url}/1234253`, requestOptions);
+      response = await res.json();
     });
 
     it("should return the options validation error", () => {
       expect(response.statusCode).toBe(400);
-      expect(response.error.errorCode).toBe("3");
-      expect(response.error.developerMessage).toBe(
+      expect(response.errorCode).toBe("3");
+      expect(response.developerMessage).toBe(
         "One of the supplied options is invalid"
       );
     });
@@ -118,7 +116,8 @@ describe("GET to /api/v3/collections/:lc/:fsa_rn", () => {
           "double-mode": "single"
         }
       };
-      response = await request(requestOptions);
+      let res = await fetch(`${url}`, requestOptions);
+      response = await res.json();
     });
 
     it("should return the double mode response", () => {

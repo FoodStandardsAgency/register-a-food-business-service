@@ -1,5 +1,5 @@
 require("dotenv").config();
-const request = require("request-promise-native");
+const fetch = require("node-fetch");
 const { logEmitter } = require("../../../src/services/logging.service");
 const mockRegistrationData = require("./mock-registration-data.json");
 
@@ -10,14 +10,15 @@ let submitResponses = [];
 
 jest.setTimeout(30000);
 
+jest.setTimeout(30000);
+
 const frontendSubmitRegistration = async () => {
   try {
     for (let index in mockRegistrationData) {
       const requestOptions = {
-        uri: `${submitUrl}/api/submissions/createNewRegistration`,
         method: "POST",
         json: true,
-        body: mockRegistrationData[index],
+        body: JSON.stringify(mockRegistrationData[index]),
         headers: {
           "Content-Type": "application/json",
           "client-name": process.env.FRONT_END_NAME,
@@ -26,8 +27,11 @@ const frontendSubmitRegistration = async () => {
         }
       };
 
-      const response = await request(requestOptions);
-      submitResponses.push(response);
+      const response = await fetch(
+        `${submitUrl}/api/submissions/createNewRegistration`,
+        requestOptions
+      );
+      submitResponses.push(await response.json());
     }
   } catch (err) {
     logEmitter.emit(
@@ -46,12 +50,11 @@ describe("GET to /api/v3/collections/:lc", () => {
   describe("Given no extra parameters", () => {
     let response;
     beforeEach(async () => {
-      // await resetDB();
       const requestOptions = {
-        uri: url,
         json: true
       };
-      response = await request(requestOptions);
+      var res = await fetch(url, requestOptions);
+      response = await res.json();
     });
 
     it("should return all the new registrations for that council including the one just submitted", () => {
@@ -75,20 +78,16 @@ describe("GET to /api/v3/collections/:lc", () => {
     let response;
     beforeEach(async () => {
       const requestOptions = {
-        uri: `${url}?new=alskdfj`,
         json: true
       };
-      try {
-        await request(requestOptions);
-      } catch (err) {
-        response = err;
-      }
+      let res = await fetch(`${url}?new=alskdfj`, requestOptions);
+      response = await res.json();
     });
 
     it("should return the options validation error", () => {
       expect(response.statusCode).toBe(400);
-      expect(response.error.errorCode).toBe("3");
-      expect(response.error.developerMessage).toBe(
+      expect(response.errorCode).toBe("3");
+      expect(response.developerMessage).toBe(
         "One of the supplied options is invalid"
       );
     });
@@ -98,10 +97,10 @@ describe("GET to /api/v3/collections/:lc", () => {
     let response;
     beforeEach(async () => {
       const requestOptions = {
-        uri: url,
         json: true
       };
-      response = await request(requestOptions);
+      let res = await fetch(url, requestOptions);
+      response = await res.json();
     });
 
     it("should return on the summary information for the registrations", () => {
@@ -114,10 +113,13 @@ describe("GET to /api/v3/collections/:lc", () => {
     let response;
     beforeEach(async () => {
       const requestOptions = {
-        uri: `${url}?fields=establishment,metadata`,
         json: true
       };
-      response = await request(requestOptions);
+      let res = await fetch(
+        `${url}?fields=establishment,metadata`,
+        requestOptions
+      );
+      response = await res.json();
     });
 
     it("should return all the new registrations for that council", () => {
@@ -132,10 +134,10 @@ describe("GET to /api/v3/collections/:lc", () => {
     let response;
     beforeEach(async () => {
       const requestOptions = {
-        uri: `${url}?new=false`,
         json: true
       };
-      response = await request(requestOptions);
+      let res = await fetch(`${url}?new=false`, requestOptions);
+      response = await res.json();
     });
 
     it("should return all the registrations for the council", () => {
@@ -147,13 +149,13 @@ describe("GET to /api/v3/collections/:lc", () => {
     let response;
     beforeEach(async () => {
       const requestOptions = {
-        uri: `${url}`,
         json: true,
         headers: {
           "double-mode": "success"
         }
       };
-      response = await request(requestOptions);
+      let res = await fetch(`${url}`, requestOptions);
+      response = await res.json();
     });
 
     it("should return the double mode response", () => {

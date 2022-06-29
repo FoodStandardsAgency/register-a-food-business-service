@@ -48,7 +48,6 @@ describe("GET to /api/collections/:lc", () => {
   describe("Given no extra parameters", () => {
     let response;
     beforeEach(async () => {
-      // await resetDB();
       const requestOptions = {
         json: true
       };
@@ -79,17 +78,14 @@ describe("GET to /api/collections/:lc", () => {
       const requestOptions = {
         json: true
       };
-      try {
-        await fetch(`${url}?new=alskdfj`, requestOptions);
-      } catch (err) {
-        response = err;
-      }
+      let res = await fetch(`${url}?new=alskdfj`, requestOptions);
+      response = await res.json();
     });
 
     it("should return the options validation error", () => {
       expect(response.statusCode).toBe(400);
-      expect(response.error.errorCode).toBe("3");
-      expect(response.error.developerMessage).toBe(
+      expect(response.errorCode).toBe("3");
+      expect(response.developerMessage).toBe(
         "One of the supplied options is invalid"
       );
     });
@@ -101,7 +97,8 @@ describe("GET to /api/collections/:lc", () => {
       const requestOptions = {
         json: true
       };
-      response = await fetch(url, requestOptions);
+      let res = await fetch(url, requestOptions);
+      response = await res.json();
     });
 
     it("should return on the summary information for the registrations", () => {
@@ -116,10 +113,11 @@ describe("GET to /api/collections/:lc", () => {
       const requestOptions = {
         json: true
       };
-      response = await fetch(
+      let res = await fetch(
         `${url}?fields=establishment,metadata`,
         requestOptions
       );
+      response = await res.json();
     });
 
     it("should return all the new registrations for that council", () => {
@@ -136,7 +134,8 @@ describe("GET to /api/collections/:lc", () => {
       const requestOptions = {
         json: true
       };
-      response = await fetch(`${url}?new=false`, requestOptions);
+      let res = await fetch(`${url}?new=false`, requestOptions);
+      response = await res.json();
     });
 
     it("should return all the registrations for the council", () => {
@@ -153,7 +152,8 @@ describe("GET to /api/collections/:lc", () => {
           "double-mode": "success"
         }
       };
-      response = await fetch(`${url}`, requestOptions);
+      let res = await fetch(`${url}`, requestOptions);
+      response = await res.json();
     });
 
     it("should return the double mode response", () => {
