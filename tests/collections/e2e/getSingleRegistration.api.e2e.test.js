@@ -1,36 +1,43 @@
 require("dotenv").config();
-const request = require("request-promise-native");
+const fetch = require("node-fetch");
 
 const baseUrl =
   "https://integration-fsa-rof-gateway.azure-api.net/registrations/v1/";
 const cardiffUrl = `${baseUrl}cardiff`;
 const cardiffAPIKey = "b175199d420448fc87baa714e458ce6e";
 
-describe("Update single registration through API", () => {
+describe("Get single registration through API", () => {
   let availableRegistrations;
   beforeAll(async () => {
     const requestOptions = {
-      uri: `${cardiffUrl}?env=${process.env.ENVIRONMENT_DESCRIPTION}`,
       json: true,
       headers: {
+        "Content-Type": "application/json",
         "Ocp-Apim-Subscription-Key": cardiffAPIKey
       }
     };
-    availableRegistrations = await request(requestOptions);
+    const res = await fetch(
+      `${cardiffUrl}?env=${process.env.ENVIRONMENT_DESCRIPTION}`,
+      requestOptions
+    );
+    availableRegistrations = await res.json();
   });
 
   describe("Given no extra parameters", () => {
     let response;
     beforeEach(async () => {
       const update = {
-        uri: `${cardiffUrl}/${availableRegistrations[0].fsa_rn}?env=${process.env.ENVIRONMENT_DESCRIPTION}`,
         json: true,
-        method: "get",
         headers: {
+          "Content-Type": "application/json",
           "Ocp-Apim-Subscription-Key": cardiffAPIKey
         }
       };
-      response = await request(update);
+      const res = await fetch(
+        `${cardiffUrl}/${availableRegistrations[0].fsa_rn}?env=${process.env.ENVIRONMENT_DESCRIPTION}`,
+        update
+      );
+      response = await res.json();
     });
 
     it("should return the requested new registration for that council", () => {
@@ -47,18 +54,18 @@ describe("Update single registration through API", () => {
     it("should return a subscription incorrect error", async () => {
       const requestOptions = {
         method: "get",
-        uri: `${cardiffUrl}/${availableRegistrations[0].fsa_rn}?env=${process.env.ENVIRONMENT_DESCRIPTION}`,
         json: true,
         headers: {
           "Ocp-Apim-Subscription-Key": "incorrectKey"
         }
       };
-      try {
-        await request(requestOptions);
-      } catch (e) {
-        expect(e.statusCode).toBe(401);
-        expect(e.message).toContain("invalid subscription key.");
-      }
+      const res = await fetch(
+        `${cardiffUrl}/${availableRegistrations[0].fsa_rn}?env=${process.env.ENVIRONMENT_DESCRIPTION}`,
+        requestOptions
+      );
+      let response = await res.json();
+      expect(response.statusCode).toBe(401);
+      expect(response.message).toContain("invalid subscription key.");
     });
   });
 });

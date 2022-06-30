@@ -1,5 +1,5 @@
 require("dotenv").config();
-const request = require("request-promise-native");
+const fetch = require("node-fetch");
 
 const baseUrl =
   "https://integration-fsa-rof-gateway.azure-api.net/registrations/v2/";
@@ -14,23 +14,25 @@ describe("Retrieve all registrations through API", () => {
       let after = new Date();
       after.setDate(after.getDate() - 7);
       const requestOptions = {
-        uri: `${unifiedUrl}?before=${before.toISOString()}&after=${after.toISOString()}&env=${
-          process.env.ENVIRONMENT_DESCRIPTION
-        }`,
         json: true,
-        resolveWithFullResponse: true,
         headers: {
+          "Content-Type": "application/json",
           "Ocp-Apim-Subscription-Key": unifiedAPIKey
         }
       };
-      response = await request(requestOptions);
+      const res = await fetch(
+        `${unifiedUrl}?before=${before.toISOString()}&after=${after.toISOString()}&env=${
+          process.env.ENVIRONMENT_DESCRIPTION
+        }`,
+        requestOptions
+      );
+      response = await res.json();
     });
 
     it("should return all the registrations in the specified time frame", () => {
-      expect(response.body.length).toBeGreaterThanOrEqual(1);
-      expect(response.body[0].fsa_rn).toBeDefined();
-      expect(response.body[0].collected).toBeDefined();
-      expect(response.statusCode).toBe(200);
+      expect(response.length).toBeGreaterThanOrEqual(1);
+      expect(response[0].fsa_rn).toBeDefined();
+      expect(response[0].collected).toBeDefined();
     });
   });
 
@@ -41,24 +43,25 @@ describe("Retrieve all registrations through API", () => {
       let after = new Date();
       after.setDate(after.getDate() - 5);
       const requestOptions = {
-        uri: `${unifiedUrl}?before=${before.toISOString()}&after=${after.toISOString()}&env=${
-          process.env.ENVIRONMENT_DESCRIPTION
-        }`,
         json: true,
-        resolveWithFullResponse: true,
         headers: {
+          "Content-Type": "application/json",
           "Ocp-Apim-Subscription-Key": "unifiedAPIKeyWhichIsWrong"
         }
       };
 
-      await request(requestOptions).catch(function (body) {
-        response = body;
-      });
+      const res = await fetch(
+        `${unifiedUrl}?before=${before.toISOString()}&after=${after.toISOString()}&env=${
+          process.env.ENVIRONMENT_DESCRIPTION
+        }`,
+        requestOptions
+      );
+      response = await res.json();
     });
 
     it("should return a subscription incorrect error", () => {
       expect(response.statusCode).toBe(401);
-      expect(response.error.message).toContain("invalid subscription key.");
+      expect(response.message).toContain("invalid subscription key.");
     });
   });
 
@@ -69,20 +72,24 @@ describe("Retrieve all registrations through API", () => {
       let after = new Date();
       after.setDate(after.getDate() - 5);
       const requestOptions = {
-        uri: `${unifiedUrl}?before=${before.toISOString()}&after=${after.toISOString()}&env=${
-          process.env.ENVIRONMENT_DESCRIPTION
-        }`,
-        json: true
+        json: true,
+        headers: {
+          "Content-Type": "application/json"
+        }
       };
 
-      await request(requestOptions).catch(function (body) {
-        response = body;
-      });
+      const res = await fetch(
+        `${unifiedUrl}?before=${before.toISOString()}&after=${after.toISOString()}&env=${
+          process.env.ENVIRONMENT_DESCRIPTION
+        }`,
+        requestOptions
+      );
+      response = await res.json();
     });
 
     it("Should return subscription key not found error", () => {
       expect(response.statusCode).toBe(401);
-      expect(response.error.message).toContain(
+      expect(response.message).toContain(
         "Access denied due to missing subscription key."
       );
     });
@@ -93,26 +100,28 @@ describe("Retrieve all registrations through API", () => {
     beforeEach(async () => {
       const before = new Date();
       const requestOptions = {
-        uri: `${unifiedUrl}?before=${before.toISOString()}&after=dfgdfggfgf&env=${
-          process.env.ENVIRONMENT_DESCRIPTION
-        }`,
         json: true,
         headers: {
+          "Content-Type": "application/json",
           "Ocp-Apim-Subscription-Key": unifiedAPIKey
         }
       };
-      await request(requestOptions).catch(function (body) {
-        response = body;
-      });
+      const res = await fetch(
+        `${unifiedUrl}?before=${before.toISOString()}&after=dfgdfggfgf&env=${
+          process.env.ENVIRONMENT_DESCRIPTION
+        }`,
+        requestOptions
+      );
+      response = await res.json();
     });
 
     it("should return the options validation error", () => {
       expect(response.statusCode).toBe(400);
-      expect(response.error.errorCode).toBe("3");
-      expect(response.error.developerMessage).toBe(
+      expect(response.errorCode).toBe("3");
+      expect(response.developerMessage).toBe(
         "One of the supplied options is invalid"
       );
-      expect(response.error.rawError).toBe(
+      expect(response.rawError).toBe(
         "after option must be a valid ISO 8601 date and time ('yyyy-MM-ddTHH:mm:ssZ')"
       );
     });

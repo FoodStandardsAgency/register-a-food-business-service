@@ -1,5 +1,5 @@
 require("dotenv").config();
-const request = require("request-promise-native");
+const fetch = require("node-fetch");
 
 const baseUrl =
   "https://integration-fsa-rof-gateway.azure-api.net/registrations/v3/";
@@ -64,25 +64,32 @@ describe("Submit a single registration through the API as a council", () => {
     beforeAll(async () => {
       //Submit registration to registration API.
       const postRequestOptions = {
-        uri: `${highgardenUrl}?env=${process.env.ENVIRONMENT_DESCRIPTION}`,
         json: true,
-        method: "post",
+        method: "POST",
         headers: {
+          "Content-Type": "application/json",
           "Ocp-Apim-Subscription-Key": highgardenAPIKey
         },
-        body: registration
+        body: JSON.stringify(registration)
       };
-      postResponse = await request(postRequestOptions);
+      let res = await fetch(
+        `${highgardenUrl}?env=${process.env.ENVIRONMENT_DESCRIPTION}`,
+        postRequestOptions
+      );
+      postResponse = await res.json();
       //Retrieve registration from collections service
       const getRequestOptions = {
-        uri: `${highgardenUrl}/${postResponse["fsa-rn"]}?env=${process.env.ENVIRONMENT_DESCRIPTION}`,
         json: true,
-        method: "get",
         headers: {
+          "Content-Type": "application/json",
           "Ocp-Apim-Subscription-Key": highgardenAPIKey
         }
       };
-      getResponse = await request(getRequestOptions);
+      res = await fetch(
+        `${highgardenUrl}/${postResponse["fsa-rn"]}?env=${process.env.ENVIRONMENT_DESCRIPTION}`,
+        getRequestOptions
+      );
+      getResponse = await res.json();
     });
 
     it("should successfully submit the registration and return a fsa-rn", () => {
@@ -108,22 +115,24 @@ describe("Submit a single registration through the API as a council", () => {
     let response;
     beforeEach(async () => {
       const requestOptions = {
-        uri: `${highgardenUrl}?env=${process.env.ENVIRONMENT_DESCRIPTION}`,
         json: true,
-        method: "post",
+        method: "POST",
         headers: {
+          "Content-Type": "application/json",
           "Ocp-Apim-Subscription-Key": "incorrectKey"
         },
         body: registration
       };
-      await request(requestOptions).catch(function (body) {
-        response = body;
-      });
+      const res = await fetch(
+        `${highgardenUrl}?env=${process.env.ENVIRONMENT_DESCRIPTION}`,
+        requestOptions
+      );
+      response = await res.json();
     });
 
     it("should return a subscription incorrect error", () => {
       expect(response.statusCode).toBe(401);
-      expect(response.error.message).toContain("invalid subscription key");
+      expect(response.message).toContain("invalid subscription key");
     });
   });
 
@@ -132,22 +141,24 @@ describe("Submit a single registration through the API as a council", () => {
     const purbeckUrl = `${baseUrl}purbeck`;
     beforeEach(async () => {
       const requestOptions = {
-        uri: `${purbeckUrl}?env=${process.env.ENVIRONMENT_DESCRIPTION}`,
         json: true,
-        method: "post",
+        method: "POST",
         headers: {
+          "Content-Type": "application/json",
           "Ocp-Apim-Subscription-Key": cardiffAPIKey
         },
-        body: registration
+        body: JSON.stringify(registration)
       };
-      await request(requestOptions).catch(function (body) {
-        response = body;
-      });
+      const res = await fetch(
+        `${purbeckUrl}?env=${process.env.ENVIRONMENT_DESCRIPTION}`,
+        requestOptions
+      );
+      response = await res.json();
     });
 
     it("should return an authorization error", () => {
       expect(response.statusCode).toBe(403);
-      expect(response.error.message).toContain(
+      expect(response.message).toContain(
         "You are not authorized to access the council:"
       );
     });
@@ -157,22 +168,24 @@ describe("Submit a single registration through the API as a council", () => {
     let response;
     beforeEach(async () => {
       const requestOptions = {
-        uri: `${highgardenUrl}?env=${process.env.ENVIRONMENT_DESCRIPTION}`,
         json: true,
-        method: "post",
+        method: "POST",
         headers: {
+          "Content-Type": "application/json",
           "Ocp-Apim-Subscription-Key": highgardenAPIKey
         },
-        body: {}
+        body: JSON.stringify({})
       };
-      await request(requestOptions).catch(function (body) {
-        response = body;
-      });
+      const res = await fetch(
+        `${highgardenUrl}?env=${process.env.ENVIRONMENT_DESCRIPTION}`,
+        requestOptions
+      );
+      response = await res.json();
     });
 
     it("should return a schema error", () => {
       expect(response.statusCode).toBe(400);
-      expect(response.error.developerMessage).toBe(
+      expect(response.developerMessage).toBe(
         "Validation error, check request body vs validation schema"
       );
     });

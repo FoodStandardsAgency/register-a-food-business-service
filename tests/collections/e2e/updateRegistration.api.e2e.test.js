@@ -1,5 +1,5 @@
 require("dotenv").config();
-const request = require("request-promise-native");
+const fetch = require("node-fetch");
 
 const baseUrl =
   "https://integration-fsa-rof-gateway.azure-api.net/registrations/v1/";
@@ -10,30 +10,38 @@ describe("Update single registration through API", () => {
   let availableRegistrations;
   beforeAll(async () => {
     const requestOptions = {
-      uri: `${cardiffUrl}?env=${process.env.ENVIRONMENT_DESCRIPTION}`,
       json: true,
       headers: {
+        "Content-Type": "application/json",
         "Ocp-Apim-Subscription-Key": cardiffAPIKey
       }
     };
-    availableRegistrations = await request(requestOptions);
+    const res = await fetch(
+      `${cardiffUrl}?env=${process.env.ENVIRONMENT_DESCRIPTION}`,
+      requestOptions
+    );
+    availableRegistrations = await res.json();
   });
 
   describe("Given no extra parameters", () => {
     let response;
     beforeEach(async () => {
       const update = {
-        uri: `${cardiffUrl}/${availableRegistrations[0].fsa_rn}?env=${process.env.ENVIRONMENT_DESCRIPTION}`,
         json: true,
-        method: "put",
+        method: "PUT",
         headers: {
+          "Content-Type": "application/json",
           "Ocp-Apim-Subscription-Key": cardiffAPIKey
         },
-        body: {
+        body: JSON.stringify({
           collected: true
-        }
+        })
       };
-      response = await request(update);
+      const res = await fetch(
+        `${cardiffUrl}/${availableRegistrations[0].fsa_rn}?env=${process.env.ENVIRONMENT_DESCRIPTION}`,
+        update
+      );
+      response = await res.json();
     });
 
     it("should return the updated object with collected true", () => {
@@ -45,25 +53,27 @@ describe("Update single registration through API", () => {
   describe("Given invalid body", () => {
     let response;
     beforeEach(async () => {
-      const requestOptions = {
-        method: "put",
-        uri: `${cardiffUrl}/${availableRegistrations[0].fsa_rn}?env=${process.env.ENVIRONMENT_DESCRIPTION}`,
+      const update = {
         json: true,
+        method: "PUT",
         headers: {
+          "Content-Type": "application/json",
           "Ocp-Apim-Subscription-Key": cardiffAPIKey
         },
-        body: {
-          incorrect: "true"
-        }
+        body: JSON.stringify({
+          incorrect: true
+        })
       };
-      await request(requestOptions).catch(function (body) {
-        response = body;
-      });
+      const res = await fetch(
+        `${cardiffUrl}/${availableRegistrations[0].fsa_rn}?env=${process.env.ENVIRONMENT_DESCRIPTION}`,
+        update
+      );
+      response = await res.json();
     });
 
     it("Should throw an error", () => {
       expect(response.statusCode).toBe(400);
-      expect(response.error.developerMessage).toBe(
+      expect(response.developerMessage).toBe(
         "One of the supplied options is invalid"
       );
     });
@@ -73,17 +83,21 @@ describe("Update single registration through API", () => {
     let response;
     beforeEach(async () => {
       const update = {
-        uri: `${cardiffUrl}/${availableRegistrations[0].fsa_rn}?env=${process.env.ENVIRONMENT_DESCRIPTION}`,
         json: true,
-        method: "put",
+        method: "PUT",
         headers: {
+          "Content-Type": "application/json",
           "Ocp-Apim-Subscription-Key": cardiffAPIKey
         },
-        body: {
+        body: JSON.stringify({
           collected: false
-        }
+        })
       };
-      response = await request(update);
+      const res = await fetch(
+        `${cardiffUrl}/${availableRegistrations[0].fsa_rn}?env=${process.env.ENVIRONMENT_DESCRIPTION}`,
+        update
+      );
+      response = await res.json();
     });
 
     it("should return false for collected flag", () => {
@@ -95,25 +109,27 @@ describe("Update single registration through API", () => {
   describe("Given invalid subscription key", () => {
     let response;
     beforeEach(async () => {
-      const requestOptions = {
-        method: "put",
-        uri: `${cardiffUrl}/${availableRegistrations[0].fsa_rn}?env=${process.env.ENVIRONMENT_DESCRIPTION}`,
+      const update = {
         json: true,
+        method: "PUT",
         headers: {
+          "Content-Type": "application/json",
           "Ocp-Apim-Subscription-Key": "incorrectKey"
         },
-        body: {
+        body: JSON.stringify({
           collected: true
-        }
+        })
       };
-      await request(requestOptions).catch(function (body) {
-        response = body;
-      });
+      const res = await fetch(
+        `${cardiffUrl}/${availableRegistrations[0].fsa_rn}?env=${process.env.ENVIRONMENT_DESCRIPTION}`,
+        update
+      );
+      response = await res.json();
     });
 
     it("should return a subscription incorrect error", () => {
       expect(response.statusCode).toBe(401);
-      expect(response.error.message).toContain("invalid subscription key.");
+      expect(response.message).toContain("invalid subscription key.");
     });
   });
 });

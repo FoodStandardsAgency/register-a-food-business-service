@@ -1,5 +1,5 @@
-const request = require("request-promise-native");
-const { tascomiAuth } = require("@slice-and-dice/fsa-rof");
+const fetch = require("node-fetch");
+const { tascomiAuth } = {}; // require("@slice-and-dice/fsa-rof"); No longer needed
 const { doubleRequest } = require("./tascomi.double");
 const { logEmitter } = require("../../services/logging.service");
 const { statusEmitter } = require("../../services/statusEmitter.service");
@@ -19,7 +19,6 @@ const TASCOMI_FAIL = false;
 
 const sendRequest = async (url, method, body, public_key, private_key) => {
   const tascomiApiOptions = {
-    url: url,
     method: method,
     form: body
   };
@@ -40,7 +39,7 @@ const sendRequest = async (url, method, body, public_key, private_key) => {
       "X-Public": auth.public_key,
       "X-Hash": auth.hash
     };
-    return request(tascomiApiOptions);
+    return fetch(url, tascomiApiOptions);
   }
 };
 

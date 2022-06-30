@@ -286,7 +286,7 @@ const updateRegistrationCollectedByCouncil = async (
       }
     }
   );
-  if (response.result.n === 0) {
+  if (response.modifiedCount === 0) {
     const error = new Error("updateRegistrationNotFoundError");
     error.name = "updateRegistrationNotFoundError";
     logEmitter.emit(

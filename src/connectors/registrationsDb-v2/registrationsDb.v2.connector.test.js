@@ -377,7 +377,7 @@ describe("Function: updateRegistrationCollectedByCouncil", () => {
         mongodb.MongoClient.connect.mockImplementation(() => ({
           db: () => ({
             collection: () => ({
-              updateOne: () => ({ result: { n: 0 } })
+              updateOne: () => ({ modifiedCount: 0 })
             })
           })
         }));
