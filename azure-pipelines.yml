@@ -4,74 +4,72 @@
 # https://aka.ms/yaml
 
 pool:
-  vmImage: 'ubuntu-latest'
+  vmImage: "ubuntu-latest"
 
 steps:
-- task: NodeTool@0
-  inputs:
-    versionSpec: '12.9'
+  - task: NodeTool@0
+    inputs:
+      versionSpec: "16.15"
 
-- script: echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > .npmrc
-  displayName: Create .npmrc
+  - script: echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > .npmrc
+    displayName: Create .npmrc
 
-- script: npm -v
-  displayName: 'Npm version'
+  - script: npm -v
+    displayName: "Npm version"
 
-- script: npm install
-  displayName: 'Install'
+  - script: npm install
+    displayName: "Install"
 
-- script: npm run format:verify
-  displayName: 'Format'
+  - script: npm run format:verify
+    displayName: "Format"
 
-- script: npm run lint
-  displayName: 'Lint'
+  - script: npm run lint
+    displayName: "Lint"
 
-- script: npm run test:unit:ci
-  displayName: 'Unit tests'
+  - script: npm run test:unit:ci
+    displayName: "Unit tests"
 
-- task: PublishTestResults@2
-  inputs:
-    testRunner: JUnit
-    testResultsFile: ./reports/TEST-unit.xml
-    testRunTitle: Unit tests
-    mergeTestResults: false
+  - task: PublishTestResults@2
+    inputs:
+      testRunner: JUnit
+      testResultsFile: ./reports/TEST-unit.xml
+      testRunTitle: Unit tests
+      mergeTestResults: false
 
-- task: PublishCodeCoverageResults@1
-  inputs: 
-    codeCoverageTool: Cobertura
-    summaryFileLocation: '$(System.DefaultWorkingDirectory)/coverage/cobertura-coverage.xml'
-    reportDirectory: '$(System.DefaultWorkingDirectory)/coverage/lcov-report'
+  - task: PublishCodeCoverageResults@1
+    inputs:
+      codeCoverageTool: Cobertura
+      summaryFileLocation: "$(System.DefaultWorkingDirectory)/coverage/cobertura-coverage.xml"
+      reportDirectory: "$(System.DefaultWorkingDirectory)/coverage/lcov-report"
 
-- script: npm run test:integration
-  displayName: 'Integration tests'
+  - script: npm run test:integration
+    displayName: "Integration tests"
 
-- task: PublishTestResults@2
-  inputs:
-    testRunner: JUnit
-    testResultsFile: ./reports/TEST-integration.xml
-    testRunTitle: Integration tests
-    mergeTestResults: false
+  - task: PublishTestResults@2
+    inputs:
+      testRunner: JUnit
+      testResultsFile: ./reports/TEST-integration.xml
+      testRunTitle: Integration tests
+      mergeTestResults: false
 
-- task: SonarCloudPrepare@1
-  inputs:
-    SonarCloud: 'Sonarcloud'
-    organization: 'fsa'
-    scannerMode: 'CLI'
-    configMode: 'file'
-    
-- task: SonarCloudAnalyze@1
+  - task: SonarCloudPrepare@1
+    inputs:
+      SonarCloud: "Sonarcloud"
+      organization: "fsa"
+      scannerMode: "CLI"
+      configMode: "file"
 
-- script: npm prune --production
-  displayName: Prune dev dependencies
+  - task: SonarCloudAnalyze@1
 
-- script: rm -rf coverage reports
-  displayName: Remove reporting folders
-  
-- task: ArchiveFiles@2
-  inputs:
-    rootFolderOrFile: '$(System.DefaultWorkingDirectory)'
-    includeRootFolder: false
+  - script: npm prune --production
+    displayName: Prune dev dependencies
 
-- task: PublishBuildArtifacts@1
+  - script: rm -rf coverage reports
+    displayName: Remove reporting folders
 
+  - task: ArchiveFiles@2
+    inputs:
+      rootFolderOrFile: "$(System.DefaultWorkingDirectory)"
+      includeRootFolder: false
 
+  - task: PublishBuildArtifacts@1
