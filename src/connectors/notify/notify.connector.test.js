@@ -19,7 +19,7 @@ describe("Function: sendSingleEmail", () => {
     country: ""
   };
   const testFetchedTemplate = {
-    body: {
+    data: {
       personalisation: {
         some_field: {},
         example: {},
@@ -56,9 +56,9 @@ describe("Function: sendSingleEmail", () => {
     });
 
     it("Should resolve with the success message ", async () => {
-      await expect(sendSingleEmail(...args)).resolves.toBe(
-        "This is a success message from the notify client"
-      );
+      await expect(
+        sendSingleEmail(testTemplateId, testRecipient, ...args)
+      ).resolves.toBe("This is a success message from the notify client");
     });
 
     it("Should have called the Notify sendEmail function with the template ID, recipient, and flattenedData (within an object)", () => {
