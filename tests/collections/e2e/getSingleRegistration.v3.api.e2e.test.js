@@ -1,5 +1,5 @@
 require("dotenv").config();
-const request = require("request-promise-native");
+const fetch = require("node-fetch");
 
 const baseUrl =
   "https://integration-fsa-rof-gateway.azure-api.net/registrations/v3/";
@@ -13,27 +13,34 @@ describe("Get single registration through API", () => {
   let availableRegistrations;
   beforeAll(async () => {
     const requestOptions = {
-      uri: `${cardiffUrl}?env=${process.env.ENVIRONMENT_DESCRIPTION}`,
       json: true,
       headers: {
+        "Content-Type": "application/json",
         "Ocp-Apim-Subscription-Key": cardiffAPIKey
       }
     };
-    availableRegistrations = await request(requestOptions);
+    const res = await fetch(
+      `${cardiffUrl}?env=${process.env.ENVIRONMENT_DESCRIPTION}`,
+      requestOptions
+    );
+    availableRegistrations = await res.json();
   });
 
   describe("Given no extra parameters", () => {
     let response;
     beforeEach(async () => {
       const update = {
-        uri: `${cardiffUrl}/${availableRegistrations[0].fsa_rn}?env=${process.env.ENVIRONMENT_DESCRIPTION}`,
         json: true,
-        method: "get",
         headers: {
+          "Content-Type": "application/json",
           "Ocp-Apim-Subscription-Key": cardiffAPIKey
         }
       };
-      response = await request(update);
+      const res = await fetch(
+        `${cardiffUrl}/${availableRegistrations[0].fsa_rn}?env=${process.env.ENVIRONMENT_DESCRIPTION}`,
+        update
+      );
+      response = await res.json();
     });
 
     it("should return the requested new registration for that council", () => {
@@ -49,14 +56,18 @@ describe("Get single registration through API", () => {
   describe("Given supplier and valid council", () => {
     let response;
     beforeEach(async () => {
-      const requestOptions = {
-        uri: `${supplierUrl}/${availableRegistrations[0].fsa_rn}?env=${process.env.ENVIRONMENT_DESCRIPTION}&local-authority=${supplierValidCouncils}`,
+      const update = {
         json: true,
         headers: {
+          "Content-Type": "application/json",
           "Ocp-Apim-Subscription-Key": supplierAPIKey
         }
       };
-      response = await request(requestOptions);
+      const res = await fetch(
+        `${supplierUrl}/${availableRegistrations[0].fsa_rn}?env=${process.env.ENVIRONMENT_DESCRIPTION}&local-authority=${supplierValidCouncils}`,
+        update
+      );
+      response = await res.json();
     });
 
     it("should return the requested new registration for that council", () => {
@@ -64,6 +75,7 @@ describe("Get single registration through API", () => {
       expect(response.establishment).toBeDefined();
       expect(response.establishment.operator).toBeDefined();
       expect(response.establishment.premise).toBeDefined();
+      expect(response.establishment.establishment_web_address).toBeDefined();
       expect(response.metadata).toBeDefined();
     });
   });
@@ -71,21 +83,22 @@ describe("Get single registration through API", () => {
   describe("Given supplier and invalid requested council", () => {
     it("Should return the appropriate error", async () => {
       const requestOptions = {
-        uri: `${supplierUrl}/${availableRegistrations[0].fsa_rn}?env=${process.env.ENVIRONMENT_DESCRIPTION}&local-authority=invalid`,
         json: true,
         headers: {
+          "Content-Type": "application/json",
           "Ocp-Apim-Subscription-Key": supplierAPIKey
         }
       };
+      const res = await fetch(
+        `${supplierUrl}/${availableRegistrations[0].fsa_rn}?env=${process.env.ENVIRONMENT_DESCRIPTION}&local-authority=invalid`,
+        requestOptions
+      );
+      const response = await res.json();
 
-      try {
-        await request(requestOptions);
-      } catch (e) {
-        expect(e.statusCode).toBe(400);
-        expect(e.message).toContain(
-          "requested local-authorities must only contain authorized local authorities"
-        );
-      }
+      expect(response.statusCode).toBe(400);
+      expect(response.rawError).toContain(
+        "requested local-authorities must only contain authorized local authorities"
+      );
     });
   });
 
@@ -93,18 +106,18 @@ describe("Get single registration through API", () => {
     it("should return a subscription incorrect error", async () => {
       const requestOptions = {
         method: "get",
-        uri: `${cardiffUrl}/${availableRegistrations[0].fsa_rn}?env=${process.env.ENVIRONMENT_DESCRIPTION}`,
         json: true,
         headers: {
           "Ocp-Apim-Subscription-Key": "incorrectKey"
         }
       };
-      try {
-        await request(requestOptions);
-      } catch (e) {
-        expect(e.statusCode).toBe(401);
-        expect(e.message).toContain("invalid subscription key.");
-      }
+      const res = await fetch(
+        `${cardiffUrl}/${availableRegistrations[0].fsa_rn}?env=${process.env.ENVIRONMENT_DESCRIPTION}`,
+        requestOptions
+      );
+      let response = await res.json();
+      expect(response.statusCode).toBe(401);
+      expect(response.message).toContain("invalid subscription key.");
     });
   });
 });

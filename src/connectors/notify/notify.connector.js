@@ -22,7 +22,7 @@ const sendStatusEmail = async (templateId, recipientEmail, flattenedData) => {
     const notifyTemplate = await notifyClient.getTemplateById(templateId);
 
     const requiredTemplateFields = Object.keys(
-      notifyTemplate.body.personalisation
+      notifyTemplate.data.personalisation
     );
 
     const templateFieldsWithoutSuffix = requiredTemplateFields.map(
@@ -57,13 +57,11 @@ const sendStatusEmail = async (templateId, recipientEmail, flattenedData) => {
       allNotifyPersonalisationData["northern-ireland"] = "yes";
     }
 
-    const notifyArguments = [
+    const notifyResponse = await notifyClient.sendEmail(
       templateId,
       recipientEmail,
       { personalisation: allNotifyPersonalisationData }
-    ];
-
-    const notifyResponse = await notifyClient.sendEmail(...notifyArguments);
+    );
     const responseBody = notifyResponse.body;
     logEmitter.emit("functionSuccess", "notify.connector", "sendStatusEmail");
     return responseBody;
@@ -133,7 +131,7 @@ const sendSingleEmail = async (
     const notifyTemplate = await notifyClient.getTemplateById(templateId);
 
     const requiredTemplateFields = Object.keys(
-      notifyTemplate.body.personalisation
+      notifyTemplate.data.personalisation
     );
 
     const templateFieldsWithoutSuffix = requiredTemplateFields.map(
@@ -168,13 +166,11 @@ const sendSingleEmail = async (
       allNotifyPersonalisationData["northern-ireland"] = "yes";
     }
 
-    const notifyArguments = [
+    const notifyResponse = await notifyClient.sendEmail(
       templateId,
       recipientEmail,
       { personalisation: allNotifyPersonalisationData }
-    ];
-
-    const notifyResponse = await notifyClient.sendEmail(...notifyArguments);
+    );
     const responseBody = notifyResponse.body;
     logEmitter.emit("functionSuccess", "notify.connector", "sendSingleEmail");
     logEmitter.emit(

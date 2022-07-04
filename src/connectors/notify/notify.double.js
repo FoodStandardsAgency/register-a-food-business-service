@@ -39,7 +39,7 @@ const notifyClientDouble = {
   },
   prepareUpload: () => "www.link-to-document.com",
   getTemplateById: () => ({
-    body: {
+    data: {
       personalisation: {
         establishment_trading_name: {}
       }

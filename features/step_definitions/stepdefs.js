@@ -53,7 +53,9 @@ const sendDirectRequest = async (body) => {
 ////////
 
 const triggerNotificationTask = async () => {
-  const res = await fetch(`${apiUrl}/api/tasks/bulk/sendnotification`);
+  const res = await fetch(
+    `${apiUrl}/api/tasks/bulk/sendnotification?dryrun=true`
+  );
   return res.json();
 };
 

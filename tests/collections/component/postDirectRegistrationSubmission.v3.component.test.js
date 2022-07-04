@@ -1,5 +1,5 @@
 require("dotenv").config();
-const request = require("request-promise-native");
+const fetch = require("node-fetch");
 
 const baseUrl = process.env.SERVICE_BASE_URL || "http://localhost:4000";
 const directSubmitUrl = `${baseUrl}/api/submissions/v3/createNewDirectRegistration/cardiff`;
@@ -113,23 +113,29 @@ describe("Submit a single registration through the API as a council", () => {
     beforeAll(async () => {
       //Submit registration to registration API.
       const postRequestOptions = {
-        uri: directSubmitUrl,
         json: true,
-        method: "post",
+        body: JSON.stringify(registration),
+        method: "POST",
         headers: {
+          "Content-Type": "application/json",
           "client-name": process.env.DIRECT_API_NAME,
           "api-secret": process.env.DIRECT_API_SECRET
-        },
-        body: registration
+        }
       };
-      postResponse = await request(postRequestOptions);
+
+      const res = await fetch(directSubmitUrl, postRequestOptions);
+      postResponse = await res.json();
+
       //Retrieve registration from collections service
       const getRequestOptions = {
-        uri: `${collectUrl}/${postResponse["fsa-rn"]}`,
         json: true,
         method: "get"
       };
-      getResponse = await request(getRequestOptions);
+      const response = await fetch(
+        `${collectUrl}/${postResponse["fsa-rn"]}`,
+        getRequestOptions
+      );
+      getResponse = await response.json();
     });
 
     it("should successfully submit the registration and return a fsa-rn", () => {
@@ -157,23 +163,27 @@ describe("Submit a single registration through the API as a council", () => {
     beforeAll(async () => {
       //Submit registration to registration API.
       const postRequestOptions = {
-        uri: directSubmitUrl,
         json: true,
-        method: "post",
+        body: JSON.stringify(registrationWithFSARN),
+        method: "POST",
         headers: {
+          "Content-Type": "application/json",
           "client-name": process.env.DIRECT_API_NAME,
           "api-secret": process.env.DIRECT_API_SECRET
-        },
-        body: registrationWithFSARN
+        }
       };
-      postResponse = await request(postRequestOptions);
+      var res = await fetch(directSubmitUrl, postRequestOptions);
+      postResponse = await res.json();
       //Retrieve registration from collections service
       const getRequestOptions = {
-        uri: `${collectUrl}/${postResponse["fsa-rn"]}`,
         json: true,
         method: "get"
       };
-      getResponse = await request(getRequestOptions);
+      res = await fetch(
+        `${collectUrl}/${postResponse["fsa-rn"]}`,
+        getRequestOptions
+      );
+      getResponse = await res.json();
     });
 
     it("should successfully submit the registration and return a fsa-rn", () => {
@@ -200,163 +210,151 @@ describe("Submit a single registration through the API as a council", () => {
       let registrationWithInvalidFSARN = registrationWithFSARN;
       registrationWithInvalidFSARN.fsa_rn = "E6TYYT-CRC6L0-J0JD";
       const postRequestOptions = {
-        uri: directSubmitUrl,
         json: true,
-        method: "post",
+        body: JSON.stringify(registrationWithInvalidFSARN),
+        method: "POST",
         headers: {
+          "Content-Type": "application/json",
           "client-name": process.env.DIRECT_API_NAME,
           "api-secret": process.env.DIRECT_API_SECRET
-        },
-        body: registrationWithInvalidFSARN
+        }
       };
 
-      try {
-        await request(postRequestOptions);
-      } catch (e) {
-        expect(e.statusCode).toBe(400);
-        expect(e.error.errorCode).toBe("3");
-        expect(e.error.userMessages[0].message).toContain(
-          "Invalid FSA Reference Number"
-        );
-      }
+      const res = await fetch(directSubmitUrl, postRequestOptions);
+      const response = await res.json();
+      expect(response.statusCode).toBe(400);
+      expect(response.errorCode).toBe("3");
+      expect(response.userMessages[0].message).toContain(
+        "Invalid FSA Reference Number"
+      );
     });
   });
 
   describe("Given the council is not found", () => {
     it("should return a no council match error", async () => {
       const postRequestOptions = {
-        uri: `${baseUrl}/api/submissions/v3/createNewDirectRegistration/unknown`,
         json: true,
-        method: "post",
+        body: JSON.stringify(registration),
+        method: "POST",
         headers: {
+          "Content-Type": "application/json",
           "client-name": process.env.DIRECT_API_NAME,
           "api-secret": process.env.DIRECT_API_SECRET
-        },
-        body: registration
+        }
       };
-      try {
-        await request(postRequestOptions);
-      } catch (e) {
-        expect(e.statusCode).toBe(400);
-        expect(e.error.errorCode).toBe("13");
-        expect(e.error.developerMessage).toContain(
-          "The local council has not matched any records in the config database"
-        );
-      }
+
+      const res = await fetch(
+        `${baseUrl}/api/submissions/v2/createNewDirectRegistration/unknown`,
+        postRequestOptions
+      );
+      const response = await res.json();
+      expect(response.statusCode).toBe(400);
+      expect(response.errorCode).toBe("13");
+      expect(response.developerMessage).toContain(
+        "The local council has not matched any records in the config database"
+      );
     });
   });
 
   describe("Given the api-secret is wrong", () => {
     it("should return a secret not found incorrect error", async () => {
       const postRequestOptions = {
-        uri: directSubmitUrl,
         json: true,
-        method: "post",
+        body: JSON.stringify(registration),
+        method: "POST",
         headers: {
+          "Content-Type": "application/json",
           "client-name": process.env.DIRECT_API_NAME,
           "api-secret": "Wr0NG"
-        },
-        body: registration
+        }
       };
-      try {
-        await request(postRequestOptions);
-      } catch (e) {
-        expect(e.statusCode).toBe(403);
-        expect(e.error.errorCode).toBe("11");
-        expect(e.error.developerMessage).toContain("Secret is invalid");
-      }
+      const res = await fetch(directSubmitUrl, postRequestOptions);
+      const response = await res.json();
+      expect(response.statusCode).toBe(403);
+      expect(response.errorCode).toBe("11");
+      expect(response.developerMessage).toContain("Secret is invalid");
     });
   });
 
   describe("Given the api-secret is missing", () => {
     it("should return a secret not found error", async () => {
       const postRequestOptions = {
-        uri: directSubmitUrl,
         json: true,
-        method: "post",
+        body: JSON.stringify(registration),
+        method: "POST",
         headers: {
+          "Content-Type": "application/json",
           "client-name": process.env.DIRECT_API_NAME
-        },
-        body: registration
+        }
       };
-
-      try {
-        await request(postRequestOptions);
-      } catch (e) {
-        expect(e.statusCode).toBe(403);
-        expect(e.error.errorCode).toBe("8");
-        expect(e.error.developerMessage).toContain("Client secret not found");
-      }
+      const res = await fetch(directSubmitUrl, postRequestOptions);
+      const response = await res.json();
+      expect(response.statusCode).toBe(403);
+      expect(response.errorCode).toBe("8");
+      expect(response.developerMessage).toContain("Client secret not found");
     });
   });
 
   describe("Given the client-name is wrong", () => {
     it("should return a client not supported error", async () => {
       const postRequestOptions = {
-        uri: directSubmitUrl,
         json: true,
-        method: "post",
+        body: JSON.stringify(registration),
+        method: "POST",
         headers: {
+          "Content-Type": "application/json",
           "client-name": "wrong-name",
           "api-secret": process.env.DIRECT_API_SECRET
-        },
-        body: registration
+        }
       };
 
-      try {
-        await request(postRequestOptions);
-      } catch (e) {
-        expect(e.statusCode).toBe(403);
-        expect(e.error.errorCode).toBe("10");
-        expect(e.error.developerMessage).toContain("Client not supported");
-      }
+      const res = await fetch(directSubmitUrl, postRequestOptions);
+      const response = await res.json();
+      expect(response.statusCode).toBe(403);
+      expect(response.errorCode).toBe("10");
+      expect(response.developerMessage).toContain("Client not supported");
     });
   });
 
   describe("Given the client-name is missing", () => {
     it("should return a client not found error", async () => {
       const postRequestOptions = {
-        uri: directSubmitUrl,
         json: true,
-        method: "post",
+        body: JSON.stringify(registration),
+        method: "POST",
         headers: {
+          "Content-Type": "application/json",
           "api-secret": process.env.DIRECT_API_SECRET
-        },
-        body: registration
+        }
       };
 
-      try {
-        await request(postRequestOptions);
-      } catch (e) {
-        expect(e.statusCode).toBe(403);
-        expect(e.error.errorCode).toBe("9");
-        expect(e.error.developerMessage).toContain("Client not found");
-      }
+      const res = await fetch(directSubmitUrl, postRequestOptions);
+      const response = await res.json();
+      expect(response.statusCode).toBe(403);
+      expect(response.errorCode).toBe("9");
+      expect(response.developerMessage).toContain("Client not found");
     });
   });
 
   describe("Given the registration body is invalid", () => {
     it("should return a validation error", async () => {
       const postRequestOptions = {
-        uri: directSubmitUrl,
-        json: true,
-        method: "post",
+        body: JSON.stringify({}),
+        method: "POST",
         headers: {
+          "Content-Type": "application/json",
           "client-name": process.env.DIRECT_API_NAME,
           "api-secret": process.env.DIRECT_API_SECRET
-        },
-        body: {}
+        }
       };
 
-      try {
-        await request(postRequestOptions);
-      } catch (e) {
-        expect(e.statusCode).toBe(400);
-        expect(e.error.errorCode).toBe("3");
-        expect(e.error.developerMessage).toBe(
-          "Validation error, check request body vs validation schema"
-        );
-      }
+      const res = await fetch(directSubmitUrl, postRequestOptions);
+      const response = await res.json();
+      expect(response.statusCode).toBe(400);
+      expect(response.errorCode).toBe("3");
+      expect(response.developerMessage).toBe(
+        "Validation error, check request body vs validation schema"
+      );
     });
   });
 });
