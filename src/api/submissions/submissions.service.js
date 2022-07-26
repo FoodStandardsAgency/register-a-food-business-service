@@ -1,4 +1,4 @@
-const fetch = require("node-fetch");
+const axios = require("axios").default;
 const HttpsProxyAgent = require("https-proxy-agent");
 const {
   getAllLocalCouncilConfig,
@@ -75,14 +75,16 @@ const getRegistrationMetaData = async (councilCode) => {
   try {
     const options = {};
     if (process.env.HTTP_PROXY) {
-      options.agent = new HttpsProxyAgent(process.env.HTTP_PROXY);
+      options.httpsAgent = new HttpsProxyAgent(process.env.HTTP_PROXY);
+      // https://github.com/axios/axios/issues/2072#issuecomment-609650888
+      options.proxy = false;
     }
-    const fsaRnResponse = await fetch(
+    const fsaRnResponse = await axios(
       `https://fsa-reference-numbers.epimorphics.net/generate/${councilCode}/${typeCode}`,
       options
     );
     if (fsaRnResponse.status === 200) {
-      fsa_rn = await fsaRnResponse.json();
+      fsa_rn = fsaRnResponse.data;
     }
 
     statusEmitter.emit("incrementCount", "fsaRnCallsSucceeded");

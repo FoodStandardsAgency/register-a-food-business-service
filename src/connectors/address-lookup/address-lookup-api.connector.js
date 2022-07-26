@@ -2,7 +2,7 @@
  * @module connectors/address-lookup-api
  */
 
-const fetch = require("node-fetch");
+const axios = require("axios").default;
 const HttpsProxyAgent = require("https-proxy-agent");
 const {
   ADDRESS_API_URL_BASE,
@@ -78,15 +78,17 @@ const fetchUsingPostcoderPremium = async (postcode) => {
 
   const options = { method: "GET" };
   if (process.env.HTTP_PROXY) {
-    options.agent = new HttpsProxyAgent(process.env.HTTP_PROXY);
+    options.httpsAgent = new HttpsProxyAgent(process.env.HTTP_PROXY);
+    // https://github.com/axios/axios/issues/2072#issuecomment-609650888
+    options.proxy = false;
   }
-  const response = await fetch(
+  const response = await axios(
     `${ADDRESS_API_URL_BASE}/${postcode}?${ADDRESS_API_URL_QUERY}`,
     options
   );
 
   if (response.status === 200) {
-    return response.json();
+    return response.data;
   } else {
     logEmitter.emit(
       "functionFail",
