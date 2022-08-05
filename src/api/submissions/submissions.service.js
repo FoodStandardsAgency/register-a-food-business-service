@@ -78,7 +78,7 @@ const getRegistrationMetaData = async (councilCode) => {
       options.agent = new HttpsProxyAgent(process.env.HTTP_PROXY);
     }
     const fsaRnResponse = await fetch(
-      `https://fsa-reference-numbers.epimorphics.net/generate/${councilCode}/${typeCode}`,
+      `https://rng.food.gov.uk/generate/${councilCode}/${typeCode}`,
       options
     );
     if (fsaRnResponse.status === 200) {
