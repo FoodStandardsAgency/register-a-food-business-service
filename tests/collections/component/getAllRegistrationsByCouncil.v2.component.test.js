@@ -1,5 +1,5 @@
 require("dotenv").config();
-const fetch = require("node-fetch");
+const axios = require("axios").default;
 const { logEmitter } = require("../../../src/services/logging.service");
 const mockRegistrationData = require("./mock-registration-data.json");
 
@@ -15,8 +15,8 @@ const frontendSubmitRegistration = async () => {
     for (let index in mockRegistrationData) {
       const requestOptions = {
         method: "POST",
-        json: true,
-        body: JSON.stringify(mockRegistrationData[index]),
+        data: mockRegistrationData[index],
+
         headers: {
           "Content-Type": "application/json",
           "client-name": process.env.FRONT_END_NAME,
@@ -25,11 +25,11 @@ const frontendSubmitRegistration = async () => {
         }
       };
 
-      const response = await fetch(
+      const response = await axios(
         `${submitUrl}/api/submissions/createNewRegistration`,
         requestOptions
       );
-      submitResponses.push(await response.json());
+      submitResponses.push(await response.data);
     }
   } catch (err) {
     logEmitter.emit(
@@ -48,11 +48,9 @@ describe("GET to /api/v2/collections/:lc", () => {
   describe("Given no extra parameters", () => {
     let response;
     beforeEach(async () => {
-      const requestOptions = {
-        json: true
-      };
-      var res = await fetch(url, requestOptions);
-      response = await res.json();
+
+      var res = await axios(url, requestOptions);
+      response = res.data;
     });
 
     it("should return all the new registrations for that council including the one just submitted", () => {
@@ -75,11 +73,9 @@ describe("GET to /api/v2/collections/:lc", () => {
   describe("Given invalid parameters", () => {
     let response;
     beforeEach(async () => {
-      const requestOptions = {
-        json: true
-      };
-      let res = await fetch(`${url}?new=alskdfj`, requestOptions);
-      response = await res.json();
+
+      let res = await axios(`${url}?new=alskdfj`, requestOptions);
+      response = res.data;
     });
 
     it("should return the options validation error", () => {
@@ -94,11 +90,9 @@ describe("GET to /api/v2/collections/:lc", () => {
   describe("Given no 'fields' parameter", () => {
     let response;
     beforeEach(async () => {
-      const requestOptions = {
-        json: true
-      };
-      let res = await fetch(url, requestOptions);
-      response = await res.json();
+
+      let res = await axios(url, requestOptions);
+      response = res.data;
     });
 
     it("should return on the summary information for the registrations", () => {
@@ -110,14 +104,12 @@ describe("GET to /api/v2/collections/:lc", () => {
   describe("Given 'fields' parameter", () => {
     let response;
     beforeEach(async () => {
-      const requestOptions = {
-        json: true
-      };
-      let res = await fetch(
+
+      let res = await axios(
         `${url}?fields=establishment,metadata`,
         requestOptions
       );
-      response = await res.json();
+      response = res.data;
     });
 
     it("should return all the new registrations for that council", () => {
@@ -131,11 +123,9 @@ describe("GET to /api/v2/collections/:lc", () => {
   describe("Given 'new=false' parameter", () => {
     let response;
     beforeEach(async () => {
-      const requestOptions = {
-        json: true
-      };
-      let res = await fetch(`${url}?new=false`, requestOptions);
-      response = await res.json();
+
+      let res = await axios(`${url}?new=false`, requestOptions);
+      response = res.data;
     });
 
     it("should return all the registrations for the council", () => {
@@ -147,13 +137,13 @@ describe("GET to /api/v2/collections/:lc", () => {
     let response;
     beforeEach(async () => {
       const requestOptions = {
-        json: true,
+        data: mockRegistrationData[index],
         headers: {
           "double-mode": "success"
         }
       };
-      let res = await fetch(`${url}`, requestOptions);
-      response = await res.json();
+      let res = await axios(`${url}`, requestOptions);
+      response = res.data;
     });
 
     it("should return the double mode response", () => {

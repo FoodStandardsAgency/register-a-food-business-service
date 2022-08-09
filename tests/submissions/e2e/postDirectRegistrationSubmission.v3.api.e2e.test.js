@@ -1,5 +1,5 @@
 require("dotenv").config();
-const fetch = require("node-fetch");
+const axios = require("axios").default;
 
 const baseUrl =
   "https://integration-fsa-rof-gateway.azure-api.net/registrations/v3/";

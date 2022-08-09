@@ -1,5 +1,5 @@
 require("dotenv").config();
-const fetch = require("node-fetch");
+const axios = require("axios").default;
 
 const baseUrl = process.env.SERVICE_BASE_URL || "http://localhost:4000";
 const directSubmitUrl = `${baseUrl}/api/submissions/v3/createNewDirectRegistration/cardiff`;
@@ -113,8 +113,7 @@ describe("Submit a single registration through the API as a council", () => {
     beforeAll(async () => {
       //Submit registration to registration API.
       const postRequestOptions = {
-        json: true,
-        body: JSON.stringify(registration),
+        data: mockRegistrationData[index],
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -123,19 +122,19 @@ describe("Submit a single registration through the API as a council", () => {
         }
       };
 
-      const res = await fetch(directSubmitUrl, postRequestOptions);
-      postResponse = await res.json();
+      const res = await axios(directSubmitUrl, postRequestOptions);
+      postResponse = res.data;
 
       //Retrieve registration from collections service
       const getRequestOptions = {
         json: true,
         method: "get"
       };
-      const response = await fetch(
+      const response = await axios(
         `${collectUrl}/${postResponse["fsa-rn"]}`,
         getRequestOptions
       );
-      getResponse = await response.json();
+      getResponse = await response.data;
     });
 
     it("should successfully submit the registration and return a fsa-rn", () => {
@@ -163,8 +162,7 @@ describe("Submit a single registration through the API as a council", () => {
     beforeAll(async () => {
       //Submit registration to registration API.
       const postRequestOptions = {
-        json: true,
-        body: JSON.stringify(registrationWithFSARN),
+        data: mockRegistrationData[index],
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -172,18 +170,18 @@ describe("Submit a single registration through the API as a council", () => {
           "api-secret": process.env.DIRECT_API_SECRET
         }
       };
-      var res = await fetch(directSubmitUrl, postRequestOptions);
-      postResponse = await res.json();
+      var res = await axios(directSubmitUrl, postRequestOptions);
+      postResponse = res.data;
       //Retrieve registration from collections service
       const getRequestOptions = {
-        json: true,
+        data: mockRegistrationData[index],
         method: "get"
       };
-      res = await fetch(
+      res = await axios(
         `${collectUrl}/${postResponse["fsa-rn"]}`,
         getRequestOptions
       );
-      getResponse = await res.json();
+      getResponse = res.data;
     });
 
     it("should successfully submit the registration and return a fsa-rn", () => {
@@ -210,8 +208,7 @@ describe("Submit a single registration through the API as a council", () => {
       let registrationWithInvalidFSARN = registrationWithFSARN;
       registrationWithInvalidFSARN.fsa_rn = "E6TYYT-CRC6L0-J0JD";
       const postRequestOptions = {
-        json: true,
-        body: JSON.stringify(registrationWithInvalidFSARN),
+        data: mockRegistrationData[index],
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -220,8 +217,8 @@ describe("Submit a single registration through the API as a council", () => {
         }
       };
 
-      const res = await fetch(directSubmitUrl, postRequestOptions);
-      const response = await res.json();
+      const res = await axios(directSubmitUrl, postRequestOptions);
+      const response = res.data;
       expect(response.statusCode).toBe(400);
       expect(response.errorCode).toBe("3");
       expect(response.userMessages[0].message).toContain(
@@ -233,8 +230,7 @@ describe("Submit a single registration through the API as a council", () => {
   describe("Given the council is not found", () => {
     it("should return a no council match error", async () => {
       const postRequestOptions = {
-        json: true,
-        body: JSON.stringify(registration),
+        data: mockRegistrationData[index],
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -243,11 +239,11 @@ describe("Submit a single registration through the API as a council", () => {
         }
       };
 
-      const res = await fetch(
+      const res = await axios(
         `${baseUrl}/api/submissions/v2/createNewDirectRegistration/unknown`,
         postRequestOptions
       );
-      const response = await res.json();
+      const response = res.data;
       expect(response.statusCode).toBe(400);
       expect(response.errorCode).toBe("13");
       expect(response.developerMessage).toContain(
@@ -259,8 +255,7 @@ describe("Submit a single registration through the API as a council", () => {
   describe("Given the api-secret is wrong", () => {
     it("should return a secret not found incorrect error", async () => {
       const postRequestOptions = {
-        json: true,
-        body: JSON.stringify(registration),
+        data: mockRegistrationData[index],
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -279,16 +274,15 @@ describe("Submit a single registration through the API as a council", () => {
   describe("Given the api-secret is missing", () => {
     it("should return a secret not found error", async () => {
       const postRequestOptions = {
-        json: true,
-        body: JSON.stringify(registration),
+        data: mockRegistrationData[index],
         method: "POST",
         headers: {
           "Content-Type": "application/json",
           "client-name": process.env.DIRECT_API_NAME
         }
       };
-      const res = await fetch(directSubmitUrl, postRequestOptions);
-      const response = await res.json();
+      const res = await axios(directSubmitUrl, postRequestOptions);
+      const response =  res.data;
       expect(response.statusCode).toBe(403);
       expect(response.errorCode).toBe("8");
       expect(response.developerMessage).toContain("Client secret not found");
@@ -298,8 +292,7 @@ describe("Submit a single registration through the API as a council", () => {
   describe("Given the client-name is wrong", () => {
     it("should return a client not supported error", async () => {
       const postRequestOptions = {
-        json: true,
-        body: JSON.stringify(registration),
+        data: mockRegistrationData[index],
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -308,8 +301,8 @@ describe("Submit a single registration through the API as a council", () => {
         }
       };
 
-      const res = await fetch(directSubmitUrl, postRequestOptions);
-      const response = await res.json();
+      const res = await axios(directSubmitUrl, postRequestOptions);
+      const response = res.data;
       expect(response.statusCode).toBe(403);
       expect(response.errorCode).toBe("10");
       expect(response.developerMessage).toContain("Client not supported");
@@ -319,8 +312,6 @@ describe("Submit a single registration through the API as a council", () => {
   describe("Given the client-name is missing", () => {
     it("should return a client not found error", async () => {
       const postRequestOptions = {
-        json: true,
-        body: JSON.stringify(registration),
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -328,8 +319,8 @@ describe("Submit a single registration through the API as a council", () => {
         }
       };
 
-      const res = await fetch(directSubmitUrl, postRequestOptions);
-      const response = await res.json();
+      const res = await axios(directSubmitUrl, postRequestOptions);
+      const response = res.data;
       expect(response.statusCode).toBe(403);
       expect(response.errorCode).toBe("9");
       expect(response.developerMessage).toContain("Client not found");
@@ -339,7 +330,7 @@ describe("Submit a single registration through the API as a council", () => {
   describe("Given the registration body is invalid", () => {
     it("should return a validation error", async () => {
       const postRequestOptions = {
-        body: JSON.stringify({}),
+        data: mockRegistrationData[index],
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -348,8 +339,8 @@ describe("Submit a single registration through the API as a council", () => {
         }
       };
 
-      const res = await fetch(directSubmitUrl, postRequestOptions);
-      const response = await res.json();
+      const res = await axios(directSubmitUrl, postRequestOptions);
+      const response = res.data;
       expect(response.statusCode).toBe(400);
       expect(response.errorCode).toBe("3");
       expect(response.developerMessage).toBe(
