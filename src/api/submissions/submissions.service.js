@@ -79,7 +79,7 @@ const getRegistrationMetaData = async (councilCode) => {
       // https://github.com/axios/axios/issues/2072#issuecomment-609650888
       options.proxy = false;
     }
-    const fsaRnResponse = await fetch(
+    const fsaRnResponse = await axios(
       `https://rng.food.gov.uk/generate/${councilCode}/${typeCode}`,
 
       options
