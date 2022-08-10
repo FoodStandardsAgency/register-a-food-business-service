@@ -10,7 +10,6 @@ describe("Update single registration through API", () => {
   let availableRegistrations;
   beforeAll(async () => {
     const requestOptions = {
-      data: mockRegistrationData[index],
       headers: {
         "Content-Type": "application/json",
         "Ocp-Apim-Subscription-Key": cardiffAPIKey
@@ -27,7 +26,6 @@ describe("Update single registration through API", () => {
     let response;
     beforeEach(async () => {
       const update = {
-        data: mockRegistrationData[index],
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -54,11 +52,13 @@ describe("Update single registration through API", () => {
     let response;
     beforeEach(async () => {
       const update = {
-        data: mockRegistrationData[index],
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
           "Ocp-Apim-Subscription-Key": cardiffAPIKey
+        },
+        data: {
+          incorrect: true
         }
       };
       const res = await axios(
@@ -80,11 +80,13 @@ describe("Update single registration through API", () => {
     let response;
     beforeEach(async () => {
       const update = {
-        data: mockRegistrationData[index],
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
           "Ocp-Apim-Subscription-Key": cardiffAPIKey
+        },
+        data: {
+          collected: false
         }
       };
       const res = await axios(
@@ -104,11 +106,13 @@ describe("Update single registration through API", () => {
     let response;
     beforeEach(async () => {
       const update = {
-        data: mockRegistrationData[index],
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
           "Ocp-Apim-Subscription-Key": "incorrectKey"
+        },
+        data: {
+          collected: true
         }
       };
       const res = await axios(

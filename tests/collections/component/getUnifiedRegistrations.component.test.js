@@ -28,7 +28,7 @@ const frontendSubmitRegistration = async () => {
         `${submitUrl}/api/submissions/createNewRegistration`,
         requestOptions
       );
-      submitResponses.push(await response.data);
+      submitResponses.push(response.data);
     }
   } catch (err) {
     logEmitter.emit(
@@ -52,8 +52,7 @@ describe("GET to /api/collections/unified", () => {
       after.setMinutes(after.getMinutes() - 1);
 
       var res = await axios(
-        `${url}?before=${before.toISOString()}&after=${after.toISOString()}`,
-        requestOptions
+        `${url}?before=${before.toISOString()}&after=${after.toISOString()}`
       );
       response = res.data;
     });
@@ -78,8 +77,7 @@ describe("GET to /api/collections/unified", () => {
       after.setDate(after.getDate() + 15);
 
       var res = await axios(
-        `${url}?before=${before.toISOString()}&after=${after.toISOString()}`,
-        requestOptions
+        `${url}?before=${before.toISOString()}&after=${after.toISOString()}`
       );
       response = res.data;
     });
@@ -99,8 +97,7 @@ describe("GET to /api/collections/unified", () => {
       after.setMinutes(after.getMinutes() - 10);
 
       var res = await axios(
-        `${url}?before=${before.toISOString()}&after=${after.toISOString()}`,
-        requestOptions
+        `${url}?before=${before.toISOString()}&after=${after.toISOString()}`
       );
       response = res.data;
     });
@@ -123,7 +120,6 @@ describe("GET to /api/collections/unified", () => {
       after.setDate(after.getDate() - 5);
 
       const requestOptions = {
-        data: mockRegistrationData[index],
         headers: {
           "double-mode": "success"
         }
@@ -149,8 +145,7 @@ describe("GET to /api/collections/unified", () => {
       after.setDate(after.getDate() - 8);
 
       let res = await axios(
-        `${url}?before=${before.toISOString()}&after=${after.toISOString()}`,
-        requestOptions
+        `${url}?before=${before.toISOString()}&after=${after.toISOString()}`
       );
       response = res.data;
     });
@@ -167,7 +162,7 @@ describe("GET to /api/collections/unified", () => {
   describe("Given no parameters", () => {
     let response;
     beforeEach(async () => {
-      let res = await axios(url, requestOptions);
+      let res = await axios(url);
       response = res.data;
     });
 

@@ -14,7 +14,7 @@ const frontendSubmitRegistration = async () => {
   try {
     const requestOptions = {
       method: "POST",
-      data: mockRegistrationData[index],
+      data: mockRegistrationData[0],
       headers: {
         "Content-Type": "application/json",
         "client-name": process.env.FRONT_END_NAME,
@@ -27,7 +27,7 @@ const frontendSubmitRegistration = async () => {
       `${submitUrl}/api/submissions/createNewRegistration`,
       requestOptions
     );
-    return await response.data;
+    return response.data;
   } catch (err) {
     logEmitter.emit(
       "functionFail",
@@ -45,11 +45,7 @@ describe("GET to /api/v2/collections/:lc/:fsa_rn", () => {
   describe("Given no extra parameters", () => {
     let response;
     beforeEach(async () => {
-
-      var res = await axios(
-        `${url}/${submitResponse["fsa-rn"]}`,
-        requestOptions
-      );
+      var res = await axios(`${url}/${submitResponse["fsa-rn"]}`);
       response = res.data;
     });
 
@@ -64,8 +60,7 @@ describe("GET to /api/v2/collections/:lc/:fsa_rn", () => {
   describe("Given council or fsa_rn which cannot be found", () => {
     let response;
     beforeEach(async () => {
-
-      let res = await axios(`${url}/1234253`, requestOptions);
+      let res = await axios(`${url}/1234253`);
       response = res.data;
     });
 
@@ -82,7 +77,6 @@ describe("GET to /api/v2/collections/:lc/:fsa_rn", () => {
     let response;
     beforeEach(async () => {
       const requestOptions = {
-        data: mockRegistrationData[index],
         headers: {
           "double-mode": "invalid double mode"
         }
@@ -104,7 +98,6 @@ describe("GET to /api/v2/collections/:lc/:fsa_rn", () => {
     let response;
     beforeEach(async () => {
       const requestOptions = {
-        data: mockRegistrationData[index],
         headers: {
           "double-mode": "single"
         }

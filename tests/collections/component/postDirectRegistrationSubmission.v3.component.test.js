@@ -113,7 +113,7 @@ describe("Submit a single registration through the API as a council", () => {
     beforeAll(async () => {
       //Submit registration to registration API.
       const postRequestOptions = {
-        data: mockRegistrationData[index],
+        data: registration,
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -134,7 +134,7 @@ describe("Submit a single registration through the API as a council", () => {
         `${collectUrl}/${postResponse["fsa-rn"]}`,
         getRequestOptions
       );
-      getResponse = await response.data;
+      getResponse = response.data;
     });
 
     it("should successfully submit the registration and return a fsa-rn", () => {
@@ -162,7 +162,7 @@ describe("Submit a single registration through the API as a council", () => {
     beforeAll(async () => {
       //Submit registration to registration API.
       const postRequestOptions = {
-        data: mockRegistrationData[index],
+        data: registrationWithFSARN,
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -173,14 +173,7 @@ describe("Submit a single registration through the API as a council", () => {
       var res = await axios(directSubmitUrl, postRequestOptions);
       postResponse = res.data;
       //Retrieve registration from collections service
-      const getRequestOptions = {
-        data: mockRegistrationData[index],
-        method: "get"
-      };
-      res = await axios(
-        `${collectUrl}/${postResponse["fsa-rn"]}`,
-        getRequestOptions
-      );
+      res = await axios(`${collectUrl}/${postResponse["fsa-rn"]}`);
       getResponse = res.data;
     });
 
@@ -208,7 +201,7 @@ describe("Submit a single registration through the API as a council", () => {
       let registrationWithInvalidFSARN = registrationWithFSARN;
       registrationWithInvalidFSARN.fsa_rn = "E6TYYT-CRC6L0-J0JD";
       const postRequestOptions = {
-        data: mockRegistrationData[index],
+        data: registrationWithInvalidFSARN,
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -230,7 +223,7 @@ describe("Submit a single registration through the API as a council", () => {
   describe("Given the council is not found", () => {
     it("should return a no council match error", async () => {
       const postRequestOptions = {
-        data: mockRegistrationData[index],
+        data: registration,
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -255,7 +248,7 @@ describe("Submit a single registration through the API as a council", () => {
   describe("Given the api-secret is wrong", () => {
     it("should return a secret not found incorrect error", async () => {
       const postRequestOptions = {
-        data: mockRegistrationData[index],
+        data: registration,
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -263,8 +256,8 @@ describe("Submit a single registration through the API as a council", () => {
           "api-secret": "Wr0NG"
         }
       };
-      const res = await fetch(directSubmitUrl, postRequestOptions);
-      const response = await res.json();
+      const res = await axios(directSubmitUrl, postRequestOptions);
+      const response = res.data;
       expect(response.statusCode).toBe(403);
       expect(response.errorCode).toBe("11");
       expect(response.developerMessage).toContain("Secret is invalid");
@@ -274,7 +267,7 @@ describe("Submit a single registration through the API as a council", () => {
   describe("Given the api-secret is missing", () => {
     it("should return a secret not found error", async () => {
       const postRequestOptions = {
-        data: mockRegistrationData[index],
+        data: registration,
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -282,7 +275,7 @@ describe("Submit a single registration through the API as a council", () => {
         }
       };
       const res = await axios(directSubmitUrl, postRequestOptions);
-      const response =  res.data;
+      const response = res.data;
       expect(response.statusCode).toBe(403);
       expect(response.errorCode).toBe("8");
       expect(response.developerMessage).toContain("Client secret not found");
@@ -292,7 +285,7 @@ describe("Submit a single registration through the API as a council", () => {
   describe("Given the client-name is wrong", () => {
     it("should return a client not supported error", async () => {
       const postRequestOptions = {
-        data: mockRegistrationData[index],
+        data: registration,
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -330,7 +323,7 @@ describe("Submit a single registration through the API as a council", () => {
   describe("Given the registration body is invalid", () => {
     it("should return a validation error", async () => {
       const postRequestOptions = {
-        data: mockRegistrationData[index],
+        data: {},
         method: "POST",
         headers: {
           "Content-Type": "application/json",

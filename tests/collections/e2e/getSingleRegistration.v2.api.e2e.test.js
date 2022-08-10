@@ -13,7 +13,6 @@ describe("Get single registration through API", () => {
   let availableRegistrations;
   beforeAll(async () => {
     const requestOptions = {
-      data: mockRegistrationData[index],
       headers: {
         "Content-Type": "application/json",
         "Ocp-Apim-Subscription-Key": cardiffAPIKey
@@ -30,7 +29,6 @@ describe("Get single registration through API", () => {
     let response;
     beforeEach(async () => {
       const update = {
-        data: mockRegistrationData[index],
         headers: {
           "Content-Type": "application/json",
           "Ocp-Apim-Subscription-Key": cardiffAPIKey
@@ -57,7 +55,6 @@ describe("Get single registration through API", () => {
     let response;
     beforeEach(async () => {
       const update = {
-        data: mockRegistrationData[index],
         headers: {
           "Content-Type": "application/json",
           "Ocp-Apim-Subscription-Key": supplierAPIKey
@@ -83,7 +80,6 @@ describe("Get single registration through API", () => {
   describe("Given supplier and invalid requested council", () => {
     it("Should return the appropriate error", async () => {
       const requestOptions = {
-        data: mockRegistrationData[index],
         headers: {
           "Content-Type": "application/json",
           "Ocp-Apim-Subscription-Key": supplierAPIKey
@@ -106,7 +102,7 @@ describe("Get single registration through API", () => {
     it("should return a subscription incorrect error", async () => {
       const requestOptions = {
         method: "get",
-        data: mockRegistrationData[index],
+
         headers: {
           "Ocp-Apim-Subscription-Key": "incorrectKey"
         }

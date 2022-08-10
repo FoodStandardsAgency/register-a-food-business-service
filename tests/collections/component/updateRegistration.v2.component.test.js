@@ -14,8 +14,7 @@ const frontendSubmitRegistration = async () => {
   try {
     const requestOptions = {
       method: "POST",
-      data: mockRegistrationData[index],
-      body: JSON.stringify(mockRegistrationData[1]),
+      data: mockRegistrationData[1],
       headers: {
         "Content-Type": "application/json",
         "client-name": process.env.FRONT_END_NAME,
@@ -47,7 +46,9 @@ describe("PUT to /api/v2/collections/:lc/:fsa_rn", () => {
     let response;
     beforeEach(async () => {
       const requestOptions = {
-        data: mockRegistrationData[index],
+        data: {
+          collected: true
+        },
         method: "PUT",
         headers: {
           "Content-Type": "application/json"
@@ -70,7 +71,9 @@ describe("PUT to /api/v2/collections/:lc/:fsa_rn", () => {
     let response;
     beforeEach(async () => {
       const requestOptions = {
-        data: mockRegistrationData[index],
+        data: {
+          collected: true
+        },
         method: "PUT",
         headers: {
           "Content-Type": "application/json"
@@ -93,7 +96,6 @@ describe("PUT to /api/v2/collections/:lc/:fsa_rn", () => {
     let response;
     beforeEach(async () => {
       const requestOptions = {
-        data: mockRegistrationData[index],
         headers: {
           "Content-Type": "application/json",
           "double-mode": "invalid double mode"
@@ -116,7 +118,6 @@ describe("PUT to /api/v2/collections/:lc/:fsa_rn", () => {
     let response;
     beforeEach(async () => {
       const requestOptions = {
-        data: mockRegistrationData[index],
         headers: {
           "Content-Type": "application/json",
           "double-mode": "update"

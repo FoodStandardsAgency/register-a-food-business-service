@@ -29,7 +29,7 @@ const frontendSubmitRegistration = async () => {
         `${submitUrl}/api/submissions/createNewRegistration`,
         requestOptions
       );
-      submitResponses.push(await response.data);
+      submitResponses.push(response.data);
     }
   } catch (err) {
     logEmitter.emit(
@@ -48,8 +48,7 @@ describe("GET to /api/v2/collections/:lc", () => {
   describe("Given no extra parameters", () => {
     let response;
     beforeEach(async () => {
-
-      var res = await axios(url, requestOptions);
+      var res = await axios(url);
       response = res.data;
     });
 
@@ -73,8 +72,7 @@ describe("GET to /api/v2/collections/:lc", () => {
   describe("Given invalid parameters", () => {
     let response;
     beforeEach(async () => {
-
-      let res = await axios(`${url}?new=alskdfj`, requestOptions);
+      let res = await axios(`${url}?new=alskdfj`);
       response = res.data;
     });
 
@@ -90,8 +88,7 @@ describe("GET to /api/v2/collections/:lc", () => {
   describe("Given no 'fields' parameter", () => {
     let response;
     beforeEach(async () => {
-
-      let res = await axios(url, requestOptions);
+      let res = await axios(url);
       response = res.data;
     });
 
@@ -104,11 +101,7 @@ describe("GET to /api/v2/collections/:lc", () => {
   describe("Given 'fields' parameter", () => {
     let response;
     beforeEach(async () => {
-
-      let res = await axios(
-        `${url}?fields=establishment,metadata`,
-        requestOptions
-      );
+      let res = await axios(`${url}?fields=establishment,metadata`);
       response = res.data;
     });
 
@@ -123,8 +116,7 @@ describe("GET to /api/v2/collections/:lc", () => {
   describe("Given 'new=false' parameter", () => {
     let response;
     beforeEach(async () => {
-
-      let res = await axios(`${url}?new=false`, requestOptions);
+      let res = await axios(`${url}?new=false`);
       response = res.data;
     });
 
@@ -137,7 +129,6 @@ describe("GET to /api/v2/collections/:lc", () => {
     let response;
     beforeEach(async () => {
       const requestOptions = {
-        data: mockRegistrationData[index],
         headers: {
           "double-mode": "success"
         }

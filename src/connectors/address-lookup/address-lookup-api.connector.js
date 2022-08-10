@@ -34,7 +34,7 @@ const getAddressesByPostcode = async (postcode) => {
   if (DOUBLE_MODE === "true") {
     const firstRes = addressLookupDouble(postcode);
     if (firstRes.status === 200) {
-      firstJson = firstRes.json();
+      firstJson = firstRes.data;
     } else {
       logEmitter.emit(
         "functionFail",
@@ -115,15 +115,15 @@ const fetchUsingPostcoderStandard = async (postcode) => {
   );
   const options = { method: "GET" };
   if (process.env.HTTP_PROXY) {
-    options.agent = new HttpsProxyAgent(process.env.HTTP_PROXY);
+    options.httpsAgent = new HttpsProxyAgent(process.env.HTTP_PROXY);
   }
 
-  const response = await fetch(
+  const response = await axios(
     `${ADDRESS_API_URL_BASE_STANDARD}/uk/${postcode}?${ADDRESS_API_URL_QUERY_STANDARD}`,
     options
   );
   if (response.status === 200) {
-    return response.json();
+    return response.data;
   } else {
     logEmitter.emit(
       "functionFail",

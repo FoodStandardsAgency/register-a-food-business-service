@@ -15,7 +15,6 @@ describe("Retrieve all registrations through API", () => {
     let response;
     beforeEach(async () => {
       const requestOptions = {
-        data: mockRegistrationData[index],
         headers: {
           "Content-Type": "application/json",
           "Ocp-Apim-Subscription-Key": cardiffAPIKey
@@ -39,7 +38,6 @@ describe("Retrieve all registrations through API", () => {
     let response;
     beforeEach(async () => {
       const requestOptions = {
-        data: mockRegistrationData[index],
         headers: {
           "Content-Type": "application/json",
           "Ocp-Apim-Subscription-Key": supplierAPIKey
@@ -63,7 +61,6 @@ describe("Retrieve all registrations through API", () => {
     let response;
     beforeEach(async () => {
       const requestOptions = {
-        data: mockRegistrationData[index],
         headers: {
           "Content-Type": "application/json",
           "Ocp-Apim-Subscription-Key": supplierAPIKey
@@ -87,7 +84,6 @@ describe("Retrieve all registrations through API", () => {
     let response;
     beforeEach(async () => {
       const requestOptions = {
-        data: mockRegistrationData[index],
         headers: {
           "Content-Type": "application/json",
           "Ocp-Apim-Subscription-Key": supplierAPIKey
@@ -110,8 +106,6 @@ describe("Retrieve all registrations through API", () => {
   describe("Given supplier and invalid requested council", () => {
     it("Should return the appropriate error", async () => {
       const requestOptions = {
-        data: mockRegistrationData[index],
-        resolveWithFullResponse: true,
         headers: {
           "Content-Type": "application/json",
           "Ocp-Apim-Subscription-Key": supplierAPIKey
@@ -133,7 +127,6 @@ describe("Retrieve all registrations through API", () => {
     let response;
     beforeEach(async () => {
       const requestOptions = {
-        data: mockRegistrationData[index],
         headers: {
           "Content-Type": "application/json",
           "Ocp-Apim-Subscription-Key": cardiffAPIKey
@@ -159,7 +152,6 @@ describe("Retrieve all registrations through API", () => {
     let response;
     beforeEach(async () => {
       const requestOptions = {
-        data: mockRegistrationData[index],
         headers: {
           "Content-Type": "application/json",
           "Ocp-Apim-Subscription-Key": "incorrectKey"
@@ -182,8 +174,7 @@ describe("Retrieve all registrations through API", () => {
     let response;
     beforeEach(async () => {
       const res = await axios(
-        `${cardiffUrl}?env=${process.env.ENVIRONMENT_DESCRIPTION}`,
-        requestOptions
+        `${cardiffUrl}?env=${process.env.ENVIRONMENT_DESCRIPTION}`
       );
       response = res.data;
     });
@@ -200,7 +191,6 @@ describe("Retrieve all registrations through API", () => {
     let response;
     beforeEach(async () => {
       const requestOptions = {
-        data: mockRegistrationData[index],
         headers: {
           "Content-Type": "application/json",
           "Ocp-Apim-Subscription-Key": cardiffAPIKey

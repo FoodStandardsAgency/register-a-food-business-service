@@ -14,7 +14,6 @@ describe("Retrieve all registrations through API", () => {
       let after = new Date();
       after.setDate(after.getDate() - 7);
       const requestOptions = {
-        data: mockRegistrationData[index],
         headers: {
           "Content-Type": "application/json",
           "Ocp-Apim-Subscription-Key": unifiedAPIKey
@@ -43,7 +42,6 @@ describe("Retrieve all registrations through API", () => {
       let after = new Date();
       after.setDate(after.getDate() - 5);
       const requestOptions = {
-        data: mockRegistrationData[index],
         headers: {
           "Content-Type": "application/json",
           "Ocp-Apim-Subscription-Key": "unifiedAPIKeyWhichIsWrong"
@@ -72,7 +70,6 @@ describe("Retrieve all registrations through API", () => {
       let after = new Date();
       after.setDate(after.getDate() - 5);
       const requestOptions = {
-        data: mockRegistrationData[index],
         headers: {
           "Content-Type": "application/json"
         }
@@ -100,7 +97,6 @@ describe("Retrieve all registrations through API", () => {
     beforeEach(async () => {
       const before = new Date();
       const requestOptions = {
-        data: mockRegistrationData[index],
         headers: {
           "Content-Type": "application/json",
           "Ocp-Apim-Subscription-Key": unifiedAPIKey

@@ -10,7 +10,6 @@ describe("Update single registration through API", () => {
   let availableRegistrations;
   beforeAll(async () => {
     const requestOptions = {
-      data: mockRegistrationData[index],
       headers: {
         "Content-Type": "application/json",
         "Ocp-Apim-Subscription-Key": cardiffAPIKey
@@ -27,11 +26,14 @@ describe("Update single registration through API", () => {
     let response;
     beforeEach(async () => {
       const update = {
-        data: mockRegistrationData[index],
+        data: {
+          collected: true
+        },
+        method: "PUT",
         headers: {
           "Content-Type": "application/json",
           "Ocp-Apim-Subscription-Key": cardiffAPIKey
-        },
+        }
       };
       const res = await axios(
         `${cardiffUrl}/${availableRegistrations[0].fsa_rn}?env=${process.env.ENVIRONMENT_DESCRIPTION}`,
@@ -50,11 +52,14 @@ describe("Update single registration through API", () => {
     let response;
     beforeEach(async () => {
       const update = {
-        data: mockRegistrationData[index],
+        data: {
+          incorrect: true
+        },
+        method: "PUT",
         headers: {
           "Content-Type": "application/json",
           "Ocp-Apim-Subscription-Key": cardiffAPIKey
-        },
+        }
       };
       const res = await axios(
         `${cardiffUrl}/${availableRegistrations[0].fsa_rn}?env=${process.env.ENVIRONMENT_DESCRIPTION}`,
@@ -75,11 +80,14 @@ describe("Update single registration through API", () => {
     let response;
     beforeEach(async () => {
       const update = {
-        data: mockRegistrationData[index],
+        data: {
+          collected: false
+        },
+        method: "PUT",
         headers: {
           "Content-Type": "application/json",
           "Ocp-Apim-Subscription-Key": cardiffAPIKey
-        },
+        }
       };
       const res = await axios(
         `${cardiffUrl}/${availableRegistrations[0].fsa_rn}?env=${process.env.ENVIRONMENT_DESCRIPTION}`,
@@ -98,11 +106,14 @@ describe("Update single registration through API", () => {
     let response;
     beforeEach(async () => {
       const update = {
-        data: mockRegistrationData[index],
+        data: {
+          collected: true
+        },
+        method: "PUT",
         headers: {
           "Content-Type": "application/json",
           "Ocp-Apim-Subscription-Key": "incorrectKey"
-        },
+        }
       };
       const res = await axios(
         `${cardiffUrl}/${availableRegistrations[0].fsa_rn}?env=${process.env.ENVIRONMENT_DESCRIPTION}`,

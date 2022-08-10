@@ -28,7 +28,7 @@ const frontendSubmitRegistration = async () => {
         `${submitUrl}/api/submissions/createNewRegistration`,
         requestOptions
       );
-      submitResponses.push(await response.data);
+      submitResponses.push(response.data);
     }
   } catch (err) {
     logEmitter.emit(
@@ -71,7 +71,6 @@ describe("GET to /api/collections/:lc", () => {
   describe("Given invalid parameters", () => {
     let response;
     beforeEach(async () => {
- 
       let res = await axios(`${url}?new=alskdfj`);
       response = res.data;
     });
@@ -101,10 +100,7 @@ describe("GET to /api/collections/:lc", () => {
   describe("Given 'fields' parameter", () => {
     let response;
     beforeEach(async () => {
-      let res = await axios(
-        `${url}?fields=establishment,metadata`,
-        
-      );
+      let res = await axios(`${url}?fields=establishment,metadata`);
       response = res.data;
     });
 
