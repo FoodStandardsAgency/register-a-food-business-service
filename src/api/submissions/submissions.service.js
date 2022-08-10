@@ -79,8 +79,9 @@ const getRegistrationMetaData = async (councilCode) => {
       // https://github.com/axios/axios/issues/2072#issuecomment-609650888
       options.proxy = false;
     }
-    const fsaRnResponse = await axios(
-      `https://fsa-reference-numbers.epimorphics.net/generate/${councilCode}/${typeCode}`,
+    const fsaRnResponse = await fetch(
+      `https://rng.food.gov.uk/generate/${councilCode}/${typeCode}`,
+
       options
     );
     if (fsaRnResponse.status === 200) {
