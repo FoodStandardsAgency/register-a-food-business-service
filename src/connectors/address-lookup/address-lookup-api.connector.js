@@ -116,6 +116,8 @@ const fetchUsingPostcoderStandard = async (postcode) => {
   const options = { method: "GET" };
   if (process.env.HTTP_PROXY) {
     options.httpsAgent = new HttpsProxyAgent(process.env.HTTP_PROXY);
+    // https://github.com/axios/axios/issues/2072#issuecomment-609650888
+    options.proxy = false;
   }
 
   const response = await axios(
