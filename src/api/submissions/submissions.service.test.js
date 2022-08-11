@@ -15,7 +15,7 @@ jest.mock("../../services/statusEmitter.service");
 
 jest.mock("../../services/notifications.service");
 
-jest.mock("node-fetch");
+jest.mock("axios");
 
 jest.mock("../../services/pdf.service");
 
@@ -29,7 +29,7 @@ const {
 
 const mockLocalCouncilConfig = require("../../connectors/configDb/mockLocalCouncilConfig.json");
 
-const fetch = require("node-fetch");
+const axios = require("axios").default;
 
 const {
   getRegistrationMetaData,
@@ -44,10 +44,10 @@ describe("Function: getRegistrationMetaData: ", () => {
   describe("When fsaRnResponse is 200 and NODE_ENV is not production", () => {
     beforeEach(async () => {
       process.env.NODE_ENV = "not production";
-      fetch.mockImplementation(() => ({
+      axios.mockResolvedValue({
         status: 200,
-        json: () => ({ "fsa-rn": "12345", reg_submission_date: "18/03/2018" })
-      }));
+        data: { "fsa-rn": "12345", reg_submission_date: "18/03/2018" }
+      });
       result = await getRegistrationMetaData(1234);
     });
 
@@ -67,10 +67,10 @@ describe("Function: getRegistrationMetaData: ", () => {
   describe("When fsaRnResponse is 200 and NODE_ENV is 'production'", () => {
     beforeEach(async () => {
       process.env.NODE_ENV = "production";
-      fetch.mockImplementation(() => ({
+      axios.mockResolvedValue({
         status: 200,
-        json: () => ({ "fsa-rn": "12345", reg_submission_date: "18/03/2018" })
-      }));
+        data: { "fsa-rn": "12345", reg_submission_date: "18/03/2018" }
+      });
       result = await getRegistrationMetaData(1234);
     });
     // it("fetch should be called with the passed councilCode and a typeCode of 001", () => {
@@ -89,10 +89,10 @@ describe("Function: getRegistrationMetaData: ", () => {
 
   describe("When fsaRnResponse is not 200", () => {
     beforeEach(async () => {
-      fetch.mockImplementation(() => ({
+      axios.mockResolvedValue({
         status: 100,
-        json: () => ({ "fsa-rn": undefined })
-      }));
+        data: { "fsa-rn": undefined }
+      });
       result = await getRegistrationMetaData();
     });
     it("should return an object that contains fsa_rn", () => {
@@ -102,7 +102,7 @@ describe("Function: getRegistrationMetaData: ", () => {
 
   describe("When the request to fsa-rn generator fails", () => {
     beforeEach(async () => {
-      fetch.mockImplementation(() => {
+      axios.mockImplementation(() => {
         throw new Error("test error");
       });
       try {

@@ -1,5 +1,5 @@
 require("dotenv").config();
-const fetch = require("node-fetch");
+const axios = require("axios").default;
 
 const baseUrl =
   "https://integration-fsa-rof-gateway.azure-api.net/registrations/v1/";
@@ -10,38 +10,36 @@ describe("Update single registration through API", () => {
   let availableRegistrations;
   beforeAll(async () => {
     const requestOptions = {
-      json: true,
       headers: {
         "Content-Type": "application/json",
         "Ocp-Apim-Subscription-Key": cardiffAPIKey
       }
     };
-    const res = await fetch(
+    const res = await axios(
       `${cardiffUrl}?env=${process.env.ENVIRONMENT_DESCRIPTION}`,
       requestOptions
     );
-    availableRegistrations = await res.json();
+    availableRegistrations = res.data;
   });
 
   describe("Given no extra parameters", () => {
     let response;
     beforeEach(async () => {
       const update = {
-        json: true,
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
           "Ocp-Apim-Subscription-Key": cardiffAPIKey
         },
-        body: JSON.stringify({
+        data: {
           collected: true
-        })
+        }
       };
-      const res = await fetch(
+      const res = await axios(
         `${cardiffUrl}/${availableRegistrations[0].fsa_rn}?env=${process.env.ENVIRONMENT_DESCRIPTION}`,
         update
       );
-      response = await res.json();
+      response = res.data;
     });
 
     it("should return the updated object with collected true", () => {
@@ -54,21 +52,20 @@ describe("Update single registration through API", () => {
     let response;
     beforeEach(async () => {
       const update = {
-        json: true,
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
           "Ocp-Apim-Subscription-Key": cardiffAPIKey
         },
-        body: JSON.stringify({
+        data: {
           incorrect: true
-        })
+        }
       };
-      const res = await fetch(
+      const res = await axios(
         `${cardiffUrl}/${availableRegistrations[0].fsa_rn}?env=${process.env.ENVIRONMENT_DESCRIPTION}`,
         update
       );
-      response = await res.json();
+      response = res.data;
     });
 
     it("Should throw an error", () => {
@@ -83,21 +80,20 @@ describe("Update single registration through API", () => {
     let response;
     beforeEach(async () => {
       const update = {
-        json: true,
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
           "Ocp-Apim-Subscription-Key": cardiffAPIKey
         },
-        body: JSON.stringify({
+        data: {
           collected: false
-        })
+        }
       };
-      const res = await fetch(
+      const res = await axios(
         `${cardiffUrl}/${availableRegistrations[0].fsa_rn}?env=${process.env.ENVIRONMENT_DESCRIPTION}`,
         update
       );
-      response = await res.json();
+      response = res.data;
     });
 
     it("should return false for collected flag", () => {
@@ -110,21 +106,20 @@ describe("Update single registration through API", () => {
     let response;
     beforeEach(async () => {
       const update = {
-        json: true,
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
           "Ocp-Apim-Subscription-Key": "incorrectKey"
         },
-        body: JSON.stringify({
+        data: {
           collected: true
-        })
+        }
       };
-      const res = await fetch(
+      const res = await axios(
         `${cardiffUrl}/${availableRegistrations[0].fsa_rn}?env=${process.env.ENVIRONMENT_DESCRIPTION}`,
         update
       );
-      response = await res.json();
+      response = res.data;
     });
 
     it("should return a subscription incorrect error", () => {

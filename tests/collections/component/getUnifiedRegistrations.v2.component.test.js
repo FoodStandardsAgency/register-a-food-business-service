@@ -1,5 +1,5 @@
 require("dotenv").config();
-const fetch = require("node-fetch");
+const axios = require("axios").default;
 const { logEmitter } = require("../../../src/services/logging.service");
 const mockRegistrationData = require("./mock-registration-data.json");
 
@@ -15,8 +15,7 @@ const frontendSubmitRegistration = async () => {
     for (let index in mockRegistrationData) {
       const requestOptions = {
         method: "POST",
-        json: true,
-        body: JSON.stringify(mockRegistrationData[index]),
+        data: mockRegistrationData[index],
         headers: {
           "Content-Type": "application/json",
           "client-name": process.env.FRONT_END_NAME,
@@ -25,11 +24,11 @@ const frontendSubmitRegistration = async () => {
         }
       };
 
-      const response = await fetch(
+      const response = await axios(
         `${submitUrl}/api/submissions/createNewRegistration`,
         requestOptions
       );
-      submitResponses.push(await response.json());
+      submitResponses.push(response.data);
     }
   } catch (err) {
     logEmitter.emit(
@@ -51,15 +50,10 @@ describe("GET to /api/v2/collections/unified", () => {
       const before = new Date();
       let after = new Date();
       after.setMinutes(after.getMinutes() - 1);
-
-      const requestOptions = {
-        json: true
-      };
-      var res = await fetch(
-        `${url}?before=${before.toISOString()}&after=${after.toISOString()}`,
-        requestOptions
+      var res = await axios(
+        `${url}?before=${before.toISOString()}&after=${after.toISOString()}`
       );
-      response = await res.json();
+      response = res.data;
     });
 
     it("should return the two previously submitted registrations", () => {
@@ -81,14 +75,10 @@ describe("GET to /api/v2/collections/unified", () => {
       before.setDate(before.getDate() + 20);
       after.setDate(after.getDate() + 15);
 
-      const requestOptions = {
-        json: true
-      };
-      var res = await fetch(
-        `${url}?before=${before.toISOString()}&after=${after.toISOString()}`,
-        requestOptions
+      var res = await axios(
+        `${url}?before=${before.toISOString()}&after=${after.toISOString()}`
       );
-      response = await res.json();
+      response = res.data;
     });
 
     it("should return zero new registrations", () => {
@@ -105,14 +95,10 @@ describe("GET to /api/v2/collections/unified", () => {
       before.setMinutes(before.getMinutes() - 5);
       after.setMinutes(after.getMinutes() - 10);
 
-      const requestOptions = {
-        json: true
-      };
-      var res = await fetch(
-        `${url}?before=${before.toISOString()}&after=${after.toISOString()}`,
-        requestOptions
+      var res = await axios(
+        `${url}?before=${before.toISOString()}&after=${after.toISOString()}`
       );
-      response = await res.json();
+      response = res.data;
     });
 
     it("should return neither of the new registrations", () => {
@@ -133,16 +119,15 @@ describe("GET to /api/v2/collections/unified", () => {
       after.setDate(after.getDate() - 5);
 
       const requestOptions = {
-        json: true,
         headers: {
           "double-mode": "success"
         }
       };
-      let res = await fetch(
+      let res = await axios(
         `${url}?before=${before.toISOString()}&after=${after.toISOString()}`,
         requestOptions
       );
-      response = await res.json();
+      response = res.data;
     });
 
     it("should return the double mode response", () => {
@@ -157,15 +142,10 @@ describe("GET to /api/v2/collections/unified", () => {
       const before = new Date();
       let after = new Date();
       after.setDate(after.getDate() - 8);
-
-      const requestOptions = {
-        json: true
-      };
-      let res = await fetch(
-        `${url}?before=${before.toISOString()}&after=${after.toISOString()}`,
-        requestOptions
+      let res = await axios(
+        `${url}?before=${before.toISOString()}&after=${after.toISOString()}`
       );
-      response = await res.json();
+      response = res.data;
     });
 
     it("should return the options validation error", () => {
@@ -180,11 +160,8 @@ describe("GET to /api/v2/collections/unified", () => {
   describe("Given no parameters", () => {
     let response;
     beforeEach(async () => {
-      const requestOptions = {
-        json: true
-      };
-      let res = await fetch(url, requestOptions);
-      response = await res.json();
+      let res = await axios(url);
+      response = res.data;
     });
 
     it("should return the options validation error", () => {

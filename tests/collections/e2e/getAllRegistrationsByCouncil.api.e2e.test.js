@@ -1,5 +1,5 @@
 require("dotenv").config();
-const fetch = require("node-fetch");
+const axios = require("axios").default;
 
 const baseUrl =
   "https://integration-fsa-rof-gateway.azure-api.net/registrations/v1/";
@@ -12,17 +12,16 @@ describe("Retrieve all registrations through API", () => {
     beforeEach(async () => {
       const requestOptions = {
         method: "GET",
-        json: true,
         headers: {
           "Content-Type": "application/json",
           "Ocp-Apim-Subscription-Key": cardiffAPIKey
         }
       };
-      const res = await fetch(
+      const res = await axios(
         `${cardiffUrl}?env=${process.env.ENVIRONMENT_DESCRIPTION}`,
         requestOptions
       );
-      response = await res.json();
+      response = res.data;
     });
 
     it("should return all the new registrations for that council", () => {
@@ -36,18 +35,17 @@ describe("Retrieve all registrations through API", () => {
     let response;
     beforeEach(async () => {
       const requestOptions = {
-        json: true,
         headers: {
           "Content-Type": "application/json",
           "Ocp-Apim-Subscription-Key": cardiffAPIKey
         }
       };
 
-      const res = await fetch(
+      const res = await axios(
         `${baseUrl}incorrectAuthority?env=${process.env.ENVIRONMENT_DESCRIPTION}`,
         requestOptions
       );
-      response = await res.json();
+      response = res.data;
     });
 
     it("Should return the appropriate error", () => {
@@ -62,18 +60,17 @@ describe("Retrieve all registrations through API", () => {
     let response;
     beforeEach(async () => {
       const requestOptions = {
-        json: true,
         headers: {
           "Content-Type": "application/json",
           "Ocp-Apim-Subscription-Key": "incorrectKey"
         }
       };
 
-      const res = await fetch(
+      const res = await axios(
         `${cardiffUrl}?env=${process.env.ENVIRONMENT_DESCRIPTION}`,
         requestOptions
       );
-      response = await res.json();
+      response = res.data;
     });
 
     it("should return a subscription incorrect error", () => {
@@ -86,16 +83,15 @@ describe("Retrieve all registrations through API", () => {
     let response;
     beforeEach(async () => {
       const requestOptions = {
-        json: true,
         headers: {
           "Content-Type": "application/json"
         }
       };
-      const res = await fetch(
+      const res = await axios(
         `${cardiffUrl}?env=${process.env.ENVIRONMENT_DESCRIPTION}`,
         requestOptions
       );
-      response = await res.json();
+      response = res.data;
     });
 
     it("Should return subscription key not found error", () => {
@@ -110,17 +106,16 @@ describe("Retrieve all registrations through API", () => {
     let response;
     beforeEach(async () => {
       const requestOptions = {
-        json: true,
         headers: {
           "Content-Type": "application/json",
           "Ocp-Apim-Subscription-Key": cardiffAPIKey
         }
       };
-      const res = await fetch(
+      const res = await axios(
         `${cardiffUrl}?new=alskdfj&env=${process.env.ENVIRONMENT_DESCRIPTION}`,
         requestOptions
       );
-      response = await res.json();
+      response = res.data;
     });
 
     it("should return the options validation error", () => {

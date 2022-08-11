@@ -1,5 +1,5 @@
 require("dotenv").config();
-const fetch = require("node-fetch");
+const axios = require("axios").default;
 
 const baseUrl =
   "https://integration-fsa-rof-gateway.azure-api.net/registrations/v2/";
@@ -15,17 +15,16 @@ describe("Retrieve all registrations through API", () => {
     let response;
     beforeEach(async () => {
       const requestOptions = {
-        json: true,
         headers: {
           "Content-Type": "application/json",
           "Ocp-Apim-Subscription-Key": cardiffAPIKey
         }
       };
-      const res = await fetch(
+      const res = await axios(
         `${cardiffUrl}?env=${process.env.ENVIRONMENT_DESCRIPTION}`,
         requestOptions
       );
-      response = await res.json();
+      response = res.data;
     });
 
     it("should return all the new registrations for that council", () => {
@@ -39,17 +38,16 @@ describe("Retrieve all registrations through API", () => {
     let response;
     beforeEach(async () => {
       const requestOptions = {
-        json: true,
         headers: {
           "Content-Type": "application/json",
           "Ocp-Apim-Subscription-Key": supplierAPIKey
         }
       };
-      const res = await fetch(
+      const res = await axios(
         `${supplierUrl}?env=${process.env.ENVIRONMENT_DESCRIPTION}&local-authorities=${supplierValidCouncil}`,
         requestOptions
       );
-      response = await res.json();
+      response = res.data;
     });
 
     it("should return all the new registrations for that council", () => {
@@ -63,17 +61,16 @@ describe("Retrieve all registrations through API", () => {
     let response;
     beforeEach(async () => {
       const requestOptions = {
-        json: true,
         headers: {
           "Content-Type": "application/json",
           "Ocp-Apim-Subscription-Key": supplierAPIKey
         }
       };
-      const res = await fetch(
+      const res = await axios(
         `${supplierUrl}?env=${process.env.ENVIRONMENT_DESCRIPTION}`,
         requestOptions
       );
-      response = await res.json();
+      response = res.data;
     });
 
     it("should return all the new registrations for all authorised councils", () => {
@@ -87,17 +84,16 @@ describe("Retrieve all registrations through API", () => {
     let response;
     beforeEach(async () => {
       const requestOptions = {
-        json: true,
         headers: {
           "Content-Type": "application/json",
           "Ocp-Apim-Subscription-Key": supplierAPIKey
         }
       };
-      const res = await fetch(
+      const res = await axios(
         `${supplierUrl}?env=${process.env.ENVIRONMENT_DESCRIPTION}&local-authorities=${supplierValidCouncils}`,
         requestOptions
       );
-      response = await res.json();
+      response = res.data;
     });
 
     it("should return all the new registrations for that council", () => {
@@ -110,18 +106,16 @@ describe("Retrieve all registrations through API", () => {
   describe("Given supplier and invalid requested council", () => {
     it("Should return the appropriate error", async () => {
       const requestOptions = {
-        json: true,
-        resolveWithFullResponse: true,
         headers: {
           "Content-Type": "application/json",
           "Ocp-Apim-Subscription-Key": supplierAPIKey
         }
       };
-      const res = await fetch(
+      const res = await axios(
         `${supplierUrl}?env=${process.env.ENVIRONMENT_DESCRIPTION}&local-authorities=invalid`,
         requestOptions
       );
-      const response = await res.json();
+      const response = res.data;
       expect(response.statusCode).toBe(400);
       expect(response.developerMessage).toContain(
         "One of the supplied options is invalid"
@@ -133,18 +127,17 @@ describe("Retrieve all registrations through API", () => {
     let response;
     beforeEach(async () => {
       const requestOptions = {
-        json: true,
         headers: {
           "Content-Type": "application/json",
           "Ocp-Apim-Subscription-Key": cardiffAPIKey
         }
       };
 
-      const res = await fetch(
+      const res = await axios(
         `${baseUrl}incorrectAuthority?env=${process.env.ENVIRONMENT_DESCRIPTION}`,
         requestOptions
       );
-      response = await res.json();
+      response = res.data;
     });
 
     it("Should return the appropriate error", () => {
@@ -159,17 +152,16 @@ describe("Retrieve all registrations through API", () => {
     let response;
     beforeEach(async () => {
       const requestOptions = {
-        json: true,
         headers: {
           "Content-Type": "application/json",
           "Ocp-Apim-Subscription-Key": "incorrectKey"
         }
       };
-      const res = await fetch(
+      const res = await axios(
         `${cardiffUrl}?env=${process.env.ENVIRONMENT_DESCRIPTION}`,
         requestOptions
       );
-      response = await res.json();
+      response = res.data;
     });
 
     it("should return a subscription incorrect error", () => {
@@ -181,14 +173,10 @@ describe("Retrieve all registrations through API", () => {
   describe("Given no subscription key", () => {
     let response;
     beforeEach(async () => {
-      const requestOptions = {
-        json: true
-      };
-      const res = await fetch(
-        `${cardiffUrl}?env=${process.env.ENVIRONMENT_DESCRIPTION}`,
-        requestOptions
+      const res = await axios(
+        `${cardiffUrl}?env=${process.env.ENVIRONMENT_DESCRIPTION}`
       );
-      response = await res.json();
+      response = res.data;
     });
 
     it("Should return subscription key not found error", () => {
@@ -203,17 +191,16 @@ describe("Retrieve all registrations through API", () => {
     let response;
     beforeEach(async () => {
       const requestOptions = {
-        json: true,
         headers: {
           "Content-Type": "application/json",
           "Ocp-Apim-Subscription-Key": cardiffAPIKey
         }
       };
-      const res = await fetch(
+      const res = await axios(
         `${cardiffUrl}?new=alskdfj&env=${process.env.ENVIRONMENT_DESCRIPTION}`,
         requestOptions
       );
-      response = await res.json();
+      response = res.data;
     });
 
     it("should return the options validation error", () => {
