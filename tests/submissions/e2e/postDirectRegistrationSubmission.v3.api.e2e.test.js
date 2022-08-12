@@ -1,6 +1,10 @@
 require("dotenv").config();
-const axios = require("axios").default;
-
+const ax = require("axios").default;
+const axios = ax.create({
+  validateStatus: () => {
+    return true;
+  }
+});
 const baseUrl =
   "https://integration-fsa-rof-gateway.azure-api.net/registrations/v3/";
 const highgardenUrl = `${baseUrl}highgarden`;

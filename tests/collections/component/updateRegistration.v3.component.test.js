@@ -1,4 +1,9 @@
-const axios = require("axios").default;
+const ax = require("axios").default;
+const axios = ax.create({
+  validateStatus: () => {
+    return true;
+  }
+});
 require("dotenv").config();
 const { logEmitter } = require("../../../src/services/logging.service");
 const mockRegistrationData = require("./mock-registration-data.json");

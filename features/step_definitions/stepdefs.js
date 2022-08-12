@@ -1,5 +1,10 @@
 const assert = require("assert");
-const axios = require("axios").default;
+const ax = require("axios").default;
+const axios = ax.create({
+  validateStatus: () => {
+    return true;
+  }
+});
 const { Given, When, Then, setDefaultTimeout } = require("cucumber");
 const {
   FRONT_END_NAME,
