@@ -35,7 +35,6 @@ const sendRequest = async (body) => {
     headers,
     data: body
   });
-  console.log("!!!!", res.data);
   return res.data;
 };
 
@@ -289,8 +288,6 @@ Then("I receive a confirmation number", async function () {
 
 Then("It returns an array of attempted registrations", async function () {
   assert.ok(this.response["attempted"]);
-  console.log("?????", this.response);
-  console.log("?????2", directRegistrationFSARNs);
 });
 
 Then(
