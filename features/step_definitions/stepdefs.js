@@ -33,7 +33,7 @@ const sendRequest = async (body) => {
   const res = await axios(`${apiUrl}/api/submissions/createNewRegistration`, {
     method: "POST",
     headers,
-    body
+    data: body
   });
   return res.data;
 };
@@ -50,7 +50,7 @@ const sendDirectRequest = async (body) => {
     {
       method: "POST",
       headers,
-      body
+      data: body
     }
   );
   return res.data;
