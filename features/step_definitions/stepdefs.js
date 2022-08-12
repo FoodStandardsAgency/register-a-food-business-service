@@ -23,7 +23,7 @@ const sendRequest = async (body) => {
     "Content-Type": "application/json",
     "api-secret": FRONT_END_SECRET,
     "client-name": FRONT_END_NAME,
-    "registration-data-version": "2.1.0"
+    "registration-data-version": "2.2.0"
   };
   const res = await axios(`${apiUrl}/api/submissions/createNewRegistration`, {
     method: "POST",
