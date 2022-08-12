@@ -76,7 +76,12 @@ const fetchUsingPostcoderPremium = async (postcode) => {
     postcode
   );
 
-  const options = { method: "GET" };
+  const options = {
+    method: "GET",
+    validateStatus: () => {
+      return true;
+    }
+  };
   if (process.env.HTTP_PROXY) {
     options.httpsAgent = new HttpsProxyAgent(process.env.HTTP_PROXY);
     // https://github.com/axios/axios/issues/2072#issuecomment-609650888
@@ -113,7 +118,12 @@ const fetchUsingPostcoderStandard = async (postcode) => {
     "fetchUsingPostcoderStandard",
     postcode
   );
-  const options = { method: "GET" };
+  const options = {
+    method: "GET",
+    validateStatus: () => {
+      return true;
+    }
+  };
   if (process.env.HTTP_PROXY) {
     options.httpsAgent = new HttpsProxyAgent(process.env.HTTP_PROXY);
     // https://github.com/axios/axios/issues/2072#issuecomment-609650888

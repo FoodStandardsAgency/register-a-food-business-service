@@ -1,4 +1,9 @@
-const axios = require("axios");
+const ax = require("axios").default;
+const axios = ax.create({
+  validateStatus: () => {
+    return true;
+  }
+});
 const { tascomiAuth } = {}; // require("@slice-and-dice/fsa-rof"); No longer needed
 const { doubleRequest } = require("./tascomi.double");
 const { logEmitter } = require("../../services/logging.service");

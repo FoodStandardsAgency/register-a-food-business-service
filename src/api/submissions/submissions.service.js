@@ -73,7 +73,11 @@ const getRegistrationMetaData = async (councilCode) => {
   let fsa_rn;
 
   try {
-    const options = {};
+    const options = {
+      validateStatus: () => {
+        return true;
+      }
+    };
     if (process.env.HTTP_PROXY) {
       options.httpsAgent = new HttpsProxyAgent(process.env.HTTP_PROXY);
       // https://github.com/axios/axios/issues/2072#issuecomment-609650888

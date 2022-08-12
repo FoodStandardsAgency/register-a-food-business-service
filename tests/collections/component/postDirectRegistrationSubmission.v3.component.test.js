@@ -1,6 +1,10 @@
 require("dotenv").config();
-const axios = require("axios").default;
-
+const ax = require("axios").default;
+const axios = ax.create({
+  validateStatus: () => {
+    return true;
+  }
+});
 const baseUrl = process.env.SERVICE_BASE_URL || "http://localhost:4000";
 const directSubmitUrl = `${baseUrl}/api/submissions/v3/createNewDirectRegistration/cardiff`;
 const collectUrl = `${baseUrl}/api/v3/collections/cardiff`;
