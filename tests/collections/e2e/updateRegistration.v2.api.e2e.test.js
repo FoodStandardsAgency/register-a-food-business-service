@@ -35,9 +35,9 @@ describe("Update single registration through API", () => {
           "Content-Type": "application/json",
           "Ocp-Apim-Subscription-Key": cardiffAPIKey
         },
-        body: JSON.stringify({
+        data: {
           collected: true
-        })
+        }
       };
       const res = await axios(
         `${cardiffUrl}/${availableRegistrations[0].fsa_rn}?env=${process.env.ENVIRONMENT_DESCRIPTION}`,
