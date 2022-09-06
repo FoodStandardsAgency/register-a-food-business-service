@@ -301,6 +301,64 @@ describe(`generateEmailsToSend`, () => {
   });
 });
 
+it(`Test use existing notifications`, () => {
+  let regData = {
+    status: {
+      notifications: [
+        {
+          time: new Date("4/2/2020, 11:24:43"),
+          sent: true,
+          type: "LC",
+          address: "test_lc1@email.com"
+        },
+        {
+          time: new Date("4/2/2020, 11:24:43"),
+          sent: true,
+          type: "LC",
+          address: "test_lc2@email.com"
+        },
+        {
+          time: new Date("4/2/2020, 11:24:43"),
+          sent: true,
+          type: "LC",
+          address: "test_lc3@email.com"
+        },
+        {
+          time: new Date("4/2/2020, 11:24:43"),
+          sent: true,
+          type: "FBO",
+          address: "test_fbo@email.com"
+        }
+      ]
+    }
+  };
+
+  let result = generateEmailsToSend(regData, {}, testConfigData);
+
+  expect(result).toStrictEqual([
+    {
+      type: "LC",
+      address: "test_lc1@email.com",
+      templateId: "integration-test"
+    },
+    {
+      type: "LC",
+      address: "test_lc2@email.com",
+      templateId: "integration-test"
+    },
+    {
+      type: "LC",
+      address: "test_lc3@email.com",
+      templateId: "integration-test"
+    },
+    {
+      type: "FBO",
+      address: "test_fbo@email.com",
+      templateId: "integration-test"
+    }
+  ]);
+});
+
 describe("Function: transformDataForNotify", () => {
   let result;
 

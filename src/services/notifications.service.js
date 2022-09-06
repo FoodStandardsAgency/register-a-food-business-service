@@ -407,47 +407,84 @@ const generateEmailsToSend = (registration, lcContactConfig, configData) => {
   const cy = registration.submission_language === "cy";
   let emailsToSend = [];
 
-  for (let typeOfCouncil in lcContactConfig) {
-    const lcNotificationEmailAddresses =
-      lcContactConfig[typeOfCouncil].local_council_notify_emails;
-
-    for (let recipientEmailAddress in lcNotificationEmailAddresses) {
+  if (
+    registration.status &&
+    registration.status.notifications &&
+    registration.status.notifications.length > 0
+  ) {
+    // use existing notifications
+    registration.status.notifications.forEach((notification) => {
+      let templateID;
+      switch (notification.type) {
+        case "LC":
+          templateID = cy
+            ? configData.notify_template_keys.lc_new_registration_welsh
+            : configData.notify_template_keys.lc_new_registration;
+          break;
+        case "FBO":
+          templateID = cy
+            ? configData.notify_template_keys.fbo_submission_complete_welsh
+            : configData.notify_template_keys.fbo_submission_complete;
+          break;
+        case "FBO_FB":
+          templateID = cy
+            ? configData.notify_template_keys.fbo_feedback_welsh
+            : configData.notify_template_keys.fbo_feedback;
+          break;
+        case "FD_FB":
+          templateID = configData.notify_template_keys.fd_feedback;
+          break;
+      }
       emailsToSend.push({
-        type: "LC",
-        address: lcNotificationEmailAddresses[recipientEmailAddress],
-        templateId: cy
-          ? configData.notify_template_keys.lc_new_registration_welsh
-          : configData.notify_template_keys.lc_new_registration
+        type: notification.type,
+        address: notification.address,
+        templateId: templateID
       });
+    });
+  } else {
+    // create new notifications
+    for (let typeOfCouncil in lcContactConfig) {
+      const lcNotificationEmailAddresses =
+        lcContactConfig[typeOfCouncil].local_council_notify_emails;
+
+      for (let recipientEmailAddress in lcNotificationEmailAddresses) {
+        emailsToSend.push({
+          type: "LC",
+          address: lcNotificationEmailAddresses[recipientEmailAddress],
+          templateId: cy
+            ? configData.notify_template_keys.lc_new_registration_welsh
+            : configData.notify_template_keys.lc_new_registration
+        });
+      }
     }
-  }
 
-  const fboEmailAddress =
-    registration.establishment.operator.operator_email ||
-    registration.establishment.operator.contact_representative_email;
+    const fboEmailAddress =
+      registration.establishment.operator.operator_email ||
+      registration.establishment.operator.contact_representative_email;
 
-  emailsToSend.push({
-    type: "FBO",
-    address: fboEmailAddress,
-    templateId: cy
-      ? configData.notify_template_keys.fbo_submission_complete_welsh
-      : configData.notify_template_keys.fbo_submission_complete
-  });
-
-  if (registration.declaration && registration.declaration.feedback1) {
     emailsToSend.push({
-      type: "FBO_FB",
+      type: "FBO",
       address: fboEmailAddress,
       templateId: cy
-        ? configData.notify_template_keys.fbo_feedback_welsh
-        : configData.notify_template_keys.fbo_feedback
+        ? configData.notify_template_keys.fbo_submission_complete_welsh
+        : configData.notify_template_keys.fbo_submission_complete
     });
 
-    emailsToSend.push({
-      type: "FD_FB",
-      address: configData.future_delivery_email,
-      templateId: configData.notify_template_keys.fd_feedback
-    });
+    if (registration.declaration && registration.declaration.feedback1) {
+      emailsToSend.push({
+        type: "FBO_FB",
+        address: fboEmailAddress,
+        templateId: cy
+          ? configData.notify_template_keys.fbo_feedback_welsh
+          : configData.notify_template_keys.fbo_feedback
+      });
+
+      emailsToSend.push({
+        type: "FD_FB",
+        address: configData.future_delivery_email,
+        templateId: configData.notify_template_keys.fd_feedback
+      });
+    }
   }
 
   return emailsToSend;
