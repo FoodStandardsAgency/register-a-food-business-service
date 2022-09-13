@@ -4,6 +4,8 @@ const { logEmitter, INFO, ERROR } = require("../../services/logging.service");
 const { sendNotifications } = require("../../services/notifications.service");
 const { isEmpty } = require("lodash");
 const { success } = require("../../utils/express/response");
+const HttpsProxyAgent = require("https-proxy-agent");
+const axios = require("axios");
 
 const {
   sendTascomiRegistration,
@@ -15,7 +17,8 @@ const {
   updateStatusInCache,
   findOutstandingTascomiRegistrationsFsaIds,
   findAllBlankRegistrations,
-  findAllFailedNotificationsRegistrations
+  findAllFailedNotificationsRegistrations,
+  findAllTmpRegistrations
 } = require("../../connectors/cacheDb/cacheDb.connector");
 
 const {
@@ -30,6 +33,7 @@ const {
 const {
   establishConnectionToCosmos
 } = require("../../connectors/cosmos.client");
+const { RNG_API_URL } = require("../../config");
 
 const sendAllOutstandingRegistrationsToTascomiAction = async (
   req,
@@ -162,7 +166,7 @@ const sendAllNotificationsForRegistrationsAction = async (
     "registrations"
   );
 
-  //we have to do these 2 look ups as a workaround for azure cosmos shortcoming
+  //we have to do these 3 look ups as a workaround for azure cosmos shortcoming
   let registrations = await findAllBlankRegistrations(registrationsCollection);
   registrations = await registrations.toArray();
 
@@ -174,6 +178,12 @@ const sendAllNotificationsForRegistrationsAction = async (
   for (let reg of failedRegistrations) {
     registrations.push(reg);
   }
+  let tmpRegistrations = await findAllTmpRegistrations(registrationsCollection);
+  tmpRegistrations = await tmpRegistrations.toArray();
+
+  for (let reg of tmpRegistrations) {
+    registrations.push(reg);
+  }
 
   let allLcConfigData = await getAllLocalCouncilConfig();
   let registration;
@@ -183,6 +193,70 @@ const sendAllNotificationsForRegistrationsAction = async (
     idsAttempted.push(registration["fsa-rn"]);
 
     if (!dryrun) {
+      if (registration["fsa-rn"].startsWith("tmp_")) {
+        // Try resolve RNG
+        const typeCode = process.env.NODE_ENV === "production" ? "001" : "000";
+        const councilCode = registration.hygiene_council_code || "1234";
+        let fsa_rn;
+        try {
+          const options = {
+            validateStatus: () => {
+              return true;
+            }
+          };
+          if (process.env.HTTP_PROXY) {
+            options.httpsAgent = new HttpsProxyAgent(process.env.HTTP_PROXY);
+            // https://github.com/axios/axios/issues/2072#issuecomment-609650888
+            options.proxy = false;
+          }
+          const fsaRnResponse = await axios(
+            `${RNG_API_URL}/generate/${councilCode}/${typeCode}`,
+            options
+          );
+          if (fsaRnResponse.status === 200) {
+            // get registration
+            fsa_rn = fsaRnResponse.data["fsa-rn"];
+            const cachedRegistrations = await establishConnectionToCosmos(
+              "registrations",
+              "registrations"
+            );
+            logEmitter.emit(
+              "functionCall",
+              "sendAllNotificationsForRegistrationsAction",
+              "update`fsa-rn`"
+            );
+            try {
+              // update fsa-rn
+              await cachedRegistrations.updateOne(
+                { "fsa-rn": registration["fsa-rn"] },
+                {
+                  $set: { "fsa-rn": fsa_rn }
+                }
+              );
+              logEmitter.emit(
+                "functionSuccess",
+                "sendAllNotificationsForRegistrationsAction",
+                "update`fsa-rn"
+              );
+              registration["fsa-rn"] = fsa_rn;
+            } catch (err) {
+              logEmitter.emit(
+                "functionFail",
+                "sendAllNotificationsForRegistrationsAction",
+                "update`fsa-rn",
+                err
+              );
+            }
+          }
+        } catch (err) {
+          logEmitter.emit(
+            "functionFail",
+            "sendAllNotificationsForRegistrationsAction",
+            "get `fsa-rn",
+            err
+          );
+        }
+      }
       await multiSendNotifications(registration, allLcConfigData);
 
       //sleep

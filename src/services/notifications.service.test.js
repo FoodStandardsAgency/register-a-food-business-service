@@ -180,6 +180,7 @@ const testConfigData = {
 describe(`generateEmailsToSend`, () => {
   it(`Test operator_email is matched to FBO`, () => {
     let regData = {
+      "fsa-rn": "ABCD-EFGH-JKLM-NOPR",
       establishment: {
         operator: {
           operator_email: "testop"
@@ -197,6 +198,7 @@ describe(`generateEmailsToSend`, () => {
 
   it(`Test contact_representative_email is matched to FBO`, () => {
     let regData = {
+      "fsa-rn": "ABCD-EFGH-JKLM-NOPR",
       establishment: {
         operator: {
           contact_representative_email: "testrep"
@@ -214,6 +216,7 @@ describe(`generateEmailsToSend`, () => {
 
   it(`Test lc councils are collated`, () => {
     let regData = {
+      "fsa-rn": "ABCD-EFGH-JKLM-NOPR",
       establishment: {
         operator: {
           contact_representative_email: "testrep"
@@ -268,6 +271,7 @@ describe(`generateEmailsToSend`, () => {
 
   it(`Test declaration emails`, () => {
     let regData = {
+      "fsa-rn": "ABCD-EFGH-JKLM-NOPR",
       establishment: {
         operator: {
           contact_representative_email: "testrep"
@@ -303,6 +307,7 @@ describe(`generateEmailsToSend`, () => {
 
 it(`Test use existing notifications`, () => {
   let regData = {
+    establishment: { operator: { operator_email: "fbo@email.com" } },
     status: {
       notifications: [
         {

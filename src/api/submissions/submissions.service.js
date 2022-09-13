@@ -1,4 +1,5 @@
 const axios = require("axios").default;
+const uuid = require("uuid");
 const HttpsProxyAgent = require("https-proxy-agent");
 const {
   getAllLocalCouncilConfig,
@@ -7,6 +8,7 @@ const {
 
 const { logEmitter } = require("../../services/logging.service");
 const { statusEmitter } = require("../../services/statusEmitter.service");
+const { RNG_API_URL } = require("../../config");
 
 const sendTascomiRegistration = async (registration, localCouncil) => {
   // hack to reduce repair work needed
@@ -84,8 +86,7 @@ const getRegistrationMetaData = async (councilCode) => {
       options.proxy = false;
     }
     const fsaRnResponse = await axios(
-      `https://rng.food.gov.uk/generate/${councilCode}/${typeCode}`,
-
+      `${RNG_API_URL}/generate/${councilCode}/${typeCode}`,
       options
     );
     if (fsaRnResponse.status === 200) {
@@ -100,7 +101,7 @@ const getRegistrationMetaData = async (councilCode) => {
       "getRegistrationMetaData"
     );
     return {
-      "fsa-rn": fsa_rn ? fsa_rn["fsa-rn"] : undefined,
+      "fsa-rn": fsa_rn ? fsa_rn["fsa-rn"] : "tmp_" + uuid.v4(),
       reg_submission_date: reg_submission_date
     };
   } catch (err) {
@@ -112,12 +113,10 @@ const getRegistrationMetaData = async (councilCode) => {
       "getRegistrationMetaData",
       err
     );
-
-    const newError = new Error();
-    newError.name = "fsaRnFetchError";
-    newError.message = err.message;
-
-    throw newError;
+    return {
+      "fsa-rn": "tmp_" + uuid.v4(),
+      reg_submission_date: reg_submission_date
+    };
   }
 };
 

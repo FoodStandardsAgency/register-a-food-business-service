@@ -102,6 +102,7 @@ const findAllFailedNotificationsRegistrations = async (
   return await cachedRegistrations
     .find({
       $and: [
+        { "fsa-rn": { $not: { $regex: /^tmp_/ } } },
         {
           "status.notifications": {
             $elemMatch: { sent: { $ne: true } }
@@ -120,10 +121,29 @@ const findAllFailedNotificationsRegistrations = async (
     .limit(limit);
 };
 
+const findAllTmpRegistrations = async (cachedRegistrations, limit = 100) => {
+  return await cachedRegistrations
+    .find({
+      $and: [
+        { "fsa-rn": { $regex: /^tmp_/ } },
+        {
+          $or: [
+            { direct_submission: { $exists: false } },
+            { direct_submission: null },
+            { direct_submission: false }
+          ]
+        }
+      ]
+    })
+    .sort({ reg_submission_date: 1 })
+    .limit(limit);
+};
+
 const findAllBlankRegistrations = async (cachedRegistrations, limit = 100) => {
   return await cachedRegistrations
     .find({
       $and: [
+        { "fsa-rn": { $not: { $regex: /^tmp_/ } } },
         {
           $or: [
             { "status.notifications": { $exists: false } },
@@ -234,6 +254,7 @@ const updateNotificationOnSent = (
 
 module.exports = {
   findAllFailedNotificationsRegistrations,
+  findAllTmpRegistrations,
   findAllBlankRegistrations,
   findOutstandingTascomiRegistrationsFsaIds,
   cacheRegistration,
