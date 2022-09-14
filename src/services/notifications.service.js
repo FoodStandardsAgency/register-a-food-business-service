@@ -328,7 +328,7 @@ const initialiseNotificationsStatus = (emailsToSend) => {
     notifications.push({
       time: undefined,
       sent:
-        emailsToSend.length > 1 && emailsToSend[index].type === "RNG_PENDING"
+        emailsToSend.length > 1 && emailsToSend[index].type === "RNG_PENDING" // In order to prevent RN pending emails from being sent to FBO when RNG service has been resolved
           ? true
           : false,
       type: emailsToSend[index].type,
