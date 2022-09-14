@@ -195,68 +195,12 @@ const sendAllNotificationsForRegistrationsAction = async (
     if (!dryrun) {
       if (registration["fsa-rn"].startsWith("tmp_")) {
         // Try resolve RNG
-        const typeCode = process.env.NODE_ENV === "production" ? "001" : "000";
-        const councilCode = registration.hygiene_council_code || "1234";
-        let fsa_rn;
-        try {
-          const options = {
-            validateStatus: () => {
-              return true;
-            }
-          };
-          if (process.env.HTTP_PROXY) {
-            options.httpsAgent = new HttpsProxyAgent(process.env.HTTP_PROXY);
-            // https://github.com/axios/axios/issues/2072#issuecomment-609650888
-            options.proxy = false;
-          }
-          const fsaRnResponse = await axios(
-            `${RNG_API_URL}/generate/${councilCode}/${typeCode}`,
-            options
-          );
-          if (fsaRnResponse.status === 200) {
-            // get registration
-            fsa_rn = fsaRnResponse.data["fsa-rn"];
-            const cachedRegistrations = await establishConnectionToCosmos(
-              "registrations",
-              "registrations"
-            );
-            logEmitter.emit(
-              "functionCall",
-              "sendAllNotificationsForRegistrationsAction",
-              "update`fsa-rn`"
-            );
-            try {
-              // update fsa-rn
-              await cachedRegistrations.updateOne(
-                { "fsa-rn": registration["fsa-rn"] },
-                {
-                  $set: { "fsa-rn": fsa_rn }
-                }
-              );
-              logEmitter.emit(
-                "functionSuccess",
-                "sendAllNotificationsForRegistrationsAction",
-                "update`fsa-rn"
-              );
-              registration["fsa-rn"] = fsa_rn;
-            } catch (err) {
-              logEmitter.emit(
-                "functionFail",
-                "sendAllNotificationsForRegistrationsAction",
-                "update`fsa-rn",
-                err
-              );
-            }
-          }
-        } catch (err) {
-          logEmitter.emit(
-            "functionFail",
-            "sendAllNotificationsForRegistrationsAction",
-            "get `fsa-rn",
-            err
-          );
+        const newRn = await tryResolveRegistrationNumber(registration);
+        if (newRn) {
+          registration["fsa-rn"] = newRn;
         }
       }
+
       await multiSendNotifications(registration, allLcConfigData);
 
       //sleep
@@ -285,6 +229,73 @@ const sendAllNotificationsForRegistrationsAction = async (
     dryrun,
     throttle
   });
+};
+
+const tryResolveRegistrationNumber = async (registration) => {
+  const typeCode = process.env.NODE_ENV === "production" ? "001" : "000";
+  const councilCode = registration.hygiene_council_code || "1234";
+  let fsa_rn;
+  try {
+    const options = {
+      validateStatus: () => {
+        return true;
+      }
+    };
+    if (process.env.HTTP_PROXY) {
+      options.httpsAgent = new HttpsProxyAgent(process.env.HTTP_PROXY);
+      // https://github.com/axios/axios/issues/2072#issuecomment-609650888
+      options.proxy = false;
+    }
+    const fsaRnResponse = await axios(
+      `${RNG_API_URL}/generate/${councilCode}/${typeCode}`,
+      options
+    );
+    if (fsaRnResponse.status === 200) {
+      // get registration
+      fsa_rn = fsaRnResponse.data["fsa-rn"];
+      const cachedRegistrations = await establishConnectionToCosmos(
+        "registrations",
+        "registrations"
+      );
+      logEmitter.emit(
+        "functionCall",
+        "tryResolveRegistrationNumber",
+        "update`fsa-rn`"
+      );
+      try {
+        // update fsa-rn
+        await cachedRegistrations.updateOne(
+          { "fsa-rn": registration["fsa-rn"] },
+          {
+            $set: { "fsa-rn": fsa_rn }
+          }
+        );
+        logEmitter.emit(
+          "functionSuccess",
+          "tryResolveRegistrationNumber",
+          "update`fsa-rn"
+        );
+        return fsa_rn;
+      } catch (err) {
+        logEmitter.emit(
+          "functionFail",
+          "tryResolveRegistrationNumber",
+          "update`fsa-rn",
+          err
+        );
+        return false;
+      }
+    }
+    return false;
+  } catch (err) {
+    logEmitter.emit(
+      "functionFail",
+      "tryResolveRegistrationNumber",
+      "get `fsa-rn",
+      err
+    );
+    return false;
+  }
 };
 
 const sendNotificationsForRegistrationAction = async (fsaId, req, res) => {
@@ -514,5 +525,6 @@ module.exports = {
   sendRegistrationToTascomiAction,
   sendNotificationsForRegistrationAction,
   sendAllOutstandingRegistrationsToTascomiAction,
-  sendAllNotificationsForRegistrationsAction
+  sendAllNotificationsForRegistrationsAction,
+  tryResolveRegistrationNumber
 };
