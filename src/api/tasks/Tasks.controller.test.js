@@ -1,7 +1,7 @@
-jest.mock("axios");
+jest.mock("../submissions/submissions.service");
 jest.mock("mongodb");
 
-const axios = require("axios");
+const { getFsaRn } = require("../submissions/submissions.service");
 const mongodb = require("mongodb");
 const { tryResolveRegistrationNumber } = require("./Tasks.controller");
 
@@ -21,26 +21,43 @@ describe("Function: tryResolveRegistrationNumber: ", () => {
 
   describe("Given RNG sucess:", () => {
     beforeEach(async () => {
-      axios.mockImplementation(() => ({
-        status: 200,
-        data: { "fsa-rn": "1234" }
-      }));
+      getFsaRn.mockImplementation(() => "1234");
 
       fsaRn = await tryResolveRegistrationNumber({
         "fsa-rn": "tmp_1234"
       });
     });
 
-    it("should return an empty array", () => {
+    it("should return a new fsa-rn", () => {
       expect(fsaRn).toEqual("1234");
     });
   });
 
   describe("Given RNG fail:", () => {
     beforeEach(async () => {
-      axios.mockImplementation(() => ({
-        status: 500,
-        data: undefined
+      getFsaRn.mockImplementation(() => false);
+
+      fsaRn = await tryResolveRegistrationNumber({
+        "fsa-rn": "tmp_1234"
+      });
+    });
+
+    it("should return a false", () => {
+      expect(fsaRn).toEqual(false);
+    });
+  });
+
+  describe("Given throw Error:", () => {
+    beforeEach(async () => {
+      mongodb.MongoClient.connect.mockImplementation(async () => ({
+        db: () => ({
+          collection: () => ({
+            findOne: () => {},
+            updateOne: () => {
+              throw new Error("error");
+            }
+          })
+        })
       }));
 
       fsaRn = await tryResolveRegistrationNumber({
@@ -48,23 +65,7 @@ describe("Function: tryResolveRegistrationNumber: ", () => {
       });
     });
 
-    it("should return an empty array", () => {
-      expect(fsaRn).toEqual(false);
-    });
-  });
-
-  describe("Given throw Error:", () => {
-    beforeEach(async () => {
-      axios.mockImplementation(() => {
-        throw new Error("error");
-      });
-
-      fsaRn = await tryResolveRegistrationNumber({
-        "fsa-rn": "tmp_1234"
-      });
-    });
-
-    it("should return an empty array", () => {
+    it("should return a false", () => {
       expect(fsaRn).toEqual(false);
     });
   });

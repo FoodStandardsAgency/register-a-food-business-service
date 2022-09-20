@@ -70,9 +70,19 @@ const getRegistrationMetaData = async (councilCode) => {
     };
   }
 
-  const typeCode = process.env.NODE_ENV === "production" ? "001" : "000";
   const reg_submission_date = new Date();
   let fsa_rn;
+
+  fsa_rn = await getFsaRn(councilCode);
+
+  return {
+    "fsa-rn": fsa_rn ? fsa_rn : "tmp_" + uuid.v4(),
+    reg_submission_date: reg_submission_date
+  };
+};
+
+const getFsaRn = async (councilCode) => {
+  const typeCode = process.env.NODE_ENV === "production" ? "001" : "000";
 
   try {
     const options = {
@@ -90,33 +100,26 @@ const getRegistrationMetaData = async (councilCode) => {
       options
     );
     if (fsaRnResponse.status === 200) {
-      fsa_rn = fsaRnResponse.data;
+      statusEmitter.emit("incrementCount", "fsaRnCallsSucceeded");
+      statusEmitter.emit("setStatus", "mostRecentFsaRnCallSucceeded", true);
+      logEmitter.emit("functionSuccess", "submissions.service", "getFsaRn");
+      return fsaRnResponse.data && fsaRnResponse.data["fsa-rn"]
+        ? fsaRnResponse.data["fsa-rn"]
+        : false;
     }
 
-    statusEmitter.emit("incrementCount", "fsaRnCallsSucceeded");
-    statusEmitter.emit("setStatus", "mostRecentFsaRnCallSucceeded", true);
-    logEmitter.emit(
-      "functionSuccess",
-      "submissions.service",
-      "getRegistrationMetaData"
-    );
-    return {
-      "fsa-rn": fsa_rn ? fsa_rn["fsa-rn"] : "tmp_" + uuid.v4(),
-      reg_submission_date: reg_submission_date
-    };
-  } catch (err) {
-    statusEmitter.emit("incrementCount", "fsaRnCallsFailed");
-    statusEmitter.emit("setStatus", "mostRecentFsaRnCallSucceeded", false);
     logEmitter.emit(
       "functionFail",
       "submissions.service",
-      "getRegistrationMetaData",
-      err
+      "getFsaRn",
+      `Response code ${fsaRnResponse.status}`
     );
-    return {
-      "fsa-rn": "tmp_" + uuid.v4(),
-      reg_submission_date: reg_submission_date
-    };
+    return false;
+  } catch (err) {
+    statusEmitter.emit("incrementCount", "fsaRnCallsFailed");
+    statusEmitter.emit("setStatus", "mostRecentFsaRnCallSucceeded", false);
+    logEmitter.emit("functionFail", "submissions.service", "getFsaRn", err);
+    return false;
   }
 };
 
@@ -407,5 +410,6 @@ module.exports = {
   getRegistrationMetaData,
   getLcContactConfig,
   getLcContactConfigFromArray,
-  getLcAuth
+  getLcAuth,
+  getFsaRn
 };

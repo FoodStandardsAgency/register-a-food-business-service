@@ -4,8 +4,7 @@ const { logEmitter, INFO, ERROR } = require("../../services/logging.service");
 const { sendNotifications } = require("../../services/notifications.service");
 const { isEmpty } = require("lodash");
 const { success } = require("../../utils/express/response");
-const HttpsProxyAgent = require("https-proxy-agent");
-const axios = require("axios");
+const { getFsaRn } = require("../submissions/submissions.service");
 
 const {
   sendTascomiRegistration,
@@ -33,7 +32,6 @@ const {
 const {
   establishConnectionToCosmos
 } = require("../../connectors/cosmos.client");
-const { RNG_API_URL } = require("../../config");
 
 const sendAllOutstandingRegistrationsToTascomiAction = async (
   req,
@@ -232,27 +230,12 @@ const sendAllNotificationsForRegistrationsAction = async (
 };
 
 const tryResolveRegistrationNumber = async (registration) => {
-  const typeCode = process.env.NODE_ENV === "production" ? "001" : "000";
   const councilCode = registration.hygiene_council_code || "1234";
-  let fsa_rn;
-  try {
-    const options = {
-      validateStatus: () => {
-        return true;
-      }
-    };
-    if (process.env.HTTP_PROXY) {
-      options.httpsAgent = new HttpsProxyAgent(process.env.HTTP_PROXY);
-      // https://github.com/axios/axios/issues/2072#issuecomment-609650888
-      options.proxy = false;
-    }
-    const fsaRnResponse = await axios(
-      `${RNG_API_URL}/generate/${councilCode}/${typeCode}`,
-      options
-    );
-    if (fsaRnResponse.status === 200) {
-      // get registration
-      fsa_rn = fsaRnResponse.data["fsa-rn"];
+
+  const fsa_rn = await getFsaRn(councilCode);
+  if (fsa_rn) {
+    try {
+      // update fsa-rn
       const cachedRegistrations = await establishConnectionToCosmos(
         "registrations",
         "registrations"
@@ -262,40 +245,30 @@ const tryResolveRegistrationNumber = async (registration) => {
         "tryResolveRegistrationNumber",
         "update`fsa-rn`"
       );
-      try {
-        // update fsa-rn
-        await cachedRegistrations.updateOne(
-          { "fsa-rn": registration["fsa-rn"] },
-          {
-            $set: { "fsa-rn": fsa_rn }
-          }
-        );
-        logEmitter.emit(
-          "functionSuccess",
-          "tryResolveRegistrationNumber",
-          "update`fsa-rn"
-        );
-        return fsa_rn;
-      } catch (err) {
-        logEmitter.emit(
-          "functionFail",
-          "tryResolveRegistrationNumber",
-          "update`fsa-rn",
-          err
-        );
-        return false;
-      }
+
+      await cachedRegistrations.updateOne(
+        { "fsa-rn": registration["fsa-rn"] },
+        {
+          $set: { "fsa-rn": fsa_rn }
+        }
+      );
+      logEmitter.emit(
+        "functionSuccess",
+        "tryResolveRegistrationNumber",
+        "update`fsa-rn"
+      );
+      return fsa_rn;
+    } catch (err) {
+      logEmitter.emit(
+        "functionFail",
+        "tryResolveRegistrationNumber",
+        "update`fsa-rn",
+        err
+      );
+      return false;
     }
-    return false;
-  } catch (err) {
-    logEmitter.emit(
-      "functionFail",
-      "tryResolveRegistrationNumber",
-      "get `fsa-rn",
-      err
-    );
-    return false;
   }
+  return false;
 };
 
 const sendNotificationsForRegistrationAction = async (fsaId, req, res) => {
