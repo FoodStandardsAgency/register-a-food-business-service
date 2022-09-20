@@ -21,8 +21,7 @@ module.exports = {
     process.env.ADDRESS_API_KEY || "PCW45-12345-12345-1234X"
   }/address`,
   ADDRESS_API_URL_QUERY_STANDARD: "format=json&lines=3",
-  RNG_API_URL:
-    process.env.RNG_API_URL || "https://fsa-reference-numbers.epimorphics.net",
+  RNG_API_URL: process.env.RNG_API_URL || "https://rng.food.gov.uk",
   RNG_PENDING_TEMPLATE_ID:
     process.env.RNG_PENDING_TEMPLATE_ID ||
     "56c84504-c165-42fc-8640-21f36c1f9eb8",
