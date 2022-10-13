@@ -9,6 +9,10 @@ const { statusEmitter } = require("./statusEmitter.service");
 const { sendSingleEmail } = require("../connectors/notify/notify.connector");
 const { pdfGenerator, transformDataForPdf } = require("./pdf.service");
 const {
+  RNG_PENDING_TEMPLATE_ID,
+  RNG_PENDING_TEMPLATE_ID_CY
+} = require("../config");
+const {
   getStatus,
   updateStatus,
   updateNotificationOnSent
@@ -323,7 +327,10 @@ const initialiseNotificationsStatus = (emailsToSend) => {
   for (let index in emailsToSend) {
     notifications.push({
       time: undefined,
-      sent: false,
+      sent:
+        emailsToSend.length > 1 && emailsToSend[index].type === "RNG_PENDING" // In order to prevent RN pending emails from being sent to FBO when RNG service has been resolved
+          ? true
+          : false,
       type: emailsToSend[index].type,
       address: emailsToSend[index].address
     });
@@ -406,11 +413,18 @@ const initialiseNotificationsStatusIfNotSet = async (fsaId, emailsToSend) => {
 const generateEmailsToSend = (registration, lcContactConfig, configData) => {
   const cy = registration.submission_language === "cy";
   let emailsToSend = [];
+  const fboEmailAddress =
+    registration.establishment.operator.operator_email ||
+    registration.establishment.operator.contact_representative_email;
 
   if (
-    registration.status &&
-    registration.status.notifications &&
-    registration.status.notifications.length > 0
+    (registration.status &&
+      registration.status.notifications &&
+      registration.status.notifications.length > 1) ||
+    (registration.status &&
+      registration.status.notifications &&
+      registration.status.notifications.length == 1 &&
+      registration.status.notifications[0].type != "RNG_PENDING")
   ) {
     // use existing notifications
     registration.status.notifications.forEach((notification) => {
@@ -434,6 +448,10 @@ const generateEmailsToSend = (registration, lcContactConfig, configData) => {
         case "FD_FB":
           templateID = configData.notify_template_keys.fd_feedback;
           break;
+        case "RNG_PENDING":
+          templateID = cy
+            ? RNG_PENDING_TEMPLATE_ID_CY
+            : RNG_PENDING_TEMPLATE_ID;
       }
       emailsToSend.push({
         type: notification.type,
@@ -441,8 +459,28 @@ const generateEmailsToSend = (registration, lcContactConfig, configData) => {
         templateId: templateID
       });
     });
+  } else if (registration["fsa-rn"].startsWith("tmp_")) {
+    // send only RNG pending notification
+    emailsToSend.push({
+      type: "RNG_PENDING",
+      address: fboEmailAddress,
+      templateId: cy ? RNG_PENDING_TEMPLATE_ID_CY : RNG_PENDING_TEMPLATE_ID
+    });
   } else {
     // create new notifications
+    if (
+      registration.status &&
+      registration.status.notifications &&
+      registration.status.notifications.length == 1 &&
+      registration.status.notifications[0].type == "RNG_PENDING"
+    ) {
+      emailsToSend.push({
+        type: "RNG_PENDING",
+        address: fboEmailAddress,
+        templateId: cy ? RNG_PENDING_TEMPLATE_ID_CY : RNG_PENDING_TEMPLATE_ID
+      });
+    }
+
     for (let typeOfCouncil in lcContactConfig) {
       const lcNotificationEmailAddresses =
         lcContactConfig[typeOfCouncil].local_council_notify_emails;
@@ -457,10 +495,6 @@ const generateEmailsToSend = (registration, lcContactConfig, configData) => {
         });
       }
     }
-
-    const fboEmailAddress =
-      registration.establishment.operator.operator_email ||
-      registration.establishment.operator.contact_representative_email;
 
     emailsToSend.push({
       type: "FBO",

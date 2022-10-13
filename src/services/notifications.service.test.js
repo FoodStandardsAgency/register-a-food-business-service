@@ -18,6 +18,8 @@ const {
   transformDataForNotify
 } = require("./notifications.service");
 
+const { RNG_PENDING_TEMPLATE_ID } = require("../config");
+
 const {
   businessTypeEnum,
   customerTypeEnum,
@@ -178,8 +180,61 @@ const testConfigData = {
 };
 
 describe(`generateEmailsToSend`, () => {
+  it(`Test when RNG fails, RN pending templates are sent`, () => {
+    let regData = {
+      "fsa-rn": "tmp_ABCD-EFGH-JKLM-NOPR",
+      establishment: {
+        operator: {
+          operator_email: "testop"
+        }
+      }
+    };
+    let lcConfig = {};
+
+    let result = generateEmailsToSend(regData, lcConfig, testConfigData);
+
+    expect(result).toStrictEqual([
+      {
+        address: "testop",
+        templateId: RNG_PENDING_TEMPLATE_ID,
+        type: "RNG_PENDING"
+      }
+    ]);
+  });
+
+  it(`Test when preveus failed RNG registration is resolved, the correct template is sent`, () => {
+    let regData = {
+      "fsa-rn": "ABCD-EFGH-JKLM-NOPR",
+      establishment: {
+        operator: {
+          operator_email: "testop"
+        }
+      },
+      status: {
+        notifications: [{ type: "RNG_PENDING" }]
+      }
+    };
+    let lcConfig = {};
+
+    let result = generateEmailsToSend(regData, lcConfig, testConfigData);
+
+    expect(result).toStrictEqual([
+      {
+        address: "testop",
+        templateId: RNG_PENDING_TEMPLATE_ID,
+        type: "RNG_PENDING"
+      },
+      {
+        address: "testop",
+        templateId: "integration-test",
+        type: "FBO"
+      }
+    ]);
+  });
+
   it(`Test operator_email is matched to FBO`, () => {
     let regData = {
+      "fsa-rn": "ABCD-EFGH-JKLM-NOPR",
       establishment: {
         operator: {
           operator_email: "testop"
@@ -197,6 +252,7 @@ describe(`generateEmailsToSend`, () => {
 
   it(`Test contact_representative_email is matched to FBO`, () => {
     let regData = {
+      "fsa-rn": "ABCD-EFGH-JKLM-NOPR",
       establishment: {
         operator: {
           contact_representative_email: "testrep"
@@ -214,6 +270,7 @@ describe(`generateEmailsToSend`, () => {
 
   it(`Test lc councils are collated`, () => {
     let regData = {
+      "fsa-rn": "ABCD-EFGH-JKLM-NOPR",
       establishment: {
         operator: {
           contact_representative_email: "testrep"
@@ -268,6 +325,7 @@ describe(`generateEmailsToSend`, () => {
 
   it(`Test declaration emails`, () => {
     let regData = {
+      "fsa-rn": "ABCD-EFGH-JKLM-NOPR",
       establishment: {
         operator: {
           contact_representative_email: "testrep"
@@ -299,64 +357,65 @@ describe(`generateEmailsToSend`, () => {
       }
     ]);
   });
-});
 
-it(`Test use existing notifications`, () => {
-  let regData = {
-    status: {
-      notifications: [
-        {
-          time: new Date("4/2/2020, 11:24:43"),
-          sent: true,
-          type: "LC",
-          address: "test_lc1@email.com"
-        },
-        {
-          time: new Date("4/2/2020, 11:24:43"),
-          sent: true,
-          type: "LC",
-          address: "test_lc2@email.com"
-        },
-        {
-          time: new Date("4/2/2020, 11:24:43"),
-          sent: true,
-          type: "LC",
-          address: "test_lc3@email.com"
-        },
-        {
-          time: new Date("4/2/2020, 11:24:43"),
-          sent: true,
-          type: "FBO",
-          address: "test_fbo@email.com"
-        }
-      ]
-    }
-  };
+  it(`Test use existing notifications`, () => {
+    let regData = {
+      establishment: { operator: { operator_email: "fbo@email.com" } },
+      status: {
+        notifications: [
+          {
+            time: new Date("4/2/2020, 11:24:43"),
+            sent: true,
+            type: "LC",
+            address: "test_lc1@email.com"
+          },
+          {
+            time: new Date("4/2/2020, 11:24:43"),
+            sent: true,
+            type: "LC",
+            address: "test_lc2@email.com"
+          },
+          {
+            time: new Date("4/2/2020, 11:24:43"),
+            sent: true,
+            type: "LC",
+            address: "test_lc3@email.com"
+          },
+          {
+            time: new Date("4/2/2020, 11:24:43"),
+            sent: true,
+            type: "FBO",
+            address: "test_fbo@email.com"
+          }
+        ]
+      }
+    };
 
-  let result = generateEmailsToSend(regData, {}, testConfigData);
+    let result = generateEmailsToSend(regData, {}, testConfigData);
 
-  expect(result).toStrictEqual([
-    {
-      type: "LC",
-      address: "test_lc1@email.com",
-      templateId: "integration-test"
-    },
-    {
-      type: "LC",
-      address: "test_lc2@email.com",
-      templateId: "integration-test"
-    },
-    {
-      type: "LC",
-      address: "test_lc3@email.com",
-      templateId: "integration-test"
-    },
-    {
-      type: "FBO",
-      address: "test_fbo@email.com",
-      templateId: "integration-test"
-    }
-  ]);
+    expect(result).toStrictEqual([
+      {
+        type: "LC",
+        address: "test_lc1@email.com",
+        templateId: "integration-test"
+      },
+      {
+        type: "LC",
+        address: "test_lc2@email.com",
+        templateId: "integration-test"
+      },
+      {
+        type: "LC",
+        address: "test_lc3@email.com",
+        templateId: "integration-test"
+      },
+      {
+        type: "FBO",
+        address: "test_fbo@email.com",
+        templateId: "integration-test"
+      }
+    ]);
+  });
 });
 
 describe("Function: transformDataForNotify", () => {

@@ -95,8 +95,8 @@ describe("Function: getRegistrationMetaData: ", () => {
       });
       result = await getRegistrationMetaData();
     });
-    it("should return an object that contains fsa_rn", () => {
-      expect(result["fsa-rn"]).toBe(undefined);
+    it("should return an object that contains temporary fsa_rn", () => {
+      expect(result["fsa-rn"]).toEqual(expect.stringMatching(/^tmp_/));
     });
   });
 
@@ -111,8 +111,8 @@ describe("Function: getRegistrationMetaData: ", () => {
         result = err;
       }
     });
-    it("should throw the error from the fetch attempt", () => {
-      expect(result.message).toBe("test error");
+    it("should return an object that contains temporary fsa_rn", () => {
+      expect(result["fsa-rn"]).toEqual(expect.stringMatching(/^tmp_/));
     });
   });
 });
