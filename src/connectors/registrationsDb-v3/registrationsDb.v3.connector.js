@@ -22,6 +22,7 @@ const getRegistrationsByCouncils = async (
       .find(
         {
           $and: [
+            { "fsa-rn": { $not: { $regex: /^tmp_/ } } },
             { local_council_url: { $in: councils } },
             { collected: { $in: collected } },
             { reg_submission_date: { $gte: new Date(after) } },
@@ -66,6 +67,7 @@ const getAllRegistrations = async (before, after) => {
       .find(
         {
           $and: [
+            { "fsa-rn": { $not: { $regex: /^tmp_/ } } },
             { reg_submission_date: { $gte: after } },
             { reg_submission_date: { $lte: before } }
           ]

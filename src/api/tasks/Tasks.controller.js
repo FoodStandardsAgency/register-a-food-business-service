@@ -4,6 +4,7 @@ const { logEmitter, INFO, ERROR } = require("../../services/logging.service");
 const { sendNotifications } = require("../../services/notifications.service");
 const { isEmpty } = require("lodash");
 const { success } = require("../../utils/express/response");
+const { getFsaRn } = require("../submissions/submissions.service");
 
 const {
   sendTascomiRegistration,
@@ -15,7 +16,8 @@ const {
   updateStatusInCache,
   findOutstandingTascomiRegistrationsFsaIds,
   findAllBlankRegistrations,
-  findAllFailedNotificationsRegistrations
+  findAllFailedNotificationsRegistrations,
+  findAllTmpRegistrations
 } = require("../../connectors/cacheDb/cacheDb.connector");
 
 const {
@@ -162,7 +164,7 @@ const sendAllNotificationsForRegistrationsAction = async (
     "registrations"
   );
 
-  //we have to do these 2 look ups as a workaround for azure cosmos shortcoming
+  //we have to do these 3 look ups as a workaround for azure cosmos shortcoming
   let registrations = await findAllBlankRegistrations(registrationsCollection);
   registrations = await registrations.toArray();
 
@@ -174,6 +176,12 @@ const sendAllNotificationsForRegistrationsAction = async (
   for (let reg of failedRegistrations) {
     registrations.push(reg);
   }
+  let tmpRegistrations = await findAllTmpRegistrations(registrationsCollection);
+  tmpRegistrations = await tmpRegistrations.toArray();
+
+  for (let reg of tmpRegistrations) {
+    registrations.push(reg);
+  }
 
   let allLcConfigData = await getAllLocalCouncilConfig();
   let registration;
@@ -183,6 +191,14 @@ const sendAllNotificationsForRegistrationsAction = async (
     idsAttempted.push(registration["fsa-rn"]);
 
     if (!dryrun) {
+      if (registration["fsa-rn"].startsWith("tmp_")) {
+        // Try resolve RNG
+        const newRn = await tryResolveRegistrationNumber(registration);
+        if (newRn) {
+          registration["fsa-rn"] = newRn;
+        }
+      }
+
       await multiSendNotifications(registration, allLcConfigData);
 
       //sleep
@@ -211,6 +227,48 @@ const sendAllNotificationsForRegistrationsAction = async (
     dryrun,
     throttle
   });
+};
+
+const tryResolveRegistrationNumber = async (registration) => {
+  const councilCode = registration.hygiene_council_code || "1234";
+
+  const fsa_rn = await getFsaRn(councilCode);
+  if (fsa_rn) {
+    try {
+      // update fsa-rn
+      const cachedRegistrations = await establishConnectionToCosmos(
+        "registrations",
+        "registrations"
+      );
+      logEmitter.emit(
+        "functionCall",
+        "tryResolveRegistrationNumber",
+        "update`fsa-rn`"
+      );
+
+      await cachedRegistrations.updateOne(
+        { "fsa-rn": registration["fsa-rn"] },
+        {
+          $set: { "fsa-rn": fsa_rn }
+        }
+      );
+      logEmitter.emit(
+        "functionSuccess",
+        "tryResolveRegistrationNumber",
+        "update`fsa-rn"
+      );
+      return fsa_rn;
+    } catch (err) {
+      logEmitter.emit(
+        "functionFail",
+        "tryResolveRegistrationNumber",
+        "update`fsa-rn",
+        err
+      );
+      return false;
+    }
+  }
+  return false;
 };
 
 const sendNotificationsForRegistrationAction = async (fsaId, req, res) => {
@@ -440,5 +498,6 @@ module.exports = {
   sendRegistrationToTascomiAction,
   sendNotificationsForRegistrationAction,
   sendAllOutstandingRegistrationsToTascomiAction,
-  sendAllNotificationsForRegistrationsAction
+  sendAllNotificationsForRegistrationsAction,
+  tryResolveRegistrationNumber
 };

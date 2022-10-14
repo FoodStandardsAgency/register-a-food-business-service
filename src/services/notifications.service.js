@@ -9,6 +9,10 @@ const { statusEmitter } = require("./statusEmitter.service");
 const { sendSingleEmail } = require("../connectors/notify/notify.connector");
 const { pdfGenerator, transformDataForPdf } = require("./pdf.service");
 const {
+  RNG_PENDING_TEMPLATE_ID,
+  RNG_PENDING_TEMPLATE_ID_CY
+} = require("../config");
+const {
   getStatus,
   updateStatus,
   updateNotificationOnSent
@@ -323,7 +327,10 @@ const initialiseNotificationsStatus = (emailsToSend) => {
   for (let index in emailsToSend) {
     notifications.push({
       time: undefined,
-      sent: false,
+      sent:
+        emailsToSend.length > 1 && emailsToSend[index].type === "RNG_PENDING" // In order to prevent RN pending emails from being sent to FBO when RNG service has been resolved
+          ? true
+          : false,
       type: emailsToSend[index].type,
       address: emailsToSend[index].address
     });
@@ -406,48 +413,112 @@ const initialiseNotificationsStatusIfNotSet = async (fsaId, emailsToSend) => {
 const generateEmailsToSend = (registration, lcContactConfig, configData) => {
   const cy = registration.submission_language === "cy";
   let emailsToSend = [];
-
-  for (let typeOfCouncil in lcContactConfig) {
-    const lcNotificationEmailAddresses =
-      lcContactConfig[typeOfCouncil].local_council_notify_emails;
-
-    for (let recipientEmailAddress in lcNotificationEmailAddresses) {
-      emailsToSend.push({
-        type: "LC",
-        address: lcNotificationEmailAddresses[recipientEmailAddress],
-        templateId: cy
-          ? configData.notify_template_keys.lc_new_registration_welsh
-          : configData.notify_template_keys.lc_new_registration
-      });
-    }
-  }
-
   const fboEmailAddress =
     registration.establishment.operator.operator_email ||
     registration.establishment.operator.contact_representative_email;
 
-  emailsToSend.push({
-    type: "FBO",
-    address: fboEmailAddress,
-    templateId: cy
-      ? configData.notify_template_keys.fbo_submission_complete_welsh
-      : configData.notify_template_keys.fbo_submission_complete
-  });
-
-  if (registration.declaration && registration.declaration.feedback1) {
+  if (
+    (registration.status &&
+      registration.status.notifications &&
+      registration.status.notifications.length > 1) ||
+    (registration.status &&
+      registration.status.notifications &&
+      registration.status.notifications.length == 1 &&
+      registration.status.notifications[0].type != "RNG_PENDING")
+  ) {
+    // use existing notifications
+    registration.status.notifications.forEach((notification) => {
+      let templateID;
+      switch (notification.type) {
+        case "LC":
+          templateID = cy
+            ? configData.notify_template_keys.lc_new_registration_welsh
+            : configData.notify_template_keys.lc_new_registration;
+          break;
+        case "FBO":
+          templateID = cy
+            ? configData.notify_template_keys.fbo_submission_complete_welsh
+            : configData.notify_template_keys.fbo_submission_complete;
+          break;
+        case "FBO_FB":
+          templateID = cy
+            ? configData.notify_template_keys.fbo_feedback_welsh
+            : configData.notify_template_keys.fbo_feedback;
+          break;
+        case "FD_FB":
+          templateID = configData.notify_template_keys.fd_feedback;
+          break;
+        case "RNG_PENDING":
+          templateID = cy
+            ? RNG_PENDING_TEMPLATE_ID_CY
+            : RNG_PENDING_TEMPLATE_ID;
+      }
+      emailsToSend.push({
+        type: notification.type,
+        address: notification.address,
+        templateId: templateID
+      });
+    });
+  } else if (registration["fsa-rn"].startsWith("tmp_")) {
+    // send only RNG pending notification
     emailsToSend.push({
-      type: "FBO_FB",
+      type: "RNG_PENDING",
+      address: fboEmailAddress,
+      templateId: cy ? RNG_PENDING_TEMPLATE_ID_CY : RNG_PENDING_TEMPLATE_ID
+    });
+  } else {
+    // create new notifications
+    if (
+      registration.status &&
+      registration.status.notifications &&
+      registration.status.notifications.length == 1 &&
+      registration.status.notifications[0].type == "RNG_PENDING"
+    ) {
+      emailsToSend.push({
+        type: "RNG_PENDING",
+        address: fboEmailAddress,
+        templateId: cy ? RNG_PENDING_TEMPLATE_ID_CY : RNG_PENDING_TEMPLATE_ID
+      });
+    }
+
+    for (let typeOfCouncil in lcContactConfig) {
+      const lcNotificationEmailAddresses =
+        lcContactConfig[typeOfCouncil].local_council_notify_emails;
+
+      for (let recipientEmailAddress in lcNotificationEmailAddresses) {
+        emailsToSend.push({
+          type: "LC",
+          address: lcNotificationEmailAddresses[recipientEmailAddress],
+          templateId: cy
+            ? configData.notify_template_keys.lc_new_registration_welsh
+            : configData.notify_template_keys.lc_new_registration
+        });
+      }
+    }
+
+    emailsToSend.push({
+      type: "FBO",
       address: fboEmailAddress,
       templateId: cy
-        ? configData.notify_template_keys.fbo_feedback_welsh
-        : configData.notify_template_keys.fbo_feedback
+        ? configData.notify_template_keys.fbo_submission_complete_welsh
+        : configData.notify_template_keys.fbo_submission_complete
     });
 
-    emailsToSend.push({
-      type: "FD_FB",
-      address: configData.future_delivery_email,
-      templateId: configData.notify_template_keys.fd_feedback
-    });
+    if (registration.declaration && registration.declaration.feedback1) {
+      emailsToSend.push({
+        type: "FBO_FB",
+        address: fboEmailAddress,
+        templateId: cy
+          ? configData.notify_template_keys.fbo_feedback_welsh
+          : configData.notify_template_keys.fbo_feedback
+      });
+
+      emailsToSend.push({
+        type: "FD_FB",
+        address: configData.future_delivery_email,
+        templateId: configData.notify_template_keys.fd_feedback
+      });
+    }
   }
 
   return emailsToSend;
