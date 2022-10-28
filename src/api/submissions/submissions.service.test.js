@@ -29,7 +29,7 @@ const {
 
 const mockLocalCouncilConfig = require("../../connectors/configDb/mockLocalCouncilConfig.json");
 
-const axios = require("axios").default;
+const axios = require("axios");
 
 const {
   getRegistrationMetaData,

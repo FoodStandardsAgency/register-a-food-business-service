@@ -1,4 +1,4 @@
-const ax = require("axios").default;
+const ax = require("axios");
 const axios = ax.create({
   validateStatus: () => {
     return true;

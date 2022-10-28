@@ -2,7 +2,7 @@
  * @module connectors/address-lookup-api
  */
 
-const axios = require("axios").default;
+const axios = require("axios");
 const HttpsProxyAgent = require("https-proxy-agent");
 const {
   ADDRESS_API_URL_BASE,
