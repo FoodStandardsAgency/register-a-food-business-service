@@ -188,6 +188,13 @@ const sendAllNotificationsForRegistrationsAction = async (
 
   for (let i = 0; i < registrations.length; i++) {
     registration = registrations[i];
+    if (!registration["fsa-rn"]) {
+      logEmitter.emit(
+        ERROR,
+        "sendAllNotificationsForRegistrationsAction missing fsa-rn"
+      );
+      continue;
+    }
     idsAttempted.push(registration["fsa-rn"]);
 
     if (!dryrun) {
