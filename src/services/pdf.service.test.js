@@ -389,8 +389,8 @@ describe("Pdf Service: ", () => {
         result = await pdfGenerator(mockPdfData, i18nUtil);
       });
 
-      it("should return a base64 string", () => {
-        expect(Buffer.from(result, "base64").toString("base64")).toBe(result);
+      it("should return a string", () => {
+        expect(Buffer.from(result).toString()).toBe(result.toString());
       });
     });
     describe("when registration role is partnership", () => {
@@ -453,7 +453,7 @@ describe("Pdf Service: ", () => {
       });
 
       it("should return a base64 string", () => {
-        expect(Buffer.from(result, "base64").toString("base64")).toBe(result);
+        expect(Buffer.from(result).toString()).toBe(result.toString());
       });
     });
   });
