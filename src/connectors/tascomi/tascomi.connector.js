@@ -1,4 +1,9 @@
-const fetch = require("node-fetch");
+const ax = require("axios");
+const axios = ax.create({
+  validateStatus: () => {
+    return true;
+  }
+});
 const { tascomiAuth } = {}; // require("@slice-and-dice/fsa-rof"); No longer needed
 const { doubleRequest } = require("./tascomi.double");
 const { logEmitter } = require("../../services/logging.service");
@@ -20,7 +25,7 @@ const TASCOMI_FAIL = false;
 const sendRequest = async (url, method, body, public_key, private_key) => {
   const tascomiApiOptions = {
     method: method,
-    form: body
+    data: body
   };
 
   if (
@@ -39,7 +44,7 @@ const sendRequest = async (url, method, body, public_key, private_key) => {
       "X-Public": auth.public_key,
       "X-Hash": auth.hash
     };
-    return fetch(url, tascomiApiOptions);
+    return axios(url, tascomiApiOptions);
   }
 };
 

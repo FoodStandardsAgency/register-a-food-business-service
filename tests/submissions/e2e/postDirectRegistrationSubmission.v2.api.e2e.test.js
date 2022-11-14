@@ -1,6 +1,10 @@
 require("dotenv").config();
-const fetch = require("node-fetch");
-
+const ax = require("axios");
+const axios = ax.create({
+  validateStatus: () => {
+    return true;
+  }
+});
 const baseUrl =
   "https://integration-fsa-rof-gateway.azure-api.net/registrations/v2/";
 const highgardenUrl = `${baseUrl}highgarden`;
@@ -64,32 +68,30 @@ describe("Submit a single registration through the API as a council", () => {
     beforeAll(async () => {
       //Submit registration to registration API.
       const postRequestOptions = {
-        json: true,
         method: "POST",
         headers: {
           "Content-Type": "application/json",
           "Ocp-Apim-Subscription-Key": highgardenAPIKey
         },
-        body: JSON.stringify(registration)
+        data: registration
       };
-      let res = await fetch(
+      let res = await axios(
         `${highgardenUrl}?env=${process.env.ENVIRONMENT_DESCRIPTION}`,
         postRequestOptions
       );
-      postResponse = await res.json();
+      postResponse = res.data;
       //Retrieve registration from collections service
       const getRequestOptions = {
-        json: true,
         headers: {
           "Content-Type": "application/json",
           "Ocp-Apim-Subscription-Key": highgardenAPIKey
         }
       };
-      res = await fetch(
+      res = await axios(
         `${highgardenUrl}/${postResponse["fsa-rn"]}?env=${process.env.ENVIRONMENT_DESCRIPTION}`,
         getRequestOptions
       );
-      getResponse = await res.json();
+      getResponse = res.data;
     });
 
     it("should successfully submit the registration and return a fsa-rn", () => {
@@ -115,19 +117,18 @@ describe("Submit a single registration through the API as a council", () => {
     let response;
     beforeEach(async () => {
       const requestOptions = {
-        json: true,
         method: "POST",
         headers: {
           "Content-Type": "application/json",
           "Ocp-Apim-Subscription-Key": "incorrectKey"
         },
-        body: registration
+        data: registration
       };
-      const res = await fetch(
+      const res = await axios(
         `${highgardenUrl}?env=${process.env.ENVIRONMENT_DESCRIPTION}`,
         requestOptions
       );
-      response = await res.json();
+      response = res.data;
     });
 
     it("should return a subscription incorrect error", () => {
@@ -141,19 +142,18 @@ describe("Submit a single registration through the API as a council", () => {
     const purbeckUrl = `${baseUrl}purbeck`;
     beforeEach(async () => {
       const requestOptions = {
-        json: true,
         method: "POST",
         headers: {
           "Content-Type": "application/json",
           "Ocp-Apim-Subscription-Key": cardiffAPIKey
         },
-        body: JSON.stringify(registration)
+        data: registration
       };
-      const res = await fetch(
+      const res = await axios(
         `${purbeckUrl}?env=${process.env.ENVIRONMENT_DESCRIPTION}`,
         requestOptions
       );
-      response = await res.json();
+      response = res.data;
     });
 
     it("should return an authorization error", () => {
@@ -168,19 +168,18 @@ describe("Submit a single registration through the API as a council", () => {
     let response;
     beforeEach(async () => {
       const requestOptions = {
-        json: true,
         method: "POST",
         headers: {
           "Content-Type": "application/json",
           "Ocp-Apim-Subscription-Key": highgardenAPIKey
         },
-        body: JSON.stringify({})
+        data: {}
       };
-      const res = await fetch(
+      const res = await axios(
         `${highgardenUrl}?env=${process.env.ENVIRONMENT_DESCRIPTION}`,
         requestOptions
       );
-      response = await res.json();
+      response = res.data;
     });
 
     it("should return a schema error", () => {

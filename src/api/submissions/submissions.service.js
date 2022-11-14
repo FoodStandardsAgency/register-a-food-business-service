@@ -1,4 +1,5 @@
-const fetch = require("node-fetch");
+const axios = require("axios");
+const uuid = require("uuid");
 const HttpsProxyAgent = require("https-proxy-agent");
 const {
   getAllLocalCouncilConfig,
@@ -7,6 +8,7 @@ const {
 
 const { logEmitter } = require("../../services/logging.service");
 const { statusEmitter } = require("../../services/statusEmitter.service");
+const { RNG_API_URL } = require("../../config");
 
 const sendTascomiRegistration = async (registration, localCouncil) => {
   // hack to reduce repair work needed
@@ -68,49 +70,56 @@ const getRegistrationMetaData = async (councilCode) => {
     };
   }
 
-  const typeCode = process.env.NODE_ENV === "production" ? "001" : "000";
   const reg_submission_date = new Date();
   let fsa_rn;
 
+  fsa_rn = await getFsaRn(councilCode);
+
+  return {
+    "fsa-rn": fsa_rn ? fsa_rn : "tmp_" + uuid.v4(),
+    reg_submission_date: reg_submission_date
+  };
+};
+
+const getFsaRn = async (councilCode) => {
+  const typeCode = process.env.NODE_ENV === "production" ? "001" : "000";
+
   try {
-    const options = {};
+    const options = {
+      validateStatus: () => {
+        return true;
+      }
+    };
     if (process.env.HTTP_PROXY) {
-      options.agent = new HttpsProxyAgent(process.env.HTTP_PROXY);
+      options.httpsAgent = new HttpsProxyAgent(process.env.HTTP_PROXY);
+      // https://github.com/axios/axios/issues/2072#issuecomment-609650888
+      options.proxy = false;
     }
-    const fsaRnResponse = await fetch(
-      `https://fsa-reference-numbers.epimorphics.net/generate/${councilCode}/${typeCode}`,
+    const fsaRnResponse = await axios(
+      `${RNG_API_URL}/generate/${councilCode}/${typeCode}`,
       options
     );
     if (fsaRnResponse.status === 200) {
-      fsa_rn = await fsaRnResponse.json();
+      statusEmitter.emit("incrementCount", "fsaRnCallsSucceeded");
+      statusEmitter.emit("setStatus", "mostRecentFsaRnCallSucceeded", true);
+      logEmitter.emit("functionSuccess", "submissions.service", "getFsaRn");
+      return fsaRnResponse.data && fsaRnResponse.data["fsa-rn"]
+        ? fsaRnResponse.data["fsa-rn"]
+        : false;
     }
 
-    statusEmitter.emit("incrementCount", "fsaRnCallsSucceeded");
-    statusEmitter.emit("setStatus", "mostRecentFsaRnCallSucceeded", true);
-    logEmitter.emit(
-      "functionSuccess",
-      "submissions.service",
-      "getRegistrationMetaData"
-    );
-    return {
-      "fsa-rn": fsa_rn ? fsa_rn["fsa-rn"] : undefined,
-      reg_submission_date: reg_submission_date
-    };
-  } catch (err) {
-    statusEmitter.emit("incrementCount", "fsaRnCallsFailed");
-    statusEmitter.emit("setStatus", "mostRecentFsaRnCallSucceeded", false);
     logEmitter.emit(
       "functionFail",
       "submissions.service",
-      "getRegistrationMetaData",
-      err
+      "getFsaRn",
+      `Response code ${fsaRnResponse.status}`
     );
-
-    const newError = new Error();
-    newError.name = "fsaRnFetchError";
-    newError.message = err.message;
-
-    throw newError;
+    return false;
+  } catch (err) {
+    statusEmitter.emit("incrementCount", "fsaRnCallsFailed");
+    statusEmitter.emit("setStatus", "mostRecentFsaRnCallSucceeded", false);
+    logEmitter.emit("functionFail", "submissions.service", "getFsaRn", err);
+    return false;
   }
 };
 
@@ -401,5 +410,6 @@ module.exports = {
   getRegistrationMetaData,
   getLcContactConfig,
   getLcContactConfigFromArray,
-  getLcAuth
+  getLcAuth,
+  getFsaRn
 };

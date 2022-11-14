@@ -2,7 +2,7 @@
  * @module connectors/address-lookup-api
  */
 
-const fetch = require("node-fetch");
+const axios = require("axios");
 const HttpsProxyAgent = require("https-proxy-agent");
 const {
   ADDRESS_API_URL_BASE,
@@ -34,7 +34,7 @@ const getAddressesByPostcode = async (postcode) => {
   if (DOUBLE_MODE === "true") {
     const firstRes = addressLookupDouble(postcode);
     if (firstRes.status === 200) {
-      firstJson = firstRes.json();
+      firstJson = firstRes.data;
     } else {
       logEmitter.emit(
         "functionFail",
@@ -76,17 +76,24 @@ const fetchUsingPostcoderPremium = async (postcode) => {
     postcode
   );
 
-  const options = { method: "GET" };
+  const options = {
+    method: "GET",
+    validateStatus: () => {
+      return true;
+    }
+  };
   if (process.env.HTTP_PROXY) {
-    options.agent = new HttpsProxyAgent(process.env.HTTP_PROXY);
+    options.httpsAgent = new HttpsProxyAgent(process.env.HTTP_PROXY);
+    // https://github.com/axios/axios/issues/2072#issuecomment-609650888
+    options.proxy = false;
   }
-  const response = await fetch(
+  const response = await axios(
     `${ADDRESS_API_URL_BASE}/${postcode}?${ADDRESS_API_URL_QUERY}`,
     options
   );
 
   if (response.status === 200) {
-    return response.json();
+    return response.data;
   } else {
     logEmitter.emit(
       "functionFail",
@@ -111,17 +118,24 @@ const fetchUsingPostcoderStandard = async (postcode) => {
     "fetchUsingPostcoderStandard",
     postcode
   );
-  const options = { method: "GET" };
+  const options = {
+    method: "GET",
+    validateStatus: () => {
+      return true;
+    }
+  };
   if (process.env.HTTP_PROXY) {
-    options.agent = new HttpsProxyAgent(process.env.HTTP_PROXY);
+    options.httpsAgent = new HttpsProxyAgent(process.env.HTTP_PROXY);
+    // https://github.com/axios/axios/issues/2072#issuecomment-609650888
+    options.proxy = false;
   }
 
-  const response = await fetch(
+  const response = await axios(
     `${ADDRESS_API_URL_BASE_STANDARD}/uk/${postcode}?${ADDRESS_API_URL_QUERY_STANDARD}`,
     options
   );
   if (response.status === 200) {
-    return response.json();
+    return response.data;
   } else {
     logEmitter.emit(
       "functionFail",

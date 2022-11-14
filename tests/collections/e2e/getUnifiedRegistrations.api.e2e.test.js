@@ -1,6 +1,10 @@
 require("dotenv").config();
-const fetch = require("node-fetch");
-
+const ax = require("axios");
+const axios = ax.create({
+  validateStatus: () => {
+    return true;
+  }
+});
 const baseUrl =
   "https://integration-fsa-rof-gateway.azure-api.net/registrations/v1/";
 const unifiedUrl = `${baseUrl}unified`;
@@ -14,19 +18,18 @@ describe("Retrieve all registrations through API", () => {
       let after = new Date();
       after.setDate(after.getDate() - 7);
       const requestOptions = {
-        json: true,
         headers: {
           "Content-Type": "application/json",
           "Ocp-Apim-Subscription-Key": unifiedAPIKey
         }
       };
-      const res = await fetch(
+      const res = await axios(
         `${unifiedUrl}?before=${before.toISOString()}&after=${after.toISOString()}&env=${
           process.env.ENVIRONMENT_DESCRIPTION
         }`,
         requestOptions
       );
-      response = await res.json();
+      response = res.data;
     });
 
     it("should return all the registrations in the specified time frame", () => {
@@ -43,20 +46,19 @@ describe("Retrieve all registrations through API", () => {
       let after = new Date();
       after.setDate(after.getDate() - 5);
       const requestOptions = {
-        json: true,
         headers: {
           "Content-Type": "application/json",
           "Ocp-Apim-Subscription-Key": "unifiedAPIKeyWhichIsWrong"
         }
       };
 
-      const res = await fetch(
+      const res = await axios(
         `${unifiedUrl}?before=${before.toISOString()}&after=${after.toISOString()}&env=${
           process.env.ENVIRONMENT_DESCRIPTION
         }`,
         requestOptions
       );
-      response = await res.json();
+      response = res.data;
     });
 
     it("should return a subscription incorrect error", () => {
@@ -72,19 +74,18 @@ describe("Retrieve all registrations through API", () => {
       let after = new Date();
       after.setDate(after.getDate() - 5);
       const requestOptions = {
-        json: true,
         headers: {
           "Content-Type": "application/json"
         }
       };
 
-      const res = await fetch(
+      const res = await axios(
         `${unifiedUrl}?before=${before.toISOString()}&after=${after.toISOString()}&env=${
           process.env.ENVIRONMENT_DESCRIPTION
         }`,
         requestOptions
       );
-      response = await res.json();
+      response = res.data;
     });
 
     it("Should return subscription key not found error", () => {
@@ -100,19 +101,18 @@ describe("Retrieve all registrations through API", () => {
     beforeEach(async () => {
       const before = new Date();
       const requestOptions = {
-        json: true,
         headers: {
           "Content-Type": "application/json",
           "Ocp-Apim-Subscription-Key": unifiedAPIKey
         }
       };
-      const res = await fetch(
+      const res = await axios(
         `${unifiedUrl}?before=${before.toISOString()}&after=dfgdfggfgf&env=${
           process.env.ENVIRONMENT_DESCRIPTION
         }`,
         requestOptions
       );
-      response = await res.json();
+      response = res.data;
     });
 
     it("should return the options validation error", () => {

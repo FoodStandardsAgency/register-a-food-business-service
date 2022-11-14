@@ -1,4 +1,9 @@
-const fetch = require("node-fetch");
+const ax = require("axios");
+const axios = ax.create({
+  validateStatus: () => {
+    return true;
+  }
+});
 require("dotenv").config();
 const { logEmitter } = require("../../../src/services/logging.service");
 const mockRegistrationData = require("./mock-registration-data.json");
@@ -14,21 +19,20 @@ const frontendSubmitRegistration = async () => {
   try {
     const requestOptions = {
       method: "POST",
-      json: true,
-      body: JSON.stringify(mockRegistrationData[1]),
+      data: mockRegistrationData[1],
       headers: {
         "Content-Type": "application/json",
         "client-name": process.env.FRONT_END_NAME,
         "api-secret": process.env.FRONT_END_SECRET,
-        "registration-data-version": "2.1.0"
+        "registration-data-version": "2.2.0"
       }
     };
 
-    const res = await fetch(
+    const res = await axios(
       `${submitUrl}/api/submissions/createNewRegistration`,
       requestOptions
     );
-    const response = await res.json();
+    const response = res.data;
     return response;
   } catch (err) {
     logEmitter.emit(
@@ -47,20 +51,19 @@ describe("PUT to /api/v2/collections/:lc/:fsa_rn", () => {
     let response;
     beforeEach(async () => {
       const requestOptions = {
-        json: true,
-        method: "PUT",
-        body: JSON.stringify({
+        data: {
           collected: true
-        }),
+        },
+        method: "PUT",
         headers: {
           "Content-Type": "application/json"
         }
       };
-      const res = await fetch(
+      const res = await axios(
         `${url}/${submitResponse["fsa-rn"]}`,
         requestOptions
       );
-      response = await res.json();
+      response = res.data;
     });
 
     it("should return the fsa_rn and collected", () => {
@@ -73,17 +76,16 @@ describe("PUT to /api/v2/collections/:lc/:fsa_rn", () => {
     let response;
     beforeEach(async () => {
       const requestOptions = {
-        json: true,
-        method: "PUT",
-        body: JSON.stringify({
+        data: {
           collected: true
-        }),
+        },
+        method: "PUT",
         headers: {
           "Content-Type": "application/json"
         }
       };
-      const res = await fetch(`${url}/1234253`, requestOptions);
-      response = await res.json();
+      const res = await axios(`${url}/1234253`, requestOptions);
+      response = res.data;
     });
 
     it("should return the getRegistrationNotFound error", () => {
@@ -99,14 +101,13 @@ describe("PUT to /api/v2/collections/:lc/:fsa_rn", () => {
     let response;
     beforeEach(async () => {
       const requestOptions = {
-        json: true,
         headers: {
           "Content-Type": "application/json",
           "double-mode": "invalid double mode"
         }
       };
-      const res = await fetch(`${url}/1234253`, requestOptions);
-      response = await res.json();
+      const res = await axios(`${url}/1234253`, requestOptions);
+      response = res.data;
     });
 
     it("should return the options validation error", () => {
@@ -122,14 +123,13 @@ describe("PUT to /api/v2/collections/:lc/:fsa_rn", () => {
     let response;
     beforeEach(async () => {
       const requestOptions = {
-        json: true,
         headers: {
           "Content-Type": "application/json",
           "double-mode": "update"
         }
       };
-      const res = await fetch(`${url}`, requestOptions);
-      response = await res.json();
+      const res = await axios(`${url}`, requestOptions);
+      response = res.data;
     });
 
     it("should return the double mode response", () => {

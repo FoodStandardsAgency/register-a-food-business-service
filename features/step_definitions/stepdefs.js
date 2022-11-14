@@ -1,5 +1,10 @@
 const assert = require("assert");
-const fetch = require("node-fetch");
+const ax = require("axios");
+const axios = ax.create({
+  validateStatus: () => {
+    return true;
+  }
+});
 const { Given, When, Then, setDefaultTimeout } = require("cucumber");
 const {
   FRONT_END_NAME,
@@ -23,14 +28,14 @@ const sendRequest = async (body) => {
     "Content-Type": "application/json",
     "api-secret": FRONT_END_SECRET,
     "client-name": FRONT_END_NAME,
-    "registration-data-version": "2.1.0"
+    "registration-data-version": "2.2.0"
   };
-  const res = await fetch(`${apiUrl}/api/submissions/createNewRegistration`, {
+  const res = await axios(`${apiUrl}/api/submissions/createNewRegistration`, {
     method: "POST",
     headers,
-    body: JSON.stringify(body)
+    data: body
   });
-  return res.json();
+  return res.data;
 };
 
 const sendDirectRequest = async (body) => {
@@ -40,28 +45,28 @@ const sendDirectRequest = async (body) => {
     "client-name": DIRECT_API_NAME,
     "registration-data-version": "1.7.0"
   };
-  const res = await fetch(
+  const res = await axios(
     `${apiUrl}/api/submissions/v2/createNewDirectRegistration/cardiff`,
     {
       method: "POST",
       headers,
-      body: JSON.stringify(body)
+      data: body
     }
   );
-  return res.json();
+  return res.data;
 };
 ////////
 
 const triggerNotificationTask = async () => {
-  const res = await fetch(
+  const res = await axios(
     `${apiUrl}/api/tasks/bulk/sendnotification?dryrun=true`
   );
-  return res.json();
+  return res.data;
 };
 
 const triggerTascomiTask = async () => {
-  const res = await fetch(`${apiUrl}/api/tasks/bulk/createtascomiregistration`);
-  return res.json();
+  const res = await axios(`${apiUrl}/api/tasks/bulk/createtascomiregistration`);
+  return res.data;
 };
 
 Given("I have a new registration with all valid required fields", function () {

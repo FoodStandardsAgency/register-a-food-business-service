@@ -1,6 +1,10 @@
 require("dotenv").config();
-const fetch = require("node-fetch");
-
+const ax = require("axios");
+const axios = ax.create({
+  validateStatus: () => {
+    return true;
+  }
+});
 const baseUrl =
   "https://integration-fsa-rof-gateway.azure-api.net/registrations/v2/";
 const cardiffUrl = `${baseUrl}cardiff`;
@@ -13,34 +17,32 @@ describe("Get single registration through API", () => {
   let availableRegistrations;
   beforeAll(async () => {
     const requestOptions = {
-      json: true,
       headers: {
         "Content-Type": "application/json",
         "Ocp-Apim-Subscription-Key": cardiffAPIKey
       }
     };
-    const res = await fetch(
+    const res = await axios(
       `${cardiffUrl}?env=${process.env.ENVIRONMENT_DESCRIPTION}`,
       requestOptions
     );
-    availableRegistrations = await res.json();
+    availableRegistrations = res.data;
   });
 
   describe("Given no extra parameters", () => {
     let response;
     beforeEach(async () => {
       const update = {
-        json: true,
         headers: {
           "Content-Type": "application/json",
           "Ocp-Apim-Subscription-Key": cardiffAPIKey
         }
       };
-      const res = await fetch(
+      const res = await axios(
         `${cardiffUrl}/${availableRegistrations[0].fsa_rn}?env=${process.env.ENVIRONMENT_DESCRIPTION}`,
         update
       );
-      response = await res.json();
+      response = res.data;
     });
 
     it("should return the requested new registration for that council", () => {
@@ -57,17 +59,16 @@ describe("Get single registration through API", () => {
     let response;
     beforeEach(async () => {
       const update = {
-        json: true,
         headers: {
           "Content-Type": "application/json",
           "Ocp-Apim-Subscription-Key": supplierAPIKey
         }
       };
-      const res = await fetch(
+      const res = await axios(
         `${supplierUrl}/${availableRegistrations[0].fsa_rn}?env=${process.env.ENVIRONMENT_DESCRIPTION}&local-authority=${supplierValidCouncils}`,
         update
       );
-      response = await res.json();
+      response = res.data;
     });
 
     it("should return the requested new registration for that council", () => {
@@ -83,17 +84,16 @@ describe("Get single registration through API", () => {
   describe("Given supplier and invalid requested council", () => {
     it("Should return the appropriate error", async () => {
       const requestOptions = {
-        json: true,
         headers: {
           "Content-Type": "application/json",
           "Ocp-Apim-Subscription-Key": supplierAPIKey
         }
       };
-      const res = await fetch(
+      const res = await axios(
         `${supplierUrl}/${availableRegistrations[0].fsa_rn}?env=${process.env.ENVIRONMENT_DESCRIPTION}&local-authority=invalid`,
         requestOptions
       );
-      const response = await res.json();
+      const response = res.data;
 
       expect(response.statusCode).toBe(400);
       expect(response.rawError).toContain(
@@ -106,16 +106,16 @@ describe("Get single registration through API", () => {
     it("should return a subscription incorrect error", async () => {
       const requestOptions = {
         method: "get",
-        json: true,
+
         headers: {
           "Ocp-Apim-Subscription-Key": "incorrectKey"
         }
       };
-      const res = await fetch(
+      const res = await axios(
         `${cardiffUrl}/${availableRegistrations[0].fsa_rn}?env=${process.env.ENVIRONMENT_DESCRIPTION}`,
         requestOptions
       );
-      let response = await res.json();
+      let response = res.data;
       expect(response.statusCode).toBe(401);
       expect(response.message).toContain("invalid subscription key.");
     });

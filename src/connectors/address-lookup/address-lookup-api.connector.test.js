@@ -1,7 +1,7 @@
-jest.mock("node-fetch");
+jest.mock("axios");
 jest.mock("./address-lookup-api.double");
 
-const fetch = require("node-fetch");
+const axios = require("axios");
 const { getAddressesByPostcode } = require("./address-lookup-api.connector");
 const { smallAddressResponseJSON } = require("./smallAddressResponseMock.json");
 const {
@@ -18,9 +18,9 @@ describe("Function: getAddressesByPostcode: ", () => {
 
   describe("Given a valid UK postcode:", () => {
     beforeEach(async () => {
-      fetch.mockImplementation(() => ({
+      axios.mockImplementation(() => ({
         status: 200,
-        json: () => smallAddressResponseJSON
+        data: smallAddressResponseJSON
       }));
 
       responseJSON = await getAddressesByPostcode("NR14 7PZ");
@@ -30,7 +30,7 @@ describe("Function: getAddressesByPostcode: ", () => {
       beforeEach(async () => {
         process.env.DOUBLE_MODE = "true";
         addressLookupDouble.mockImplementation(() => ({
-          json: () => regularIntegrationResponse,
+          data: regularIntegrationResponse,
           status: 200
         }));
 
@@ -48,7 +48,7 @@ describe("Function: getAddressesByPostcode: ", () => {
 
     describe("When given a non-200 response from the API", () => {
       beforeEach(async () => {
-        fetch.mockImplementation(() => ({
+        axios.mockImplementation(() => ({
           status: 500
         }));
       });
@@ -68,13 +68,13 @@ describe("Function: getAddressesByPostcode: ", () => {
 
     describe("When premium service returns no addresses but standard service returns some addresses", () => {
       beforeEach(async () => {
-        fetch.mockImplementation(() => ({
+        axios.mockImplementation(() => ({
           status: 200,
-          json: jest.fn(() => regularIntegrationResponse)
+          data: regularIntegrationResponse
         }));
-        fetch.mockImplementationOnce(() => ({
+        axios.mockImplementationOnce(() => ({
           status: 200,
-          json: jest.fn(() => [])
+          data: []
         }));
         responseJSON = await getAddressesByPostcode("BS249ST");
       });
@@ -85,12 +85,12 @@ describe("Function: getAddressesByPostcode: ", () => {
     });
     describe("When given a non-200 response from the API on second attempt", () => {
       beforeEach(async () => {
-        fetch.mockImplementation(() => ({
+        axios.mockImplementation(() => ({
           status: 500
         }));
-        fetch.mockImplementationOnce(() => ({
+        axios.mockImplementationOnce(() => ({
           status: 200,
-          json: jest.fn(() => [])
+          data: []
         }));
       });
 
@@ -110,8 +110,8 @@ describe("Function: getAddressesByPostcode: ", () => {
 
   describe("Given an invalid UK postcode:", () => {
     beforeEach(async () => {
-      fetch.mockImplementation(() => ({
-        json: jest.fn(() => []),
+      axios.mockImplementation(() => ({
+        data: [],
         status: 200
       }));
 
@@ -126,7 +126,7 @@ describe("Function: getAddressesByPostcode: ", () => {
       beforeEach(async () => {
         process.env.DOUBLE_MODE = "true";
         addressLookupDouble.mockImplementation(() => ({
-          json: () => [],
+          data: [],
           status: 200
         }));
 
