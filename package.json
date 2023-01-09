@@ -64,7 +64,7 @@
     "moment": "^2.29.4",
     "mongodb": "^4.11.0",
     "morgan": "^1.10.0",
-    "notifications-node-client": "^5.2.1",
+    "notifications-node-client": "^6.0.0",
     "pdfmake": "^0.2.6",
     "swagger-ui-express": "^4.5.0",
     "uuid": "^9.0.0",
