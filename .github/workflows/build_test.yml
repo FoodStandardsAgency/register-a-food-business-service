@@ -1,0 +1,99 @@
+name: Build & Test
+on:
+  workflow_call:
+  workflow_dispatch:
+  pull_request:
+    branches:
+      - develop
+      - master
+
+jobs:
+  build_lint_test:
+    name: Build, Lint, Test
+    env:
+      NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+    runs-on: ubuntu-latest
+
+    steps:
+      #     - run: echo 'build and test'
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Use Node.js 16.15
+        uses: actions/setup-node@v1
+        with:
+          node-version: 16.15
+
+      - name: Create .npmrc
+        run: echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" > .npmrc
+
+      - name: Npm version
+        run: npm -v
+
+      - name: Install
+        run: npm install
+
+      - name: Format
+        run: npm run format:verify
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Unit tests
+        run: npm run test:unit:ci
+
+      - name: Publish Unit Test Results
+        uses: EnricoMi/publish-unit-test-result-action@v2
+        if: always()
+        with:
+          junit_files: ./reports/TEST-unit.xml
+          check_name: "Unit Test Results"
+
+      - name: Integration tests
+        run: npm run test:integration
+
+      - name: Publish Integration Test Results
+        uses: EnricoMi/publish-unit-test-result-action@v2
+        if: always()
+        with:
+          junit_files: ./reports/TEST-integration.xml
+          check_name: "Integration Test Results"
+
+      - name: Publish Coverage Summary
+        uses: 5monkeys/cobertura-action@v13
+        with:
+          path: ./coverage/cobertura-coverage.xml
+          minimum_coverage: 60
+          show_line: true
+          show_branch: true
+          report_name: Coverage Summary
+
+      - # "Error: the step 'SonarCloudPrepare@1' does not have a conversion path yet"
+        run: |
+          echo "Error: the step 'SonarCloudPrepare@1' does not have a conversion path yet"
+          #task: SonarCloudPrepare@1
+          #inputs:
+          #  sonarcloud: Sonarcloud
+          #  organization: fsa
+          #  scannermode: CLI
+          #  configmode: file
+      - # "Error: the step 'SonarCloudAnalyze@1' does not have a conversion path yet"
+        run: |
+          echo "Error: the step 'SonarCloudAnalyze@1' does not have a conversion path yet"
+          #task: SonarCloudAnalyze@1
+
+      - name: Prune dev dependencies
+        run: npm prune --production
+
+      - name: Remove reporting folders
+        run: rm -rf coverage reports
+
+      - name: Zip artifact for deployment
+        run: zip build.zip ./* -r
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: build
+          path: build.zip

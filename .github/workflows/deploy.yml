@@ -1,0 +1,65 @@
+name: Deploy
+on:
+  workflow_call:
+    inputs:
+      environment:
+        required: true
+        type: string
+env:
+  WEBAPP_NAME: ${{ fromJSON('{"test":"rafb-service-test","production":"rafb-service-test","staging":"rafb-service-test","integration":"rafb-service-test", "onboarding":"rafb-service-test", "test-collections":"rafb-service-test","production-collections":"rafb-service-test","staging-collections":"rafb-service-test","integration-collections":"rafb-service-test", "onboarding-collections":"rafb-service-test"}')[inputs.environment] }}
+  RESOURCE_GROUP: ${{ fromJSON('{"test":"rafb-service-test_group","production":"rafb-service-test_group","staging":"rafb-service-test_group","integration":"rafb-service-test_group","onboarding":"rafb-service-test_group", "test-collections":"rafb-service-test_group","production-collections":"rafb-service-test_group","staging-collections":"rafb-service-test_group","integration-collections":"rafb-service-test_group","onboarding-collections":"rafb-service-test_group"}')[inputs.environment] }}
+  SLOT_NAME: deploy
+
+jobs:
+  deploy-to-staging-slot:
+    name: Deploy to staging slot
+    environment: ${{ inputs.environment }}
+    runs-on: ubuntu-latest
+    steps:
+      #       - run: echo "Deploy to staging slot"
+      - name: Log into Azure CLI with service principal
+        uses: azure/login@v1.1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - name: Download artifact from build job
+        uses: actions/download-artifact@v2
+        with:
+          name: build
+
+      - name: Deploy to slot
+        uses: azure/webapps-deploy@v1
+        with:
+          app-name: ${{ env.WEBAPP_NAME }}
+          slot-name: ${{ env.SLOT_NAME }}
+          package: "build.zip"
+
+      - name: Configure App settings
+        uses: azure/appservice-settings@v1
+        with:
+          app-name: ${{ env.WEBAPP_NAME }}
+          slot-name: ${{ env.SLOT_NAME }}
+          app-settings-json: "${{ secrets.APP_SETTINGS }}"
+        id: settings
+
+      - run: |
+          az logout
+
+  swap-with-production-slot:
+    name: Swap with prod slot
+    environment: ${{ inputs.environment }}
+    needs: deploy-to-staging-slot
+    runs-on: ubuntu-latest
+
+    steps:
+      #       - run: echo "Swap with prod slot"
+      - name: Log into Azure CLI with service principal
+        uses: azure/login@v1.1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - name: Swap slots
+        run: az webapp deployment slot swap -s ${{ env.SLOT_NAME }} -n ${{ env.WEBAPP_NAME }} -g ${{ env.RESOURCE_GROUP }}
+
+      - run: |
+          az logout
