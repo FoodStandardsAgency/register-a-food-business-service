@@ -2,10 +2,10 @@ name: Release
 run-name: Release (${{ github.ref_name  }})
 on:
   workflow_dispatch:
-#     pull_request:
-#         branches:
-#         - 'release/**'
-#         - 'hotfix/**'
+  push:
+    branches:
+      - "release/**"
+      - "hotfix/**"
 jobs:
   build_and_test:
     name: Build & test
@@ -34,7 +34,6 @@ jobs:
     with:
       environment: onboarding
     secrets: inherit
-
 
   deploy_to_staging_collections:
     name: Deploy to Staging Collections
