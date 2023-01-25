@@ -19,9 +19,9 @@ jobs:
       environment: test
     secrets: inherit
 
-deploy_to_test_collections:
+  deploy_to_test_collections:
     name: Deploy to Test Collections
-    needs: [build_and_test, deploy_to_staging_collections]
+    needs: build_and_test
     uses: ./.github/workflows/deploy.yml
     with:
       environment: test-collections
