@@ -35,13 +35,6 @@ jobs:
       environment: onboarding
     secrets: inherit
 
-  deploy_to_testing:
-    name: Deploy to Test
-    needs: [build_and_test, deploy_to_staging]
-    uses: ./.github/workflows/deploy.yml
-    with:
-      environment: test
-    secrets: inherit
 
   deploy_to_staging_collections:
     name: Deploy to Staging Collections
@@ -67,10 +60,4 @@ jobs:
       environment: onboarding-collections
     secrets: inherit
 
-  deploy_to_test_collections:
-    name: Deploy to Test Collections
-    needs: [build_and_test, deploy_to_staging_collections]
-    uses: ./.github/workflows/deploy.yml
-    with:
-      environment: test-collections
-    secrets: inherit
+  
