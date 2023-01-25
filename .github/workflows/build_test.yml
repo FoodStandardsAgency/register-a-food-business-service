@@ -18,7 +18,6 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      #     - run: echo 'build and test'
       - name: Checkout
         uses: actions/checkout@v2
 
@@ -61,15 +60,6 @@ jobs:
         with:
           junit_files: ./reports/TEST-integration.xml
           check_name: "Integration Test Results"
-
-      - name: Publish Coverage Summary
-        uses: 5monkeys/cobertura-action@v13
-        with:
-          path: ./coverage/cobertura-coverage.xml
-          minimum_coverage: 60
-          show_line: true
-          show_branch: true
-          report_name: Coverage Summary
           
       - name: Generate Coverage Summary
         uses: irongut/CodeCoverageSummary@v1.3.0
