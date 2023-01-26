@@ -166,9 +166,9 @@ const sendAllNotificationsForRegistrationsAction = async (
 
   /* Blank i.e. new registrations, failed registrations (or ones that have been updated to resend)
 and registrations with temporary reference IDs are all queried separately. This was originally due to a
-workaround for an Azure Cosmos shortcoming but has the fortunate effect that bulk updates to existing emails 
-or large numbers of registrations with temporary reference IDs will not interfere with the processing of new 
-registrations. A limit of 100 is returned for each of the three types, which seems to keep the processing well 
+workaround for an Azure Cosmos shortcoming but has the fortunate effect that bulk updates to existing emails
+or large numbers of registrations with temporary reference IDs will not interfere with the processing of new
+registrations. A limit of 100 is returned for each of the three types, which seems to keep the processing well
 within the 5 minute window before the next batch begins.  */
   let registrations = await findAllBlankRegistrations(registrationsCollection);
   registrations = await registrations.toArray();
