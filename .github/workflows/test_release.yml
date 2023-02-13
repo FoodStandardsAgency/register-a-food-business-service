@@ -1,0 +1,28 @@
+name: Release to Test
+run-name: Release to Test (${{ github.ref_name  }})
+on:
+  workflow_dispatch:
+  
+  push:
+    branches:
+      - "develop"
+jobs:
+  build_and_test:
+    name: Build & test
+    uses: ./.github/workflows/build_and_test.yml
+
+  deploy_to_test:
+    name: Deploy to Test
+    needs: build_and_test
+    uses: ./.github/workflows/deploy.yml
+    with:
+      environment: test
+    secrets: inherit
+
+  deploy_to_test_collections:
+    name: Deploy to Test Collections
+    needs: build_and_test
+    uses: ./.github/workflows/deploy.yml
+    with:
+      environment: test-collections
+    secrets: inherit

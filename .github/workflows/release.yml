@@ -1,0 +1,62 @@
+name: Release
+run-name: Release (${{ github.ref_name  }})
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - "release/**"
+      - "hotfix/**"
+jobs:
+  build_and_test:
+    name: Build & test
+    uses: ./.github/workflows/build_test.yml
+
+  deploy_to_staging:
+    name: Deploy to Staging
+    needs: build_and_test
+    uses: ./.github/workflows/deploy.yml
+    with:
+      environment: staging
+    secrets: inherit
+
+  deploy_to_production:
+    name: Deploy to Production
+    needs: [build_and_test, deploy_to_staging]
+    uses: ./.github/workflows/deploy.yml
+    with:
+      environment: production
+    secrets: inherit
+
+  deploy_to_onboarding:
+    name: Deploy to Onboarding
+    needs: [build_and_test, deploy_to_staging]
+    uses: ./.github/workflows/deploy.yml
+    with:
+      environment: onboarding
+    secrets: inherit
+
+  deploy_to_staging_collections:
+    name: Deploy to Staging Collections
+    needs: build_and_test
+    uses: ./.github/workflows/deploy.yml
+    with:
+      environment: staging-collections
+    secrets: inherit
+
+  deploy_to_production_collections:
+    name: Deploy to Production Collections
+    needs: [build_and_test, deploy_to_staging_collections]
+    uses: ./.github/workflows/deploy.yml
+    with:
+      environment: production-collections
+    secrets: inherit
+
+  deploy_to_onboarding_collections:
+    name: Deploy to Onboarding Collections
+    needs: [build_and_test, deploy_to_staging_collections]
+    uses: ./.github/workflows/deploy.yml
+    with:
+      environment: onboarding-collections
+    secrets: inherit
+
+  
