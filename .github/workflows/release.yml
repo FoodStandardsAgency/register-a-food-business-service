@@ -9,7 +9,7 @@ on:
 jobs:
   build_and_test:
     name: Build & test
-    uses: ./.github/workflows/build_test.yml
+    uses: ./.github/workflows/build_and_test.yml
 
   deploy_to_staging:
     name: Deploy to Staging
