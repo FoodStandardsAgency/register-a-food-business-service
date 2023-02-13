@@ -11,7 +11,7 @@ jobs:
     name: Build & test
     uses: ./.github/workflows/build_and_test.yml
 
-  deploy_to_testing:
+  deploy_to_test:
     name: Deploy to Test
     needs: build_and_test
     uses: ./.github/workflows/deploy.yml
