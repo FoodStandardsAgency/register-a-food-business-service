@@ -125,7 +125,9 @@ const sendSingleEmail = async (
 
   try {
     flattenedData.link_to_document = pdfFile
-      ? await notifyClient.prepareUpload(pdfFile)
+      ? await notifyClient.prepareUpload(pdfFile, {
+          confirmEmailBeforeDownload: false
+        })
       : "";
 
     const notifyTemplate = await notifyClient.getTemplateById(templateId);
