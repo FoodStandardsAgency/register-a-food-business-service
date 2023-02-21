@@ -21,10 +21,17 @@ jobs:
   
   component_e2e_tests:
     name: Component, E2E tests
-    needs: [build_and_test, deploy_to_staging]
+    env:
+      ENVIRONMENT_DESCRIPTION: staging
+    needs: deploy_to_staging
     environment: staging
     runs-on: ubuntu-latest
     steps:
+      - name: Use Node.js 16.15
+        uses: actions/setup-node@v1
+        with:
+          node-version: 16.15
+          
       - name: Download artifact from build job
         uses: actions/download-artifact@v2
         with:
@@ -79,10 +86,18 @@ jobs:
     
   collections_component_e2e_tests:
     name: Collections. Component, E2E tests
-    needs: [build_and_test, deploy_to_staging_collections]
+    env:
+      ENVIRONMENT_DESCRIPTION: staging
+      COMPONENT_TEST_BASE_URL: https://staging-register-a-food-business-collections-service.azurewebsites.net
+    needs: [deploy_to_staging_collections]
     environment: staging-collections
     runs-on: ubuntu-latest
     steps:
+      - name: Use Node.js 16.15
+        uses: actions/setup-node@v1
+        with:
+          node-version: 16.15
+          
       - name: Download artifact from build job
         uses: actions/download-artifact@v2
         with:
