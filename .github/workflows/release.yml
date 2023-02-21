@@ -121,7 +121,7 @@ jobs:
 
   deploy_to_onboarding_collections:
     name: Deploy to Onboarding Collections
-    needs: [build_and_test, deploy_to_staging_collections]
+    needs: [collections_component_e2e_tests]
     uses: ./.github/workflows/deploy.yml
     with:
       environment: onboarding-collections
