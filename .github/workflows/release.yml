@@ -34,9 +34,6 @@ jobs:
       
       - name: Npm version
         run: npm -v
-
-      - name: Install
-        run: npm install
         
       - name: Download artifact from build job
         uses: actions/download-artifact@v2
@@ -45,6 +42,9 @@ jobs:
           
       - name: unzip artifact for tests
         run: unzip build.zip
+        
+      - name: Install
+        run: npm install
         
       - name: Component Tests
         run: npm run test:submissions:component:ci
@@ -106,9 +106,6 @@ jobs:
       
       - name: Npm version
         run: npm -v
-
-      - name: Install
-        run: npm install
         
       - name: Download artifact from build job
         uses: actions/download-artifact@v2
@@ -117,6 +114,9 @@ jobs:
           
       - name: unzip artifact for tests
         run: unzip build.zip
+        
+      - name: Install
+        run: npm install
         
       - name: Collections Component Tests
         run: npm run test:collections:component:ci
