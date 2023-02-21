@@ -18,10 +18,44 @@ jobs:
     with:
       environment: staging
     secrets: inherit
+  
+  component_e2e_tests:
+    name: Component, E2E tests
+    needs: [build_and_test, deploy_to_staging]
+    environment: staging
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download artifact from build job
+        uses: actions/download-artifact@v2
+        with:
+          name: build
+          
+      - name: unzip artifact for tests
+        run: unzip build.zip
+        
+      - name: Component Tests
+        run: npm run test:submissions:component:ci
+
+      - name: Publish Component Test Results
+        uses: EnricoMi/publish-unit-test-result-action@v2
+        if: always()
+        with:
+          junit_files: ./reports/TEST-component.xml
+          check_name: "Component Test Results"
+          
+      - name: E2E Tests
+        run: npm run test:submissions:api:e2e
+
+      - name: Publish E2E Test Results
+        uses: EnricoMi/publish-unit-test-result-action@v2
+        if: always()
+        with:
+          junit_files: ./reports/TEST-undefined.xml
+          check_name: "E2E Test Results"
 
   deploy_to_production:
     name: Deploy to Production
-    needs: [build_and_test, deploy_to_staging]
+    needs: [component_e2e_tests]
     uses: ./.github/workflows/deploy.yml
     with:
       environment: production
@@ -29,7 +63,7 @@ jobs:
 
   deploy_to_onboarding:
     name: Deploy to Onboarding
-    needs: [build_and_test, deploy_to_staging]
+    needs: [component_e2e_tests]
     uses: ./.github/workflows/deploy.yml
     with:
       environment: onboarding
@@ -42,10 +76,44 @@ jobs:
     with:
       environment: staging-collections
     secrets: inherit
+    
+  collections_component_e2e_tests:
+    name: Collections. Component, E2E tests
+    needs: [build_and_test, deploy_to_staging_collections]
+    environment: staging-collections
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download artifact from build job
+        uses: actions/download-artifact@v2
+        with:
+          name: build
+          
+      - name: unzip artifact for tests
+        run: unzip build.zip
+        
+      - name: Collections Component Tests
+        run: npm run test:collections:component:ci
+
+      - name: Publish Collections Component Test Results
+        uses: EnricoMi/publish-unit-test-result-action@v2
+        if: always()
+        with:
+          junit_files: ./reports/TEST-component.xml
+          check_name: "Collections Component Test Results"
+          
+      - name: Collections E2E Tests
+        run: test:collections:api:e2e
+
+      - name: Publish Collections E2E Test Results
+        uses: EnricoMi/publish-unit-test-result-action@v2
+        if: always()
+        with:
+          junit_files: ./reports/TEST-undefined.xml
+          check_name: "Collections E2E Test Results"
 
   deploy_to_production_collections:
     name: Deploy to Production Collections
-    needs: [build_and_test, deploy_to_staging_collections]
+    needs: [collections_component_e2e_tests]
     uses: ./.github/workflows/deploy.yml
     with:
       environment: production-collections
