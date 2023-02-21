@@ -235,17 +235,16 @@ const pdfGenerator = (pdfData, i18n) => {
 
     const segmentsOfPdf = [];
 
-    const convertToBase64 = () => {
+    const convertToPdf = () => {
       const result = Buffer.concat(segmentsOfPdf);
-      const base64Pdf = result.toString("base64");
-      resolve(base64Pdf);
+      resolve(result);
     };
 
     pdfMake.on("data", (segment) => {
       segmentsOfPdf.push(segment);
     });
 
-    pdfMake.on("end", convertToBase64);
+    pdfMake.on("end", convertToPdf);
     pdfMake.end();
   });
 };
