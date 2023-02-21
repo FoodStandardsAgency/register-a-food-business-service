@@ -31,7 +31,13 @@ jobs:
         uses: actions/setup-node@v1
         with:
           node-version: 16.15
-          
+      
+      - name: Npm version
+        run: npm -v
+
+      - name: Install
+        run: npm install
+        
       - name: Download artifact from build job
         uses: actions/download-artifact@v2
         with:
@@ -97,7 +103,13 @@ jobs:
         uses: actions/setup-node@v1
         with:
           node-version: 16.15
-          
+      
+      - name: Npm version
+        run: npm -v
+
+      - name: Install
+        run: npm install
+        
       - name: Download artifact from build job
         uses: actions/download-artifact@v2
         with:
