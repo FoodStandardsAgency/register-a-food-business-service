@@ -6,6 +6,14 @@ on:
     branches:
       - "release/**"
       - "hotfix/**"
+env:
+  ENVIRONMENT_DESCRIPTION: staging
+  COMPONENT_TEST_BASE_URL: https://staging-register-a-food-business-collections-service.azurewebsites.net
+  FRONT_END_NAME: register-a-food-business-front-end
+  FRONT_END_SECRET: ${{ secrets.FRONT_END_SECRET }}
+  DIRECT_API_NAME: register-a-food-business-apim
+  DIRECT_API_SECRET: ${{ secrets.DIRECT_API_SECRET }}
+      
 jobs:
   build_and_test:
     name: Build & test
@@ -21,11 +29,10 @@ jobs:
   
   component_e2e_tests:
     name: Component, E2E tests
-    env:
-      ENVIRONMENT_DESCRIPTION: staging
+    runs-on: ubuntu-latest
     needs: deploy_to_staging
     environment: staging
-    runs-on: ubuntu-latest
+    
     steps:
       - name: Use Node.js 16.15
         uses: actions/setup-node@v1
@@ -91,13 +98,11 @@ jobs:
     secrets: inherit
     
   collections_component_e2e_tests:
-    name: Collections. Component, E2E tests
-    env:
-      ENVIRONMENT_DESCRIPTION: staging
-      COMPONENT_TEST_BASE_URL: https://staging-register-a-food-business-collections-service.azurewebsites.net
+    name: Collections. Component, E2E tests   
+    runs-on: ubuntu-latest
     needs: [deploy_to_staging_collections]
     environment: staging-collections
-    runs-on: ubuntu-latest
+    
     steps:
       - name: Use Node.js 16.15
         uses: actions/setup-node@v1
