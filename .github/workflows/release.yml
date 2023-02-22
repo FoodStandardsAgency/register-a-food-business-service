@@ -102,6 +102,7 @@ jobs:
     needs: [deploy_to_staging_collections]
     environment: staging-collections
     env:
+      ENVIRONMENT_DESCRIPTION: staging
       NODE_ENV: development
       SERVICE_BASE_URL: https://staging-register-a-food-business-service.azurewebsites.net
       API_SECRET: ${{ secrets.API_SECRET }}
