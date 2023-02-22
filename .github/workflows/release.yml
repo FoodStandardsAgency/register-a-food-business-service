@@ -156,7 +156,7 @@ jobs:
           check_name: "Collections Component Test Results"
           
       - name: Collections E2E Tests
-        run: test:collections:api:e2e
+        run: npm run test:collections:api:e2e
 
       - name: Publish Collections E2E Test Results
         uses: EnricoMi/publish-unit-test-result-action@v2
