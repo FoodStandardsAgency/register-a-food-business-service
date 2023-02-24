@@ -1,0 +1,60 @@
+name: Deploy
+on:
+  workflow_call:
+    inputs:
+      environment:
+        required: true
+        type: string
+
+jobs:
+  deploy-to-staging-slot:
+    name: Deploy to staging slot
+    environment: ${{ inputs.environment }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Log into Azure CLI with service principal
+        uses: azure/login@v1.1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - name: Download artifact from build job
+        uses: actions/download-artifact@v2
+        with:
+          name: build
+
+      - name: Deploy to slot
+        uses: azure/webapps-deploy@v1
+        with:
+          app-name: ${{ vars.WEBAPP_NAME }}
+          slot-name: ${{ vars.SLOT_NAME }}
+          package: "build.zip"
+
+      - name: Configure App settings
+        uses: azure/appservice-settings@v1
+        with:
+          app-name: ${{ vars.WEBAPP_NAME }}
+          slot-name: ${{ vars.SLOT_NAME }}
+          app-settings-json: "${{ secrets.APP_SETTINGS }}"
+        id: settings
+
+      - run: |
+          az logout
+
+  swap-with-production-slot:
+    name: Swap with prod slot
+    environment: ${{ inputs.environment }}
+    needs: deploy-to-staging-slot
+    runs-on: ubuntu-latest
+
+    steps:
+      #       - run: echo "Swap with prod slot"
+      - name: Log into Azure CLI with service principal
+        uses: azure/login@v1.1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - name: Swap slots
+        run: az webapp deployment slot swap -s ${{ vars.SLOT_NAME }} -n ${{ vars.WEBAPP_NAME }} -g ${{ vars.RESOURCE_GROUP }}
+
+      - run: |
+          az logout

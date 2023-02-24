@@ -1,0 +1,43 @@
+name: Create Feature Branch
+on:
+  workflow_dispatch:
+    inputs:
+      feature_name:
+        description: "Feature name?"
+        type: text
+        required: true
+
+jobs:
+  create_feature:
+    name: Create feature - ${{ inputs.feature_name }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v2.5.0
+        with:
+          ref: develop
+
+      - name: Initialize mandatory git config
+        run: |
+          git config user.name "GitHub Actions"
+          git config user.email noreply@github.com
+
+      - name: Use Node.js 16.15
+        uses: actions/setup-node@v1
+        with:
+          node-version: 16.15
+
+      - name: Npm version
+        run: npm -v
+
+      - name: Convert name to lovercase and joined with underscore
+        id: name_to_joined_lowercase
+        run: |
+          export input_feature_name=$(echo ${{ inputs.feature_name }} |  sed -r s/[^a-zA-Z0-9]+/_/g | sed -r s/^-+\|-+$//g | tr A-Z a-z )
+          echo ::set-output name=feature_name::$input_feature_name
+
+      - name: Create branch
+        run: git checkout -b feature/${{ steps.name_to_joined_lowercase.outputs.feature_name }}
+
+      - name: Push new branch
+        run: git push origin feature/${{ steps.name_to_joined_lowercase.outputs.feature_name }}

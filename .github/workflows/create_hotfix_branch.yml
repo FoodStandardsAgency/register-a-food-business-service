@@ -1,0 +1,53 @@
+name: Create Release/Hotfix Branch
+on:
+  workflow_dispatch:
+    inputs:
+      release_hotfix:
+        description: "Release/Hotfix ?"
+        type: choice
+        required: true
+        default: release
+        options:
+          - release
+          - hotfix
+      version:
+        description: "Version  (ie 14.2.1)"
+        required: true
+
+jobs:
+  create_release_hotfix:
+    name: Create ${{ inputs.release_hotfix }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v2.5.0
+        with:
+          ref: develop
+
+      - name: Initialize mandatory git config
+        run: |
+          git config user.name "GitHub Actions"
+          git config user.email noreply@github.com
+
+      - name: Use Node.js 16.15
+        uses: actions/setup-node@v1
+        with:
+          node-version: 16.15
+
+      - name: Npm version
+        run: npm -v
+
+      - name: Create branch
+        run: git checkout -b ${{ inputs.release_hotfix }}/v${{ inputs.version }}
+
+      - name: Update version package.json
+        run: npm version ${{ inputs.version }} --no-git-tag-version
+
+      - name: Add package.json file
+        run: git add package.json
+
+      - name: Commit changes
+        run: git commit --message "Prepare ${{ inputs.release_hotfix }} v${{ github.event.inputs.version }}"
+
+      - name: Push new branch
+        run: git push origin ${{ inputs.release_hotfix }}/v${{ inputs.version }}
