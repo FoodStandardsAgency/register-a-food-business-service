@@ -20,6 +20,8 @@
     "local_council_phone_number": "123456789",
     "local_council_url": "west-dorset",
     "separate_standards_council": 4226,
+    "new_authority_name": "New name",
+    "new_authority_id": 1234,
     "auth": {
       "url": "url",
       "public_key": "key",
@@ -32,6 +34,8 @@
     "local_council_notify_emails": ["dorsetcounty@email.com"],
     "local_council_email": "info-dorsetcounty@email.com",
     "local_council_url": "dorset",
+    "new_authority_name": "New name",
+    "new_authority_id": 1234,
     "auth": {
       "url": "url",
       "public_key": "key",
