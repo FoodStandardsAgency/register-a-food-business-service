@@ -34,7 +34,7 @@ jobs:
         id: name_to_joined_lowercase
         run: |
           export input_feature_name=$(echo ${{ inputs.feature_name }} |  sed -r s/[^a-zA-Z0-9]+/_/g | sed -r s/^-+\|-+$//g | tr A-Z a-z )
-          echo ::set-output name=feature_name::$input_feature_name
+          echo "feature_name=$input_feature_name" >> $GITHUB_OUTPUT
 
       - name: Create branch
         run: git checkout -b feature/${{ steps.name_to_joined_lowercase.outputs.feature_name }}
