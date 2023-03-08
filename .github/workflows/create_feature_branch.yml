@@ -4,7 +4,7 @@ on:
     inputs:
       feature_name:
         description: "Feature name?"
-        type: text
+        type: string
         required: true
 
 jobs:
@@ -13,7 +13,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Check out code
-        uses: actions/checkout@v2.5.0
+        uses: actions/checkout@v3
         with:
           ref: develop
 
@@ -23,7 +23,7 @@ jobs:
           git config user.email noreply@github.com
 
       - name: Use Node.js 16.15
-        uses: actions/setup-node@v1
+        uses: actions/setup-node@v3
         with:
           node-version: 16.15
 
