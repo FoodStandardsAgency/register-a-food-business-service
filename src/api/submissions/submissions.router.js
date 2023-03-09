@@ -34,6 +34,7 @@ const submissionsRouter = () => {
           req.body.registration,
           req.body.local_council_url,
           req.body.submission_language,
+          req.body.manual_local_authority,
           regDataVersion
         );
         statusEmitter.emit("incrementCount", "userRegistrationsSucceeded");

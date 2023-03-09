@@ -35,7 +35,8 @@ const transformDataForNotify = (registration, lcContactConfig, i18n) => {
   const lcInfo = {};
   if (lcContactConfig.hygieneAndStandards) {
     lcInfo.local_council = i18n.tLa(
-      lcContactConfig.hygieneAndStandards.local_council
+      lcContactConfig.hygieneAndStandards.new_authority_name ||
+        lcContactConfig.hygieneAndStandards.local_council
     );
 
     lcInfo.local_council_email =
@@ -51,7 +52,8 @@ const transformDataForNotify = (registration, lcContactConfig, i18n) => {
     }
   } else {
     lcInfo.local_council_hygiene = i18n.tLa(
-      lcContactConfig.hygiene.local_council
+      lcContactConfig.hygiene.new_authority_name ||
+        lcContactConfig.hygiene.local_council
     );
 
     lcInfo.local_council_email_hygiene =
@@ -66,7 +68,8 @@ const transformDataForNotify = (registration, lcContactConfig, i18n) => {
         lcContactConfig.hygiene.local_council_phone_number;
     }
     lcInfo.local_council_standards = i18n.tLa(
-      lcContactConfig.standards.local_council
+      lcContactConfig.standards.new_authority_name ||
+        lcContactConfig.standards.local_council
     );
 
     lcInfo.local_council_email_standards =
