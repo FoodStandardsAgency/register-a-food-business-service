@@ -168,10 +168,31 @@ const getLcContactConfigFromArray = async (
             }
           };
 
+          if (urlLcConfig.new_authority_name) {
+            separateCouncils.hygiene.new_authority_name =
+              urlLcConfig.new_authority_name;
+          }
+
+          if (urlLcConfig.new_authority_id) {
+            separateCouncils.hygiene.new_authority_id =
+              urlLcConfig.new_authority_id;
+          }
+
           if (urlLcConfig.local_council_phone_number) {
             separateCouncils.hygiene.local_council_phone_number =
               urlLcConfig.local_council_phone_number;
           }
+
+          if (standardsLcConfig.new_authority_name) {
+            separateCouncils.standards.new_authority_name =
+              standardsLcConfig.new_authority_name;
+          }
+
+          if (standardsLcConfig.new_authority_id) {
+            separateCouncils.standards.new_authority_id =
+              standardsLcConfig.new_authority_id;
+          }
+
           if (standardsLcConfig.local_council_phone_number) {
             separateCouncils.standards.local_council_phone_number =
               standardsLcConfig.local_council_phone_number;
@@ -208,6 +229,16 @@ const getLcContactConfigFromArray = async (
             hasAuth: urlLcConfig.auth ? true : false
           }
         };
+
+        if (urlLcConfig.new_authority_name) {
+          hygieneAndStandardsCouncil.hygieneAndStandards.new_authority_name =
+            urlLcConfig.new_authority_name;
+        }
+
+        if (urlLcConfig.new_authority_id) {
+          hygieneAndStandardsCouncil.hygieneAndStandards.new_authority_id =
+            urlLcConfig.new_authority_id;
+        }
 
         if (urlLcConfig.local_council_phone_number) {
           hygieneAndStandardsCouncil.hygieneAndStandards.local_council_phone_number =
@@ -286,10 +317,31 @@ const getLcContactConfig = async (localCouncilUrl) => {
             }
           };
 
+          if (urlLcConfig.new_authority_name) {
+            separateCouncils.hygiene.new_authority_name =
+              urlLcConfig.new_authority_name;
+          }
+
+          if (urlLcConfig.new_authority_id) {
+            separateCouncils.hygiene.new_authority_id =
+              urlLcConfig.new_authority_id;
+          }
+
           if (urlLcConfig.local_council_phone_number) {
             separateCouncils.hygiene.local_council_phone_number =
               urlLcConfig.local_council_phone_number;
           }
+
+          if (standardsLcConfig.new_authority_name) {
+            separateCouncils.standards.new_authority_name =
+              standardsLcConfig.new_authority_name;
+          }
+
+          if (standardsLcConfig.new_authority_id) {
+            separateCouncils.standards.new_authority_id =
+              standardsLcConfig.new_authority_id;
+          }
+
           if (standardsLcConfig.local_council_phone_number) {
             separateCouncils.standards.local_council_phone_number =
               standardsLcConfig.local_council_phone_number;
@@ -326,6 +378,16 @@ const getLcContactConfig = async (localCouncilUrl) => {
             hasAuth: urlLcConfig.auth ? true : false
           }
         };
+
+        if (urlLcConfig.new_authority_name) {
+          hygieneAndStandardsCouncil.hygieneAndStandards.new_authority_name =
+            urlLcConfig.new_authority_name;
+        }
+
+        if (urlLcConfig.new_authority_id) {
+          hygieneAndStandardsCouncil.hygieneAndStandards.new_authority_id =
+            urlLcConfig.new_authority_id;
+        }
 
         if (urlLcConfig.local_council_phone_number) {
           hygieneAndStandardsCouncil.hygieneAndStandards.local_council_phone_number =

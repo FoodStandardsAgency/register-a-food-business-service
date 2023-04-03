@@ -132,6 +132,7 @@ describe("registration controller", () => {
   );
   const testLocalCouncilUrl = "example-council-url";
   const testRegDataVersion = "1.2.0";
+  const manualLocalAuthority = false;
   const testOptions = {
     regDataVersion: testRegDataVersion,
     subscriber: testLocalCouncilUrl,
@@ -167,6 +168,7 @@ describe("registration controller", () => {
             testRegistration,
             testLocalCouncilUrl,
             testLanguage,
+            manualLocalAuthority,
             testRegDataVersion
           );
         });
@@ -180,7 +182,8 @@ describe("registration controller", () => {
               collected_at: postRegistrationMetadata.collected_at,
               reg_submission_date: postRegistrationMetadata.reg_submission_date,
               direct_submission: false,
-              submission_language: "en"
+              submission_language: "en",
+              manual_local_authority: false
             },
             testRegistration,
             exampleLcConfig,

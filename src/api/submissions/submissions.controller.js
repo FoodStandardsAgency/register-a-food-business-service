@@ -29,6 +29,7 @@ const createNewRegistration = async (
   registration,
   localCouncilUrl,
   submission_language,
+  manual_local_authority,
   regDataVersion
 ) => {
   logEmitter.emit(
@@ -90,7 +91,8 @@ const createNewRegistration = async (
       direct_submission: false,
       collected: false,
       collected_at: null,
-      submission_language: submission_language
+      submission_language: submission_language,
+      manual_local_authority: manual_local_authority
     },
     registration,
     lcContactConfig,

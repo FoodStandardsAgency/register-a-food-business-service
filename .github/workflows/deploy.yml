@@ -13,17 +13,17 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Log into Azure CLI with service principal
-        uses: azure/login@v1.1
+        uses: azure/login@v1
         with:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
 
       - name: Download artifact from build job
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v3
         with:
           name: build
 
       - name: Deploy to slot
-        uses: azure/webapps-deploy@v1
+        uses: azure/webapps-deploy@v2
         with:
           app-name: ${{ vars.WEBAPP_NAME }}
           slot-name: ${{ vars.SLOT_NAME }}
@@ -49,7 +49,7 @@ jobs:
     steps:
       #       - run: echo "Swap with prod slot"
       - name: Log into Azure CLI with service principal
-        uses: azure/login@v1.1
+        uses: azure/login@v1
         with:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
 

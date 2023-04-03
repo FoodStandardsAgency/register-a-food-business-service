@@ -156,6 +156,21 @@ describe("Function: getLcContactConfig: ", () => {
           ).not.toBeDefined();
         });
       });
+      describe("given the local council have new_authority_name and new_authority_id", () => {
+        beforeEach(async () => {
+          result = await getLcContactConfig("dorset");
+        });
+        it("the hygieneAndStandards object contain the new_authority_name field", () => {
+          expect(result.hygieneAndStandards.new_authority_name).toBeDefined();
+          expect(result.hygieneAndStandards.new_authority_name).toBe(
+            "New name"
+          );
+        });
+        it("the hygieneAndStandards object contain the new_authority_id field", () => {
+          expect(result.hygieneAndStandards.new_authority_id).toBeDefined();
+          expect(result.hygieneAndStandards.new_authority_id).toBe(1234);
+        });
+      });
     });
 
     describe("given the local council has a separate standards council", () => {
@@ -205,6 +220,27 @@ describe("Function: getLcContactConfig: ", () => {
           }
           expect(result.hygiene.local_council_phone_number).not.toBeDefined();
           expect(result.standards.local_council_phone_number).toBeDefined();
+        });
+      });
+      describe("given the local council have new_authority_name and new_authority_id", () => {
+        beforeEach(async () => {
+          result = await getLcContactConfig("west-dorset");
+        });
+        it("the hygiene object contain the new_authority_name field", () => {
+          expect(result.hygiene.new_authority_name).toBeDefined();
+          expect(result.hygiene.new_authority_name).toBe("New name");
+        });
+        it("the hygiene object contain the new_authority_id field", () => {
+          expect(result.hygiene.new_authority_id).toBeDefined();
+          expect(result.hygiene.new_authority_id).toBe(1234);
+        });
+        it("the standards object contain the new_authority_name field", () => {
+          expect(result.standards.new_authority_name).toBeDefined();
+          expect(result.standards.new_authority_name).toBe("New name");
+        });
+        it("the standards object contain the new_authority_id field", () => {
+          expect(result.standards.new_authority_id).toBeDefined();
+          expect(result.standards.new_authority_id).toBe(1234);
         });
       });
     });
