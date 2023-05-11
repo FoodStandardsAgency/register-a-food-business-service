@@ -50,6 +50,10 @@ const transformDataForNotify = (registration, lcContactConfig, i18n) => {
       lcInfo.local_council_phone_number =
         lcContactConfig.hygieneAndStandards.local_council_phone_number;
     }
+     if (lcContactConfig.standards.local_guidance_link) {
+       lcInfo.local_guidance_link_standards =
+         lcContactConfig.standards.local_guidance_link;
+     }
   } else {
     lcInfo.local_council_hygiene = i18n.tLa(
       lcContactConfig.hygiene.new_authority_name ||
@@ -79,6 +83,11 @@ const transformDataForNotify = (registration, lcContactConfig, i18n) => {
       lcInfo.local_council_phone_number_standards =
         lcContactConfig.standards.local_council_phone_number;
     }
+
+     if (lcContactConfig.standards.local_guidance_link) {
+       lcInfo.local_guidance_link_standards =
+         lcContactConfig.standards.local_guidance_link;
+     }
   }
   const registrationClone = JSON.parse(JSON.stringify(registration));
 
