@@ -22,6 +22,7 @@
     "separate_standards_council": 4226,
     "new_authority_name": "New name",
     "new_authority_id": 1234,
+    "local_council_guidance_link": "link1",
     "auth": {
       "url": "url",
       "public_key": "key",
@@ -36,6 +37,7 @@
     "local_council_url": "dorset",
     "new_authority_name": "New name",
     "new_authority_id": 1234,
+    "local_council_guidance_link": "link2",
     "auth": {
       "url": "url",
       "public_key": "key",

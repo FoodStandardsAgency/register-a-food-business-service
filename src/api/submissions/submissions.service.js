@@ -155,7 +155,8 @@ const getLcContactConfigFromArray = async (
               local_council_notify_emails:
                 urlLcConfig.local_council_notify_emails,
               local_council_email: urlLcConfig.local_council_email,
-              local_guidance_link: urlLcConfig.local_guidance_link,
+              local_council_guidance_link:
+                urlLcConfig.local_council_guidance_link,
               country: urlLcConfig.country,
               hasAuth: urlLcConfig.auth ? true : false
             },
@@ -165,7 +166,8 @@ const getLcContactConfigFromArray = async (
               local_council_notify_emails:
                 standardsLcConfig.local_council_notify_emails,
               local_council_email: standardsLcConfig.local_council_email,
-              local_guidance_link: standardsLcConfig.local_guidance_link,
+              local_council_guidance_link:
+                standardsLcConfig.local_council_guidance_link,
               hasAuth: standardsLcConfig.auth ? true : false
             }
           };
@@ -227,7 +229,8 @@ const getLcContactConfigFromArray = async (
             local_council_notify_emails:
               urlLcConfig.local_council_notify_emails,
             local_council_email: urlLcConfig.local_council_email,
-            local_guidance_link: urlLcConfig.local_guidance_link,
+            local_council_guidance_link:
+              urlLcConfig.local_council_guidance_link,
             country: urlLcConfig.country,
             hasAuth: urlLcConfig.auth ? true : false
           }
@@ -307,7 +310,8 @@ const getLcContactConfig = async (localCouncilUrl) => {
               local_council_notify_emails:
                 urlLcConfig.local_council_notify_emails,
               local_council_email: urlLcConfig.local_council_email,
-             local_guidance_link: urlLcConfig.local_guidance_link,
+              local_council_guidance_link:
+                urlLcConfig.local_council_guidance_link,
               country: urlLcConfig.country,
               hasAuth: urlLcConfig.auth ? true : false
             },
@@ -317,7 +321,8 @@ const getLcContactConfig = async (localCouncilUrl) => {
               local_council_notify_emails:
                 standardsLcConfig.local_council_notify_emails,
               local_council_email: standardsLcConfig.local_council_email,
-              local_guidance_link: standardsLcConfig.local_guidance_link,
+              local_council_guidance_link:
+                standardsLcConfig.local_council_guidance_link,
               hasAuth: standardsLcConfig.auth ? true : false
             }
           };
@@ -379,6 +384,8 @@ const getLcContactConfig = async (localCouncilUrl) => {
             local_council_notify_emails:
               urlLcConfig.local_council_notify_emails,
             local_council_email: urlLcConfig.local_council_email,
+            local_council_guidance_link:
+              urlLcConfig.local_council_guidance_link,
             country: urlLcConfig.country,
             hasAuth: urlLcConfig.auth ? true : false
           }

@@ -132,12 +132,14 @@ const testLcContactConfigSplitWithPhoneNumber = {
   hygiene: {
     local_council: "Hygiene council name",
     local_council_email: "hygiene@example.com",
-    local_council_phone_number: "123456789"
+    local_council_phone_number: "123456789",
+    local_council_guidance_link: "link1"
   },
   standards: {
     local_council: "Standards council name",
     local_council_email: "standards@example.com",
-    local_council_phone_number: "123456789"
+    local_council_phone_number: "123456789",
+    local_council_guidance_link: "link2"
   }
 };
 
@@ -146,6 +148,7 @@ const testLcContactConfigCombinedWithPhoneNumber = {
     local_council: "Hygiene and standards council name",
     local_council_email: "both@example.com",
     local_council_phone_number: "123456789",
+    local_council_guidance_link: "link3",
     country: "wales",
     hasAuth: true
   }
@@ -447,6 +450,8 @@ describe("Function: transformDataForNotify", () => {
           reg_submission_date: "01 Dec 2018",
           local_council_hygiene: "Hygiene council name",
           local_council_email_hygiene: "hygiene@example.com",
+          local_council_guidance_link_hygiene: "link1",
+          local_council_guidance_link_standards: "link2",
           country: undefined,
           hasAuth: undefined,
           local_council_phone_number_hygiene: "123456789",
@@ -484,6 +489,7 @@ describe("Function: transformDataForNotify", () => {
           reg_submission_date: "01 Dec 2018",
           local_council: "Hygiene and standards council name",
           local_council_email: "both@example.com",
+          local_council_guidance_link: "link3",
           country: "wales",
           hasAuth: true,
           local_council_phone_number: "123456789",
@@ -588,6 +594,8 @@ describe("Function: transformDataForNotify", () => {
           water_supply: "Test",
           declaration1: "Declaration",
           example: "value",
+          local_council_guidance_link_hygiene: "link1",
+          local_council_guidance_link_standards: "link2",
           local_council_hygiene: "Hygiene council name",
           local_council_email_hygiene: "hygiene@example.com",
           local_council_phone_number_hygiene: "123456789",
@@ -628,6 +636,8 @@ describe("Function: transformDataForNotify", () => {
           water_supply: waterSupplyEnum.PUBLIC.value.en,
           declaration1: "Declaration",
           reg_submission_date: today,
+          local_council_guidance_link_hygiene: "link1",
+          local_council_guidance_link_standards: "link2",
           local_council_hygiene: "Hygiene council name",
           local_council_email_hygiene: "hygiene@example.com",
           country: undefined,
@@ -666,6 +676,7 @@ describe("Function: transformDataForNotify", () => {
           import_export_activities: importExportEnum.BOTH.value.en,
           water_supply: waterSupplyEnum.PUBLIC.value.en,
           declaration1: "Declaration",
+          local_council_guidance_link: "link3",
           reg_submission_date: today,
           local_council: "Hygiene and standards council name",
           local_council_email: "both@example.com",
