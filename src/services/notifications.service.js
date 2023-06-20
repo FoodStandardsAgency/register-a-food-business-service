@@ -9,8 +9,16 @@ const { statusEmitter } = require("./statusEmitter.service");
 const { sendSingleEmail } = require("../connectors/notify/notify.connector");
 const { pdfGenerator, transformDataForPdf } = require("./pdf.service");
 const {
+  FBO_SUBMISSION_COMPLETE_TEMPLATE_ID,
+  LC_NEW_REGISTRATION_TEMPLATE_ID,
+  FBO_FEEDBACK_TEMPLATE_ID,
+  FD_FEEDBACK_TEMPLATE_ID,
   RNG_PENDING_TEMPLATE_ID,
-  RNG_PENDING_TEMPLATE_ID_CY
+  FBO_SUBMISSION_COMPLETE_TEMPLATE_ID_CY,
+  LC_NEW_REGISTRATION_TEMPLATE_ID_CY,
+  FBO_FEEDBACK_TEMPLATE_ID_CY,
+  RNG_PENDING_TEMPLATE_ID_CY,
+  FUTURE_DELIVERY_EMAIL
 } = require("../config");
 const {
   getStatus,
@@ -305,19 +313,9 @@ const sendEmails = async (
  * @param fsaId
  * @param {object} lcContactConfig The object containing the local council information
  * @param {object} registration The object containing all the answers the user has submitted during the sesion
- * @param {object} configData Object containing notify_template_keys and future_delivery_email
  */
-const sendNotifications = async (
-  fsaId,
-  lcContactConfig,
-  registration,
-  configData
-) => {
-  let emailsToSend = generateEmailsToSend(
-    registration,
-    lcContactConfig,
-    configData
-  );
+const sendNotifications = async (fsaId, lcContactConfig, registration) => {
+  let emailsToSend = generateEmailsToSend(registration, lcContactConfig);
 
   await initialiseNotificationsStatusIfNotSet(fsaId, emailsToSend);
 
@@ -413,7 +411,7 @@ const initialiseNotificationsStatusIfNotSet = async (fsaId, emailsToSend) => {
   }
 };
 
-const generateEmailsToSend = (registration, lcContactConfig, configData) => {
+const generateEmailsToSend = (registration, lcContactConfig) => {
   const cy = registration.submission_language === "cy";
   let emailsToSend = [];
   const fboEmailAddress =
@@ -435,21 +433,21 @@ const generateEmailsToSend = (registration, lcContactConfig, configData) => {
       switch (notification.type) {
         case "LC":
           templateID = cy
-            ? configData.notify_template_keys.lc_new_registration_welsh
-            : configData.notify_template_keys.lc_new_registration;
+            ? LC_NEW_REGISTRATION_TEMPLATE_ID_CY
+            : LC_NEW_REGISTRATION_TEMPLATE_ID;
           break;
         case "FBO":
           templateID = cy
-            ? configData.notify_template_keys.fbo_submission_complete_welsh
-            : configData.notify_template_keys.fbo_submission_complete;
+            ? FBO_SUBMISSION_COMPLETE_TEMPLATE_ID_CY
+            : FBO_SUBMISSION_COMPLETE_TEMPLATE_ID;
           break;
         case "FBO_FB":
           templateID = cy
-            ? configData.notify_template_keys.fbo_feedback_welsh
-            : configData.notify_template_keys.fbo_feedback;
+            ? FBO_FEEDBACK_TEMPLATE_ID_CY
+            : FBO_FEEDBACK_TEMPLATE_ID;
           break;
         case "FD_FB":
-          templateID = configData.notify_template_keys.fd_feedback;
+          templateID = FD_FEEDBACK_TEMPLATE_ID;
           break;
         case "RNG_PENDING":
           templateID = cy
@@ -493,8 +491,8 @@ const generateEmailsToSend = (registration, lcContactConfig, configData) => {
           type: "LC",
           address: lcNotificationEmailAddresses[recipientEmailAddress],
           templateId: cy
-            ? configData.notify_template_keys.lc_new_registration_welsh
-            : configData.notify_template_keys.lc_new_registration
+            ? LC_NEW_REGISTRATION_TEMPLATE_ID_CY
+            : LC_NEW_REGISTRATION_TEMPLATE_ID
         });
       }
     }
@@ -503,8 +501,8 @@ const generateEmailsToSend = (registration, lcContactConfig, configData) => {
       type: "FBO",
       address: fboEmailAddress,
       templateId: cy
-        ? configData.notify_template_keys.fbo_submission_complete_welsh
-        : configData.notify_template_keys.fbo_submission_complete
+        ? FBO_SUBMISSION_COMPLETE_TEMPLATE_ID_CY
+        : FBO_SUBMISSION_COMPLETE_TEMPLATE_ID
     });
 
     if (registration.declaration && registration.declaration.feedback1) {
@@ -512,14 +510,14 @@ const generateEmailsToSend = (registration, lcContactConfig, configData) => {
         type: "FBO_FB",
         address: fboEmailAddress,
         templateId: cy
-          ? configData.notify_template_keys.fbo_feedback_welsh
-          : configData.notify_template_keys.fbo_feedback
+          ? FBO_FEEDBACK_TEMPLATE_ID_CY
+          : FBO_FEEDBACK_TEMPLATE_ID_CY
       });
 
       emailsToSend.push({
         type: "FD_FB",
-        address: configData.future_delivery_email,
-        templateId: configData.notify_template_keys.fd_feedback
+        address: FUTURE_DELIVERY_EMAIL,
+        templateId: FD_FEEDBACK_TEMPLATE_ID
       });
     }
   }
