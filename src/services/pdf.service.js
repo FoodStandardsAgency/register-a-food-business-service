@@ -161,7 +161,7 @@ const createContent = (pdfData, i18n) => {
   content.push(
     createTitle(
       i18n.t(
-        "You have received a new food business registration. The registration details are included in this email. The new registration will also be available in your management information system if you have a integrated connection."
+        "You have received a new food business registration. The registration details are included in this email. The new registration will also be available in your management information system if you have an integrated connection."
       ),
       "h4"
     )
