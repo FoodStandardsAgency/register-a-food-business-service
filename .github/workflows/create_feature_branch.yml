@@ -22,10 +22,10 @@ jobs:
           git config user.name "GitHub Actions"
           git config user.email noreply@github.com
 
-      - name: Use Node.js 16.15
+      - name: Use Node.js 18.16
         uses: actions/setup-node@v3
         with:
-          node-version: 16.15
+          node-version: 18.16
 
       - name: Npm version
         run: npm -v
