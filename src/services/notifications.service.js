@@ -509,9 +509,7 @@ const generateEmailsToSend = (registration, lcContactConfig) => {
       emailsToSend.push({
         type: "FBO_FB",
         address: fboEmailAddress,
-        templateId: cy
-          ? FBO_FEEDBACK_TEMPLATE_ID_CY
-          : FBO_FEEDBACK_TEMPLATE_ID
+        templateId: cy ? FBO_FEEDBACK_TEMPLATE_ID_CY : FBO_FEEDBACK_TEMPLATE_ID
       });
 
       emailsToSend.push({
