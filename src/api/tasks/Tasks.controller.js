@@ -310,16 +310,6 @@ const sendNotificationsForRegistrationAction = async (fsaId, req, res) => {
     throw new Error(`${message}`);
   }
 
-  let configVersion = registration.registration_data_version
-    ? registration.registration_data_version
-    : "1.7.0";
-  let config = await getConfig(configVersion);
-  if (isEmpty(config)) {
-    let message = `Could not find config ${fsaId} version : ${configVersion}`;
-    logEmitter.emit(ERROR, message);
-    throw new Error(`${message}`);
-  }
-
   //this method is in dire need of refactoring...
   let lcContactConfig = await getLcContactConfigFromArray(
     localCouncil.local_council_url,
@@ -331,7 +321,7 @@ const sendNotificationsForRegistrationAction = async (fsaId, req, res) => {
     throw new Error(`${message}`);
   }
 
-  await sendNotifications(fsaId, lcContactConfig, registration, config);
+  await sendNotifications(fsaId, lcContactConfig, registration);
 
   logEmitter.emit(INFO, `Send notifications for ${fsaId}`);
   logEmitter.emit(
@@ -358,17 +348,6 @@ const multiSendNotifications = async (registration, allLocalCouncils) => {
     throw new Error(`${message}`);
   }
 
-  let configVersion = registration.registration_data_version
-    ? registration.registration_data_version
-    : "1.7.0";
-  let config = await getConfig(configVersion);
-
-  if (isEmpty(config)) {
-    let message = `Could not find config ${fsaId} version : ${configVersion}`;
-    logEmitter.emit(ERROR, message);
-    throw new Error(`${message}`);
-  }
-
   //this method is in dire need of refactoring...
   let lcContactConfig = await getLcContactConfigFromArray(
     localCouncil.local_council_url,
@@ -380,7 +359,7 @@ const multiSendNotifications = async (registration, allLocalCouncils) => {
     throw new Error(`${message}`);
   }
 
-  await sendNotifications(fsaId, lcContactConfig, registration, config);
+  await sendNotifications(fsaId, lcContactConfig, registration);
 };
 
 const multiSendRegistrationToTascomi = async (
@@ -428,16 +407,6 @@ const multiSendRegistrationToTascomi = async (
     "Tasks.controller",
     "multiSendRegistrationToTascomi"
   );
-};
-
-const getConfig = async (configVersion) => {
-  logEmitter.emit("functionCall", "Tasks.controller", "getConfig");
-  let configCollection = await establishConnectionToCosmos(
-    "config",
-    "configVersion"
-  );
-  logEmitter.emit("functionSuccess", "Tasks.controller", "getConfig");
-  return await configCollection.findOne({ _id: configVersion });
 };
 
 const getRegistration = async (fsaId) => {

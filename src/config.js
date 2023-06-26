@@ -22,10 +22,36 @@ module.exports = {
   }/address`,
   ADDRESS_API_URL_QUERY_STANDARD: "format=json&lines=3",
   RNG_API_URL: process.env.RNG_API_URL || "https://rng.food.gov.uk",
+
+  FBO_SUBMISSION_COMPLETE_TEMPLATE_ID:
+    process.env.FBO_SUBMISSION_COMPLETE_TEMPLATE_ID ||
+    "281514ac-c813-42cd-8a26-afd6d09c72e0",
+  LC_NEW_REGISTRATION_TEMPLATE_ID:
+    process.env.LC_NEW_REGISTRATION_TEMPLATE_ID ||
+    "9b17b8ea-5639-435d-977e-9949f9f1e8c5",
+  FBO_FEEDBACK_TEMPLATE_ID:
+    process.env.FBO_FEEDBACK_TEMPLATE_ID ||
+    "e36a8f9e-c20b-4ab3-908e-3ceaaafec12a",
+  FD_FEEDBACK_TEMPLATE_ID:
+    process.env.FD_FEEDBACK_TEMPLATE_ID ||
+    "c58c834f-97c5-486d-a4fa-6b42edc171b7",
   RNG_PENDING_TEMPLATE_ID:
     process.env.RNG_PENDING_TEMPLATE_ID ||
-    "56c84504-c165-42fc-8640-21f36c1f9eb8",
+    "fae273a6-fe5d-424f-92b1-f93fadd33f3f",
+
+  FBO_SUBMISSION_COMPLETE_TEMPLATE_ID_CY:
+    process.env.FBO_SUBMISSION_COMPLETE_TEMPLATE_ID_CY ||
+    "372d9863-c988-4a2a-a658-f2fb68bb41cc",
+  LC_NEW_REGISTRATION_TEMPLATE_ID_CY:
+    process.env.LC_NEW_REGISTRATION_TEMPLATE_ID_CY ||
+    "5eb69c3d-20f5-4d70-9747-2e901489e8f4",
+  FBO_FEEDBACK_TEMPLATE_ID_CY:
+    process.env.FBO_FEEDBACK_TEMPLATE_ID_CY ||
+    "acf73014-fd4d-415c-b2dd-1aa78f6232b7",
   RNG_PENDING_TEMPLATE_ID_CY:
     process.env.RNG_PENDING_TEMPLATE_ID_CY ||
-    "10ba97c6-3c0e-4403-baaa-62b4682d1632"
+    "8cd18222-54f1-4276-9621-86c0f9e23d0a",
+
+  FUTURE_DELIVERY_EMAIL:
+    process.env.FUTURE_DELIVERY_EMAIL || "fsatestemail.valid@gmail.com"
 };

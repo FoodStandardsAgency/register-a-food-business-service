@@ -172,16 +172,6 @@ const testLcContactConfigCombined = {
   }
 };
 
-const testConfigData = {
-  _id: "9.9.9",
-  notify_template_keys: {
-    fbo_submission_complete: "integration-test",
-    lc_new_registration: "integration-test",
-    fbo_feedback: "integration-test",
-    fd_feedback: "integration-test"
-  }
-};
-
 describe(`generateEmailsToSend`, () => {
   it(`Test when RNG fails, RN pending templates are sent`, () => {
     let regData = {
@@ -194,7 +184,7 @@ describe(`generateEmailsToSend`, () => {
     };
     let lcConfig = {};
 
-    let result = generateEmailsToSend(regData, lcConfig, testConfigData);
+    let result = generateEmailsToSend(regData, lcConfig);
 
     expect(result).toStrictEqual([
       {
@@ -219,7 +209,7 @@ describe(`generateEmailsToSend`, () => {
     };
     let lcConfig = {};
 
-    let result = generateEmailsToSend(regData, lcConfig, testConfigData);
+    let result = generateEmailsToSend(regData, lcConfig);
 
     expect(result).toStrictEqual([
       {
@@ -229,7 +219,7 @@ describe(`generateEmailsToSend`, () => {
       },
       {
         address: "testop",
-        templateId: "integration-test",
+        templateId: "281514ac-c813-42cd-8a26-afd6d09c72e0",
         type: "FBO"
       }
     ]);
@@ -246,10 +236,14 @@ describe(`generateEmailsToSend`, () => {
     };
     let lcConfig = {};
 
-    let result = generateEmailsToSend(regData, lcConfig, testConfigData);
+    let result = generateEmailsToSend(regData, lcConfig);
 
     expect(result).toStrictEqual([
-      { address: "testop", templateId: "integration-test", type: "FBO" }
+      {
+        address: "testop",
+        templateId: "281514ac-c813-42cd-8a26-afd6d09c72e0",
+        type: "FBO"
+      }
     ]);
   });
 
@@ -264,10 +258,14 @@ describe(`generateEmailsToSend`, () => {
     };
     let lcConfig = {};
 
-    let result = generateEmailsToSend(regData, lcConfig, testConfigData);
+    let result = generateEmailsToSend(regData, lcConfig);
 
     expect(result).toStrictEqual([
-      { address: "testrep", templateId: "integration-test", type: "FBO" }
+      {
+        address: "testrep",
+        templateId: "281514ac-c813-42cd-8a26-afd6d09c72e0",
+        type: "FBO"
+      }
     ]);
   });
 
@@ -295,33 +293,33 @@ describe(`generateEmailsToSend`, () => {
       }
     };
 
-    let result = generateEmailsToSend(regData, lcConfig, testConfigData);
+    let result = generateEmailsToSend(regData, lcConfig);
 
     expect(result).toStrictEqual([
       {
         type: "LC",
         address: "fake_notify_1@test.com",
-        templateId: "integration-test"
+        templateId: "9b17b8ea-5639-435d-977e-9949f9f1e8c5"
       },
       {
         type: "LC",
         address: "fake_notify_2@test.com",
-        templateId: "integration-test"
+        templateId: "9b17b8ea-5639-435d-977e-9949f9f1e8c5"
       },
       {
         type: "LC",
         address: "fake_notify_3@test.com",
-        templateId: "integration-test"
+        templateId: "9b17b8ea-5639-435d-977e-9949f9f1e8c5"
       },
       {
         type: "LC",
         address: "fake_notify_4@test.com",
-        templateId: "integration-test"
+        templateId: "9b17b8ea-5639-435d-977e-9949f9f1e8c5"
       },
       {
         type: "FBO",
         address: "testrep",
-        templateId: "integration-test"
+        templateId: "281514ac-c813-42cd-8a26-afd6d09c72e0"
       }
     ]);
   });
@@ -340,23 +338,23 @@ describe(`generateEmailsToSend`, () => {
     };
     let lcConfig = {};
 
-    let result = generateEmailsToSend(regData, lcConfig, testConfigData);
+    let result = generateEmailsToSend(regData, lcConfig);
 
     expect(result).toStrictEqual([
       {
         type: "FBO",
         address: "testrep",
-        templateId: "integration-test"
+        templateId: "281514ac-c813-42cd-8a26-afd6d09c72e0"
       },
       {
         type: "FBO_FB",
         address: "testrep",
-        templateId: "integration-test"
+        templateId: "e36a8f9e-c20b-4ab3-908e-3ceaaafec12a"
       },
       {
         type: "FD_FB",
-        address: undefined,
-        templateId: "integration-test"
+        address: "fsatestemail.valid@gmail.com",
+        templateId: "c58c834f-97c5-486d-a4fa-6b42edc171b7"
       }
     ]);
   });
@@ -394,28 +392,28 @@ describe(`generateEmailsToSend`, () => {
       }
     };
 
-    let result = generateEmailsToSend(regData, {}, testConfigData);
+    let result = generateEmailsToSend(regData, {});
 
     expect(result).toStrictEqual([
       {
         type: "LC",
         address: "test_lc1@email.com",
-        templateId: "integration-test"
+        templateId: "9b17b8ea-5639-435d-977e-9949f9f1e8c5"
       },
       {
         type: "LC",
         address: "test_lc2@email.com",
-        templateId: "integration-test"
+        templateId: "9b17b8ea-5639-435d-977e-9949f9f1e8c5"
       },
       {
         type: "LC",
         address: "test_lc3@email.com",
-        templateId: "integration-test"
+        templateId: "9b17b8ea-5639-435d-977e-9949f9f1e8c5"
       },
       {
         type: "FBO",
         address: "test_fbo@email.com",
-        templateId: "integration-test"
+        templateId: "281514ac-c813-42cd-8a26-afd6d09c72e0"
       }
     ]);
   });
