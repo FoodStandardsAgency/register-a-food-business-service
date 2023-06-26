@@ -50,6 +50,10 @@ const transformDataForNotify = (registration, lcContactConfig, i18n) => {
       lcInfo.local_council_phone_number =
         lcContactConfig.hygieneAndStandards.local_council_phone_number;
     }
+    if (lcContactConfig.hygieneAndStandards.local_council_guidance_link) {
+      lcInfo.local_council_guidance_link =
+        lcContactConfig.hygieneAndStandards.local_council_guidance_link;
+    }
   } else {
     lcInfo.local_council_hygiene = i18n.tLa(
       lcContactConfig.hygiene.new_authority_name ||
@@ -67,6 +71,10 @@ const transformDataForNotify = (registration, lcContactConfig, i18n) => {
       lcInfo.local_council_phone_number_hygiene =
         lcContactConfig.hygiene.local_council_phone_number;
     }
+    if (lcContactConfig.hygiene.local_council_guidance_link) {
+      lcInfo.local_council_guidance_link_hygiene =
+        lcContactConfig.hygiene.local_council_guidance_link;
+    }
     lcInfo.local_council_standards = i18n.tLa(
       lcContactConfig.standards.new_authority_name ||
         lcContactConfig.standards.local_council
@@ -78,6 +86,11 @@ const transformDataForNotify = (registration, lcContactConfig, i18n) => {
     if (lcContactConfig.standards.local_council_phone_number) {
       lcInfo.local_council_phone_number_standards =
         lcContactConfig.standards.local_council_phone_number;
+    }
+
+    if (lcContactConfig.standards.local_council_guidance_link) {
+      lcInfo.local_council_guidance_link_standards =
+        lcContactConfig.standards.local_council_guidance_link;
     }
   }
   const registrationClone = JSON.parse(JSON.stringify(registration));
