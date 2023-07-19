@@ -33,10 +33,10 @@ jobs:
       DIRECT_API_SECRET: ${{ secrets.DIRECT_API_SECRET }}
       
     steps:
-      - name: Use Node.js 16.15
+      - name: Use Node.js 18.16
         uses: actions/setup-node@v3
         with:
-          node-version: 16.15
+          node-version: 18.16
       
       - name: Npm version
         run: npm -v
@@ -113,10 +113,10 @@ jobs:
       DIRECT_API_SECRET: ${{ secrets.DIRECT_API_SECRET }}
       
     steps:
-      - name: Use Node.js 16.15
+      - name: Use Node.js 18.16
         uses: actions/setup-node@v3
         with:
-          node-version: 16.15
+          node-version: 18.16
       
       - name: Npm version
         run: npm -v

@@ -21,10 +21,10 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
 
-      - name: Use Node.js 16.15
+      - name: Use Node.js 18.16
         uses: actions/setup-node@v3
         with:
-          node-version: 16.15
+          node-version: 18.16
 
       - name: Create .npmrc
         run: echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" > .npmrc
