@@ -14,11 +14,6 @@ const validateBooleanString = (value) => {
   return validValues.includes(value);
 };
 
-const doubleModes = ["success", "fail", "update", "single", ""];
-const validateDoubleMode = (value) => {
-  return doubleModes.includes(value);
-};
-
 const allowedFields = ["metadata", "establishment"];
 const validateFields = (value) => {
   if (!Array.isArray(value)) {
@@ -49,10 +44,6 @@ const validationFields = {
   council: {
     function: validateString,
     message: "council option must be a string"
-  },
-  double_mode: {
-    function: validateDoubleMode,
-    message: `double mode option must be one of ${doubleModes}`
   },
   new: {
     function: validateBooleanString,

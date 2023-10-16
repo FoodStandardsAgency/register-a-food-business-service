@@ -8,14 +8,12 @@ let realResult;
 
 describe("cacheDb contract: cacheRegistration", () => {
   beforeEach(async () => {
-    process.env.DOUBLE_MODE = true;
     doubleResult = await cacheRegistration({
       registration: {
         data: "data"
       }
     });
 
-    process.env.DOUBLE_MODE = false;
     realResult = await cacheRegistration({
       registration: {
         data: "data"

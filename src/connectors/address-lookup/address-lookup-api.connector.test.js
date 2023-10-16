@@ -7,15 +7,10 @@ const { smallAddressResponseJSON } = require("./smallAddressResponseMock.json");
 const {
   regularIntegrationResponse
 } = require("./regularIntegrationResponse.json");
-const { addressLookupDouble } = require("./address-lookup-api.double");
 
 let responseJSON;
 
 describe("Function: getAddressesByPostcode: ", () => {
-  beforeEach(() => {
-    process.env.DOUBLE_MODE = "false";
-  });
-
   describe("Given a valid UK postcode:", () => {
     beforeEach(async () => {
       axios.mockImplementation(() => ({
@@ -24,26 +19,6 @@ describe("Function: getAddressesByPostcode: ", () => {
       }));
 
       responseJSON = await getAddressesByPostcode("NR14 7PZ");
-    });
-
-    describe("When DOUBLE_MODE is set", () => {
-      beforeEach(async () => {
-        process.env.DOUBLE_MODE = "true";
-        addressLookupDouble.mockImplementation(() => ({
-          data: regularIntegrationResponse,
-          status: 200
-        }));
-
-        responseJSON = await getAddressesByPostcode("BS249ST");
-      });
-
-      afterEach(() => {
-        process.env.DOUBLE_MODE = "false";
-      });
-
-      it("should return the regular integration response", () => {
-        expect(responseJSON).toEqual(regularIntegrationResponse);
-      });
     });
 
     describe("When given a non-200 response from the API", () => {
@@ -120,26 +95,6 @@ describe("Function: getAddressesByPostcode: ", () => {
 
     it("should return an empty array", () => {
       expect(responseJSON).toEqual([]);
-    });
-
-    describe("When DOUBLE_MODE is set", () => {
-      beforeEach(async () => {
-        process.env.DOUBLE_MODE = "true";
-        addressLookupDouble.mockImplementation(() => ({
-          data: [],
-          status: 200
-        }));
-
-        responseJSON = await getAddressesByPostcode("invalid postcode");
-      });
-
-      afterEach(() => {
-        process.env.DOUBLE_MODE = "false";
-      });
-
-      it("should return an empty array", () => {
-        expect(responseJSON).toEqual([]);
-      });
     });
   });
 });

@@ -5,7 +5,6 @@ const axios = ax.create({
   }
 });
 const { tascomiAuth } = {}; // require("@slice-and-dice/fsa-rof"); No longer needed
-const { doubleRequest } = require("./tascomi.double");
 const { logEmitter } = require("../../services/logging.service");
 const { statusEmitter } = require("../../services/statusEmitter.service");
 
@@ -28,24 +27,16 @@ const sendRequest = async (url, method, body, public_key, private_key) => {
     data: body
   };
 
-  if (
-    process.env.TASCOMI_DOUBLE_MODE === "true" ||
-    process.env.DOUBLE_MODE === "true"
-  ) {
-    logEmitter.emit("doubleMode", "tascomi.connector", "sendRequest");
-    return doubleRequest(tascomiApiOptions);
-  } else {
-    const auth = await tascomiAuth.generateSyncHash(
-      public_key,
-      private_key,
-      process.env.NTP_SERVER
-    );
-    tascomiApiOptions.headers = {
-      "X-Public": auth.public_key,
-      "X-Hash": auth.hash
-    };
-    return axios(url, tascomiApiOptions);
-  }
+  const auth = await tascomiAuth.generateSyncHash(
+    public_key,
+    private_key,
+    process.env.NTP_SERVER
+  );
+  tascomiApiOptions.headers = {
+    "X-Public": auth.public_key,
+    "X-Hash": auth.hash
+  };
+  return axios(url, tascomiApiOptions);
 };
 
 const createFoodBusinessRegistration = async (
