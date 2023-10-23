@@ -19,15 +19,6 @@ describe("Middleware: errorHandler", () => {
     jest.clearAllMocks();
   });
   describe("When given an error", () => {
-    it("should find the error in errorDetails", () => {
-      const error = {
-        name: "tascomiAuth"
-      };
-      errorHandler(error, "request", res);
-      expect(res.status).toBeCalledWith(500);
-      expect(res.send.mock.calls[0][0].errorCode).toBe("1");
-    });
-
     it("should handle not finding error in errorDetails", () => {
       const error = {
         name: "randomUnknownError"

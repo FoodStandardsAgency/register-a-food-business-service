@@ -3,7 +3,6 @@ jest.mock("../../services/validation.service", () => ({
 }));
 
 jest.mock("./submissions.service", () => ({
-  sendTascomiRegistration: jest.fn(),
   getRegistrationMetaData: jest.fn(),
   getLcContactConfig: jest.fn(),
   getLcAuth: jest.fn()

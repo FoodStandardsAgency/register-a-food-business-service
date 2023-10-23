@@ -4,9 +4,7 @@
 // 400 - Bad Request (Client Error) - A json with error \ more details should return to the client.
 // 401 - Unauthorized
 // 500 - Internal Server Error - A json with an error should return to the client only when there is no security risk by doing that.
-// Codes: DB error, notify error, tascomi error
-// 1 - TascomiAuth failure
-// 2 - TascomiRefNumber failure
+// Codes: DB error, notify error
 // 3 - validation error
 // 4 - sequelizeConnectionError
 // 95 - notifyMissingKey

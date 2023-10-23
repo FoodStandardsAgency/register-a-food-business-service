@@ -47,7 +47,7 @@ const cacheRegistration = async (registration) => {
 };
 
 /**
- * Update the completed objects for the Registration and Tascomi objects
+ * Update the completed objects for the Registration
  * @param {string} fsa_rn The FSA-RN for the registration to be updated
  * @param {string} property The specific field to be updated
  * @param {boolean} value The value for the result
@@ -163,28 +163,6 @@ const findAllBlankRegistrations = async (cachedRegistrations, limit = 100) => {
     .limit(limit);
 };
 
-const findOutstandingTascomiRegistrationsFsaIds = async (
-  cachedRegistrations,
-  limit = 100
-) => {
-  return await cachedRegistrations
-    .find({
-      $and: [
-        { "status.tascomi": { $exists: true } },
-        { "status.tascomi.complete": { $ne: true } },
-        {
-          $or: [
-            { direct_submission: { $exists: false } },
-            { direct_submission: null },
-            { direct_submission: false }
-          ]
-        }
-      ]
-    })
-    .sort({ reg_submission_date: 1 })
-    .limit(limit);
-};
-
 const findOneById = async (cachedRegistrations, fsa_rn) => {
   const cachedRegistration = await cachedRegistrations.findOne({
     "fsa-rn": fsa_rn
@@ -256,7 +234,6 @@ module.exports = {
   findAllFailedNotificationsRegistrations,
   findAllTmpRegistrations,
   findAllBlankRegistrations,
-  findOutstandingTascomiRegistrationsFsaIds,
   cacheRegistration,
   updateStatusInCache,
   updateNotificationOnSent,

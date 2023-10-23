@@ -64,11 +64,6 @@ const triggerNotificationTask = async () => {
   return res.data;
 };
 
-const triggerTascomiTask = async () => {
-  const res = await axios(`${apiUrl}/api/tasks/bulk/createtascomiregistration`);
-  return res.data;
-};
-
 Given("I have a new registration with all valid required fields", function () {
   this.registration = {
     registration: {
@@ -270,9 +265,6 @@ When("The send notifications task is triggered", async function () {
   this.response = await triggerNotificationTask();
 });
 
-When("The tascomi task is triggered", async function () {
-  this.response = await triggerTascomiTask();
-});
 
 Then("I get a success response", async function () {
   assert.ok(this.response["fsa-rn"]);
