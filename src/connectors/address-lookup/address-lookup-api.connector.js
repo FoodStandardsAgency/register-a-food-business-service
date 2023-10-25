@@ -12,7 +12,6 @@ const {
 } = require("../../config");
 const { logEmitter } = require("../../services/logging.service");
 
-
 /**
  * Fetches addresses from the address lookup API for the given postcode
  *
@@ -30,10 +29,10 @@ const getAddressesByPostcode = async (postcode) => {
 
   let firstJson;
 
-    firstJson = await fetchUsingPostcoderPremium(postcode);
-    if (!firstJson || firstJson.length === 0) {
-      firstJson = await fetchUsingPostcoderStandard(postcode);
-    }
+  firstJson = await fetchUsingPostcoderPremium(postcode);
+  if (!firstJson || firstJson.length === 0) {
+    firstJson = await fetchUsingPostcoderStandard(postcode);
+  }
 
   logEmitter.emit(
     "functionSuccess",
