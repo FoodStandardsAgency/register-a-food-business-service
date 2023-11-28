@@ -87,6 +87,7 @@ describe("submissions router", () => {
           next
         );
       });
+
       it("should call next with error", () => {
         expect(next).toBeCalledWith(new Error("reg error"));
       });
