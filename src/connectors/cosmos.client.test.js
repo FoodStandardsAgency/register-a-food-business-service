@@ -1,5 +1,4 @@
 jest.mock("mongodb");
-jest.mock("./configDb/configDb.double");
 
 const mongodb = require("mongodb");
 const { establishConnectionToCosmos } = require("./cosmos.client");

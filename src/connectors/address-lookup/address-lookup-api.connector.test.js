@@ -1,5 +1,4 @@
 jest.mock("axios");
-jest.mock("./address-lookup-api.double");
 
 const axios = require("axios");
 const { getAddressesByPostcode } = require("./address-lookup-api.connector");

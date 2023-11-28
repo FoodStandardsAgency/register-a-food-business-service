@@ -15,7 +15,7 @@ const supplier = [
     env: ["dev", "test", "staging", "production"],
     type: "input",
     name: "SEED_SUPPLIER_URL",
-    message: "Enter the url string of the new supplier, e.g. tascomi"
+    message: "Enter the url string of the new supplier, e.g. arcus"
   },
   {
     env: ["dev", "test", "staging", "production"],

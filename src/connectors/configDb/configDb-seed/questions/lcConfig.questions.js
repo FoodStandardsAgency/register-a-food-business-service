@@ -19,24 +19,6 @@ const localCouncil = [
     message: "Enter the url string of the new local council, e.g. west-dorset"
   },
   {
-    env: ["dev", "test", "staging"],
-    type: "input",
-    name: "SEED_TASCOMI_URL_DEV",
-    message: "Enter the SANDBOX Tascomi API URL? (DO NOT ENTER A LIVE API URL)"
-  },
-  {
-    env: ["dev", "test", "staging"],
-    type: "input",
-    name: "SEED_TASCOMI_PUBLIC_KEY_DEV",
-    message: "Enter the SANDBOX Tascomi PUBLIC key"
-  },
-  {
-    env: ["dev", "test", "staging"],
-    type: "input",
-    name: "SEED_TASCOMI_PRIVATE_KEY_DEV",
-    message: "Enter the SANDBOX Tascomi PRIVATE key"
-  },
-  {
     env: ["production"],
     type: "input",
     name: "SEED_LC_EMAIL",
@@ -54,27 +36,6 @@ const localCouncil = [
     name: "SEED_LC_PHONE_NUMBER",
     message:
       "(OPTIONAL) Enter the phone number that the council wants displayed to users"
-  },
-  {
-    env: ["production"],
-    type: "input",
-    name: "SEED_TASCOMI_URL_LC",
-    message:
-      "Enter the real Tascomi API URL for the new local council (leave blank if not integrated)"
-  },
-  {
-    env: ["production"],
-    type: "input",
-    name: "SEED_TASCOMI_PUBLIC_KEY_LC",
-    message:
-      "Enter the real Tascomi PUBLIC key for the new local council (leave blank if not integrated)"
-  },
-  {
-    env: ["production"],
-    type: "input",
-    name: "SEED_TASCOMI_PRIVATE_KEY_LC",
-    message:
-      "Enter the real Tascomi PRIVATE key for the new local council (leave blank if not integrated)"
   }
 ];
 

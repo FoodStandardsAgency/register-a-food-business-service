@@ -19,6 +19,14 @@ describe("Middleware: errorHandler", () => {
     jest.clearAllMocks();
   });
   describe("When given an error", () => {
+    it("should find the error in errorDetails", () => {
+      const error = {
+        name: "optionsValidationError"
+      };
+      errorHandler(error, "request", res);
+      expect(res.status).toBeCalledWith(400);
+      expect(res.send.mock.calls[0][0].errorCode).toBe("3");
+    });
     it("should handle not finding error in errorDetails", () => {
       const error = {
         name: "randomUnknownError"

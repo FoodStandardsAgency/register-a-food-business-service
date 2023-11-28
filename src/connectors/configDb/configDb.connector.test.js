@@ -1,5 +1,4 @@
 jest.mock("mongodb");
-jest.mock("./configDb.double");
 jest.mock("../../services/statusEmitter.service");
 
 const mongodb = require("mongodb");
@@ -10,7 +9,6 @@ const {
 } = require("./configDb.connector");
 const { clearCosmosConnection } = require("../cosmos.client");
 const mockLocalCouncilConfig = require("./mockLocalCouncilConfig.json");
-const { lcConfigCollectionDouble } = require("./configDb.double");
 const mockSupplierConfig = require("./mockSupplierConfig.json");
 const mockConfigVersion = {
   _id: "1.2.0",
@@ -100,20 +98,6 @@ describe("Function: getAllLocalCouncilConfig", () => {
 
     it("should return the data from the find() response", async () => {
       await expect(getAllLocalCouncilConfig()).resolves.toEqual(
-        mockLocalCouncilConfig
-      );
-    });
-  });
-
-  describe("when running in double mode", () => {
-    beforeEach(() => {
-      lcConfigCollectionDouble.find.mockImplementation(() => ({
-        toArray: () => mockLocalCouncilConfig
-      }));
-    });
-
-    it("should resolve with the data from the double's find() response", async () => {
-      await expect(getAllLocalCouncilConfig("hi")).resolves.toEqual(
         mockLocalCouncilConfig
       );
     });
