@@ -89,6 +89,7 @@ describe("Connector: cacheDb", () => {
         expect(response.insertedId).toBe("1000");
       });
     });
+  });
 
     describe("Function: updateCompletedInCache1", () => {
       describe("When success", () => {
@@ -260,4 +261,4 @@ describe("Connector: cacheDb", () => {
       });
     });
   });
-});
+
