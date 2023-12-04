@@ -40,7 +40,6 @@ module.exports = {
     "!**/src/db/**",
     "!**/src/config.js",
     "!**/tests/*",
-    "!**/src/**/*.double.js",
     "!**/src/connectors/configDb/configDb-seed/**",
     "!**/src/**/*.router.js"
   ]

@@ -18,7 +18,6 @@ describe("Connector: cacheDb", () => {
   describe("Function: cacheRegistration", () => {
     describe("given the request is successful", () => {
       beforeEach(async () => {
-        process.env.DOUBLE_MODE = false;
         mongodb.MongoClient.connect.mockImplementation(async () => ({
           db: () => ({
             collection: () => ({
@@ -36,7 +35,6 @@ describe("Connector: cacheDb", () => {
 
     describe("given the request throws an error", () => {
       beforeEach(async () => {
-        process.env.DOUBLE_MODE = false;
         mongodb.MongoClient.connect.mockImplementation(() => ({
           db: () => ({
             collection: () => ({
@@ -60,7 +58,6 @@ describe("Connector: cacheDb", () => {
 
     describe("given two requests without clearing the mongo connection", () => {
       beforeEach(async () => {
-        process.env.DOUBLE_MODE = false;
         mongodb.MongoClient.connect.mockImplementation(async () => ({
           db: () => ({
             collection: () => ({
@@ -92,24 +89,12 @@ describe("Connector: cacheDb", () => {
         expect(response.insertedId).toBe("1000");
       });
     });
-
-    describe("when running in double mode", () => {
-      beforeEach(async () => {
-        process.env.DOUBLE_MODE = "true";
-        response = await cacheRegistration();
-      });
-
-      it("should resolve with the data from the double's insertOne()", async () => {
-        expect(response.insertedId).toBe("13478de349");
-      });
-    });
   });
 
   describe("Function: updateCompletedInCache1", () => {
     describe("When success", () => {
       let result;
       beforeEach(async () => {
-        process.env.DOUBLE_MODE = false;
         mongodb.MongoClient.connect.mockImplementation(async () => ({
           db: () => ({
             collection: () => ({
@@ -134,7 +119,6 @@ describe("Connector: cacheDb", () => {
     describe("When Failure", () => {
       let result;
       beforeEach(async () => {
-        process.env.DOUBLE_MODE = false;
         mongodb.MongoClient.connect.mockImplementation(async () => ({
           db: () => ({
             collection: () => ({
@@ -229,7 +213,6 @@ describe("Connector: cacheDb", () => {
     describe("When success", () => {
       let result;
       beforeEach(async () => {
-        process.env.DOUBLE_MODE = false;
         mongodb.MongoClient.connect.mockImplementation(async () => ({
           db: () => ({
             collection: () => ({
@@ -254,7 +237,6 @@ describe("Connector: cacheDb", () => {
     describe("When Failure", () => {
       let result;
       beforeEach(async () => {
-        process.env.DOUBLE_MODE = false;
         mongodb.MongoClient.connect.mockImplementation(async () => ({
           db: () => ({
             collection: () => ({

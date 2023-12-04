@@ -3,7 +3,6 @@ const submissionsController = require("./submissions.controller");
 const { createRegistrationAuth } = require("../../middleware/authHandler");
 const { logEmitter } = require("../../services/logging.service");
 const { statusEmitter } = require("../../services/statusEmitter.service");
-const { registrationDouble } = require("./submissions.double");
 
 const submissionsRouter = () => {
   const router = Router();
@@ -100,14 +99,11 @@ const submissionsRouter = () => {
         };
 
         let response;
-        if (req.headers["double-mode"]) {
-          response = registrationDouble(req.headers["double-mode"]);
-        } else {
-          response = await submissionsController.createNewDirectRegistration(
-            req.body,
-            options
-          );
-        }
+        response = await submissionsController.createNewDirectRegistration(
+          req.body,
+          options
+        );
+
         statusEmitter.emit("incrementCount", "directRegistrationsSucceeded");
         statusEmitter.emit(
           "setStatus",
@@ -164,14 +160,11 @@ const submissionsRouter = () => {
         };
 
         let response;
-        if (req.headers["double-mode"]) {
-          response = registrationDouble(req.headers["double-mode"]);
-        } else {
-          response = await submissionsController.createNewDirectRegistration(
-            req.body,
-            options
-          );
-        }
+
+        response = await submissionsController.createNewDirectRegistration(
+          req.body,
+          options
+        );
         statusEmitter.emit("incrementCount", "directRegistrationsSucceeded");
         statusEmitter.emit(
           "setStatus",

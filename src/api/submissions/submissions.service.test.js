@@ -2,11 +2,6 @@ jest.mock("../../connectors/notify/notify.connector", () => ({
   sendSingleEmail: jest.fn()
 }));
 
-jest.mock("../../connectors/tascomi/tascomi.connector", () => ({
-  createFoodBusinessRegistration: jest.fn(),
-  createReferenceNumber: jest.fn()
-}));
-
 jest.mock("../../connectors/configDb/configDb.connector", () => ({
   getAllLocalCouncilConfig: jest.fn()
 }));

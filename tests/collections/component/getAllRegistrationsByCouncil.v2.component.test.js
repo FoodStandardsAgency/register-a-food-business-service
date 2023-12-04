@@ -129,22 +129,4 @@ describe("GET to /api/v2/collections/:lc", () => {
       expect(response.length).toBeGreaterThanOrEqual(1);
     });
   });
-
-  describe("Given 'double-mode' header", () => {
-    let response;
-    beforeEach(async () => {
-      const requestOptions = {
-        headers: {
-          "double-mode": "success"
-        }
-      };
-      let res = await axios(`${url}`, requestOptions);
-      response = res.data;
-    });
-
-    it("should return the double mode response", () => {
-      expect(response).toHaveLength(1);
-      expect(response[0].establishment.establishment_trading_name).toBe("Itsu");
-    });
-  });
 });

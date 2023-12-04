@@ -19,7 +19,6 @@ const collectionsRouter = () => {
     try {
       let registrations;
       const options = {
-        double_mode: req.headers["double-mode"] || "",
         after: req.query.after,
         before: req.query.before
       };
@@ -48,7 +47,6 @@ const collectionsRouter = () => {
     try {
       const fields = req.query.fields ? req.query.fields.split(",") : [];
       const options = {
-        double_mode: req.headers["double-mode"] || "",
         new: req.query.new || "true",
         fields,
         council: req.params.lc,
@@ -83,7 +81,6 @@ const collectionsRouter = () => {
     );
     try {
       const options = {
-        double_mode: req.headers["double-mode"] || "",
         fsa_rn: req.params.fsa_rn,
         council: req.params.lc
       };
@@ -115,7 +112,6 @@ const collectionsRouter = () => {
     );
     try {
       const options = {
-        double_mode: req.headers["double-mode"] || "",
         collected: req.body.collected,
         fsa_rn: req.params.fsa_rn,
         council: req.params.lc

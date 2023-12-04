@@ -6,9 +6,7 @@ const {
 } = require("../../connectors/registrationsDb/registrationsDb.connector");
 
 const { validateOptions } = require("./collections.service");
-const {
-  registrationDbDouble
-} = require("../../connectors/registrationsDb/registrationsDb.double");
+
 const {
   transformRegForCollections
 } = require("../../services/collectionsTransform.service");
@@ -29,9 +27,6 @@ const getRegistrationsByCouncil = async (options) => {
   const validationResult = await validateOptions(options, true);
 
   if (validationResult === true) {
-    if (options.double_mode) {
-      return registrationDbDouble(options.double_mode);
-    }
     const registrations = await getAllRegistrationsByCouncil(
       options.council,
       options.new,
@@ -68,9 +63,6 @@ const getRegistration = async (options) => {
   const validationResult = await validateOptions(options);
 
   if (validationResult === true) {
-    if (options.double_mode) {
-      return registrationDbDouble(options.double_mode);
-    }
     const registration = await getSingleRegistration(
       options.fsa_rn,
       options.council
@@ -102,10 +94,6 @@ const getRegistrations = async (options) => {
   const validationResult = await validateOptions(options);
 
   if (validationResult === true) {
-    if (options.double_mode) {
-      return registrationDbDouble(options.double_mode);
-    }
-
     const registrations = await getUnifiedRegistrations(
       options.before,
       options.after,
@@ -140,10 +128,6 @@ const updateRegistration = async (options) => {
   const validationResult = await validateOptions(options);
 
   if (validationResult === true) {
-    if (options.double_mode) {
-      return registrationDbDouble(options.double_mode);
-    }
-
     const response = await updateRegistrationCollectedByCouncil(
       options.fsa_rn,
       options.collected,

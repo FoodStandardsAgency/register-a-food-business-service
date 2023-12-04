@@ -1,11 +1,9 @@
 "use strict";
 
 jest.mock("notifications-node-client");
-jest.mock("./notify.double");
 
 const { NotifyClient } = require("notifications-node-client");
 const { sendSingleEmail } = require("./notify.connector");
-const { notifyClientDouble } = require("./notify.double");
 
 describe("Function: sendSingleEmail", () => {
   let mockNotifyClient;
@@ -43,7 +41,6 @@ describe("Function: sendSingleEmail", () => {
 
   describe("given the request is successful", () => {
     beforeEach(async () => {
-      process.env.DOUBLE_MODE = false;
       jest.clearAllMocks();
       mockNotifyClient = {
         sendEmail: jest.fn(async () => {
@@ -119,7 +116,6 @@ describe("Function: sendSingleEmail", () => {
 
     describe("given the NotifyClient constructor throws an error when used", () => {
       beforeEach(async () => {
-        process.env.DOUBLE_MODE = false;
         jest.clearAllMocks();
         NotifyClient.mockImplementation(() => {
           throw new Error();
@@ -133,7 +129,6 @@ describe("Function: sendSingleEmail", () => {
 
     describe("given the request throws an error", () => {
       beforeEach(() => {
-        process.env.DOUBLE_MODE = false;
         jest.clearAllMocks();
       });
 
@@ -220,28 +215,8 @@ describe("Function: sendSingleEmail", () => {
       });
     });
 
-    describe("When running in double mode", () => {
-      beforeEach(async () => {
-        process.env.DOUBLE_MODE = true;
-        jest.clearAllMocks();
-        NotifyClient.mockImplementation(() => ({}));
-        notifyClientDouble.sendEmail.mockImplementation(async () => ({
-          body: "Double response"
-        }));
-        notifyClientDouble.prepareUpload.mockImplementation(() => {});
-        notifyClientDouble.getTemplateById.mockImplementation(
-          async () => testFetchedTemplate
-        );
-      });
-
-      it("Should resolve with the double message", async () => {
-        await expect(sendSingleEmail(...args)).resolves.toBe("Double response");
-      });
-    });
-
     describe("When not given a pdfFile", () => {
       beforeEach(async () => {
-        process.env.DOUBLE_MODE = false;
         jest.clearAllMocks();
         mockNotifyClient = {
           sendEmail: jest.fn(async () => {

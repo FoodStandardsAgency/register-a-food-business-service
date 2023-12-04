@@ -6,20 +6,7 @@
     "userMessages": "",
     "statusCode": 400
   },
-  {
-    "name": "tascomiAuth",
-    "code": "1",
-    "developerMessage": "Authentication with Tascomi API failed, have you supplied the application with the correct keys?",
-    "userMessages": "",
-    "statusCode": 500
-  },
-  {
-    "name": "tascomiRefNumber",
-    "code": "2",
-    "developerMessage": "Tascomi ref number creation failed",
-    "userMessages": "",
-    "statusCode": 500
-  },
+
   {
     "name": "validationError",
     "code": "3",

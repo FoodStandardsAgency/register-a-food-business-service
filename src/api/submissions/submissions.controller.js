@@ -78,9 +78,6 @@ const createNewRegistration = async (
   const status = {
     notifications: null
   };
-  if (sourceCouncil.auth) {
-    status.tascomi = {};
-  }
 
   //this is all very messy but ported from legacy code.
   const completeCacheRecord = Object.assign(
