@@ -14,8 +14,7 @@ const envQuestions = [
     message:
       "Which environments do you want to deploy to? (Use the space bar to select and deselect)",
     choices: ["dev", "test", "staging", "production"],
-    validate: (answer) =>
-      answer.length < 1 ? "You must choose at least one environment" : true
+    validate: (answer) => (answer.length < 1 ? "You must choose at least one environment" : true)
   }
 ];
 
@@ -50,8 +49,7 @@ const confirmEnvUrls = [
   {
     type: "confirm",
     name: "confirmation_env_urls",
-    message:
-      "CHECK YOUR CONFIG DB URL ANSWERS. Are they definitely correct for each environment?"
+    message: "CHECK YOUR CONFIG DB URL ANSWERS. Are they definitely correct for each environment?"
   }
 ];
 

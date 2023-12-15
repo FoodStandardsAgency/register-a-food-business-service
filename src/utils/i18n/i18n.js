@@ -8,8 +8,7 @@ module.exports = class i18n {
   constructor(language) {
     this.lang = language;
     this.translations = language === "cy" ? cy : en;
-    this.laTranslations =
-      language === "cy" ? cyLocalAuthorities : enLocalAuthorities;
+    this.laTranslations = language === "cy" ? cyLocalAuthorities : enLocalAuthorities;
   }
   language() {
     return this.lang;
@@ -18,10 +17,7 @@ module.exports = class i18n {
     if (this.translations && this.translations[key]) {
       return this.translations[key];
     } else {
-      logEmitter.emit(
-        "warn",
-        `No ${this.lang} translation found for key: ${key}`
-      );
+      logEmitter.emit("warn", `No ${this.lang} translation found for key: ${key}`);
     }
     return key;
   }
@@ -29,10 +25,7 @@ module.exports = class i18n {
     if (this.laTranslations && this.laTranslations[key]) {
       return this.laTranslations[key];
     } else {
-      logEmitter.emit(
-        "warn",
-        `No ${this.lang} translation found for key: ${key}`
-      );
+      logEmitter.emit("warn", `No ${this.lang} translation found for key: ${key}`);
     }
     return key;
   }

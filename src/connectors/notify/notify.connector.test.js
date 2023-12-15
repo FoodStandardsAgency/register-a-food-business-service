@@ -53,9 +53,9 @@ describe("Function: sendSingleEmail", () => {
     });
 
     it("Should resolve with the success message ", async () => {
-      await expect(
-        sendSingleEmail(testTemplateId, testRecipient, ...args)
-      ).resolves.toBe("This is a success message from the notify client");
+      await expect(sendSingleEmail(testTemplateId, testRecipient, ...args)).resolves.toBe(
+        "This is a success message from the notify client"
+      );
     });
 
     it("Should have called the Notify sendEmail function with the template ID, recipient, and flattenedData (within an object)", () => {
@@ -72,46 +72,39 @@ describe("Function: sendSingleEmail", () => {
           country: "",
           country_exists: "no"
         };
-        expect(mockNotifyClient.sendEmail).toHaveBeenLastCalledWith(
-          testTemplateId,
-          testRecipient,
-          {
-            personalisation: expectedFlattenedDataWithExists
-          }
-        );
+        expect(mockNotifyClient.sendEmail).toHaveBeenLastCalledWith(testTemplateId, testRecipient, {
+          personalisation: expectedFlattenedDataWithExists
+        });
       });
     });
 
     describe("given the country of the LA", () => {
       const countries = ["england", "wales", "northern-ireland"];
-      it.each(countries)(
-        "should set personalisation to match the country",
-        (country) => {
-          testFlattenedData.country = country;
-          return sendSingleEmail(...args).then(() => {
-            const expectedFlattenedDataWithExists = {
-              example: "value",
-              example_exists: "yes",
-              some_field: "",
-              some_field_exists: "no",
-              opening_day_monday: true,
-              opening_day_monday_exists: "yes",
-              opening_day_tuesday: "",
-              opening_day_tuesday_exists: "no",
-              country: country,
-              country_exists: "yes"
-            };
-            expectedFlattenedDataWithExists[`${country}`] = "yes";
-            expect(mockNotifyClient.sendEmail).toHaveBeenLastCalledWith(
-              testTemplateId,
-              testRecipient,
-              {
-                personalisation: expectedFlattenedDataWithExists
-              }
-            );
-          });
-        }
-      );
+      it.each(countries)("should set personalisation to match the country", (country) => {
+        testFlattenedData.country = country;
+        return sendSingleEmail(...args).then(() => {
+          const expectedFlattenedDataWithExists = {
+            example: "value",
+            example_exists: "yes",
+            some_field: "",
+            some_field_exists: "no",
+            opening_day_monday: true,
+            opening_day_monday_exists: "yes",
+            opening_day_tuesday: "",
+            opening_day_tuesday_exists: "no",
+            country: country,
+            country_exists: "yes"
+          };
+          expectedFlattenedDataWithExists[`${country}`] = "yes";
+          expect(mockNotifyClient.sendEmail).toHaveBeenLastCalledWith(
+            testTemplateId,
+            testRecipient,
+            {
+              personalisation: expectedFlattenedDataWithExists
+            }
+          );
+        });
+      });
     });
 
     describe("given the NotifyClient constructor throws an error when used", () => {

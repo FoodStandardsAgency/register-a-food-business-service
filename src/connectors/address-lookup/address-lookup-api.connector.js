@@ -34,11 +34,7 @@ const getAddressesByPostcode = async (postcode) => {
     firstJson = await fetchUsingPostcoderStandard(postcode);
   }
 
-  logEmitter.emit(
-    "functionSuccess",
-    "address-lookup-api.connector",
-    "getAddressByPostcode"
-  );
+  logEmitter.emit("functionSuccess", "address-lookup-api.connector", "getAddressByPostcode");
   return firstJson;
 };
 
@@ -124,9 +120,7 @@ const fetchUsingPostcoderStandard = async (postcode) => {
       "fetchUsingPostcoderStandard",
       `Address lookup API responded with non-200 status: ${response.status} - ${response.statusText}`
     );
-    throw new Error(
-      `Address lookup API responded with non-200 status: ${response.status}`
-    );
+    throw new Error(`Address lookup API responded with non-200 status: ${response.status}`);
   }
 };
 

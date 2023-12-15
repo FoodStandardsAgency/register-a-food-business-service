@@ -4,9 +4,7 @@ jest.mock("../../connectors/configDb/configDb.connector", () => ({
 }));
 
 const { validateOptions } = require("./collections.v3.service");
-const {
-  getCouncilsForSupplier
-} = require("../../connectors/configDb/configDb.connector");
+const { getCouncilsForSupplier } = require("../../connectors/configDb/configDb.connector");
 
 describe("registrations.v3.service", () => {
   afterEach(() => {
@@ -92,15 +90,7 @@ describe("registrations.v3.service", () => {
     });
 
     describe("When given invalid new", () => {
-      const invalidNew = [
-        1233,
-        [],
-        {},
-        false,
-        null,
-        undefined,
-        "normal string"
-      ];
+      const invalidNew = [1233, [], {}, false, null, undefined, "normal string"];
       invalidNew.forEach(async (newOption) => {
         result = await validateOptions({ new: newOption });
         expect(result).not.toBe(true);
@@ -121,15 +111,7 @@ describe("registrations.v3.service", () => {
     });
 
     describe("When given invalid fields", () => {
-      const invalidFields = [
-        1233,
-        ["invalid"],
-        {},
-        false,
-        null,
-        undefined,
-        "thing"
-      ];
+      const invalidFields = [1233, ["invalid"], {}, false, null, undefined, "thing"];
       invalidFields.forEach(async (fields) => {
         result = await validateOptions({ fields });
         expect(result).not.toBe(true);
@@ -150,15 +132,7 @@ describe("registrations.v3.service", () => {
     });
 
     describe("When given invalid collected", () => {
-      const invalidCollected = [
-        1233,
-        ["invalid"],
-        {},
-        "false",
-        null,
-        undefined,
-        "thing"
-      ];
+      const invalidCollected = [1233, ["invalid"], {}, "false", null, undefined, "thing"];
       invalidCollected.forEach(async (collected) => {
         result = await validateOptions({ collected });
         expect(result).not.toBe(true);

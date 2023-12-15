@@ -1,12 +1,7 @@
 const { validate } = require("../../services/validation.service");
-const {
-  getRegistrationMetaData,
-  getLcContactConfig
-} = require("./submissions.service");
+const { getRegistrationMetaData, getLcContactConfig } = require("./submissions.service");
 
-const {
-  cacheRegistration
-} = require("../../connectors/cacheDb/cacheDb.connector");
+const { cacheRegistration } = require("../../connectors/cacheDb/cacheDb.connector");
 
 const { getUprn } = require("../../connectors/address-lookup/address-matcher");
 
@@ -15,13 +10,9 @@ const {
   getCouncilsForSupplier
 } = require("../../connectors/configDb/configDb.connector");
 
-const {
-  establishConnectionToCosmos
-} = require("../../connectors/cosmos.client");
+const { establishConnectionToCosmos } = require("../../connectors/cosmos.client");
 
-const {
-  mapFromCollectionsRegistration
-} = require("../../utils/registrationMapper");
+const { mapFromCollectionsRegistration } = require("../../utils/registrationMapper");
 
 const { logEmitter } = require("../../services/logging.service");
 
@@ -32,11 +23,7 @@ const createNewRegistration = async (
   manual_local_authority,
   regDataVersion
 ) => {
-  logEmitter.emit(
-    "functionCall",
-    "submissions.controller",
-    "createNewRegistration"
-  );
+  logEmitter.emit("functionCall", "submissions.controller", "createNewRegistration");
 
   if (registration === undefined) {
     throw new Error("registration is undefined");
@@ -51,15 +38,9 @@ const createNewRegistration = async (
   }
 
   // RESOLUTION
-  const lcConfigCollection = await establishConnectionToCosmos(
-    "config",
-    "localAuthorities"
-  );
+  const lcConfigCollection = await establishConnectionToCosmos("config", "localAuthorities");
 
-  const sourceCouncil = await findCouncilByUrl(
-    lcConfigCollection,
-    localCouncilUrl
-  );
+  const sourceCouncil = await findCouncilByUrl(lcConfigCollection, localCouncilUrl);
 
   //left here as legacy code
   const lcContactConfig = await getLcContactConfig(localCouncilUrl);
@@ -71,9 +52,7 @@ const createNewRegistration = async (
     hygieneCouncilCode = lcContactConfig.hygiene.code;
   }
 
-  const postRegistrationMetadata = await getRegistrationMetaData(
-    hygieneCouncilCode
-  );
+  const postRegistrationMetadata = await getRegistrationMetaData(hygieneCouncilCode);
 
   const status = {
     notifications: null
@@ -112,21 +91,13 @@ const createNewRegistration = async (
     lc_config: lcContactConfig
   });
 
-  logEmitter.emit(
-    "functionSuccess",
-    "submissions.controller",
-    "createNewRegistration"
-  );
+  logEmitter.emit("functionSuccess", "submissions.controller", "createNewRegistration");
 
   return combinedResponse;
 };
 
 const createNewDirectRegistration = async (registration, options) => {
-  logEmitter.emit(
-    "functionCall",
-    "submissions.controller",
-    "createNewDirectRegistration"
-  );
+  logEmitter.emit("functionCall", "submissions.controller", "createNewDirectRegistration");
 
   if (registration === undefined) {
     throw new Error("registration is undefined");
@@ -145,10 +116,7 @@ const createNewDirectRegistration = async (registration, options) => {
   const mappedRegistration = mapFromCollectionsRegistration(registration);
 
   // RESOLUTION
-  const lcConfigCollection = await establishConnectionToCosmos(
-    "config",
-    "localAuthorities"
-  );
+  const lcConfigCollection = await establishConnectionToCosmos("config", "localAuthorities");
 
   if (options.requestedCouncil !== options.subscriber) {
     // Check supplier authorized to access requested council
@@ -167,10 +135,7 @@ const createNewDirectRegistration = async (registration, options) => {
   }
 
   // Get Council details
-  const sourceCouncil = await findCouncilByUrl(
-    lcConfigCollection,
-    options.requestedCouncil
-  );
+  const sourceCouncil = await findCouncilByUrl(lcConfigCollection, options.requestedCouncil);
   if (!sourceCouncil) {
     const newError = new Error();
     newError.name = "localCouncilNotFound";
@@ -192,10 +157,7 @@ const createNewDirectRegistration = async (registration, options) => {
         mappedRegistration.establishment.operator.operator_address_line_1,
         mappedRegistration.establishment.operator.operator_address_line_2,
         mappedRegistration.establishment.operator.operator_postcode
-      ).then(
-        (result) =>
-          (mappedRegistration.establishment.operator.operator_uprn = result)
-      )
+      ).then((result) => (mappedRegistration.establishment.operator.operator_uprn = result))
     );
   }
 
@@ -205,19 +167,14 @@ const createNewDirectRegistration = async (registration, options) => {
         mappedRegistration.establishment.premise.establishment_address_line_1,
         mappedRegistration.establishment.premise.establishment_address_line_2,
         mappedRegistration.establishment.premise.establishment_postcode
-      ).then(
-        (result) =>
-          (mappedRegistration.establishment.premise.establishment_uprn = result)
-      )
+      ).then((result) => (mappedRegistration.establishment.premise.establishment_uprn = result))
     );
   }
 
   //left here as legacy code
   let lcContactConfig;
   promises.push(
-    getLcContactConfig(sourceCouncil.local_council_url).then(
-      (result) => (lcContactConfig = result)
-    )
+    getLcContactConfig(sourceCouncil.local_council_url).then((result) => (lcContactConfig = result))
   );
 
   // Wait for asyncs to catch up
@@ -276,11 +233,7 @@ const createNewDirectRegistration = async (registration, options) => {
 
   const response = { "fsa-rn": regMetadata["fsa-rn"] };
 
-  logEmitter.emit(
-    "functionSuccess",
-    "submissions.controller",
-    "createNewDirectRegistration"
-  );
+  logEmitter.emit("functionSuccess", "submissions.controller", "createNewDirectRegistration");
 
   return response;
 };

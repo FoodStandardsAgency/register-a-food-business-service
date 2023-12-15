@@ -13,24 +13,15 @@ jest.mock("../../services/notifications.service");
 jest.mock("axios");
 
 jest.mock("../../services/pdf.service");
+jest.mock("../../connectors/cacheDb/cacheDb.connector");
 
-jest.mock("../../connectors/cacheDb/cacheDb.connector", () => ({
-  updateStatusInCache: jest.fn()
-}));
-
-const {
-  getAllLocalCouncilConfig
-} = require("../../connectors/configDb/configDb.connector");
+const { getAllLocalCouncilConfig } = require("../../connectors/configDb/configDb.connector");
 
 const mockLocalCouncilConfig = require("../../connectors/configDb/mockLocalCouncilConfig.json");
 
 const axios = require("axios");
 
-const {
-  getRegistrationMetaData,
-  getLcContactConfig,
-  getLcAuth
-} = require("./submissions.service");
+const { getRegistrationMetaData, getLcContactConfig, getLcAuth } = require("./submissions.service");
 
 let result;
 
@@ -131,13 +122,9 @@ describe("Function: getLcContactConfig: ", () => {
         it("the hygieneAndStandards object should contain the necessary data fields", () => {
           expect(result.hygieneAndStandards.code).toBeDefined();
           expect(result.hygieneAndStandards.local_council).toBeDefined();
-          expect(
-            result.hygieneAndStandards.local_council_notify_emails
-          ).toBeDefined();
+          expect(result.hygieneAndStandards.local_council_notify_emails).toBeDefined();
           expect(result.hygieneAndStandards.local_council_email).toBeDefined();
-          expect(
-            result.hygieneAndStandards.local_council_phone_number
-          ).toBeDefined();
+          expect(result.hygieneAndStandards.local_council_phone_number).toBeDefined();
           expect(result.hygieneAndStandards.hasAuth).toBe(true);
         });
       });
@@ -146,9 +133,7 @@ describe("Function: getLcContactConfig: ", () => {
           result = await getLcContactConfig("dorset");
         });
         it("the hygieneAndStandards object not contain the phone number field", () => {
-          expect(
-            result.hygieneAndStandards.local_council_phone_number
-          ).not.toBeDefined();
+          expect(result.hygieneAndStandards.local_council_phone_number).not.toBeDefined();
         });
       });
       describe("given the local council have new_authority_name and new_authority_id", () => {
@@ -157,9 +142,7 @@ describe("Function: getLcContactConfig: ", () => {
         });
         it("the hygieneAndStandards object contain the new_authority_name field", () => {
           expect(result.hygieneAndStandards.new_authority_name).toBeDefined();
-          expect(result.hygieneAndStandards.new_authority_name).toBe(
-            "New name"
-          );
+          expect(result.hygieneAndStandards.new_authority_name).toBe("New name");
         });
         it("the hygieneAndStandards object contain the new_authority_id field", () => {
           expect(result.hygieneAndStandards.new_authority_id).toBeDefined();
@@ -171,12 +154,8 @@ describe("Function: getLcContactConfig: ", () => {
           result = await getLcContactConfig("dorset");
         });
         it("the hygieneAndStandards object contain the local_council_guidance_link field", () => {
-          expect(
-            result.hygieneAndStandards.local_council_guidance_link
-          ).toBeDefined();
-          expect(result.hygieneAndStandards.local_council_guidance_link).toBe(
-            "link2"
-          );
+          expect(result.hygieneAndStandards.local_council_guidance_link).toBeDefined();
+          expect(result.hygieneAndStandards.local_council_guidance_link).toBe("link2");
         });
       });
     });
@@ -197,9 +176,7 @@ describe("Function: getLcContactConfig: ", () => {
           for (let typeOfCouncil in result) {
             expect(result[typeOfCouncil].code).toBeDefined();
             expect(result[typeOfCouncil].local_council).toBeDefined();
-            expect(
-              result[typeOfCouncil].local_council_notify_emails
-            ).toBeDefined();
+            expect(result[typeOfCouncil].local_council_notify_emails).toBeDefined();
             expect(result[typeOfCouncil].local_council_email).toBeDefined();
           }
           expect(result.hygiene.local_council_phone_number).toBeDefined();
@@ -221,9 +198,7 @@ describe("Function: getLcContactConfig: ", () => {
           for (let typeOfCouncil in result) {
             expect(result[typeOfCouncil].code).toBeDefined();
             expect(result[typeOfCouncil].local_council).toBeDefined();
-            expect(
-              result[typeOfCouncil].local_council_notify_emails
-            ).toBeDefined();
+            expect(result[typeOfCouncil].local_council_notify_emails).toBeDefined();
             expect(result[typeOfCouncil].local_council_email).toBeDefined();
           }
           expect(result.hygiene.local_council_phone_number).not.toBeDefined();
@@ -295,9 +270,7 @@ describe("Function: getLcContactConfig: ", () => {
 
     it("should throw localCouncilNotFound error with the URL", () => {
       expect(result.name).toBe("localCouncilNotFound");
-      expect(result.message).toBe(
-        `Config for "some-invalid-local-council" not found`
-      );
+      expect(result.message).toBe(`Config for "some-invalid-local-council" not found`);
     });
   });
 
@@ -347,9 +320,7 @@ describe("Function: getLcAuth: ", () => {
 
     it("should throw localCouncilNotFound error with the URL", () => {
       expect(result.name).toBe("localCouncilNotFound");
-      expect(result.message).toBe(
-        `Config for "some-invalid-local-council" not found`
-      );
+      expect(result.message).toBe(`Config for "some-invalid-local-council" not found`);
     });
   });
 

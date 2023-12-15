@@ -34,12 +34,7 @@ const frontendSubmitRegistration = async () => {
     );
     return response.data;
   } catch (err) {
-    logEmitter.emit(
-      "functionFail",
-      "getSingleRegistration",
-      "frontendSubmitRegistration",
-      err
-    );
+    logEmitter.emit("functionFail", "getSingleRegistration", "frontendSubmitRegistration", err);
   }
 };
 
@@ -55,9 +50,7 @@ describe("GET to /api/v3/collections/:lc/:fsa_rn", () => {
     });
 
     it("should return all the full details of that registration", () => {
-      expect(response.establishment.establishment_trading_name).toBe(
-        "Blanda Inc"
-      );
+      expect(response.establishment.establishment_trading_name).toBe("Blanda Inc");
       expect(response.metadata).toBeDefined();
     });
   });
@@ -93,9 +86,7 @@ describe("GET to /api/v3/collections/:lc/:fsa_rn", () => {
     it("should return the options validation error", () => {
       expect(response.statusCode).toBe(400);
       expect(response.errorCode).toBe("3");
-      expect(response.developerMessage).toBe(
-        "One of the supplied options is invalid"
-      );
+      expect(response.developerMessage).toBe("One of the supplied options is invalid");
     });
   });
 });

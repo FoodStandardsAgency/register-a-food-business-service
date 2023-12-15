@@ -30,9 +30,12 @@ describe("/api/tasks route: ", () => {
     });
 
     it("Should call sendAllNotificationsForRegistrationsAction", () => {
-      expect(
-        sendAllNotificationsForRegistrationsAction
-      ).toHaveBeenLastCalledWith(req, res, false, 500);
+      expect(sendAllNotificationsForRegistrationsAction).toHaveBeenLastCalledWith(
+        req,
+        res,
+        false,
+        500
+      );
     });
 
     it("Should call sendAllNotificationsForRegistrationsAction with dryrun true", () => {
@@ -46,9 +49,12 @@ describe("/api/tasks route: ", () => {
       };
       handler(req, res);
 
-      expect(
-        sendAllNotificationsForRegistrationsAction
-      ).toHaveBeenLastCalledWith(req, res, true, 3000);
+      expect(sendAllNotificationsForRegistrationsAction).toHaveBeenLastCalledWith(
+        req,
+        res,
+        true,
+        3000
+      );
     });
   });
 
@@ -66,11 +72,7 @@ describe("/api/tasks route: ", () => {
     });
 
     it("Should call sendNotificationsForRegistrationAction", () => {
-      expect(sendNotificationsForRegistrationAction).toHaveBeenLastCalledWith(
-        fsaId,
-        req,
-        res
-      );
+      expect(sendNotificationsForRegistrationAction).toHaveBeenLastCalledWith(fsaId, req, res);
     });
   });
 });

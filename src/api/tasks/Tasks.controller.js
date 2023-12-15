@@ -6,9 +6,7 @@ const { isEmpty } = require("lodash");
 const { success } = require("../../utils/express/response");
 const { getFsaRn } = require("../submissions/submissions.service");
 
-const {
-  getLcContactConfigFromArray
-} = require("../submissions/submissions.service");
+const { getLcContactConfigFromArray } = require("../submissions/submissions.service");
 
 const {
   findOneById,
@@ -17,32 +15,16 @@ const {
   findAllTmpRegistrations
 } = require("../../connectors/cacheDb/cacheDb.connector");
 
-const {
-  getAllLocalCouncilConfig
-} = require("../../connectors/configDb/configDb.connector");
+const { getAllLocalCouncilConfig } = require("../../connectors/configDb/configDb.connector");
 
-const {
-  establishConnectionToCosmos
-} = require("../../connectors/cosmos.client");
+const { establishConnectionToCosmos } = require("../../connectors/cosmos.client");
 
 //actions
 
-const sendAllNotificationsForRegistrationsAction = async (
-  req,
-  res,
-  dryrun,
-  throttle = 0
-) => {
-  logEmitter.emit(
-    "functionCall",
-    "Tasks.controller",
-    "sendAllNotificationsForRegistrationsAction"
-  );
+const sendAllNotificationsForRegistrationsAction = async (req, res, dryrun, throttle = 0) => {
+  logEmitter.emit("functionCall", "Tasks.controller", "sendAllNotificationsForRegistrationsAction");
   let idsAttempted = [];
-  let registrationsCollection = await establishConnectionToCosmos(
-    "registrations",
-    "registrations"
-  );
+  let registrationsCollection = await establishConnectionToCosmos("registrations", "registrations");
 
   /* Blank i.e. new registrations, failed registrations (or ones that have been updated to resend)
 and registrations with temporary reference IDs are all queried separately. This was originally due to a
@@ -53,9 +35,7 @@ within the 5 minute window before the next batch begins.  */
   let registrations = await findAllBlankRegistrations(registrationsCollection);
   registrations = await registrations.toArray();
 
-  let failedRegistrations = await findAllFailedNotificationsRegistrations(
-    registrationsCollection
-  );
+  let failedRegistrations = await findAllFailedNotificationsRegistrations(registrationsCollection);
   failedRegistrations = await failedRegistrations.toArray();
 
   for (let reg of failedRegistrations) {
@@ -74,10 +54,7 @@ within the 5 minute window before the next batch begins.  */
   for (let i = 0; i < registrations.length; i++) {
     registration = registrations[i];
     if (!registration["fsa-rn"]) {
-      logEmitter.emit(
-        ERROR,
-        "sendAllNotificationsForRegistrationsAction missing fsa-rn"
-      );
+      logEmitter.emit(ERROR, "sendAllNotificationsForRegistrationsAction missing fsa-rn");
       continue;
     }
     idsAttempted.push(registration["fsa-rn"]);
@@ -96,15 +73,9 @@ within the 5 minute window before the next batch begins.  */
       //sleep
       await new Promise((resolve) => setTimeout(resolve, throttle));
 
-      logEmitter.emit(
-        INFO,
-        `Sent notifications for FSAId ${registration["fsa-rn"]}`
-      );
+      logEmitter.emit(INFO, `Sent notifications for FSAId ${registration["fsa-rn"]}`);
     } else {
-      logEmitter.emit(
-        INFO,
-        `Pretended to send notifications for FSAId ${registration["fsa-rn"]}`
-      );
+      logEmitter.emit(INFO, `Pretended to send notifications for FSAId ${registration["fsa-rn"]}`);
     }
   }
 
@@ -132,11 +103,7 @@ const tryResolveRegistrationNumber = async (registration) => {
         "registrations",
         "registrations"
       );
-      logEmitter.emit(
-        "functionCall",
-        "tryResolveRegistrationNumber",
-        "update`fsa-rn`"
-      );
+      logEmitter.emit("functionCall", "tryResolveRegistrationNumber", "update`fsa-rn`");
 
       await cachedRegistrations.updateOne(
         { "fsa-rn": registration["fsa-rn"] },
@@ -144,19 +111,10 @@ const tryResolveRegistrationNumber = async (registration) => {
           $set: { "fsa-rn": fsa_rn }
         }
       );
-      logEmitter.emit(
-        "functionSuccess",
-        "tryResolveRegistrationNumber",
-        "update`fsa-rn"
-      );
+      logEmitter.emit("functionSuccess", "tryResolveRegistrationNumber", "update`fsa-rn");
       return fsa_rn;
     } catch (err) {
-      logEmitter.emit(
-        "functionFail",
-        "tryResolveRegistrationNumber",
-        "update`fsa-rn",
-        err
-      );
+      logEmitter.emit("functionFail", "tryResolveRegistrationNumber", "update`fsa-rn", err);
       return false;
     }
   }
@@ -164,11 +122,7 @@ const tryResolveRegistrationNumber = async (registration) => {
 };
 
 const sendNotificationsForRegistrationAction = async (fsaId, req, res) => {
-  logEmitter.emit(
-    "functionCall",
-    "Tasks.controller",
-    "sendNotificationsForRegistrationAction"
-  );
+  logEmitter.emit("functionCall", "Tasks.controller", "sendNotificationsForRegistrationAction");
   let allLcConfigData = await getAllLocalCouncilConfig();
 
   //GET REGISTRATION
@@ -204,11 +158,7 @@ const sendNotificationsForRegistrationAction = async (fsaId, req, res) => {
   await sendNotifications(fsaId, lcContactConfig, registration);
 
   logEmitter.emit(INFO, `Send notifications for ${fsaId}`);
-  logEmitter.emit(
-    "functionSuccess",
-    "Tasks.controller",
-    "sendNotificationsForRegistrationAction"
-  );
+  logEmitter.emit("functionSuccess", "Tasks.controller", "sendNotificationsForRegistrationAction");
 
   await success(res, { fsaId, message: `Updated notifications status` });
 };
@@ -218,10 +168,7 @@ const multiSendNotifications = async (registration, allLocalCouncils) => {
   let fsaId = registration["fsa-rn"];
 
   let localCouncilId = getLocalCouncilIdForRegistration(registration);
-  let localCouncil = await findCouncilByIdInArray(
-    localCouncilId,
-    allLocalCouncils
-  );
+  let localCouncil = await findCouncilByIdInArray(localCouncilId, allLocalCouncils);
   if (isEmpty(localCouncil)) {
     let message = `Could not find local council with ID ${localCouncilId}`;
     logEmitter.emit(ERROR, message);
@@ -244,10 +191,7 @@ const multiSendNotifications = async (registration, allLocalCouncils) => {
 
 const getRegistration = async (fsaId) => {
   logEmitter.emit("functionCall", "Tasks.controller", "getRegistration");
-  const cachedRegistrations = await establishConnectionToCosmos(
-    "registrations",
-    "registrations"
-  );
+  const cachedRegistrations = await establishConnectionToCosmos("registrations", "registrations");
   logEmitter.emit("functionSuccess", "Tasks.controller", "getRegistration");
   return await findOneById(cachedRegistrations, fsaId);
 };
@@ -273,20 +217,12 @@ const getRegistration = async (fsaId) => {
 const findCouncilByIdInArray = (id, allCouncils = []) => {
   logEmitter.emit("functionCall", "Tasks.controller", "findCouncilByIdInArray");
   let out = allCouncils.find((council) => council._id === id);
-  logEmitter.emit(
-    "functionSuccess",
-    "Tasks.controller",
-    "findCouncilByIdInArray"
-  );
+  logEmitter.emit("functionSuccess", "Tasks.controller", "findCouncilByIdInArray");
   return out;
 };
 
 const getLocalCouncilIdForRegistration = (registration) => {
-  logEmitter.emit(
-    "functionCall",
-    "Tasks.controller",
-    "getLocalCouncilIdForRegistration"
-  );
+  logEmitter.emit("functionCall", "Tasks.controller", "getLocalCouncilIdForRegistration");
   let councilId;
 
   if (registration.source_council_id) {
@@ -299,11 +235,7 @@ const getLocalCouncilIdForRegistration = (registration) => {
       : registration.hygiene.code;
   }
 
-  logEmitter.emit(
-    "functionSuccess",
-    "Tasks.controller",
-    "getLocalCouncilIdForRegistration"
-  );
+  logEmitter.emit("functionSuccess", "Tasks.controller", "getLocalCouncilIdForRegistration");
 
   return councilId;
 };

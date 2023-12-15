@@ -21,8 +21,7 @@ const supplier = [
     env: ["dev", "test", "staging", "production"],
     type: "input",
     name: "SEED_SUPPLIER_COUNCILS",
-    message:
-      "Enter the urls for the linked councils in comma separated list, e.g. bath,cardiff"
+    message: "Enter the urls for the linked councils in comma separated list, e.g. bath,cardiff"
   }
 ];
 

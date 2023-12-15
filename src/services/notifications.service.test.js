@@ -13,10 +13,7 @@ jest.mock("./logging.service", () => ({
 const moment = require("moment");
 const today = moment().format("DD MMM YYYY");
 
-const {
-  generateEmailsToSend,
-  transformDataForNotify
-} = require("./notifications.service");
+const { generateEmailsToSend, transformDataForNotify } = require("./notifications.service");
 
 const { RNG_PENDING_TEMPLATE_ID } = require("../config");
 

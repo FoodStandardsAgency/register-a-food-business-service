@@ -5,12 +5,8 @@ const swaggerV2Document = require("../../openAPI-v2.spec.json");
 const swaggerV3Document = require("../../openAPI-v3.spec.json");
 const { submissionsRouter } = require("./submissions/submissions.router");
 const { collectionsRouter } = require("./collections/collections.router");
-const {
-  collectionsV2Router
-} = require("./collections-v2/collections.v2.router");
-const {
-  collectionsV3Router
-} = require("./collections-v3/collections.v3.router");
+const { collectionsV2Router } = require("./collections-v2/collections.v2.router");
+const { collectionsV3Router } = require("./collections-v3/collections.v3.router");
 const { statusRouter } = require("./status/status.router");
 const { TaskRouter } = require("./tasks/TaskRouter.router");
 

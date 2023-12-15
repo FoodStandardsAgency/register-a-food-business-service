@@ -42,15 +42,7 @@ describe("registrations.service", () => {
     });
 
     describe("When given invalid new", () => {
-      const invalidNew = [
-        1233,
-        [],
-        {},
-        false,
-        null,
-        undefined,
-        "normal string"
-      ];
+      const invalidNew = [1233, [], {}, false, null, undefined, "normal string"];
       invalidNew.forEach((newOption) => {
         result = validateOptions({ new: newOption });
         expect(result).not.toBe(true);
@@ -71,15 +63,7 @@ describe("registrations.service", () => {
     });
 
     describe("When given invalid fields", () => {
-      const invalidFields = [
-        1233,
-        ["invalid"],
-        {},
-        false,
-        null,
-        undefined,
-        "thing"
-      ];
+      const invalidFields = [1233, ["invalid"], {}, false, null, undefined, "thing"];
       invalidFields.forEach((fields) => {
         result = validateOptions({ fields });
         expect(result).not.toBe(true);
@@ -100,15 +84,7 @@ describe("registrations.service", () => {
     });
 
     describe("When given invalid collected", () => {
-      const invalidCollected = [
-        1233,
-        ["invalid"],
-        {},
-        "false",
-        null,
-        undefined,
-        "thing"
-      ];
+      const invalidCollected = [1233, ["invalid"], {}, "false", null, undefined, "thing"];
       invalidCollected.forEach((collected) => {
         result = validateOptions({ collected });
         expect(result).not.toBe(true);

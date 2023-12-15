@@ -178,10 +178,7 @@ const schema = {
               {
                 oneOf: [
                   {
-                    required: [
-                      "operator_company_name",
-                      "operator_companies_house_number"
-                    ]
+                    required: ["operator_company_name", "operator_companies_house_number"]
                   },
                   { required: ["operator_charity_name"] },
                   { required: ["operator_first_name", "operator_last_name"] },
@@ -194,10 +191,7 @@ const schema = {
                     required: ["operator_primary_number", "operator_email"]
                   },
                   {
-                    required: [
-                      "contact_representative_email",
-                      "contact_representative_number"
-                    ]
+                    required: ["contact_representative_email", "contact_representative_number"]
                   }
                 ]
               }

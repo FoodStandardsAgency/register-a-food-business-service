@@ -28,19 +28,11 @@ const frontendSubmitRegistration = async () => {
       }
     };
 
-    const res = await axios(
-      `${submitUrl}/api/submissions/createNewRegistration`,
-      requestOptions
-    );
+    const res = await axios(`${submitUrl}/api/submissions/createNewRegistration`, requestOptions);
     const response = res.data;
     return response;
   } catch (err) {
-    logEmitter.emit(
-      "functionFail",
-      "getSingleRegistration",
-      "frontendSubmitRegistration",
-      err
-    );
+    logEmitter.emit("functionFail", "getSingleRegistration", "frontendSubmitRegistration", err);
   }
 };
 describe("PUT to /api/v2/collections/:lc/:fsa_rn", () => {
@@ -59,10 +51,7 @@ describe("PUT to /api/v2/collections/:lc/:fsa_rn", () => {
           "Content-Type": "application/json"
         }
       };
-      const res = await axios(
-        `${url}/${submitResponse["fsa-rn"]}`,
-        requestOptions
-      );
+      const res = await axios(`${url}/${submitResponse["fsa-rn"]}`, requestOptions);
       response = res.data;
     });
 
@@ -113,9 +102,7 @@ describe("PUT to /api/v2/collections/:lc/:fsa_rn", () => {
     it("should return the options validation error", () => {
       expect(response.statusCode).toBe(400);
       expect(response.errorCode).toBe("3");
-      expect(response.developerMessage).toBe(
-        "One of the supplied options is invalid"
-      );
+      expect(response.developerMessage).toBe("One of the supplied options is invalid");
     });
   });
 });

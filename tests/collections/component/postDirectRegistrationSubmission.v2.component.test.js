@@ -134,10 +134,7 @@ describe("Submit a single registration through the API as a council", () => {
       const getRequestOptions = {
         method: "get"
       };
-      const response = await axios(
-        `${collectUrl}/${postResponse["fsa-rn"]}`,
-        getRequestOptions
-      );
+      const response = await axios(`${collectUrl}/${postResponse["fsa-rn"]}`, getRequestOptions);
       getResponse = response.data;
     });
 
@@ -181,10 +178,7 @@ describe("Submit a single registration through the API as a council", () => {
         json: true,
         method: "get"
       };
-      res = await axios(
-        `${collectUrl}/${postResponse["fsa-rn"]}`,
-        getRequestOptions
-      );
+      res = await axios(`${collectUrl}/${postResponse["fsa-rn"]}`, getRequestOptions);
       getResponse = res.data;
     });
 
@@ -225,9 +219,7 @@ describe("Submit a single registration through the API as a council", () => {
       const response = res.data;
       expect(response.statusCode).toBe(400);
       expect(response.errorCode).toBe("3");
-      expect(response.userMessages[0].message).toContain(
-        "Invalid FSA Reference Number"
-      );
+      expect(response.userMessages[0].message).toContain("Invalid FSA Reference Number");
     });
   });
 

@@ -6,11 +6,7 @@ let client = undefined;
 let DB;
 
 const establishConnectionToCosmos = async (dbName, collectionName) => {
-  logEmitter.emit(
-    "functionCall",
-    "cosmos.client.js",
-    "establishConnectionToCosmos"
-  );
+  logEmitter.emit("functionCall", "cosmos.client.js", "establishConnectionToCosmos");
 
   // If no connection or connection is not valid after downtime
   if (!client || !client.topology || !client.topology.isConnected()) {
@@ -23,22 +19,13 @@ const establishConnectionToCosmos = async (dbName, collectionName) => {
         useUnifiedTopology: true
       });
     } catch (err) {
-      logEmitter.emit(
-        "functionFail",
-        "cosmos.client.js",
-        "establishConnectionToCosmos",
-        err
-      );
+      logEmitter.emit("functionFail", "cosmos.client.js", "establishConnectionToCosmos", err);
       throw err;
     }
   }
   DB = client.db(dbName);
   let collection = DB.collection(collectionName);
-  logEmitter.emit(
-    "functionSuccess",
-    "cosmos.client.js",
-    "establishConnectionToCosmos"
-  );
+  logEmitter.emit("functionSuccess", "cosmos.client.js", "establishConnectionToCosmos");
   return collection;
 };
 

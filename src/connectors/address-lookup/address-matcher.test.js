@@ -10,9 +10,7 @@ describe("Function: getUprn", () => {
   describe("when making a valid request", () => {
     let result;
     beforeEach(async () => {
-      getAddressesByPostcode.mockImplementation(
-        () => regularIntegrationResponse
-      );
+      getAddressesByPostcode.mockImplementation(() => regularIntegrationResponse);
     });
 
     describe("that matches fully", () => {
@@ -59,11 +57,7 @@ describe("Function: getUprn", () => {
 
     describe("that matches first part of the first line with additional whitespace", () => {
       beforeEach(async () => {
-        result = await getUprn(
-          "  6 EASTFIELD ROAD  , EASTFIELD",
-          "",
-          "PO57CDE"
-        );
+        result = await getUprn("  6 EASTFIELD ROAD  , EASTFIELD", "", "PO57CDE");
       });
 
       it("should call getAddressesByPostcode", () => {

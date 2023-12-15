@@ -12,22 +12,16 @@ const sendStatusEmail = async (templateId, recipientEmail, flattenedData) => {
   try {
     const notifyTemplate = await notifyClient.getTemplateById(templateId);
 
-    const requiredTemplateFields = Object.keys(
-      notifyTemplate.data.personalisation
-    );
+    const requiredTemplateFields = Object.keys(notifyTemplate.data.personalisation);
 
-    const templateFieldsWithoutSuffix = requiredTemplateFields.map(
-      (fieldName) => {
-        const trimmedFieldName = fieldName.trim();
-        return trimmedFieldName.endsWith("_exists")
-          ? trimmedFieldName.slice(0, -7)
-          : trimmedFieldName;
-      }
-    );
+    const templateFieldsWithoutSuffix = requiredTemplateFields.map((fieldName) => {
+      const trimmedFieldName = fieldName.trim();
+      return trimmedFieldName.endsWith("_exists")
+        ? trimmedFieldName.slice(0, -7)
+        : trimmedFieldName;
+    });
 
-    const templateFieldsWithoutDuplicates = new Set(
-      templateFieldsWithoutSuffix
-    );
+    const templateFieldsWithoutDuplicates = new Set(templateFieldsWithoutSuffix);
 
     const allNotifyPersonalisationData = { ...flattenedData };
 
@@ -48,11 +42,9 @@ const sendStatusEmail = async (templateId, recipientEmail, flattenedData) => {
       allNotifyPersonalisationData["northern-ireland"] = "yes";
     }
 
-    const notifyResponse = await notifyClient.sendEmail(
-      templateId,
-      recipientEmail,
-      { personalisation: allNotifyPersonalisationData }
-    );
+    const notifyResponse = await notifyClient.sendEmail(templateId, recipientEmail, {
+      personalisation: allNotifyPersonalisationData
+    });
     const responseBody = notifyResponse.body;
     logEmitter.emit("functionSuccess", "notify.connector", "sendStatusEmail");
     return responseBody;
@@ -72,12 +64,7 @@ const sendStatusEmail = async (templateId, recipientEmail, flattenedData) => {
         newError.name = "notifyMissingPersonalisation";
       }
     }
-    logEmitter.emit(
-      "functionFail",
-      "notify.connector",
-      "sendStatusEmail",
-      newError
-    );
+    logEmitter.emit("functionFail", "notify.connector", "sendStatusEmail", newError);
     return null;
   }
 };
@@ -115,22 +102,16 @@ const sendSingleEmail = async (
 
     const notifyTemplate = await notifyClient.getTemplateById(templateId);
 
-    const requiredTemplateFields = Object.keys(
-      notifyTemplate.data.personalisation
-    );
+    const requiredTemplateFields = Object.keys(notifyTemplate.data.personalisation);
 
-    const templateFieldsWithoutSuffix = requiredTemplateFields.map(
-      (fieldName) => {
-        const trimmedFieldName = fieldName.trim();
-        return trimmedFieldName.endsWith("_exists")
-          ? trimmedFieldName.slice(0, -7)
-          : trimmedFieldName;
-      }
-    );
+    const templateFieldsWithoutSuffix = requiredTemplateFields.map((fieldName) => {
+      const trimmedFieldName = fieldName.trim();
+      return trimmedFieldName.endsWith("_exists")
+        ? trimmedFieldName.slice(0, -7)
+        : trimmedFieldName;
+    });
 
-    const templateFieldsWithoutDuplicates = new Set(
-      templateFieldsWithoutSuffix
-    );
+    const templateFieldsWithoutDuplicates = new Set(templateFieldsWithoutSuffix);
 
     const allNotifyPersonalisationData = { ...flattenedData };
 
@@ -151,11 +132,9 @@ const sendSingleEmail = async (
       allNotifyPersonalisationData["northern-ireland"] = "yes";
     }
 
-    const notifyResponse = await notifyClient.sendEmail(
-      templateId,
-      recipientEmail,
-      { personalisation: allNotifyPersonalisationData }
-    );
+    const notifyResponse = await notifyClient.sendEmail(templateId, recipientEmail, {
+      personalisation: allNotifyPersonalisationData
+    });
     const responseBody = notifyResponse.body;
     logEmitter.emit("functionSuccess", "notify.connector", "sendSingleEmail");
     logEmitter.emit(
@@ -189,12 +168,7 @@ const sendSingleEmail = async (
         newError.name = "notifyMissingPersonalisation";
       }
     }
-    logEmitter.emit(
-      "functionFail",
-      "notify.connector",
-      "sendSingleEmail",
-      newError
-    );
+    logEmitter.emit("functionFail", "notify.connector", "sendSingleEmail", newError);
     return null;
   }
 };

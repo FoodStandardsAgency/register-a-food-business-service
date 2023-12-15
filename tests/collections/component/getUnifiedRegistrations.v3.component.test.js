@@ -36,12 +36,7 @@ const frontendSubmitRegistration = async () => {
       submitResponses.push(response.data);
     }
   } catch (err) {
-    logEmitter.emit(
-      "functionFail",
-      "getSingleRegistration",
-      "frontendSubmitRegistration",
-      err
-    );
+    logEmitter.emit("functionFail", "getSingleRegistration", "frontendSubmitRegistration", err);
   }
 };
 
@@ -55,9 +50,7 @@ describe("GET to /api/v3/collections/unified", () => {
       const before = new Date();
       let after = new Date();
       after.setMinutes(after.getMinutes() - 1);
-      var res = await axios(
-        `${url}?before=${before.toISOString()}&after=${after.toISOString()}`
-      );
+      var res = await axios(`${url}?before=${before.toISOString()}&after=${after.toISOString()}`);
       response = res.data;
     });
 
@@ -65,9 +58,7 @@ describe("GET to /api/v3/collections/unified", () => {
       expect(Array.isArray(response)).toBe(true);
       expect(response.length).toBeGreaterThanOrEqual(2);
       expect(response.map((record) => record.fsa_rn)).toEqual(
-        expect.arrayContaining(
-          submitResponses.map((record) => record["fsa-rn"])
-        )
+        expect.arrayContaining(submitResponses.map((record) => record["fsa-rn"]))
       );
     });
   });
@@ -80,9 +71,7 @@ describe("GET to /api/v3/collections/unified", () => {
       before.setDate(before.getDate() + 20);
       after.setDate(after.getDate() + 15);
 
-      var res = await axios(
-        `${url}?before=${before.toISOString()}&after=${after.toISOString()}`
-      );
+      var res = await axios(`${url}?before=${before.toISOString()}&after=${after.toISOString()}`);
       response = res.data;
     });
 
@@ -113,9 +102,7 @@ describe("GET to /api/v3/collections/unified", () => {
     it("should return neither of the new registrations", () => {
       expect(Array.isArray(response)).toBe(true);
       expect(response.map((record) => record.fsa_rn)).not.toEqual(
-        expect.arrayContaining(
-          submitResponses.map((record) => record["fsa-rn"])
-        )
+        expect.arrayContaining(submitResponses.map((record) => record["fsa-rn"]))
       );
     });
   });
@@ -127,18 +114,14 @@ describe("GET to /api/v3/collections/unified", () => {
       let after = new Date();
       after.setDate(after.getDate() - 8);
 
-      let res = await axios(
-        `${url}?before=${before.toISOString()}&after=${after.toISOString()}`
-      );
+      let res = await axios(`${url}?before=${before.toISOString()}&after=${after.toISOString()}`);
       response = res.data;
     });
 
     it("should return the options validation error", () => {
       expect(response.statusCode).toBe(400);
       expect(response.errorCode).toBe("3");
-      expect(response.developerMessage).toBe(
-        "One of the supplied options is invalid"
-      );
+      expect(response.developerMessage).toBe("One of the supplied options is invalid");
     });
   });
 
@@ -152,9 +135,7 @@ describe("GET to /api/v3/collections/unified", () => {
     it("should return the options validation error", () => {
       expect(response.statusCode).toBe(400);
       expect(response.errorCode).toBe("3");
-      expect(response.developerMessage).toBe(
-        "One of the supplied options is invalid"
-      );
+      expect(response.developerMessage).toBe("One of the supplied options is invalid");
     });
   });
 });

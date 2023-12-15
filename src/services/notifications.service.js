@@ -47,8 +47,7 @@ const transformDataForNotify = (registration, lcContactConfig, i18n) => {
         lcContactConfig.hygieneAndStandards.local_council
     );
 
-    lcInfo.local_council_email =
-      lcContactConfig.hygieneAndStandards.local_council_email;
+    lcInfo.local_council_email = lcContactConfig.hygieneAndStandards.local_council_email;
 
     lcInfo.country = lcContactConfig.hygieneAndStandards.country;
 
@@ -64,12 +63,10 @@ const transformDataForNotify = (registration, lcContactConfig, i18n) => {
     }
   } else {
     lcInfo.local_council_hygiene = i18n.tLa(
-      lcContactConfig.hygiene.new_authority_name ||
-        lcContactConfig.hygiene.local_council
+      lcContactConfig.hygiene.new_authority_name || lcContactConfig.hygiene.local_council
     );
 
-    lcInfo.local_council_email_hygiene =
-      lcContactConfig.hygiene.local_council_email;
+    lcInfo.local_council_email_hygiene = lcContactConfig.hygiene.local_council_email;
 
     lcInfo.country = lcContactConfig.hygiene.country;
 
@@ -84,12 +81,10 @@ const transformDataForNotify = (registration, lcContactConfig, i18n) => {
         lcContactConfig.hygiene.local_council_guidance_link;
     }
     lcInfo.local_council_standards = i18n.tLa(
-      lcContactConfig.standards.new_authority_name ||
-        lcContactConfig.standards.local_council
+      lcContactConfig.standards.new_authority_name || lcContactConfig.standards.local_council
     );
 
-    lcInfo.local_council_email_standards =
-      lcContactConfig.standards.local_council_email;
+    lcInfo.local_council_email_standards = lcContactConfig.standards.local_council_email;
 
     if (lcContactConfig.standards.local_council_phone_number) {
       lcInfo.local_council_phone_number_standards =
@@ -110,18 +105,14 @@ const transformDataForNotify = (registration, lcContactConfig, i18n) => {
   delete registrationClone.establishment.premise.establishment_first_line;
   delete registrationClone.establishment.premise.establishment_street;
 
-  moment.locale(
-    registration.submission_language ? registration.submission_language : "en"
-  );
-  registrationClone.establishment.establishment_details.establishment_opening_date =
-    moment(
-      registrationClone.establishment.establishment_details
-        .establishment_opening_date
-    ).format("DD MMM YYYY");
-
-  registrationClone.reg_submission_date = moment(
-    registrationClone.reg_submission_date
+  moment.locale(registration.submission_language ? registration.submission_language : "en");
+  registrationClone.establishment.establishment_details.establishment_opening_date = moment(
+    registrationClone.establishment.establishment_details.establishment_opening_date
   ).format("DD MMM YYYY");
+
+  registrationClone.reg_submission_date = moment(registrationClone.reg_submission_date).format(
+    "DD MMM YYYY"
+  );
 
   let flattenedData = Object.assign(
     {},
@@ -171,30 +162,19 @@ const transformDataForNotify = (registration, lcContactConfig, i18n) => {
  * @returns {object} Object that returns email sent status and recipients email address
  */
 
-const sendEmails = async (
-  emailsToSend,
-  registration,
-  fsaId,
-  lcContactConfig
-) => {
+const sendEmails = async (emailsToSend, registration, fsaId, lcContactConfig) => {
   logEmitter.emit("functionCall", "registration.service", "sendEmails");
   logEmitter.emit(INFO, `Started sendEmails for FSAid: ${fsaId}`);
 
   let success = true;
   let lastSentStatus;
-  let cachedRegistrations = await establishConnectionToCosmos(
-    "registrations",
-    "registrations"
-  );
+  let cachedRegistrations = await establishConnectionToCosmos("registrations", "registrations");
   let status = await getStatus(cachedRegistrations, fsaId);
 
   try {
     if (emailsToSend.length === 0) {
       //no emails to send - we dont expect this to ever happen
-      logEmitter.emit(
-        WARN,
-        `There were no entries in the emailsToSend for FSAid ${fsaId}`
-      );
+      logEmitter.emit(WARN, `There were no entries in the emailsToSend for FSAid ${fsaId}`);
 
       //it worked on basis that there was nothing to send
       return true;
@@ -202,10 +182,7 @@ const sendEmails = async (
 
     //we need to check the status immediately to identify that it is what we expect on the length of emailsToSend - shouldnt happen
     if (
-      !(
-        status.notifications.length === 0 ||
-        status.notifications.length === emailsToSend.length
-      )
+      !(status.notifications.length === 0 || status.notifications.length === emailsToSend.length)
     ) {
       throw new Error(
         `The notifications array and emails to send do not match and could indicate corruption - fsaId ${fsaId}`
@@ -213,11 +190,7 @@ const sendEmails = async (
     }
 
     let i18nUtil = new i18n(registration.submission_language || "en");
-    const data = transformDataForNotify(
-      registration,
-      lcContactConfig,
-      i18nUtil
-    );
+    const data = transformDataForNotify(registration, lcContactConfig, i18nUtil);
     const dataForPDF = transformDataForPdf(registration, lcContactConfig);
     const pdfFile = await pdfGenerator(dataForPDF, i18nUtil);
 
@@ -248,28 +221,19 @@ const sendEmails = async (
         )) !== null;
       success = success && lastSentStatus === true;
 
-      updateNotificationOnSent(
-        status,
-        fsaId,
-        emailsToSend,
-        index,
-        lastSentStatus
-      );
+      updateNotificationOnSent(status, fsaId, emailsToSend, index, lastSentStatus);
 
       logEmitter.emit(
         INFO,
-        `Attempted email sent with sendStatus: ${
-          lastSentStatus ? "sent" : "failed"
-        } type: ${emailsToSend[index].type} index:${index} for FSAId ${fsaId}`
+        `Attempted email sent with sendStatus: ${lastSentStatus ? "sent" : "failed"} type: ${
+          emailsToSend[index].type
+        } index:${index} for FSAId ${fsaId}`
       );
     }
   } catch (err) {
     success = false;
 
-    logEmitter.emit(
-      ERROR,
-      `There was an error sending emails for FSAId ${fsaId}`
-    );
+    logEmitter.emit(ERROR, `There was an error sending emails for FSAId ${fsaId}`);
     logEmitter.emit(ERROR, `Email error FSAId ${fsaId}: ${err.toString()}`);
   }
 
@@ -277,46 +241,21 @@ const sendEmails = async (
     await updateStatus(cachedRegistrations, fsaId, status);
 
     statusEmitter.emit("incrementCount", "updateNotificationOnSentSucceeded");
-    statusEmitter.emit(
-      "setStatus",
-      "mostRecentUpdateNotificationOnSentSucceeded",
-      true
-    );
-    logEmitter.emit(
-      "functionSuccess",
-      "cacheDb.connector",
-      "updateNotificationOnSent"
-    );
+    statusEmitter.emit("setStatus", "mostRecentUpdateNotificationOnSentSucceeded", true);
+    logEmitter.emit("functionSuccess", "cacheDb.connector", "updateNotificationOnSent");
   } catch (err) {
     statusEmitter.emit("incrementCount", "updateNotificationOnSentFailed");
-    statusEmitter.emit(
-      "setStatus",
-      "mostRecentUpdateNotificationOnSentSucceeded",
-      false
-    );
-    logEmitter.emit(
-      "functionFail",
-      "cacheDb.connector",
-      "updateNotificationOnSent",
-      err
-    );
+    statusEmitter.emit("setStatus", "mostRecentUpdateNotificationOnSentSucceeded", false);
+    logEmitter.emit("functionFail", "cacheDb.connector", "updateNotificationOnSent", err);
   }
 
   if (success) {
     statusEmitter.emit("incrementCount", "emailNotificationsSucceeded");
-    statusEmitter.emit(
-      "setStatus",
-      "mostRecentEmailNotificationSucceeded",
-      true
-    );
+    statusEmitter.emit("setStatus", "mostRecentEmailNotificationSucceeded", true);
     logEmitter.emit("functionSuccess", "registration.service", "sendEmails");
   } else {
     statusEmitter.emit("incrementCount", "emailNotificationsFailed");
-    statusEmitter.emit(
-      "setStatus",
-      "mostRecentEmailNotificationSucceeded",
-      false
-    );
+    statusEmitter.emit("setStatus", "mostRecentEmailNotificationSucceeded", false);
   }
 };
 
@@ -359,22 +298,12 @@ const initialiseNotificationsStatus = (emailsToSend) => {
  * @param {object} emailsToSend An object containing all of the emails to be sent
  */
 const initialiseNotificationsStatusIfNotSet = async (fsaId, emailsToSend) => {
-  logEmitter.emit(
-    "functionCall",
-    "cacheDb.connector",
-    "addNotificationToStatus"
-  );
+  logEmitter.emit("functionCall", "cacheDb.connector", "addNotificationToStatus");
   try {
-    let cachedRegistrations = await establishConnectionToCosmos(
-      "registrations",
-      "registrations"
-    );
+    let cachedRegistrations = await establishConnectionToCosmos("registrations", "registrations");
     let status = await getStatus(cachedRegistrations, fsaId);
 
-    if (
-      has(status, "notifications") &&
-      isArrayLikeObject(status.notifications)
-    ) {
+    if (has(status, "notifications") && isArrayLikeObject(status.notifications)) {
       if (status.notifications.length === emailsToSend.length) {
         logEmitter.emit(
           INFO,
@@ -398,29 +327,12 @@ const initialiseNotificationsStatusIfNotSet = async (fsaId, emailsToSend) => {
     await updateStatus(cachedRegistrations, fsaId, status);
 
     statusEmitter.emit("incrementCount", "addNotificationToStatusSucceeded");
-    statusEmitter.emit(
-      "setStatus",
-      "mostRecentAddNotificationToStatusSucceeded",
-      true
-    );
-    logEmitter.emit(
-      "functionSuccess",
-      "cacheDb.connector",
-      "addNotificationToStatus"
-    );
+    statusEmitter.emit("setStatus", "mostRecentAddNotificationToStatusSucceeded", true);
+    logEmitter.emit("functionSuccess", "cacheDb.connector", "addNotificationToStatus");
   } catch (err) {
     statusEmitter.emit("incrementCount", "addNotificationToStatusFailed");
-    statusEmitter.emit(
-      "setStatus",
-      "mostRecentAddNotificationToStatusSucceeded",
-      false
-    );
-    logEmitter.emit(
-      "functionFail",
-      "cacheDb.connector",
-      "addNotificationToStatus",
-      err
-    );
+    statusEmitter.emit("setStatus", "mostRecentAddNotificationToStatusSucceeded", false);
+    logEmitter.emit("functionFail", "cacheDb.connector", "addNotificationToStatus", err);
   }
 };
 
@@ -445,9 +357,7 @@ const generateEmailsToSend = (registration, lcContactConfig) => {
       let templateID;
       switch (notification.type) {
         case "LC":
-          templateID = cy
-            ? LC_NEW_REGISTRATION_TEMPLATE_ID_CY
-            : LC_NEW_REGISTRATION_TEMPLATE_ID;
+          templateID = cy ? LC_NEW_REGISTRATION_TEMPLATE_ID_CY : LC_NEW_REGISTRATION_TEMPLATE_ID;
           break;
         case "FBO":
           templateID = cy
@@ -455,17 +365,13 @@ const generateEmailsToSend = (registration, lcContactConfig) => {
             : FBO_SUBMISSION_COMPLETE_TEMPLATE_ID;
           break;
         case "FBO_FB":
-          templateID = cy
-            ? FBO_FEEDBACK_TEMPLATE_ID_CY
-            : FBO_FEEDBACK_TEMPLATE_ID;
+          templateID = cy ? FBO_FEEDBACK_TEMPLATE_ID_CY : FBO_FEEDBACK_TEMPLATE_ID;
           break;
         case "FD_FB":
           templateID = FD_FEEDBACK_TEMPLATE_ID;
           break;
         case "RNG_PENDING":
-          templateID = cy
-            ? RNG_PENDING_TEMPLATE_ID_CY
-            : RNG_PENDING_TEMPLATE_ID;
+          templateID = cy ? RNG_PENDING_TEMPLATE_ID_CY : RNG_PENDING_TEMPLATE_ID;
       }
       emailsToSend.push({
         type: notification.type,
@@ -503,9 +409,7 @@ const generateEmailsToSend = (registration, lcContactConfig) => {
         emailsToSend.push({
           type: "LC",
           address: lcNotificationEmailAddresses[recipientEmailAddress],
-          templateId: cy
-            ? LC_NEW_REGISTRATION_TEMPLATE_ID_CY
-            : LC_NEW_REGISTRATION_TEMPLATE_ID
+          templateId: cy ? LC_NEW_REGISTRATION_TEMPLATE_ID_CY : LC_NEW_REGISTRATION_TEMPLATE_ID
         });
       }
     }
@@ -513,9 +417,7 @@ const generateEmailsToSend = (registration, lcContactConfig) => {
     emailsToSend.push({
       type: "FBO",
       address: fboEmailAddress,
-      templateId: cy
-        ? FBO_SUBMISSION_COMPLETE_TEMPLATE_ID_CY
-        : FBO_SUBMISSION_COMPLETE_TEMPLATE_ID
+      templateId: cy ? FBO_SUBMISSION_COMPLETE_TEMPLATE_ID_CY : FBO_SUBMISSION_COMPLETE_TEMPLATE_ID
     });
 
     if (registration.declaration && registration.declaration.feedback1) {
