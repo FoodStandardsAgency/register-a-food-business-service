@@ -19,7 +19,6 @@ const collectionsV3Router = () => {
     try {
       let registrations;
       const options = {
-        double_mode: req.headers["double-mode"] || "",
         after: req.query.after,
         before: req.query.before
       };
@@ -52,7 +51,6 @@ const collectionsV3Router = () => {
     try {
       const fields = req.query.fields ? req.query.fields.split(",") : [];
       const options = {
-        double_mode: req.headers["double-mode"] || "",
         new: req.query.new || "true",
         fields,
         subscriber: req.params.subscriber,
@@ -90,7 +88,6 @@ const collectionsV3Router = () => {
     );
     try {
       const options = {
-        double_mode: req.headers["double-mode"] || "",
         fsa_rn: req.params.fsa_rn,
         subscriber: req.params.subscriber,
         requestedCouncil: req.query["local-authority"] || req.params.subscriber
@@ -123,7 +120,6 @@ const collectionsV3Router = () => {
     );
     try {
       const options = {
-        double_mode: req.headers["double-mode"] || "",
         collected: req.body.collected,
         fsa_rn: req.params.fsa_rn,
         subscriber: req.params.subscriber,

@@ -7,14 +7,11 @@ const { success } = require("../../utils/express/response");
 const { getFsaRn } = require("../submissions/submissions.service");
 
 const {
-  sendTascomiRegistration,
   getLcContactConfigFromArray
 } = require("../submissions/submissions.service");
 
 const {
   findOneById,
-  updateStatusInCache,
-  findOutstandingTascomiRegistrationsFsaIds,
   findAllBlankRegistrations,
   findAllFailedNotificationsRegistrations,
   findAllTmpRegistrations
@@ -25,127 +22,10 @@ const {
 } = require("../../connectors/configDb/configDb.connector");
 
 const {
-  TASCOMI_SUCCESS,
-  TASCOMI_SKIPPING,
-  TASCOMI_FAIL
-} = require("../../connectors/tascomi/tascomi.connector");
-const {
   establishConnectionToCosmos
 } = require("../../connectors/cosmos.client");
 
-const sendAllOutstandingRegistrationsToTascomiAction = async (
-  req,
-  res,
-  dryrun,
-  throttle = 0
-) => {
-  logEmitter.emit(
-    "functionCall",
-    "Tasks.controller",
-    "sendAllOutstandingRegistrationsToTascomiAction"
-  );
-  let registrationsCollection = await establishConnectionToCosmos(
-    "registrations",
-    "registrations"
-  );
-  let registrations = await findOutstandingTascomiRegistrationsFsaIds(
-    registrationsCollection
-  );
-  registrations = await registrations.toArray();
-  let idsAttempted = [];
-  let allLcConfigData = await getAllLocalCouncilConfig();
-  let registration;
-
-  for (let i = 0; i < registrations.length; i++) {
-    registration = registrations[i];
-    idsAttempted.push(registration["fsa-rn"]);
-
-    if (!dryrun) {
-      await multiSendRegistrationToTascomi(registration, allLcConfigData);
-    }
-
-    //sleep
-    await new Promise((resolve) => setTimeout(resolve, throttle));
-
-    logEmitter.emit(
-      INFO,
-      `Sent tascomi registrations for FSAId ${registration["fsa-rn"]}`
-    );
-  }
-
-  logEmitter.emit(
-    "functionSuccess",
-    "Tasks.controller",
-    "sendAllOutstandingRegistrationsToTascomiAction"
-  );
-
-  await success(res, {
-    message: `Updated tascomi registration status`,
-    attempted: idsAttempted,
-    dryrun,
-    throttle
-  });
-};
-
 //actions
-const sendRegistrationToTascomiAction = async (fsaId, req, res) => {
-  logEmitter.emit(
-    "functionCall",
-    "Tasks.controller",
-    "sendRegistrationToTascomiAction"
-  );
-  //GET REGISTRATION
-  let cachedRegistrations = await establishConnectionToCosmos(
-    "registrations",
-    "registrations"
-  );
-  let registration = await findOneById(cachedRegistrations, fsaId);
-  let allLcConfigData = await getAllLocalCouncilConfig();
-
-  if (isEmpty(registration)) {
-    let message = `Could not find registration with ID ${fsaId}`;
-    logEmitter.emit(ERROR, message);
-    throw new Error(`${message}`);
-  }
-  logEmitter.emit(INFO, `Found registration with ID ${fsaId}`);
-  //GET LOCAL COUNCIL
-  let localCouncilId = getLocalCouncilIdForRegistration(registration);
-  let localCouncil = findCouncilByIdInArray(localCouncilId, allLcConfigData);
-  if (isEmpty(localCouncil)) {
-    let message = `Could not find local council with ID ${localCouncilId}`;
-    logEmitter.emit(ERROR, message);
-    throw new Error(`${message}`);
-  }
-
-  // DO LOOK UP
-  if (localCouncil.auth) {
-    try {
-      //GOT AUTH DATA
-      await sendTascomiRegistration(registration, localCouncil);
-
-      //SUCCESS
-      await updateStatusInCache(fsaId, "tascomi", TASCOMI_SUCCESS);
-    } catch (e) {
-      //FAIL
-      logEmitter.emit(
-        ERROR,
-        `Could not push to tascomi for ${fsaId} and local council ${localCouncil._id}. Error: "${e.message}"`
-      );
-      await updateStatusInCache(fsaId, "tascomi", TASCOMI_FAIL);
-    }
-  } else {
-    //NOT APPLICABLE - nothing to update
-    await updateStatusInCache(fsaId, "tascomi", TASCOMI_SKIPPING);
-  }
-
-  logEmitter.emit(
-    "functionSuccess",
-    "Tasks.controller",
-    "sendRegistrationToTascomiAction"
-  );
-
-  await success(res, { fsaId, message: `Updated tascomi registration status` });
-};
 
 const sendAllNotificationsForRegistrationsAction = async (
   req,
@@ -310,16 +190,6 @@ const sendNotificationsForRegistrationAction = async (fsaId, req, res) => {
     throw new Error(`${message}`);
   }
 
-  let configVersion = registration.registration_data_version
-    ? registration.registration_data_version
-    : "1.7.0";
-  let config = await getConfig(configVersion);
-  if (isEmpty(config)) {
-    let message = `Could not find config ${fsaId} version : ${configVersion}`;
-    logEmitter.emit(ERROR, message);
-    throw new Error(`${message}`);
-  }
-
   //this method is in dire need of refactoring...
   let lcContactConfig = await getLcContactConfigFromArray(
     localCouncil.local_council_url,
@@ -331,7 +201,7 @@ const sendNotificationsForRegistrationAction = async (fsaId, req, res) => {
     throw new Error(`${message}`);
   }
 
-  await sendNotifications(fsaId, lcContactConfig, registration, config);
+  await sendNotifications(fsaId, lcContactConfig, registration);
 
   logEmitter.emit(INFO, `Send notifications for ${fsaId}`);
   logEmitter.emit(
@@ -358,17 +228,6 @@ const multiSendNotifications = async (registration, allLocalCouncils) => {
     throw new Error(`${message}`);
   }
 
-  let configVersion = registration.registration_data_version
-    ? registration.registration_data_version
-    : "1.7.0";
-  let config = await getConfig(configVersion);
-
-  if (isEmpty(config)) {
-    let message = `Could not find config ${fsaId} version : ${configVersion}`;
-    logEmitter.emit(ERROR, message);
-    throw new Error(`${message}`);
-  }
-
   //this method is in dire need of refactoring...
   let lcContactConfig = await getLcContactConfigFromArray(
     localCouncil.local_council_url,
@@ -380,64 +239,7 @@ const multiSendNotifications = async (registration, allLocalCouncils) => {
     throw new Error(`${message}`);
   }
 
-  await sendNotifications(fsaId, lcContactConfig, registration, config);
-};
-
-const multiSendRegistrationToTascomi = async (
-  registration,
-  allLcConfigData
-) => {
-  logEmitter.emit(
-    "functionCall",
-    "Tasks.controller",
-    "multiSendRegistrationToTascomi"
-  );
-  let fsaId = registration["fsa-rn"];
-
-  let councilId = getLocalCouncilIdForRegistration(registration);
-  let localCouncil = findCouncilByIdInArray(councilId, allLcConfigData);
-  if (isEmpty(localCouncil)) {
-    let message = `Could not find local council with ID ${councilId}`;
-    logEmitter.emit(ERROR, message);
-    throw new Error(`${message}`);
-  }
-
-  // DO LOOK UP
-  if (localCouncil.auth) {
-    try {
-      //GOT AUTH DATA
-      await sendTascomiRegistration(registration, localCouncil);
-
-      //SUCCESS
-      await updateStatusInCache(fsaId, "tascomi", TASCOMI_SUCCESS);
-    } catch (e) {
-      //FAIL
-      logEmitter.emit(
-        ERROR,
-        `Could not push to tascomi for ${fsaId} and local council ${localCouncil._id}. Error: "${e.message}"`
-      );
-      await updateStatusInCache(fsaId, "tascomi", TASCOMI_FAIL);
-    }
-  } else {
-    //NOT APPLICABLE - nothing to update
-    await updateStatusInCache(fsaId, "tascomi", TASCOMI_SKIPPING);
-  }
-
-  logEmitter.emit(
-    "functionSuccess",
-    "Tasks.controller",
-    "multiSendRegistrationToTascomi"
-  );
-};
-
-const getConfig = async (configVersion) => {
-  logEmitter.emit("functionCall", "Tasks.controller", "getConfig");
-  let configCollection = await establishConnectionToCosmos(
-    "config",
-    "configVersion"
-  );
-  logEmitter.emit("functionSuccess", "Tasks.controller", "getConfig");
-  return await configCollection.findOne({ _id: configVersion });
+  await sendNotifications(fsaId, lcContactConfig, registration);
 };
 
 const getRegistration = async (fsaId) => {
@@ -507,9 +309,7 @@ const getLocalCouncilIdForRegistration = (registration) => {
 };
 
 module.exports = {
-  sendRegistrationToTascomiAction,
   sendNotificationsForRegistrationAction,
-  sendAllOutstandingRegistrationsToTascomiAction,
   sendAllNotificationsForRegistrationsAction,
   tryResolveRegistrationNumber
 };

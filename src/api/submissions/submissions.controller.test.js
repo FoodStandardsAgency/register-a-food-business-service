@@ -3,7 +3,6 @@ jest.mock("../../services/validation.service", () => ({
 }));
 
 jest.mock("./submissions.service", () => ({
-  sendTascomiRegistration: jest.fn(),
   getRegistrationMetaData: jest.fn(),
   getLcContactConfig: jest.fn(),
   getLcAuth: jest.fn()
@@ -136,8 +135,7 @@ describe("registration controller", () => {
   const testOptions = {
     regDataVersion: testRegDataVersion,
     subscriber: testLocalCouncilUrl,
-    requestedCouncil: testLocalCouncilUrl,
-    doubleMode: null
+    requestedCouncil: testLocalCouncilUrl
   };
   const testConfigVersion = {
     notify_template_keys: { key1: "abc", key2: "xyz" }

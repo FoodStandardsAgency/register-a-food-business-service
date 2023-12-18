@@ -120,31 +120,6 @@ describe("GET to /api/v3/collections/unified", () => {
     });
   });
 
-  describe("Given 'double-mode' header", () => {
-    let response;
-    beforeEach(async () => {
-      const before = new Date();
-      let after = new Date();
-      after.setDate(after.getDate() - 5);
-
-      const requestOptions = {
-        headers: {
-          "double-mode": "success"
-        }
-      };
-      let res = await axios(
-        `${url}?before=${before.toISOString()}&after=${after.toISOString()}`,
-        requestOptions
-      );
-      response = res.data;
-    });
-
-    it("should return the double mode response", () => {
-      expect(response).toHaveLength(1);
-      expect(response[0].establishment.establishment_trading_name).toBe("Itsu");
-    });
-  });
-
   describe("Given before and after range greater than 7 days", () => {
     let response;
     beforeEach(async () => {

@@ -1,5 +1,4 @@
 jest.mock("mongodb");
-jest.mock("./configDb.double");
 jest.mock("../../services/statusEmitter.service");
 
 const mongodb = require("mongodb");
@@ -10,7 +9,6 @@ const {
 } = require("./configDb.connector");
 const { clearCosmosConnection } = require("../cosmos.client");
 const mockLocalCouncilConfig = require("./mockLocalCouncilConfig.json");
-const { lcConfigCollectionDouble } = require("./configDb.double");
 const mockSupplierConfig = require("./mockSupplierConfig.json");
 const mockConfigVersion = {
   _id: "1.2.0",
@@ -31,7 +29,6 @@ let result;
 describe("Function: getConfigVersion", () => {
   describe("given the request is successful", () => {
     beforeEach(async () => {
-      process.env.DOUBLE_MODE = false;
       mongodb.MongoClient.connect.mockImplementation(() => ({
         db: () => ({
           collection: () => ({
@@ -48,7 +45,6 @@ describe("Function: getConfigVersion", () => {
   });
   describe("given the request throws an error", () => {
     beforeEach(async () => {
-      process.env.DOUBLE_MODE = false;
       mongodb.MongoClient.connect.mockImplementation(() => {
         throw new Error("example mongo error");
       });
@@ -70,7 +66,6 @@ describe("Function: getConfigVersion", () => {
 describe("Function: getAllLocalCouncilConfig", () => {
   describe("given the request throws an error", () => {
     beforeEach(async () => {
-      process.env.DOUBLE_MODE = false;
       mongodb.MongoClient.connect.mockImplementation(() => {
         throw new Error("example mongo error");
       });
@@ -92,7 +87,6 @@ describe("Function: getAllLocalCouncilConfig", () => {
 
   describe("given the request is successful", () => {
     beforeEach(() => {
-      process.env.DOUBLE_MODE = false;
       mongodb.MongoClient.connect.mockImplementation(() => ({
         db: () => ({
           collection: () => ({
@@ -109,24 +103,8 @@ describe("Function: getAllLocalCouncilConfig", () => {
     });
   });
 
-  describe("when running in double mode", () => {
-    beforeEach(() => {
-      process.env.DOUBLE_MODE = true;
-      lcConfigCollectionDouble.find.mockImplementation(() => ({
-        toArray: () => mockLocalCouncilConfig
-      }));
-    });
-
-    it("should resolve with the data from the double's find() response", async () => {
-      await expect(getAllLocalCouncilConfig("hi")).resolves.toEqual(
-        mockLocalCouncilConfig
-      );
-    });
-  });
-
   describe("given the request is run more than once during this process (populated cache)", () => {
     beforeEach(() => {
-      process.env.DOUBLE_MODE = false;
       mongodb.MongoClient.connect.mockClear();
       mongodb.MongoClient.connect.mockImplementation(() => ({
         db: () => ({

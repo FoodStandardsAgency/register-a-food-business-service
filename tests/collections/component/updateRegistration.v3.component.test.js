@@ -118,22 +118,4 @@ describe("PUT to /api/v3/collections/:lc/:fsa_rn", () => {
       );
     });
   });
-
-  describe("Given 'double-mode' header", () => {
-    let response;
-    beforeEach(async () => {
-      const requestOptions = {
-        headers: {
-          "Content-Type": "application/json",
-          "double-mode": "update"
-        }
-      };
-      const res = await axios(`${url}`, requestOptions);
-      response = res.data;
-    });
-
-    it("should return the double mode response", () => {
-      expect(response.fsa_rn).toBe("1234");
-    });
-  });
 });

@@ -1,5 +1,4 @@
 const { NotifyClient } = require("notifications-node-client");
-const { notifyClientDouble } = require("./notify.double");
 const { NOTIFY_KEY } = require("../../config");
 const { logEmitter, ERROR, INFO } = require("../../services/logging.service");
 
@@ -8,15 +7,7 @@ const sendStatusEmail = async (templateId, recipientEmail, flattenedData) => {
 
   let notifyClient;
 
-  if (
-    process.env.NOTIFY_DOUBLE_MODE === "true" ||
-    process.env.DOUBLE_MODE === "true"
-  ) {
-    logEmitter.emit("doubleMode", "notify.connector", "sendStatusEmail");
-    notifyClient = notifyClientDouble;
-  } else {
-    notifyClient = new NotifyClient(NOTIFY_KEY);
-  }
+  notifyClient = new NotifyClient(NOTIFY_KEY);
 
   try {
     const notifyTemplate = await notifyClient.getTemplateById(templateId);
@@ -113,18 +104,10 @@ const sendSingleEmail = async (
   logEmitter.emit("functionCall", "notify.connector", "sendSingleEmail");
   let notifyClient;
 
-  if (
-    process.env.NOTIFY_DOUBLE_MODE === "true" ||
-    process.env.DOUBLE_MODE === "true"
-  ) {
-    logEmitter.emit("doubleMode", "notify.connector", "sendSingleEmail");
-    notifyClient = notifyClientDouble;
-  } else {
-    notifyClient = new NotifyClient(NOTIFY_KEY);
-  }
+  notifyClient = new NotifyClient(NOTIFY_KEY);
 
   try {
-    flattenedData.link_to_document = pdfFile
+    flattenedData.link_to_file = pdfFile
       ? await notifyClient.prepareUpload(pdfFile, {
           confirmEmailBeforeDownload: false
         })

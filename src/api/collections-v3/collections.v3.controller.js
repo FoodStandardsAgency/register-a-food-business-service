@@ -7,9 +7,6 @@ const {
 
 const { validateOptions } = require("./collections.v3.service");
 const {
-  registrationDbDouble
-} = require("../../connectors/registrationsDb-v3/registrationsDb.v3.double");
-const {
   transformRegForCollections
 } = require("../../services/collectionsTransform.v3.service");
 
@@ -28,10 +25,6 @@ const getRegistrationsByCouncil = async (options) => {
   const validationResult = await validateOptions(options, true);
 
   if (validationResult === true) {
-    if (options.double_mode) {
-      return registrationDbDouble(options.double_mode);
-    }
-
     /*Check if single requested LA is the same as subscriber. This means it's either an LA requesting
     their own registrations or a non-LA subscriber not defining which councils they want returned.
     In the latter case all authorised registrations should be returned by default.*/
@@ -82,9 +75,6 @@ const getRegistration = async (options) => {
   const validationResult = await validateOptions(options);
 
   if (validationResult === true) {
-    if (options.double_mode) {
-      return registrationDbDouble(options.double_mode);
-    }
     const registration = await getSingleRegistration(
       options.fsa_rn,
       options.requestedCouncil
@@ -116,10 +106,6 @@ const getRegistrations = async (options) => {
   const validationResult = await validateOptions(options);
 
   if (validationResult === true) {
-    if (options.double_mode) {
-      return registrationDbDouble(options.double_mode);
-    }
-
     const registrations = await getUnifiedRegistrations(
       options.before,
       options.after,
@@ -153,10 +139,6 @@ const updateRegistration = async (options) => {
   const validationResult = await validateOptions(options);
 
   if (validationResult === true) {
-    if (options.double_mode) {
-      return registrationDbDouble(options.double_mode);
-    }
-
     const response = await updateRegistrationCollectedByCouncil(
       options.fsa_rn,
       options.collected,

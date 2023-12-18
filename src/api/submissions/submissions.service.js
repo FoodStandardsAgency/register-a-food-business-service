@@ -10,50 +10,6 @@ const { logEmitter } = require("../../services/logging.service");
 const { statusEmitter } = require("../../services/statusEmitter.service");
 const { RNG_API_URL } = require("../../config");
 
-const sendTascomiRegistration = async (registration, localCouncil) => {
-  // hack to reduce repair work needed
-  //let postRegistrationMetadata = registration;
-
-  logEmitter.emit(
-    "functionCall",
-    "submissions.service",
-    "sendTascomiRegistration"
-  );
-
-  if (!localCouncil.auth) {
-    //no auth so cannot return a value
-    return null;
-  }
-
-  //const auth = localCouncil.auth;
-  const reg = {}; // Remove promise retry since this menthod not used
-
-  let regParsed = JSON.parse(reg);
-  let referenceIdInput = regParsed.id ? regParsed.id : null;
-
-  if (referenceIdInput === null) {
-    const err = new Error("createFoodBusinessRegistration failed");
-    err.name = "tascomiRefNumber";
-    throw err;
-  }
-
-  const response = {}; // Remove promise retry since this menthod not used
-
-  if (JSON.parse(response).id === 0) {
-    const err = new Error("createReferenceNumber failed");
-    err.name = "tascomiRefNumber";
-    throw err;
-  }
-
-  logEmitter.emit(
-    "functionSuccess",
-    "submissions.service",
-    "sendTascomiRegistration"
-  );
-
-  return response;
-};
-
 const getRegistrationMetaData = async (councilCode) => {
   logEmitter.emit(
     "functionCall",
@@ -155,6 +111,8 @@ const getLcContactConfigFromArray = async (
               local_council_notify_emails:
                 urlLcConfig.local_council_notify_emails,
               local_council_email: urlLcConfig.local_council_email,
+              local_council_guidance_link:
+                urlLcConfig.local_council_guidance_link,
               country: urlLcConfig.country,
               hasAuth: urlLcConfig.auth ? true : false
             },
@@ -164,6 +122,8 @@ const getLcContactConfigFromArray = async (
               local_council_notify_emails:
                 standardsLcConfig.local_council_notify_emails,
               local_council_email: standardsLcConfig.local_council_email,
+              local_council_guidance_link:
+                standardsLcConfig.local_council_guidance_link,
               hasAuth: standardsLcConfig.auth ? true : false
             }
           };
@@ -225,6 +185,8 @@ const getLcContactConfigFromArray = async (
             local_council_notify_emails:
               urlLcConfig.local_council_notify_emails,
             local_council_email: urlLcConfig.local_council_email,
+            local_council_guidance_link:
+              urlLcConfig.local_council_guidance_link,
             country: urlLcConfig.country,
             hasAuth: urlLcConfig.auth ? true : false
           }
@@ -304,6 +266,8 @@ const getLcContactConfig = async (localCouncilUrl) => {
               local_council_notify_emails:
                 urlLcConfig.local_council_notify_emails,
               local_council_email: urlLcConfig.local_council_email,
+              local_council_guidance_link:
+                urlLcConfig.local_council_guidance_link,
               country: urlLcConfig.country,
               hasAuth: urlLcConfig.auth ? true : false
             },
@@ -313,6 +277,8 @@ const getLcContactConfig = async (localCouncilUrl) => {
               local_council_notify_emails:
                 standardsLcConfig.local_council_notify_emails,
               local_council_email: standardsLcConfig.local_council_email,
+              local_council_guidance_link:
+                standardsLcConfig.local_council_guidance_link,
               hasAuth: standardsLcConfig.auth ? true : false
             }
           };
@@ -374,6 +340,8 @@ const getLcContactConfig = async (localCouncilUrl) => {
             local_council_notify_emails:
               urlLcConfig.local_council_notify_emails,
             local_council_email: urlLcConfig.local_council_email,
+            local_council_guidance_link:
+              urlLcConfig.local_council_guidance_link,
             country: urlLcConfig.country,
             hasAuth: urlLcConfig.auth ? true : false
           }
@@ -468,7 +436,6 @@ const getLcAuth = async (localCouncilUrl) => {
 };
 
 module.exports = {
-  sendTascomiRegistration,
   getRegistrationMetaData,
   getLcContactConfig,
   getLcContactConfigFromArray,

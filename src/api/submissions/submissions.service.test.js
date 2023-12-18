@@ -2,11 +2,6 @@ jest.mock("../../connectors/notify/notify.connector", () => ({
   sendSingleEmail: jest.fn()
 }));
 
-jest.mock("../../connectors/tascomi/tascomi.connector", () => ({
-  createFoodBusinessRegistration: jest.fn(),
-  createReferenceNumber: jest.fn()
-}));
-
 jest.mock("../../connectors/configDb/configDb.connector", () => ({
   getAllLocalCouncilConfig: jest.fn()
 }));
@@ -171,6 +166,19 @@ describe("Function: getLcContactConfig: ", () => {
           expect(result.hygieneAndStandards.new_authority_id).toBe(1234);
         });
       });
+      describe("given the local council have local_council_guidance_link", () => {
+        beforeEach(async () => {
+          result = await getLcContactConfig("dorset");
+        });
+        it("the hygieneAndStandards object contain the local_council_guidance_link field", () => {
+          expect(
+            result.hygieneAndStandards.local_council_guidance_link
+          ).toBeDefined();
+          expect(result.hygieneAndStandards.local_council_guidance_link).toBe(
+            "link2"
+          );
+        });
+      });
     });
 
     describe("given the local council has a separate standards council", () => {
@@ -241,6 +249,19 @@ describe("Function: getLcContactConfig: ", () => {
         it("the standards object contain the new_authority_id field", () => {
           expect(result.standards.new_authority_id).toBeDefined();
           expect(result.standards.new_authority_id).toBe(1234);
+        });
+      });
+      describe("given the local council have local_council_guidance_link", () => {
+        beforeEach(async () => {
+          result = await getLcContactConfig("west-dorset");
+        });
+        it("the hygiene object contain the local_council_guidance_link field", () => {
+          expect(result.hygiene.local_council_guidance_link).toBeDefined();
+          expect(result.hygiene.local_council_guidance_link).toBe("link1");
+        });
+        it("the standards object contain the local_council_guidance_link field", () => {
+          expect(result.standards.local_council_guidance_link).toBeDefined();
+          expect(result.standards.local_council_guidance_link).toBe("link2");
         });
       });
     });

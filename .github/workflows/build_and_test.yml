@@ -21,10 +21,10 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
 
-      - name: Use Node.js 16.15
+      - name: Use Node.js 18.16
         uses: actions/setup-node@v3
         with:
-          node-version: 16.15
+          node-version: 18.16
 
       - name: Create .npmrc
         run: echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" > .npmrc
@@ -50,16 +50,6 @@ jobs:
         with:
           junit_files: ./reports/TEST-unit.xml
           check_name: "Unit Test Results"
-
-      - name: Integration tests
-        run: npm run test:integration
-
-      - name: Publish Integration Test Results
-        uses: EnricoMi/publish-unit-test-result-action@v2
-        if: always()
-        with:
-          junit_files: ./reports/TEST-integration.xml
-          check_name: "Integration Test Results"
           
       - name: Generate Coverage Summary
         uses: irongut/CodeCoverageSummary@v1.3.0

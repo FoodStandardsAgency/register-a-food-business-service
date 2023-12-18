@@ -28,35 +28,6 @@ describe("registrations.service", () => {
       });
     });
 
-    describe("When given valid double_mode", () => {
-      beforeEach(() => {
-        const options = {
-          double_mode: "success"
-        };
-        result = validateOptions(options);
-      });
-
-      it("should return true", () => {
-        expect(result).toBe(true);
-      });
-    });
-
-    describe("When given invalid double_mode", () => {
-      const invalidDoubleModes = [
-        1233,
-        [],
-        {},
-        false,
-        null,
-        undefined,
-        "thing"
-      ];
-      invalidDoubleModes.forEach((double_mode) => {
-        result = validateOptions({ double_mode });
-        expect(result).not.toBe(true);
-      });
-    });
-
     describe("When given valid new", () => {
       beforeEach(() => {
         const options = {

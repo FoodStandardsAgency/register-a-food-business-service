@@ -1,5 +1,3 @@
-jest.mock("./status-db.double");
-
 jest.mock("mongodb");
 
 const {
@@ -9,9 +7,7 @@ const {
 } = require("./status-db.connector");
 const storedStatusMock = require("../../__mocks__/storedStatusMock.json");
 const mongodb = require("mongodb");
-const { statusCollectionDouble } = require("./status-db.double");
 const { clearCosmosConnection } = require("../cosmos.client");
-const testArray = ["test@test.com"];
 const testEmailDistributionObject = {
   _id: "emailDistribution",
   emailAddresses: ["test@test.com"]
@@ -38,7 +34,6 @@ describe("Function: getStoredStatus", () => {
   describe("Given: the request throws an error", () => {
     beforeEach(async () => {
       clearCosmosConnection();
-      process.env.DOUBLE_MODE = false;
       mongodb.MongoClient.connect.mockImplementation(() => {
         throw new Error("example mongo error");
       });
@@ -114,22 +109,10 @@ describe("Function: getStoredStatus", () => {
     });
   });
 
-  describe("when running in double mode", () => {
-    beforeEach(() => {
-      process.env.DOUBLE_MODE = true;
-      statusCollectionDouble.findOne.mockImplementation(() => storedStatusMock);
-    });
-
-    it("should resolve with the data from the double's findOne() response", async () => {
-      await expect(getStoredStatus()).resolves.toEqual(storedStatusMock);
-    });
-  });
-
   describe("When: two db calls are made", () => {
     const closeConnection = jest.fn();
     let result1, result2;
     beforeEach(async () => {
-      process.env.DOUBLE_MODE = false;
       clearCosmosConnection();
       mongodb.MongoClient.connect.mockImplementation(() => ({
         db: () => ({
@@ -179,7 +162,6 @@ describe("Function: updateStoredStatus", () => {
   describe("Given: the request throws an error", () => {
     beforeEach(async () => {
       clearCosmosConnection();
-      process.env.DOUBLE_MODE = false;
       mongodb.MongoClient.connect.mockImplementation(() => {
         throw new Error("example mongo error");
       });
@@ -220,7 +202,6 @@ describe("Function: getEmailDistribution", () => {
   describe("Given: the request throws an error", () => {
     beforeEach(async () => {
       clearCosmosConnection();
-      process.env.DOUBLE_MODE = false;
       mongodb.MongoClient.connect.mockImplementation(() => {
         throw new Error("example mongo error");
       });
@@ -235,19 +216,6 @@ describe("Function: getEmailDistribution", () => {
     it("should throw mongoConnectionError error", () => {
       expect(result.name).toBe("mongoConnectionError");
       expect(result.message).toBe("example mongo error");
-    });
-  });
-
-  describe("when running in double mode", () => {
-    beforeEach(() => {
-      process.env.DOUBLE_MODE = true;
-      statusCollectionDouble.findOne.mockImplementation(
-        () => testEmailDistributionObject
-      );
-    });
-
-    it("should resolve with the data from the double's find() response", async () => {
-      await expect(getEmailDistribution()).resolves.toEqual(testArray);
     });
   });
 });
