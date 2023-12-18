@@ -73,7 +73,7 @@
   },
   "devDependencies": {
     "cucumber": "^6.0.7",
-    "cucumber-junit": "^1.7.1",
+    "cucumber-junit": "^1.5.0",
     "eslint": "^8.56.0",
     "eslint-plugin-jest": "^27.6.0",
     "eslint-plugin-node": "^11.1.0",
