@@ -117,9 +117,6 @@ describe("registration controller", () => {
     subscriber: testLocalCouncilUrl,
     requestedCouncil: testLocalCouncilUrl
   };
-  const testConfigVersion = {
-    notify_template_keys: { key1: "abc", key2: "xyz" }
-  };
   const testLanguage = "en";
 
   describe("Function: createNewRegistration", () => {

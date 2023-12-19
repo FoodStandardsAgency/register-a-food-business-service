@@ -252,7 +252,7 @@ const sendEmails = async (emailsToSend, registration, fsaId, lcContactConfig) =>
     logEmitter.emit("functionSuccess", "notifications.service", "sendEmails");
   } else {
     logEmitter.emit(INFO, "Email notification failure"); // Used for Azure alerts
-    logEmitter.emit("functionFail", "notifications.service", "sendEmails", err);
+    logEmitter.emit("functionFail", "notifications.service", "sendEmails");
   }
 };
 
