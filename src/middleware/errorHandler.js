@@ -18,7 +18,7 @@ const errorDetails = require("./errors.json");
 /* eslint-disable */
 const errorHandler = (err, req, res, next) => {
   /* eslint-enable */
-  logger.error(`Application error handled...`);
+  logger.error(`Application error handled...`); // Used for Azure alerts
 
   if (err.name) {
     logger.error(`Application error details:`, err);
