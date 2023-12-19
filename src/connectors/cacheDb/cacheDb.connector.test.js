@@ -1,12 +1,7 @@
 jest.mock("mongodb");
-jest.mock("../../services/statusEmitter.service");
 
 const mongodb = require("mongodb");
-const {
-  cacheRegistration,
-  updateStatusInCache,
-  updateNotificationOnSent
-} = require("./cacheDb.connector");
+const { cacheRegistration, updateNotificationOnSent } = require("./cacheDb.connector");
 
 describe("Connector: cacheDb", () => {
   let response;
@@ -92,56 +87,6 @@ describe("Connector: cacheDb", () => {
   });
 
   describe("Function: updateCompletedInCache1", () => {
-    describe("When success", () => {
-      let result;
-      beforeEach(async () => {
-        mongodb.MongoClient.connect.mockImplementation(async () => ({
-          db: () => ({
-            collection: () => ({
-              findOne: () => ({ status: { register: undefined } }),
-              updateOne: () => {}
-            })
-          })
-        }));
-
-        try {
-          await updateStatusInCache("123", "123", "123");
-        } catch (err) {
-          result = err;
-        }
-      });
-
-      it("should have called this", () => {
-        expect(result).toBe(undefined);
-      });
-    });
-
-    describe("When Failure", () => {
-      let result;
-      beforeEach(async () => {
-        mongodb.MongoClient.connect.mockImplementation(async () => ({
-          db: () => ({
-            collection: () => ({
-              findOne: () => ({ status: { register: undefined } }),
-              updateOne: () => {
-                throw new Error("Example mongo error");
-              }
-            })
-          })
-        }));
-
-        try {
-          await updateStatusInCache("123", "123", "123");
-        } catch (err) {
-          result = err;
-        }
-      });
-
-      it("Shouldn't throw an error", () => {
-        expect(result).toBe(undefined);
-      });
-    });
-
     describe("Function: updateNotificationOnSent", () => {
       describe("When success", () => {
         let result;
@@ -205,58 +150,6 @@ describe("Connector: cacheDb", () => {
             ]
           });
         });
-      });
-    });
-  });
-
-  describe("Function: updateCompletedInCache2", () => {
-    describe("When success", () => {
-      let result;
-      beforeEach(async () => {
-        mongodb.MongoClient.connect.mockImplementation(async () => ({
-          db: () => ({
-            collection: () => ({
-              findOne: () => ({ completed: { register: undefined } }),
-              updateOne: () => {}
-            })
-          })
-        }));
-
-        try {
-          await updateStatusInCache("123", "123", "123");
-        } catch (err) {
-          result = err;
-        }
-      });
-
-      it("should have called this", () => {
-        expect(result).toBe(undefined);
-      });
-    });
-
-    describe("When Failure", () => {
-      let result;
-      beforeEach(async () => {
-        mongodb.MongoClient.connect.mockImplementation(async () => ({
-          db: () => ({
-            collection: () => ({
-              findOne: () => ({ completed: { register: undefined } }),
-              updateOne: () => {
-                throw new Error("Example mongo error");
-              }
-            })
-          })
-        }));
-
-        try {
-          await updateStatusInCache("123", "123", "123");
-        } catch (err) {
-          result = err;
-        }
-      });
-
-      it("Shouldn't throw an error", () => {
-        expect(result).toBe(undefined);
       });
     });
   });

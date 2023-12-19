@@ -5,7 +5,6 @@
 
 const moment = require("moment");
 const { logEmitter, WARN, ERROR, INFO } = require("./logging.service");
-const { statusEmitter } = require("./statusEmitter.service");
 const { sendSingleEmail } = require("../connectors/notify/notify.connector");
 const { pdfGenerator, transformDataForPdf } = require("./pdf.service");
 const {
@@ -29,6 +28,9 @@ const { has, isArrayLikeObject } = require("lodash");
 const { transformEnumsForService } = require("./transformEnums.service");
 const i18n = require("../utils/i18n/i18n");
 const { establishConnectionToCosmos } = require("../connectors/cosmos.client");
+const NOTIFICATION_STATUS_SUCCESS = "Updating notifications status success";
+const NOTIFICATION_STATUS_FAILURE = "Updating notifications status failure";
+
 /**
  * Function that converts the data into format for Notify and creates a new object
  *
@@ -240,22 +242,17 @@ const sendEmails = async (emailsToSend, registration, fsaId, lcContactConfig) =>
   try {
     await updateStatus(cachedRegistrations, fsaId, status);
 
-    statusEmitter.emit("incrementCount", "updateNotificationOnSentSucceeded");
-    statusEmitter.emit("setStatus", "mostRecentUpdateNotificationOnSentSucceeded", true);
-    logEmitter.emit("functionSuccess", "cacheDb.connector", "updateNotificationOnSent");
+    logEmitter.emit(INFO, NOTIFICATION_STATUS_SUCCESS); // Used for Azure alerts
   } catch (err) {
-    statusEmitter.emit("incrementCount", "updateNotificationOnSentFailed");
-    statusEmitter.emit("setStatus", "mostRecentUpdateNotificationOnSentSucceeded", false);
-    logEmitter.emit("functionFail", "cacheDb.connector", "updateNotificationOnSent", err);
+    logEmitter.emit(WARN, NOTIFICATION_STATUS_FAILURE); // Used for Azure alerts
   }
 
   if (success) {
-    statusEmitter.emit("incrementCount", "emailNotificationsSucceeded");
-    statusEmitter.emit("setStatus", "mostRecentEmailNotificationSucceeded", true);
-    logEmitter.emit("functionSuccess", "registration.service", "sendEmails");
+    logEmitter.emit(INFO, "Email notification success"); // Used for Azure alerts
+    logEmitter.emit("functionSuccess", "notifications.service", "sendEmails");
   } else {
-    statusEmitter.emit("incrementCount", "emailNotificationsFailed");
-    statusEmitter.emit("setStatus", "mostRecentEmailNotificationSucceeded", false);
+    logEmitter.emit(INFO, "Email notification failure"); // Used for Azure alerts
+    logEmitter.emit("functionFail", "notifications.service", "sendEmails", err);
   }
 };
 
@@ -298,7 +295,7 @@ const initialiseNotificationsStatus = (emailsToSend) => {
  * @param {object} emailsToSend An object containing all of the emails to be sent
  */
 const initialiseNotificationsStatusIfNotSet = async (fsaId, emailsToSend) => {
-  logEmitter.emit("functionCall", "cacheDb.connector", "addNotificationToStatus");
+  logEmitter.emit("functionCall", "notifications.service", "addNotificationToStatus");
   try {
     let cachedRegistrations = await establishConnectionToCosmos("registrations", "registrations");
     let status = await getStatus(cachedRegistrations, fsaId);
@@ -326,13 +323,20 @@ const initialiseNotificationsStatusIfNotSet = async (fsaId, emailsToSend) => {
     );
     await updateStatus(cachedRegistrations, fsaId, status);
 
-    statusEmitter.emit("incrementCount", "addNotificationToStatusSucceeded");
-    statusEmitter.emit("setStatus", "mostRecentAddNotificationToStatusSucceeded", true);
-    logEmitter.emit("functionSuccess", "cacheDb.connector", "addNotificationToStatus");
+    logEmitter.emit(INFO, NOTIFICATION_STATUS_SUCCESS); // Used for Azure alerts
+    logEmitter.emit(
+      "functionSuccess",
+      "notifications.service",
+      "initialiseNotificationsStatusIfNotSet"
+    );
   } catch (err) {
-    statusEmitter.emit("incrementCount", "addNotificationToStatusFailed");
-    statusEmitter.emit("setStatus", "mostRecentAddNotificationToStatusSucceeded", false);
-    logEmitter.emit("functionFail", "cacheDb.connector", "addNotificationToStatus", err);
+    logEmitter.emit(WARN, NOTIFICATION_STATUS_FAILURE); // Used for Azure alerts
+    logEmitter.emit(
+      "functionFail",
+      "notifications.service",
+      "initialiseNotificationsStatusIfNotSet",
+      err
+    );
   }
 };
 

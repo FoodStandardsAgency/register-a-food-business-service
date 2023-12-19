@@ -7,15 +7,10 @@ const {
 } = require("../../connectors/configDb/configDb.connector");
 
 const { logEmitter } = require("../../services/logging.service");
-const { statusEmitter } = require("../../services/statusEmitter.service");
 const { RNG_API_URL } = require("../../config");
 
 const getRegistrationMetaData = async (councilCode) => {
-  logEmitter.emit(
-    "functionCall",
-    "submissions.service",
-    "getRegistrationMetaData"
-  );
+  logEmitter.emit("functionCall", "submissions.service", "getRegistrationMetaData");
 
   if (process.env.NODE_ENV === "local") {
     let oId = mongodb.ObjectId();
@@ -56,14 +51,14 @@ const getFsaRn = async (councilCode) => {
       options
     );
     if (fsaRnResponse.status === 200) {
-      statusEmitter.emit("incrementCount", "fsaRnCallsSucceeded");
-      statusEmitter.emit("setStatus", "mostRecentFsaRnCallSucceeded", true);
+      logEmitter.emit("info", "FSA Registration Number lookup success"); // Used for Azure alerts
       logEmitter.emit("functionSuccess", "submissions.service", "getFsaRn");
       return fsaRnResponse.data && fsaRnResponse.data["fsa-rn"]
         ? fsaRnResponse.data["fsa-rn"]
         : false;
     }
 
+    logEmitter.emit("warning", "FSA Registration Number lookup failure"); // Used for Azure alerts
     logEmitter.emit(
       "functionFail",
       "submissions.service",
@@ -72,22 +67,14 @@ const getFsaRn = async (councilCode) => {
     );
     return false;
   } catch (err) {
-    statusEmitter.emit("incrementCount", "fsaRnCallsFailed");
-    statusEmitter.emit("setStatus", "mostRecentFsaRnCallSucceeded", false);
+    logEmitter.emit("warning", "FSA Registration Number lookup failure"); // Used for Azure alerts
     logEmitter.emit("functionFail", "submissions.service", "getFsaRn", err);
     return false;
   }
 };
 
-const getLcContactConfigFromArray = async (
-  localCouncilUrl,
-  allCouncils = []
-) => {
-  logEmitter.emit(
-    "functionCall",
-    "submissions.service",
-    "getLcContactConfigFromArray"
-  );
+const getLcContactConfigFromArray = async (localCouncilUrl, allCouncils = []) => {
+  logEmitter.emit("functionCall", "submissions.service", "getLcContactConfigFromArray");
 
   if (localCouncilUrl) {
     const allLcConfigData = allCouncils;
@@ -99,8 +86,7 @@ const getLcContactConfigFromArray = async (
     if (urlLcConfig) {
       if (urlLcConfig.separate_standards_council) {
         const standardsLcConfig = allLcConfigData.find(
-          (localCouncil) =>
-            localCouncil._id === urlLcConfig.separate_standards_council
+          (localCouncil) => localCouncil._id === urlLcConfig.separate_standards_council
         );
 
         if (standardsLcConfig) {
@@ -108,34 +94,28 @@ const getLcContactConfigFromArray = async (
             hygiene: {
               code: urlLcConfig._id,
               local_council: urlLcConfig.local_council,
-              local_council_notify_emails:
-                urlLcConfig.local_council_notify_emails,
+              local_council_notify_emails: urlLcConfig.local_council_notify_emails,
               local_council_email: urlLcConfig.local_council_email,
-              local_council_guidance_link:
-                urlLcConfig.local_council_guidance_link,
+              local_council_guidance_link: urlLcConfig.local_council_guidance_link,
               country: urlLcConfig.country,
               hasAuth: urlLcConfig.auth ? true : false
             },
             standards: {
               code: standardsLcConfig._id,
               local_council: standardsLcConfig.local_council,
-              local_council_notify_emails:
-                standardsLcConfig.local_council_notify_emails,
+              local_council_notify_emails: standardsLcConfig.local_council_notify_emails,
               local_council_email: standardsLcConfig.local_council_email,
-              local_council_guidance_link:
-                standardsLcConfig.local_council_guidance_link,
+              local_council_guidance_link: standardsLcConfig.local_council_guidance_link,
               hasAuth: standardsLcConfig.auth ? true : false
             }
           };
 
           if (urlLcConfig.new_authority_name) {
-            separateCouncils.hygiene.new_authority_name =
-              urlLcConfig.new_authority_name;
+            separateCouncils.hygiene.new_authority_name = urlLcConfig.new_authority_name;
           }
 
           if (urlLcConfig.new_authority_id) {
-            separateCouncils.hygiene.new_authority_id =
-              urlLcConfig.new_authority_id;
+            separateCouncils.hygiene.new_authority_id = urlLcConfig.new_authority_id;
           }
 
           if (urlLcConfig.local_council_phone_number) {
@@ -144,13 +124,11 @@ const getLcContactConfigFromArray = async (
           }
 
           if (standardsLcConfig.new_authority_name) {
-            separateCouncils.standards.new_authority_name =
-              standardsLcConfig.new_authority_name;
+            separateCouncils.standards.new_authority_name = standardsLcConfig.new_authority_name;
           }
 
           if (standardsLcConfig.new_authority_id) {
-            separateCouncils.standards.new_authority_id =
-              standardsLcConfig.new_authority_id;
+            separateCouncils.standards.new_authority_id = standardsLcConfig.new_authority_id;
           }
 
           if (standardsLcConfig.local_council_phone_number) {
@@ -158,11 +136,7 @@ const getLcContactConfigFromArray = async (
               standardsLcConfig.local_council_phone_number;
           }
 
-          logEmitter.emit(
-            "functionSuccess",
-            "submissions.service",
-            "getLcContactConfigFromArray"
-          );
+          logEmitter.emit("functionSuccess", "submissions.service", "getLcContactConfigFromArray");
 
           return separateCouncils;
         } else {
@@ -182,11 +156,9 @@ const getLcContactConfigFromArray = async (
           hygieneAndStandards: {
             code: urlLcConfig._id,
             local_council: urlLcConfig.local_council,
-            local_council_notify_emails:
-              urlLcConfig.local_council_notify_emails,
+            local_council_notify_emails: urlLcConfig.local_council_notify_emails,
             local_council_email: urlLcConfig.local_council_email,
-            local_council_guidance_link:
-              urlLcConfig.local_council_guidance_link,
+            local_council_guidance_link: urlLcConfig.local_council_guidance_link,
             country: urlLcConfig.country,
             hasAuth: urlLcConfig.auth ? true : false
           }
@@ -207,11 +179,7 @@ const getLcContactConfigFromArray = async (
             urlLcConfig.local_council_phone_number;
         }
 
-        logEmitter.emit(
-          "functionSuccess",
-          "submissions.service",
-          "getLcContactConfigFromArray"
-        );
+        logEmitter.emit("functionSuccess", "submissions.service", "getLcContactConfigFromArray");
 
         return hygieneAndStandardsCouncil;
       }
@@ -231,12 +199,7 @@ const getLcContactConfigFromArray = async (
     const newError = new Error();
     newError.name = "localCouncilNotFound";
     newError.message = "Local council URL is undefined";
-    logEmitter.emit(
-      "functionFail",
-      "submissions.service",
-      "getLcContactConfigFromArray",
-      newError
-    );
+    logEmitter.emit("functionFail", "submissions.service", "getLcContactConfigFromArray", newError);
     throw newError;
   }
 };
@@ -254,8 +217,7 @@ const getLcContactConfig = async (localCouncilUrl) => {
     if (urlLcConfig) {
       if (urlLcConfig.separate_standards_council) {
         const standardsLcConfig = allLcConfigData.find(
-          (localCouncil) =>
-            localCouncil._id === urlLcConfig.separate_standards_council
+          (localCouncil) => localCouncil._id === urlLcConfig.separate_standards_council
         );
 
         if (standardsLcConfig) {
@@ -263,34 +225,28 @@ const getLcContactConfig = async (localCouncilUrl) => {
             hygiene: {
               code: urlLcConfig._id,
               local_council: urlLcConfig.local_council,
-              local_council_notify_emails:
-                urlLcConfig.local_council_notify_emails,
+              local_council_notify_emails: urlLcConfig.local_council_notify_emails,
               local_council_email: urlLcConfig.local_council_email,
-              local_council_guidance_link:
-                urlLcConfig.local_council_guidance_link,
+              local_council_guidance_link: urlLcConfig.local_council_guidance_link,
               country: urlLcConfig.country,
               hasAuth: urlLcConfig.auth ? true : false
             },
             standards: {
               code: standardsLcConfig._id,
               local_council: standardsLcConfig.local_council,
-              local_council_notify_emails:
-                standardsLcConfig.local_council_notify_emails,
+              local_council_notify_emails: standardsLcConfig.local_council_notify_emails,
               local_council_email: standardsLcConfig.local_council_email,
-              local_council_guidance_link:
-                standardsLcConfig.local_council_guidance_link,
+              local_council_guidance_link: standardsLcConfig.local_council_guidance_link,
               hasAuth: standardsLcConfig.auth ? true : false
             }
           };
 
           if (urlLcConfig.new_authority_name) {
-            separateCouncils.hygiene.new_authority_name =
-              urlLcConfig.new_authority_name;
+            separateCouncils.hygiene.new_authority_name = urlLcConfig.new_authority_name;
           }
 
           if (urlLcConfig.new_authority_id) {
-            separateCouncils.hygiene.new_authority_id =
-              urlLcConfig.new_authority_id;
+            separateCouncils.hygiene.new_authority_id = urlLcConfig.new_authority_id;
           }
 
           if (urlLcConfig.local_council_phone_number) {
@@ -299,13 +255,11 @@ const getLcContactConfig = async (localCouncilUrl) => {
           }
 
           if (standardsLcConfig.new_authority_name) {
-            separateCouncils.standards.new_authority_name =
-              standardsLcConfig.new_authority_name;
+            separateCouncils.standards.new_authority_name = standardsLcConfig.new_authority_name;
           }
 
           if (standardsLcConfig.new_authority_id) {
-            separateCouncils.standards.new_authority_id =
-              standardsLcConfig.new_authority_id;
+            separateCouncils.standards.new_authority_id = standardsLcConfig.new_authority_id;
           }
 
           if (standardsLcConfig.local_council_phone_number) {
@@ -313,23 +267,14 @@ const getLcContactConfig = async (localCouncilUrl) => {
               standardsLcConfig.local_council_phone_number;
           }
 
-          logEmitter.emit(
-            "functionSuccess",
-            "submissions.service",
-            "getLcContactConfig"
-          );
+          logEmitter.emit("functionSuccess", "submissions.service", "getLcContactConfig");
 
           return separateCouncils;
         } else {
           const newError = new Error();
           newError.name = "localCouncilNotFound";
           newError.message = `A separate standards council config with the code "${urlLcConfig.separate_standards_council}" was expected for "${localCouncilUrl}" but does not exist`;
-          logEmitter.emit(
-            "functionFail",
-            "submissions.service",
-            "getLcContactConfig",
-            newError
-          );
+          logEmitter.emit("functionFail", "submissions.service", "getLcContactConfig", newError);
           throw newError;
         }
       } else {
@@ -337,11 +282,9 @@ const getLcContactConfig = async (localCouncilUrl) => {
           hygieneAndStandards: {
             code: urlLcConfig._id,
             local_council: urlLcConfig.local_council,
-            local_council_notify_emails:
-              urlLcConfig.local_council_notify_emails,
+            local_council_notify_emails: urlLcConfig.local_council_notify_emails,
             local_council_email: urlLcConfig.local_council_email,
-            local_council_guidance_link:
-              urlLcConfig.local_council_guidance_link,
+            local_council_guidance_link: urlLcConfig.local_council_guidance_link,
             country: urlLcConfig.country,
             hasAuth: urlLcConfig.auth ? true : false
           }
@@ -362,11 +305,7 @@ const getLcContactConfig = async (localCouncilUrl) => {
             urlLcConfig.local_council_phone_number;
         }
 
-        logEmitter.emit(
-          "functionSuccess",
-          "submissions.service",
-          "getLcContactConfig"
-        );
+        logEmitter.emit("functionSuccess", "submissions.service", "getLcContactConfig");
 
         return hygieneAndStandardsCouncil;
       }
@@ -374,24 +313,14 @@ const getLcContactConfig = async (localCouncilUrl) => {
       const newError = new Error();
       newError.name = "localCouncilNotFound";
       newError.message = `Config for "${localCouncilUrl}" not found`;
-      logEmitter.emit(
-        "functionFail",
-        "submissions.service",
-        "getLcContactConfig",
-        newError
-      );
+      logEmitter.emit("functionFail", "submissions.service", "getLcContactConfig", newError);
       throw newError;
     }
   } else {
     const newError = new Error();
     newError.name = "localCouncilNotFound";
     newError.message = "Local council URL is undefined";
-    logEmitter.emit(
-      "functionFail",
-      "submissions.service",
-      "getLcContactConfig",
-      newError
-    );
+    logEmitter.emit("functionFail", "submissions.service", "getLcContactConfig", newError);
     throw newError;
   }
 };
@@ -413,24 +342,14 @@ const getLcAuth = async (localCouncilUrl) => {
       const newError = new Error();
       newError.name = "localCouncilNotFound";
       newError.message = `Config for "${localCouncilUrl}" not found`;
-      logEmitter.emit(
-        "functionFail",
-        "submissions.service",
-        "getLcAuth",
-        newError
-      );
+      logEmitter.emit("functionFail", "submissions.service", "getLcAuth", newError);
       throw newError;
     }
   } else {
     const newError = new Error();
     newError.name = "localCouncilNotFound";
     newError.message = "Local council URL is undefined";
-    logEmitter.emit(
-      "functionFail",
-      "submissions.service",
-      "getLcAuth",
-      newError
-    );
+    logEmitter.emit("functionFail", "submissions.service", "getLcAuth", newError);
     throw newError;
   }
 };

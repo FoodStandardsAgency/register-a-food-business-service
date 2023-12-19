@@ -9,7 +9,6 @@ jest.mock("./submissions.controller", () => ({
   createNewRegistration: jest.fn(),
   createNewDirectRegistration: jest.fn()
 }));
-jest.mock("../../services/statusEmitter.service");
 const submissionsController = require("./submissions.controller");
 const { submissionsRouter } = require("./submissions.router");
 describe("submissions router", () => {
@@ -63,11 +62,9 @@ describe("submissions router", () => {
     describe("when an error is thrown", () => {
       let next;
       beforeEach(async () => {
-        submissionsController.createNewDirectRegistration.mockImplementation(
-          () => {
-            throw new Error("reg error");
-          }
-        );
+        submissionsController.createNewDirectRegistration.mockImplementation(() => {
+          throw new Error("reg error");
+        });
         status.mockImplementation(() => ({
           send: jest.fn()
         }));

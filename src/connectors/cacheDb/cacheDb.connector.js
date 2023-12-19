@@ -1,42 +1,17 @@
 const { logEmitter } = require("../../services/logging.service");
-const { statusEmitter } = require("../../services/statusEmitter.service");
 const { establishConnectionToCosmos } = require("../cosmos.client");
 
 const cacheRegistration = async (registration) => {
   logEmitter.emit("functionCall", "cacheDb.connector", "cacheRegistration");
   try {
-    const cachedRegistrations = await establishConnectionToCosmos(
-      "registrations",
-      "registrations"
-    );
+    const cachedRegistrations = await establishConnectionToCosmos("registrations", "registrations");
     const response = await cachedRegistrations.insertOne(registration);
 
-    statusEmitter.emit("incrementCount", "storeRegistrationsInCacheSucceeded");
-    statusEmitter.emit(
-      "setStatus",
-      "mostRecentRegistrationInCacheSucceeded",
-      true
-    );
-    logEmitter.emit(
-      "functionSuccess",
-      "cacheDb.connector",
-      "cacheRegistration"
-    );
+    logEmitter.emit("functionSuccess", "cacheDb.connector", "cacheRegistration");
 
     return response;
   } catch (err) {
-    statusEmitter.emit("incrementCount", "storeRegistrationsInCacheFailed");
-    statusEmitter.emit(
-      "setStatus",
-      "mostRecentRegistrationInCacheSucceeded",
-      false
-    );
-    logEmitter.emit(
-      "functionFail",
-      "cacheDb.connector",
-      "cacheRegistration",
-      err
-    );
+    logEmitter.emit("functionFail", "cacheDb.connector", "cacheRegistration", err);
 
     const newError = new Error();
     newError.name = "mongoConnectionError";
@@ -46,59 +21,7 @@ const cacheRegistration = async (registration) => {
   }
 };
 
-/**
- * Update the completed objects for the Registration
- * @param {string} fsa_rn The FSA-RN for the registration to be updated
- * @param {string} property The specific field to be updated
- * @param {boolean} value The value for the result
- */
-const updateStatusInCache = async (fsa_rn, property, value) => {
-  logEmitter.emit("functionCall", "cacheDb.connector", "updateStatusInCache");
-  try {
-    const cachedRegistrations = await establishConnectionToCosmos(
-      "registrations",
-      "registrations"
-    );
-    const status = await getStatus(cachedRegistrations, fsa_rn);
-
-    status[property] = {
-      time: new Date(),
-      complete: value
-    };
-
-    await updateStatus(cachedRegistrations, fsa_rn, status);
-
-    statusEmitter.emit("incrementCount", "updateStatusInCacheSucceeded");
-    statusEmitter.emit(
-      "setStatus",
-      "mostRecentUpdateStatusInCacheSucceeded",
-      true
-    );
-    logEmitter.emit(
-      "functionSuccess",
-      "cacheDb.connector",
-      "updateStatusInCache"
-    );
-  } catch (err) {
-    statusEmitter.emit("incrementCount", "updateStatusInCacheFailed");
-    statusEmitter.emit(
-      "setStatus",
-      "mostRecentUpdateStatusInCacheSucceeded",
-      false
-    );
-    logEmitter.emit(
-      "functionFail",
-      "cacheDb.connector",
-      "updateStatusInCache",
-      err
-    );
-  }
-};
-
-const findAllFailedNotificationsRegistrations = async (
-  cachedRegistrations,
-  limit = 100
-) => {
+const findAllFailedNotificationsRegistrations = async (cachedRegistrations, limit = 100) => {
   return await cachedRegistrations
     .find({
       $and: [
@@ -145,10 +68,7 @@ const findAllBlankRegistrations = async (cachedRegistrations, limit = 100) => {
       $and: [
         { "fsa-rn": { $not: { $regex: /^tmp_/ } } },
         {
-          $or: [
-            { "status.notifications": { $exists: false } },
-            { "status.notifications": null }
-          ]
+          $or: [{ "status.notifications": { $exists: false } }, { "status.notifications": null }]
         },
         {
           $or: [
@@ -201,19 +121,8 @@ const updateStatus = async (cachedRegistrations, fsa_rn, newStatus) => {
  * @param sent
  * @param date
  */
-const updateNotificationOnSent = (
-  status,
-  fsa_rn,
-  emailsToSend,
-  index,
-  sent,
-  date = null
-) => {
-  logEmitter.emit(
-    "functionCall",
-    "cacheDb.connector",
-    "updateNotificationOnSent"
-  );
+const updateNotificationOnSent = (status, fsa_rn, emailsToSend, index, sent, date = null) => {
+  logEmitter.emit("functionCall", "cacheDb.connector", "updateNotificationOnSent");
   let { type, address } = emailsToSend[index];
   date = date === null ? new Date() : date;
   status.notifications[index].address = address;
@@ -221,11 +130,7 @@ const updateNotificationOnSent = (
   status.notifications[index].time = date;
   status.notifications[index].sent = sent;
 
-  logEmitter.emit(
-    "functionSuccess",
-    "cacheDb.connector",
-    "updateNotificationOnSent"
-  );
+  logEmitter.emit("functionSuccess", "cacheDb.connector", "updateNotificationOnSent");
 
   return status;
 };
@@ -235,7 +140,6 @@ module.exports = {
   findAllTmpRegistrations,
   findAllBlankRegistrations,
   cacheRegistration,
-  updateStatusInCache,
   updateNotificationOnSent,
   findOneById,
   getStatus,

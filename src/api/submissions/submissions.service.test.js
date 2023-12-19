@@ -6,8 +6,6 @@ jest.mock("../../connectors/configDb/configDb.connector", () => ({
   getAllLocalCouncilConfig: jest.fn()
 }));
 
-jest.mock("../../services/statusEmitter.service");
-
 jest.mock("../../services/notifications.service");
 
 jest.mock("axios");

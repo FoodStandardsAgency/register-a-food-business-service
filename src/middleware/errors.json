@@ -95,8 +95,13 @@
     "userMessages": "",
     "statusCode": 400
   },
-
-
+  {
+    "name": "missingConfig",
+    "code": "17",
+    "developerMessage": "The requested configuration data is not found.",
+    "userMessages": "",
+    "statusCode": 404
+  },
   {
     "name": "notifyMissingKey",
     "code": "95",
