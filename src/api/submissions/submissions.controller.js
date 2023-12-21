@@ -71,9 +71,8 @@ const createNewRegistration = async (
     hygieneCouncilCode = lcContactConfig.hygiene.code;
   }
 
-  const postRegistrationMetadata = await getRegistrationMetaData(
-    hygieneCouncilCode
-  );
+  const postRegistrationMetadata =
+    await getRegistrationMetaData(hygieneCouncilCode);
 
   const status = {
     notifications: null
