@@ -207,7 +207,7 @@ const createGuidanceLinksSection = (lcInfo, i18n) => {
     createHyperlinkTitle(
       "Food labelling and allergens guidance",
       "h4",
-      "https://www.food.gov.uk/business-guidance/industry-specific-advice/labelling-and-allergenss"
+      "https://www.food.gov.uk/business-guidance/industry-specific-advice/labelling-and-allergens"
     )
   );
   if (lcInfo.country == "england") {

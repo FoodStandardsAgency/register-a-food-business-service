@@ -94,8 +94,8 @@ const transformRegForCollections = (registration) => {
           registration.establishment.operator[key] === false
             ? registration.establishment.operator[key]
             : key === "partners"
-            ? []
-            : null;
+              ? []
+              : null;
       });
       operator["operator_company_house_number"] = operator["operator_companies_house_number"];
       delete operator["operator_companies_house_number"];
