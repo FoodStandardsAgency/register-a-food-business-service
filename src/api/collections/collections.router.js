@@ -11,11 +11,7 @@ const collectionsRouter = () => {
   const router = Router();
 
   router.get("/unified", async (req, res, next) => {
-    logEmitter.emit(
-      "functionCall",
-      "registrations.router",
-      "GET /unified route"
-    );
+    logEmitter.emit("functionCall", "registrations.router", "GET /unified route");
     try {
       let registrations;
       const options = {
@@ -25,19 +21,10 @@ const collectionsRouter = () => {
 
       registrations = await getRegistrations(options);
 
-      logEmitter.emit(
-        "functionSuccess",
-        "registrations.router",
-        "GET /unified route"
-      );
+      logEmitter.emit("functionSuccess", "registrations.router", "GET /unified route");
       res.send(registrations);
     } catch (err) {
-      logEmitter.emit(
-        "functionFail",
-        "registrations.router",
-        "GET /unified route",
-        err
-      );
+      logEmitter.emit("functionFail", "registrations.router", "GET /unified route", err);
       next(err);
     }
   });
@@ -56,29 +43,16 @@ const collectionsRouter = () => {
 
       const registrations = await getRegistrationsByCouncil(options);
 
-      logEmitter.emit(
-        "functionSuccess",
-        "registrations.router",
-        "GET /:lc route"
-      );
+      logEmitter.emit("functionSuccess", "registrations.router", "GET /:lc route");
       res.send(registrations);
     } catch (err) {
-      logEmitter.emit(
-        "functionFail",
-        "registrations.router",
-        "GET /:lc route",
-        err
-      );
+      logEmitter.emit("functionFail", "registrations.router", "GET /:lc route", err);
       next(err);
     }
   });
 
   router.get("/:lc/:fsa_rn", async (req, res, next) => {
-    logEmitter.emit(
-      "functionCall",
-      "registrations.router",
-      "GET /:lc/:fsa_rn route"
-    );
+    logEmitter.emit("functionCall", "registrations.router", "GET /:lc/:fsa_rn route");
     try {
       const options = {
         fsa_rn: req.params.fsa_rn,
@@ -87,29 +61,16 @@ const collectionsRouter = () => {
 
       const registration = await getRegistration(options);
 
-      logEmitter.emit(
-        "functionSuccess",
-        "registrations.router",
-        "GET /:lc/:fsa_rn route"
-      );
+      logEmitter.emit("functionSuccess", "registrations.router", "GET /:lc/:fsa_rn route");
       res.send(registration);
     } catch (err) {
-      logEmitter.emit(
-        "functionFail",
-        "registrations.router",
-        "GET /:lc/:fsa_rn route",
-        err
-      );
+      logEmitter.emit("functionFail", "registrations.router", "GET /:lc/:fsa_rn route", err);
       next(err);
     }
   });
 
   router.put("/:lc/:fsa_rn", async (req, res, next) => {
-    logEmitter.emit(
-      "functionCall",
-      "registrations.router",
-      "PUT /:lc/:fsa_rn route"
-    );
+    logEmitter.emit("functionCall", "registrations.router", "PUT /:lc/:fsa_rn route");
     try {
       const options = {
         collected: req.body.collected,
@@ -119,19 +80,10 @@ const collectionsRouter = () => {
 
       const response = await updateRegistration(options);
 
-      logEmitter.emit(
-        "functionSuccess",
-        "registrations.router",
-        "PUT /:lc/:fsa_rn route"
-      );
+      logEmitter.emit("functionSuccess", "registrations.router", "PUT /:lc/:fsa_rn route");
       res.send(response);
     } catch (err) {
-      logEmitter.emit(
-        "functionFail",
-        "registrations.router",
-        "PUT /:lc/:fsa_rn route",
-        err
-      );
+      logEmitter.emit("functionFail", "registrations.router", "PUT /:lc/:fsa_rn route", err);
       next(err);
     }
   });

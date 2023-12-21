@@ -37,12 +37,7 @@ const frontendSubmitRegistration = async () => {
       submitResponses.push(response.data);
     }
   } catch (err) {
-    logEmitter.emit(
-      "functionFail",
-      "getSingleRegistration",
-      "frontendSubmitRegistration",
-      err
-    );
+    logEmitter.emit("functionFail", "getSingleRegistration", "frontendSubmitRegistration", err);
   }
 };
 
@@ -59,14 +54,10 @@ describe("GET to /api/v2/collections/:lc", () => {
 
     it("should return all the new registrations for that council including the one just submitted", () => {
       expect(
-        response.find(
-          (record) => record.fsa_rn === submitResponses[0]["fsa-rn"]
-        )
+        response.find((record) => record.fsa_rn === submitResponses[0]["fsa-rn"])
       ).toBeDefined();
       expect(
-        response.find(
-          (record) => record.fsa_rn === submitResponses[1]["fsa-rn"]
-        )
+        response.find((record) => record.fsa_rn === submitResponses[1]["fsa-rn"])
       ).toBeUndefined();
       response.forEach((record) => {
         expect(record.collected).toBe(false);
@@ -84,9 +75,7 @@ describe("GET to /api/v2/collections/:lc", () => {
     it("should return the options validation error", () => {
       expect(response.statusCode).toBe(400);
       expect(response.errorCode).toBe("3");
-      expect(response.developerMessage).toBe(
-        "One of the supplied options is invalid"
-      );
+      expect(response.developerMessage).toBe("One of the supplied options is invalid");
     });
   });
 
@@ -111,9 +100,7 @@ describe("GET to /api/v2/collections/:lc", () => {
     });
 
     it("should return all the new registrations for that council", () => {
-      expect(
-        response[0].establishment.establishment_trading_name
-      ).toBeDefined();
+      expect(response[0].establishment.establishment_trading_name).toBeDefined();
       expect(response[0].metadata.declaration1).toBeDefined();
     });
   });

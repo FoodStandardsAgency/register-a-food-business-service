@@ -6,21 +6,13 @@ const {
 } = require("../../connectors/registrationsDb-v3/registrationsDb.v3.connector");
 
 const { validateOptions } = require("./collections.v3.service");
-const {
-  transformRegForCollections
-} = require("../../services/collectionsTransform.v3.service");
+const { transformRegForCollections } = require("../../services/collectionsTransform.v3.service");
 
 const { logEmitter } = require("../../services/logging.service");
-const {
-  getCouncilsForSupplier
-} = require("../../connectors/configDb/configDb.connector");
+const { getCouncilsForSupplier } = require("../../connectors/configDb/configDb.connector");
 
 const getRegistrationsByCouncil = async (options) => {
-  logEmitter.emit(
-    "functionCall",
-    "registrations.v3.controller",
-    "getRegistrationsByCouncil"
-  );
+  logEmitter.emit("functionCall", "registrations.v3.controller", "getRegistrationsByCouncil");
 
   const validationResult = await validateOptions(options, true);
 
@@ -50,11 +42,7 @@ const getRegistrationsByCouncil = async (options) => {
     const formattedRegistrations = registrations.map((registration) => {
       return transformRegForCollections(registration);
     });
-    logEmitter.emit(
-      "functionSuccess",
-      "registrations.v3.controller",
-      "getRegistrationsByCouncil"
-    );
+    logEmitter.emit("functionSuccess", "registrations.v3.controller", "getRegistrationsByCouncil");
 
     return formattedRegistrations;
   } else {
@@ -66,27 +54,16 @@ const getRegistrationsByCouncil = async (options) => {
 };
 
 const getRegistration = async (options) => {
-  logEmitter.emit(
-    "functionCall",
-    "registrations.v3.controller",
-    "getRegistration"
-  );
+  logEmitter.emit("functionCall", "registrations.v3.controller", "getRegistration");
 
   const validationResult = await validateOptions(options);
 
   if (validationResult === true) {
-    const registration = await getSingleRegistration(
-      options.fsa_rn,
-      options.requestedCouncil
-    );
+    const registration = await getSingleRegistration(options.fsa_rn, options.requestedCouncil);
 
     const formattedRegistration = transformRegForCollections(registration);
 
-    logEmitter.emit(
-      "functionSuccess",
-      "registrations.v3.controller",
-      "getRegistration"
-    );
+    logEmitter.emit("functionSuccess", "registrations.v3.controller", "getRegistration");
     return formattedRegistration;
   } else {
     const error = new Error("");
@@ -97,29 +74,20 @@ const getRegistration = async (options) => {
 };
 
 const getRegistrations = async (options) => {
-  logEmitter.emit(
-    "functionCall",
-    "registrations.v3.controller",
-    "getRegistrations"
-  );
+  logEmitter.emit("functionCall", "registrations.v3.controller", "getRegistrations");
 
   const validationResult = await validateOptions(options);
 
   if (validationResult === true) {
-    const registrations = await getUnifiedRegistrations(
-      options.before,
-      options.after,
-      ["establishment", "metadata"]
-    );
+    const registrations = await getUnifiedRegistrations(options.before, options.after, [
+      "establishment",
+      "metadata"
+    ]);
 
     const formattedRegistrations = registrations.map((registration) => {
       return transformRegForCollections(registration);
     });
-    logEmitter.emit(
-      "functionSuccess",
-      "registrations.v3.controller",
-      "getRegistrations"
-    );
+    logEmitter.emit("functionSuccess", "registrations.v3.controller", "getRegistrations");
     return formattedRegistrations;
   } else {
     const error = new Error("");
@@ -130,11 +98,7 @@ const getRegistrations = async (options) => {
 };
 
 const updateRegistration = async (options) => {
-  logEmitter.emit(
-    "functionCall",
-    "registrations.v3.controller",
-    "updateRegistration"
-  );
+  logEmitter.emit("functionCall", "registrations.v3.controller", "updateRegistration");
 
   const validationResult = await validateOptions(options);
 
@@ -145,11 +109,7 @@ const updateRegistration = async (options) => {
       options.requestedCouncil
     );
 
-    logEmitter.emit(
-      "functionSuccess",
-      "registrations.v3.controller",
-      "updateRegistration"
-    );
+    logEmitter.emit("functionSuccess", "registrations.v3.controller", "updateRegistration");
 
     return response;
   } else {

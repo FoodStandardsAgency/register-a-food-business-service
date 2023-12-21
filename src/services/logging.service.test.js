@@ -134,9 +134,7 @@ describe("logEmitter", () => {
       const moduleMessage = "someModule";
       const funcMessage = "someFunction";
       const someData = { data: "data" };
-      const expected1 = `${moduleMessage}: ${funcMessage} error with: ${JSON.stringify(
-        someData
-      )}`;
+      const expected1 = `${moduleMessage}: ${funcMessage} error with: ${JSON.stringify(someData)}`;
 
       logger.info.mockImplementation(() => {
         //Mock

@@ -180,10 +180,7 @@ describe("Function: getUnifiedRegistrations", () => {
       });
 
       try {
-        await getUnifiedRegistrations(
-          "2018-10-30T23:59:59Z",
-          "2018-10-25T09:00:00Z"
-        );
+        await getUnifiedRegistrations("2018-10-30T23:59:59Z", "2018-10-25T09:00:00Z");
       } catch (err) {
         result = err;
       }
@@ -213,10 +210,7 @@ describe("Function: getUnifiedRegistrations", () => {
           })
         })
       }));
-      results = await getUnifiedRegistrations(
-        "2018-10-30T23:59:59Z",
-        "2018-10-25T09:00:00Z"
-      );
+      results = await getUnifiedRegistrations("2018-10-30T23:59:59Z", "2018-10-25T09:00:00Z");
     });
     it("should return full registrations", () => {
       expect(results).toStrictEqual([fullRegistration]);
@@ -237,13 +231,7 @@ describe("Function: getAllRegistrationsByCouncils", () => {
       });
 
       try {
-        await getAllRegistrationsByCouncils(
-          councils,
-          newRegistrations,
-          [],
-          before,
-          after
-        );
+        await getAllRegistrationsByCouncils(councils, newRegistrations, [], before, after);
       } catch (err) {
         result = err;
       }
@@ -330,13 +318,7 @@ describe("Function: getAllRegistrationsByCouncils", () => {
             })
           })
         }));
-        results = await getAllRegistrationsByCouncils(
-          councils,
-          "false",
-          [],
-          before,
-          after
-        );
+        results = await getAllRegistrationsByCouncils(councils, "false", [], before, after);
       });
       it("should return full registrations", () => {
         expect(results).toStrictEqual([shortRegistration]);
@@ -382,11 +364,7 @@ describe("Function: updateRegistrationCollectedByCouncil", () => {
           })
         }));
         try {
-          await updateRegistrationCollectedByCouncil(
-            fsa_rn,
-            collected,
-            council
-          );
+          await updateRegistrationCollectedByCouncil(fsa_rn, collected, council);
         } catch (err) {
           result = err;
         }
@@ -406,11 +384,7 @@ describe("Function: updateRegistrationCollectedByCouncil", () => {
             })
           })
         }));
-        result = await updateRegistrationCollectedByCouncil(
-          fsa_rn,
-          collected,
-          council
-        );
+        result = await updateRegistrationCollectedByCouncil(fsa_rn, collected, council);
       });
       it("should return full registrations", () => {
         expect(result).toStrictEqual({ fsa_rn, collected });

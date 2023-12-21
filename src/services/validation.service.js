@@ -93,10 +93,7 @@ module.exports.validate = (data, isDirectSubmission = false) => {
     logEmitter.emit("info", "Validating with standard schema");
   }
 
-  const validatorResult = validator.validate(
-    data,
-    validationSchema.registration
-  );
+  const validatorResult = validator.validate(data, validationSchema.registration);
 
   // turn errors into key:value pairs
   validatorResult.errors.forEach((error) => {

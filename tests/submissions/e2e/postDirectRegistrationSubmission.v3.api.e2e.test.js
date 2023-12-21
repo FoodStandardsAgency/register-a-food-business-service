@@ -5,8 +5,7 @@ const axios = ax.create({
     return true;
   }
 });
-const baseUrl =
-  "https://integration-fsa-rof-gateway.azure-api.net/registrations/v3/";
+const baseUrl = "https://integration-fsa-rof-gateway.azure-api.net/registrations/v3/";
 const highgardenUrl = `${baseUrl}highgarden`;
 const highgardenAPIKey = "414d6fb61355434694c6a9fcd600e9e4";
 const cardiffAPIKey = "b175199d420448fc87baa714e458ce6e";
@@ -158,9 +157,7 @@ describe("Submit a single registration through the API as a council", () => {
 
     it("should return an authorization error", () => {
       expect(response.statusCode).toBe(403);
-      expect(response.message).toContain(
-        "You are not authorized to access the council:"
-      );
+      expect(response.message).toContain("You are not authorized to access the council:");
     });
   });
 

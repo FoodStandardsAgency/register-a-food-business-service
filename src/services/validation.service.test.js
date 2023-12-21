@@ -104,14 +104,10 @@ describe("Function: validate", () => {
       expect(response[1].property).toBe("instance.operator_last_name");
       expect(response[2].property).toBe("instance.operator_primary_number");
       expect(response[3].property).toBe("instance.operator_company_name");
-      expect(response[4].property).toBe(
-        "instance.operator_companies_house_number"
-      );
+      expect(response[4].property).toBe("instance.operator_companies_house_number");
       expect(response[5].property).toBe("instance.operator_charity_name");
       expect(response[6].property).toBe("instance.operator_charity_number");
-      expect(response[7].property).toBe(
-        "instance.establishment_primary_number"
-      );
+      expect(response[7].property).toBe("instance.establishment_primary_number");
     });
   });
 

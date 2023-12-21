@@ -5,8 +5,7 @@ const axios = ax.create({
     return true;
   }
 });
-const baseUrl =
-  "https://integration-fsa-rof-gateway.azure-api.net/registrations/v1/";
+const baseUrl = "https://integration-fsa-rof-gateway.azure-api.net/registrations/v1/";
 const unifiedUrl = `${baseUrl}unified`;
 const unifiedAPIKey = "022a06ae44724035abbdcd7d00074125";
 
@@ -90,9 +89,7 @@ describe("Retrieve all registrations through API", () => {
 
     it("Should return subscription key not found error", () => {
       expect(response.statusCode).toBe(401);
-      expect(response.message).toContain(
-        "Access denied due to missing subscription key."
-      );
+      expect(response.message).toContain("Access denied due to missing subscription key.");
     });
   });
 
@@ -118,9 +115,7 @@ describe("Retrieve all registrations through API", () => {
     it("should return the options validation error", () => {
       expect(response.statusCode).toBe(400);
       expect(response.errorCode).toBe("3");
-      expect(response.developerMessage).toBe(
-        "One of the supplied options is invalid"
-      );
+      expect(response.developerMessage).toBe("One of the supplied options is invalid");
       expect(response.rawError).toBe(
         "after option must be a valid ISO 8601 date and time ('yyyy-MM-ddTHH:mm:ssZ')"
       );

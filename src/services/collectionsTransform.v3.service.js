@@ -2,11 +2,7 @@ const { logEmitter } = require("./logging.service");
 
 const transformRegForCollections = (registration) => {
   // Transform the registrations returned from cosmos to the collections API expected format
-  logEmitter.emit(
-    "functionCall",
-    "registrationTransform.v3.service",
-    "transformRegForCollection"
-  );
+  logEmitter.emit("functionCall", "registrationTransform.v3.service", "transformRegForCollection");
 
   const establishmentObject = {};
   try {
@@ -102,8 +98,7 @@ const transformRegForCollections = (registration) => {
               ? []
               : null;
       });
-      operator["operator_company_house_number"] =
-        operator["operator_companies_house_number"];
+      operator["operator_company_house_number"] = operator["operator_companies_house_number"];
       delete operator["operator_companies_house_number"];
 
       activities_keys.forEach((key) => {
@@ -124,13 +119,7 @@ const transformRegForCollections = (registration) => {
             : null;
       });
 
-      Object.assign(
-        establishmentObject,
-        establishment,
-        { operator },
-        { activities },
-        { premise }
-      );
+      Object.assign(establishmentObject, establishment, { operator }, { activities }, { premise });
     }
 
     const formattedRegistration = {
@@ -141,9 +130,7 @@ const transformRegForCollections = (registration) => {
       competent_authority_id: registration.source_council_id,
       local_council_url: registration.local_council_url,
       collected: registration.collected,
-      collected_at: registration.collected_at
-        ? registration.collected_at.toISOString()
-        : null,
+      collected_at: registration.collected_at ? registration.collected_at.toISOString() : null,
       createdAt: registration.reg_submission_date.toISOString(),
       updatedAt: registration.collected_at
         ? registration.collected_at.toISOString()

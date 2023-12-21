@@ -53,18 +53,3 @@ This route is primarily in place to allow easy actioning of GDPR deletion reques
 
 This route is deprecated because the collections service now provides all `GET` functionality for saved registrations. However, the route can be used for admin purposes if necessary. The `client-name` and `api-secret` headers are required to use this route. Note that the matching environment variables are the `ADMIN_*` variables, which are different to those for the `POST/createNewRegistration` route.
 
-## The `/api/status` route
-
-The `/api/status` route is the endpoint for fetching status data, ranging from healthcheck (on/off) to more complex status data.
-
-### `GET /api/status/healthcheck`
-
-This route returns a success message. No message is returned if the service is not running.
-
-### `GET /api/status/all`
-
-This route returns a JSON object containing all available status points and their values, such as `storeRegistrationsInCacheSucceeded`.
-
-### `GET /api/status/name/:statusName`
-
-This route returns the status value for the given status point name.

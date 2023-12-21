@@ -5,8 +5,7 @@ const axios = ax.create({
     return true;
   }
 });
-const baseUrl =
-  "https://integration-fsa-rof-gateway.azure-api.net/registrations/v2/";
+const baseUrl = "https://integration-fsa-rof-gateway.azure-api.net/registrations/v2/";
 const cardiffUrl = `${baseUrl}cardiff`;
 const cardiffAPIKey = "b175199d420448fc87baa714e458ce6e";
 
@@ -74,9 +73,7 @@ describe("Update single registration through API", () => {
 
     it("Should throw an error", () => {
       expect(response.statusCode).toBe(400);
-      expect(response.developerMessage).toBe(
-        "One of the supplied options is invalid"
-      );
+      expect(response.developerMessage).toBe("One of the supplied options is invalid");
     });
   });
 

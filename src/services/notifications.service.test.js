@@ -5,7 +5,6 @@ jest.mock("../connectors/notify/notify.connector", () => ({
 }));
 const mockEmit = jest.fn();
 jest.mock("./pdf.service");
-jest.mock("./statusEmitter.service");
 jest.mock("./logging.service", () => ({
   logEmitter: { emit: mockEmit }
 }));
@@ -13,10 +12,7 @@ jest.mock("./logging.service", () => ({
 const moment = require("moment");
 const today = moment().format("DD MMM YYYY");
 
-const {
-  generateEmailsToSend,
-  transformDataForNotify
-} = require("./notifications.service");
+const { generateEmailsToSend, transformDataForNotify } = require("./notifications.service");
 
 const { RNG_PENDING_TEMPLATE_ID } = require("../config");
 
@@ -280,16 +276,10 @@ describe(`generateEmailsToSend`, () => {
     };
     let lcConfig = {
       fakeCouncilOne: {
-        local_council_notify_emails: [
-          "fake_notify_1@test.com",
-          "fake_notify_2@test.com"
-        ]
+        local_council_notify_emails: ["fake_notify_1@test.com", "fake_notify_2@test.com"]
       },
       fakeCouncilTwo: {
-        local_council_notify_emails: [
-          "fake_notify_3@test.com",
-          "fake_notify_4@test.com"
-        ]
+        local_council_notify_emails: ["fake_notify_3@test.com", "fake_notify_4@test.com"]
       }
     };
 
@@ -535,11 +525,7 @@ describe("Function: transformDataForNotify", () => {
 
     describe("given separate hygiene and standards councils without a phone number", () => {
       beforeEach(() => {
-        result = transformDataForNotify(
-          testRegistrationData,
-          testLcContactConfigSplit,
-          i18nUtil
-        );
+        result = transformDataForNotify(testRegistrationData, testLcContactConfigSplit, i18nUtil);
       });
 
       it("should return the flattened data with two sets of council details", () => {

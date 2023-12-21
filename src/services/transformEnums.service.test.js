@@ -102,12 +102,8 @@ describe("transformEnumsForCollections", () => {
       });
 
       it("Should not perform any transform", () => {
-        expect(registrations[1].establishment.operator.operator_type).toEqual(
-          "SOLETRADER"
-        );
-        expect(
-          registrations[1].establishment.operator.operator_first_name
-        ).toEqual("Jeff");
+        expect(registrations[1].establishment.operator.operator_type).toEqual("SOLETRADER");
+        expect(registrations[1].establishment.operator.operator_first_name).toEqual("Jeff");
       });
     });
     describe("When passed an array of registration", () => {
@@ -116,18 +112,12 @@ describe("transformEnumsForCollections", () => {
       });
 
       it("Should not perform any transform", () => {
-        expect(
-          registrations[0].establishment.premise.establishment_type
-        ).toEqual("Mobile or moveable premises");
-        expect(
-          registrations[1].establishment.premise.establishment_type
-        ).toEqual("MOBILE");
-        expect(
-          registrations[1].establishment.operator.operator_first_name
-        ).toEqual("Jeff");
-        expect(registrations[1].establishment.activities.business_type).toEqual(
-          "048"
+        expect(registrations[0].establishment.premise.establishment_type).toEqual(
+          "Mobile or moveable premises"
         );
+        expect(registrations[1].establishment.premise.establishment_type).toEqual("MOBILE");
+        expect(registrations[1].establishment.operator.operator_first_name).toEqual("Jeff");
+        expect(registrations[1].establishment.activities.business_type).toEqual("048");
       });
     });
   });
@@ -137,12 +127,8 @@ describe("transformEnumsForCollections", () => {
         transformEnumsForCollections("latest", registrations[0]);
       });
       it("Should not perform any transform", () => {
-        expect(registrations[1].establishment.activities.customer_type).toEqual(
-          "END_CONSUMER"
-        );
-        expect(
-          registrations[1].establishment.operator.operator_first_name
-        ).toEqual("Jeff");
+        expect(registrations[1].establishment.activities.customer_type).toEqual("END_CONSUMER");
+        expect(registrations[1].establishment.operator.operator_first_name).toEqual("Jeff");
       });
     });
     describe("When passed an array of registration", () => {
@@ -150,18 +136,10 @@ describe("transformEnumsForCollections", () => {
         transformEnumsForCollections("latest", registrations);
       });
       it("Should not perform any transform", () => {
-        expect(
-          registrations[0].establishment.activities.import_export_activities
-        ).toEqual("None");
-        expect(
-          registrations[1].establishment.activities.import_export_activities
-        ).toEqual("NONE");
-        expect(
-          registrations[1].establishment.operator.operator_first_name
-        ).toEqual("Jeff");
-        expect(registrations[1].establishment.activities.business_type).toEqual(
-          "048"
-        );
+        expect(registrations[0].establishment.activities.import_export_activities).toEqual("None");
+        expect(registrations[1].establishment.activities.import_export_activities).toEqual("NONE");
+        expect(registrations[1].establishment.operator.operator_first_name).toEqual("Jeff");
+        expect(registrations[1].establishment.activities.business_type).toEqual("048");
       });
     });
   });
@@ -171,12 +149,8 @@ describe("transformEnumsForCollections", () => {
         transformEnumsForCollections("1", registrations[1]);
       });
       it("Should only tranform enum keys to enum values", () => {
-        expect(registrations[1].establishment.activities.water_supply).toEqual(
-          "Private"
-        );
-        expect(
-          registrations[0].establishment.operator.operator_first_name
-        ).toEqual("Tom");
+        expect(registrations[1].establishment.activities.water_supply).toEqual("Private");
+        expect(registrations[0].establishment.operator.operator_first_name).toEqual("Tom");
       });
     });
     describe("When passed an array of registrations", () => {
@@ -185,15 +159,9 @@ describe("transformEnumsForCollections", () => {
       });
 
       it("Should only tranform enum keys to enum values", () => {
-        expect(
-          registrations[1].establishment.activities.import_export_activities
-        ).toEqual("None");
-        expect(
-          registrations[0].establishment.activities.import_export_activities
-        ).toEqual("None");
-        expect(
-          registrations[1].establishment.operator.operator_first_name
-        ).toEqual("Jeff");
+        expect(registrations[1].establishment.activities.import_export_activities).toEqual("None");
+        expect(registrations[0].establishment.activities.import_export_activities).toEqual("None");
+        expect(registrations[1].establishment.operator.operator_first_name).toEqual("Jeff");
         expect(registrations[1].establishment.activities.business_type).toEqual(
           "Market stalls with permanent pitch"
         );
@@ -210,9 +178,7 @@ describe("applyEnumTransformsForService", () => {
 
     it("should only transform enum keys to english enum values", () => {
       expect(data.activities.customer_type).toEqual("End consumer");
-      expect(data.activities.business_other_details).toEqual(
-        "business other details"
-      );
+      expect(data.activities.business_other_details).toEqual("business other details");
     });
   });
   describe("when language is welsh", () => {

@@ -9,8 +9,7 @@ const localCouncil = [
     env: ["dev", "test", "staging", "production"],
     type: "input",
     name: "SEED_LC_ID",
-    message:
-      "Enter the four-digit numeric ID/code for the new local council, e.g. 1234"
+    message: "Enter the four-digit numeric ID/code for the new local council, e.g. 1234"
   },
   {
     env: ["dev", "test", "staging", "production"],
@@ -34,8 +33,7 @@ const localCouncil = [
     env: ["production"],
     type: "input",
     name: "SEED_LC_PHONE_NUMBER",
-    message:
-      "(OPTIONAL) Enter the phone number that the council wants displayed to users"
+    message: "(OPTIONAL) Enter the phone number that the council wants displayed to users"
   }
 ];
 

@@ -3,9 +3,7 @@ jest.mock("axios");
 const axios = require("axios");
 const { getAddressesByPostcode } = require("./address-lookup-api.connector");
 const { smallAddressResponseJSON } = require("./smallAddressResponseMock.json");
-const {
-  regularIntegrationResponse
-} = require("./regularIntegrationResponse.json");
+const { regularIntegrationResponse } = require("./regularIntegrationResponse.json");
 
 let responseJSON;
 
@@ -34,9 +32,7 @@ describe("Function: getAddressesByPostcode: ", () => {
         } catch (err) {
           result = err;
         }
-        expect(result.message).toBe(
-          "Address lookup API responded with non-200 status: 500"
-        );
+        expect(result.message).toBe("Address lookup API responded with non-200 status: 500");
       });
     });
 
@@ -75,9 +71,7 @@ describe("Function: getAddressesByPostcode: ", () => {
         } catch (err) {
           result = err;
         }
-        expect(result.message).toBe(
-          "Address lookup API responded with non-200 status: 500"
-        );
+        expect(result.message).toBe("Address lookup API responded with non-200 status: 500");
       });
     });
   });

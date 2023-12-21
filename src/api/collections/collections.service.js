@@ -92,21 +92,12 @@ const validateOptions = (options, unlimitedDateRange) => {
   ) {
     return raiseValidationError(validationFields["dateRange"].message);
   }
-  logEmitter.emit(
-    "functionSuccess",
-    "registrations.service",
-    "validateOptions"
-  );
+  logEmitter.emit("functionSuccess", "registrations.service", "validateOptions");
   return true;
 };
 
 const raiseValidationError = (message) => {
-  logEmitter.emit(
-    "functionFail",
-    "registrations.service",
-    "validateOptions",
-    new Error(message)
-  );
+  logEmitter.emit("functionFail", "registrations.service", "validateOptions", new Error(message));
   return message;
 };
 

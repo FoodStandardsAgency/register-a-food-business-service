@@ -75,10 +75,7 @@ describe("Pdf Service: ", () => {
         };
 
         beforeEach(() => {
-          result = transformDataForPdf(
-            mockRegistraionData,
-            mockLcContactConfig
-          );
+          result = transformDataForPdf(mockRegistraionData, mockLcContactConfig);
         });
 
         it("Should return an object with required sections", () => {
@@ -91,9 +88,7 @@ describe("Pdf Service: ", () => {
         });
 
         it("Should create a single local council for lcInfo", () => {
-          expect(result.metaData.lcInfo.local_council).toBe(
-            "City of Cardiff Council"
-          );
+          expect(result.metaData.lcInfo.local_council).toBe("City of Cardiff Council");
         });
         it("Should return lcInfo.country", () => {
           expect(result.metaData.lcInfo.country).toBe("wales");
@@ -121,10 +116,7 @@ describe("Pdf Service: ", () => {
         };
 
         beforeEach(() => {
-          result = transformDataForPdf(
-            mockRegistraionData,
-            mockLcContactConfig
-          );
+          result = transformDataForPdf(mockRegistraionData, mockLcContactConfig);
         });
 
         it("Should return an object with required sections", () => {
@@ -137,22 +129,16 @@ describe("Pdf Service: ", () => {
         });
 
         it("Should create a single local council for lcInfo", () => {
-          expect(result.metaData.lcInfo.local_council_hygiene).toBe(
-            "City of Cardiff Council"
-          );
+          expect(result.metaData.lcInfo.local_council_hygiene).toBe("City of Cardiff Council");
 
-          expect(result.metaData.lcInfo.local_council_standards).toBe(
-            "Standards Council"
-          );
+          expect(result.metaData.lcInfo.local_council_standards).toBe("Standards Council");
         });
         it("Should return lcInfo.country", () => {
           expect(result.metaData.lcInfo.country).toBe("wales");
         });
         it("Should return correct value for key transformed fields", () => {
           expect(result.operator.operator_type).toBe("Sole trader");
-          expect(result.establishment.establishment_type).toBe(
-            "Home or domestic premises"
-          );
+          expect(result.establishment.establishment_type).toBe("Home or domestic premises");
           expect(result.activities.customer_type).toBe("End consumer");
           expect(result.activities.business_type).toBe("Livestock farm");
           expect(result.activities.import_export_activities).toBe("None");
@@ -233,10 +219,7 @@ describe("Pdf Service: ", () => {
         };
 
         beforeEach(() => {
-          result = transformDataForPdf(
-            mockRegistraionData,
-            mockLcContactConfig
-          );
+          result = transformDataForPdf(mockRegistraionData, mockLcContactConfig);
         });
 
         it("Should return an object with required sections", () => {
@@ -250,18 +233,14 @@ describe("Pdf Service: ", () => {
         });
 
         it("Should create a single local council for lcInfo", () => {
-          expect(result.metaData.lcInfo.local_council).toBe(
-            "City of Cardiff Council"
-          );
+          expect(result.metaData.lcInfo.local_council).toBe("City of Cardiff Council");
         });
         it("Should return lcInfo.country", () => {
           expect(result.metaData.lcInfo.country).toBe("wales");
         });
         it("Should return correct value for key transformed fields", () => {
           expect(result.operator.operator_type).toBe("Sole trader");
-          expect(result.establishment.establishment_type).toBe(
-            "Home or domestic premises"
-          );
+          expect(result.establishment.establishment_type).toBe("Home or domestic premises");
           expect(result.activities.customer_type).toBe("End consumer");
           expect(result.activities.business_type).toBe("Livestock farm");
           expect(result.activities.import_export_activities).toBe("None");
@@ -290,10 +269,7 @@ describe("Pdf Service: ", () => {
         };
 
         beforeEach(() => {
-          result = transformDataForPdf(
-            mockRegistraionData,
-            mockLcContactConfig
-          );
+          result = transformDataForPdf(mockRegistraionData, mockLcContactConfig);
         });
 
         it("Should return an object with required sections", () => {
@@ -306,22 +282,16 @@ describe("Pdf Service: ", () => {
         });
 
         it("Should create a single local council for lcInfo", () => {
-          expect(result.metaData.lcInfo.local_council_hygiene).toBe(
-            "City of Cardiff Council"
-          );
+          expect(result.metaData.lcInfo.local_council_hygiene).toBe("City of Cardiff Council");
 
-          expect(result.metaData.lcInfo.local_council_standards).toBe(
-            "Standards Council"
-          );
+          expect(result.metaData.lcInfo.local_council_standards).toBe("Standards Council");
         });
         it("Should return lcInfo.country", () => {
           expect(result.metaData.lcInfo.country).toBe("wales");
         });
         it("Should return correct value for key transformed fields", () => {
           expect(result.operator.operator_type).toBe("Sole trader");
-          expect(result.establishment.establishment_type).toBe(
-            "Home or domestic premises"
-          );
+          expect(result.establishment.establishment_type).toBe("Home or domestic premises");
           expect(result.activities.customer_type).toBe("End consumer");
           expect(result.activities.business_type).toBe("Livestock farm");
           expect(result.activities.import_export_activities).toBe("None");

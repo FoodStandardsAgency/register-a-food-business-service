@@ -32,9 +32,7 @@ const {
   updateRegistration
 } = require("./collections.controller");
 
-const {
-  transformRegForCollections
-} = require("../../services/collectionsTransform.service");
+const { transformRegForCollections } = require("../../services/collectionsTransform.service");
 
 const fullRegistration = {
   "fsa-rn": "PQQK8Q-SN9N8C-4ADETF",
@@ -236,21 +234,15 @@ describe("collections.controller", () => {
     describe("When successful", () => {
       beforeEach(async () => {
         validateOptions.mockImplementation(() => true);
-        getAllRegistrationsByCouncil.mockImplementation(() => [
-          shortRegistration
-        ]);
-        transformRegForCollections.mockImplementation(
-          () => transformedShortReg
-        );
+        getAllRegistrationsByCouncil.mockImplementation(() => [shortRegistration]);
+        transformRegForCollections.mockImplementation(() => transformedShortReg);
         result = await getRegistrationsByCouncil({
           getNewRegistrations: "true",
           council: "cardiff"
         });
       });
       it("should call transformRegForCollection", () => {
-        expect(transformRegForCollections).toHaveBeenCalledWith(
-          shortRegistration
-        );
+        expect(transformRegForCollections).toHaveBeenCalledWith(shortRegistration);
       });
       it("Should return the result of getAllRegistrationsByCouncil", () => {
         expect(result).toEqual([transformedShortReg]);

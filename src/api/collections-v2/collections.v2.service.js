@@ -1,8 +1,6 @@
 const { logEmitter } = require("../../services/logging.service");
 const { isISO8601 } = require("validator");
-const {
-  getCouncilsForSupplier
-} = require("../../connectors/configDb/configDb.connector");
+const { getCouncilsForSupplier } = require("../../connectors/configDb/configDb.connector");
 
 const validateString = (value) => {
   return typeof value === "string";
@@ -86,21 +84,15 @@ const validationFields = {
   },
   requestedCouncils: {
     function: validateArray,
-    message:
-      "requested local-authorities must be a valid list of local authorities"
+    message: "requested local-authorities must be a valid list of local authorities"
   },
   authorizedCouncils: {
-    message:
-      "requested local-authorities must only contain authorized local authorities"
+    message: "requested local-authorities must only contain authorized local authorities"
   }
 };
 
 const validateOptions = async (options, unlimitedDateRange) => {
-  logEmitter.emit(
-    "functionCall",
-    "registrations.v2.service",
-    "validateOptions"
-  );
+  logEmitter.emit("functionCall", "registrations.v2.service", "validateOptions");
 
   for (const key in options) {
     // Check if the validation function for each key returns true or false for the associated value
@@ -126,28 +118,19 @@ const validateOptions = async (options, unlimitedDateRange) => {
   // This should always be true due to previous validation
   if (options.subscriber && requestedCouncils && requestedCouncils.length > 0) {
     // No need to validate if council is just looking for their own registrations
-    if (
-      requestedCouncils.length > 1 ||
-      requestedCouncils[0] !== options.subscriber
-    ) {
+    if (requestedCouncils.length > 1 || requestedCouncils[0] !== options.subscriber) {
       const validCouncils = await getCouncilsForSupplier(options.subscriber);
       if (
         !requestedCouncils.every(function (val) {
           return validCouncils.indexOf(val) >= 0;
         })
       ) {
-        return raiseValidationError(
-          validationFields["authorizedCouncils"].message
-        );
+        return raiseValidationError(validationFields["authorizedCouncils"].message);
       }
     }
   }
 
-  logEmitter.emit(
-    "functionSuccess",
-    "registrations.v2.service",
-    "validateOptions"
-  );
+  logEmitter.emit("functionSuccess", "registrations.v2.service", "validateOptions");
   return true;
 };
 

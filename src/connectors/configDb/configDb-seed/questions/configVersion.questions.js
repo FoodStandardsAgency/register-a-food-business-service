@@ -9,15 +9,13 @@ const configVersion = [
     env: ["dev", "test", "staging", "production"],
     type: "input",
     name: "SEED_NOTIFY_TEMPLATE_FBO",
-    message:
-      "Enter the FBO email Notify template ID associated with the config version number"
+    message: "Enter the FBO email Notify template ID associated with the config version number"
   },
   {
     env: ["dev", "test", "staging", "production"],
     type: "input",
     name: "SEED_NOTIFY_TEMPLATE_LC",
-    message:
-      "Enter the LC email Notify template ID associated with the config version number"
+    message: "Enter the LC email Notify template ID associated with the config version number"
   }
 ];
 
