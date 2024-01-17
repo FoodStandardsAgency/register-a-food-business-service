@@ -81,7 +81,10 @@
             "in": "query",
             "description": "The local authorities for which to return data, if different to the organisation supplied in the subscriber parameter.",
             "schema": {
-              "type": "array"
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
             },
             "example": "cardiff"
           },
@@ -90,7 +93,10 @@
             "in": "query",
             "description": "Extra fields to return as part of the response.",
             "schema": {
-              "type": "array"
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
             },
             "example": "establishment"
           },
@@ -121,7 +127,7 @@
               "type": "boolean",
               "default": true
             },
-            "example": "True"
+            "example": "true"
           }
         ],
         "responses": {
