@@ -23,7 +23,8 @@
             "required": true,
             "schema": {
               "type": "string"
-            }
+            },
+            "example": "2019-04-29T16:01:12.0000000+00:00"
           },
           {
             "name": "before",
@@ -32,16 +33,8 @@
             "required": true,
             "schema": {
               "type": "string"
-            }
-          },
-          {
-            "name": "double-mode",
-            "in": "header",
-            "description": "Return a hard-coded test result according to the value specified instead of querying the database.",
-            "schema": {
-              "enum": ["success", "fail", "single", "update"],
-              "type": "string"
-            }
+            },
+            "example": "2019-04-29T16:01:12.0000000+00:00"
           }
         ],
         "responses": {
@@ -80,7 +73,8 @@
             "required": true,
             "schema": {
               "type": "string"
-            }
+            },
+            "example": "arcus"
           },
           {
             "name": "local-authorities",
@@ -91,7 +85,8 @@
               "items": {
                 "type": "string"
               }
-            }
+            },
+            "example": "cardiff"
           },
           {
             "name": "fields",
@@ -102,7 +97,8 @@
               "items": {
                 "type": "string"
               }
-            }
+            },
+            "example": "establishment"
           },
           {
             "name": "after",
@@ -110,7 +106,8 @@
             "description": "Format - date-time (as date-time in RFC3339). Filter registrations to those created/updated after an ISO formatted UTC date-time e.g. 2019-04-29T16:01:12Z.",
             "schema": {
               "type": "string"
-            }
+            },
+            "example": "2019-04-29T16:01:12.0000000+00:00"
           },
           {
             "name": "before",
@@ -118,7 +115,8 @@
             "description": "Format - date-time (as date-time in RFC3339). Filter registrations to those created/updated before an ISO formatted UTC date-time e.g. 2019-04-30T16:01:12Z.",
             "schema": {
               "type": "string"
-            }
+            },
+            "example": "2019-04-29T16:01:12.0000000+00:00"
           },
           {
             "name": "new",
@@ -128,16 +126,8 @@
               "enum": [true, false],
               "type": "boolean",
               "default": true
-            }
-          },
-          {
-            "name": "double-mode",
-            "in": "header",
-            "description": "Return a hard-coded test result according to the value specified instead of querying the database.",
-            "schema": {
-              "enum": ["success", "fail", "single", "update"],
-              "type": "string"
-            }
+            },
+            "example": "True"
           }
         ],
         "responses": {
@@ -174,7 +164,8 @@
             "required": true,
             "schema": {
               "type": "string"
-            }
+            },
+            "example": "arcus"
           },
           {
             "name": "local-authority",
@@ -182,16 +173,8 @@
             "description": "The local authority for which to submit data, if different to the organisation supplied in the subscriber parameter.",
             "schema": {
               "type": "string"
-            }
-          },
-          {
-            "name": "double-mode",
-            "in": "header",
-            "description": "Return a hard-coded test result according to the value specified instead of querying the database.",
-            "schema": {
-              "enum": ["success", "fail"],
-              "type": "string"
-            }
+            },
+            "example": "cardiff"
           }
         ],
         "requestBody": {
@@ -217,6 +200,9 @@
                       "type": "string"
                     }
                   }
+                },
+                "example": {
+                  "fsa_rn": "string"
                 }
               }
             }
@@ -246,7 +232,8 @@
             "required": true,
             "schema": {
               "type": "string"
-            }
+            },
+            "example": "arcus"
           },
           {
             "name": "fsa_rn",
@@ -255,7 +242,8 @@
             "required": true,
             "schema": {
               "type": "string"
-            }
+            },
+            "example": "PQQK8Q-SN9N8C-AAAAA"
           },
           {
             "name": "local-authority",
@@ -263,16 +251,8 @@
             "description": "The local authority for which to return data, if different to the organisation supplied in the subscriber parameter.",
             "schema": {
               "type": "string"
-            }
-          },
-          {
-            "name": "double-mode",
-            "in": "header",
-            "description": "Return a hard-coded test result according to the value specified instead of querying the database.",
-            "schema": {
-              "enum": ["success", "fail", "single", "update"],
-              "type": "string"
-            }
+            },
+            "example": "cardiff"
           }
         ],
         "responses": {
@@ -309,7 +289,8 @@
             "required": true,
             "schema": {
               "type": "string"
-            }
+            },
+            "example": "arcus"
           },
           {
             "name": "fsa_rn",
@@ -318,7 +299,8 @@
             "required": true,
             "schema": {
               "type": "string"
-            }
+            },
+            "example": "PQQK8Q-SN9N8C-AAAAA"
           },
           {
             "name": "local-authority",
@@ -326,16 +308,8 @@
             "description": "The local authority for which to update data, if different to the organisation supplied in the subscriber parameter.",
             "schema": {
               "type": "string"
-            }
-          },
-          {
-            "name": "double-mode",
-            "in": "header",
-            "description": "Return a hard-coded test result according to the value specified instead of querying the database.",
-            "schema": {
-              "enum": ["success", "fail", "single", "update"],
-              "type": "string"
-            }
+            },
+            "example": "cardiff"
           }
         ],
         "requestBody": {
@@ -344,6 +318,9 @@
             "application/json": {
               "schema": {
                 "$ref": "#/components/schemas/Collected"
+              },
+              "example": {
+                "collected": true
               }
             }
           }
@@ -365,6 +342,10 @@
                       "type": "string"
                     }
                   }
+                },
+                "example": {
+                  "collected": true,
+                  "fsa_rn": "string"
                 }
               }
             }
