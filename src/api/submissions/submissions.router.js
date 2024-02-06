@@ -2,143 +2,70 @@ const { Router } = require("express");
 const submissionsController = require("./submissions.controller");
 const { createRegistrationAuth } = require("../../middleware/authHandler");
 const { logEmitter } = require("../../services/logging.service");
-const { statusEmitter } = require("../../services/statusEmitter.service");
-const { registrationDouble } = require("./submissions.double");
+const REGISTRATION_FAILURE = "Registration creation failure";
+const DIRECT_REGISTRATION_FAILURE = "Direct registration creation failure";
+const REGISTRATION_SUCCESS = "Registration creation success";
+const DIRECT_REGISTRATION_SUCCESS = "Direct registration creation success";
 
 const submissionsRouter = () => {
   const router = Router();
 
-  router.post(
-    "/createNewRegistration",
-    createRegistrationAuth,
-    async (req, res, next) => {
-      logEmitter.emit(
-        "functionCall",
-        "submissions.router",
-        "createNewRegistration"
-      );
-      try {
-        statusEmitter.emit("incrementCount", "submissionsReceived");
+  router.post("/createNewRegistration", createRegistrationAuth, async (req, res, next) => {
+    logEmitter.emit("functionCall", "submissions.router", "createNewRegistration");
+    try {
+      const regDataVersion = req.headers["registration-data-version"];
 
-        const regDataVersion = req.headers["registration-data-version"];
-
-        if (regDataVersion === undefined) {
-          const missingHeaderError = new Error(
-            "Missing 'registration-data-version' header"
-          );
-          missingHeaderError.name = "missingRequiredHeader";
-          throw missingHeaderError;
-        }
-
-        const response = await submissionsController.createNewRegistration(
-          req.body.registration,
-          req.body.local_council_url,
-          req.body.submission_language,
-          req.body.manual_local_authority,
-          regDataVersion
-        );
-        statusEmitter.emit("incrementCount", "userRegistrationsSucceeded");
-        statusEmitter.emit(
-          "setStatus",
-          "mostRecentUserRegistrationSucceeded",
-          true
-        );
-        statusEmitter.emit("incrementCount", "endToEndRegistrationsSucceeded");
-        statusEmitter.emit(
-          "setStatus",
-          "mostRecentEndToEndRegistrationSucceeded",
-          true
-        );
-        logEmitter.emit(
-          "functionSuccess",
-          "submissions.router",
-          "createNewRegistration"
-        );
-
-        res.send(response);
-      } catch (err) {
-        logEmitter.emit(
-          "errorWith",
-          "submissions.router",
-          "createNewRegistration",
-          req.body.registration
-        );
-        statusEmitter.emit("incrementCount", "endToEndRegistrationsFailed");
-        statusEmitter.emit(
-          "setStatus",
-          "mostRecentEndToEndRegistrationSucceeded",
-          false
-        );
-        logEmitter.emit(
-          "functionFail",
-          "submissions.router",
-          "createNewRegistration",
-          err
-        );
-        next(err);
+      if (regDataVersion === undefined) {
+        const missingHeaderError = new Error("Missing 'registration-data-version' header");
+        missingHeaderError.name = "missingRequiredHeader";
+        throw missingHeaderError;
       }
+
+      const response = await submissionsController.createNewRegistration(
+        req.body.registration,
+        req.body.local_council_url,
+        req.body.submission_language,
+        req.body.manual_local_authority,
+        regDataVersion
+      );
+      logEmitter.emit("info", REGISTRATION_SUCCESS); // Used for Azure alerts
+      logEmitter.emit("functionSuccess", "submissions.router", "createNewRegistration");
+
+      res.send(response);
+    } catch (err) {
+      logEmitter.emit(
+        "errorWith",
+        "submissions.router",
+        "createNewRegistration",
+        req.body.registration
+      );
+      logEmitter.emit("warning", REGISTRATION_FAILURE); // Used for Azure alerts
+      logEmitter.emit("functionFail", "submissions.router", "createNewRegistration", err);
+      next(err);
     }
-  );
+  });
 
   router.post(
     "/v2/createNewDirectRegistration/:subscriber",
     createRegistrationAuth,
     async (req, res, next) => {
-      logEmitter.emit(
-        "functionCall",
-        "submissions.router",
-        "createNewDirectRegistration"
-      );
+      logEmitter.emit("functionCall", "submissions.router", "createNewDirectRegistration");
       try {
-        statusEmitter.emit("incrementCount", "directSubmissionsReceived");
-
         const options = {
           apiVersion: req.headers["api-version"] || "v2.1",
           subscriber: req.params.subscriber || "",
-          requestedCouncil:
-            req.query["local-authority"] || req.params.subscriber
+          requestedCouncil: req.query["local-authority"] || req.params.subscriber
         };
 
         let response;
-        if (req.headers["double-mode"]) {
-          response = registrationDouble(req.headers["double-mode"]);
-        } else {
-          response = await submissionsController.createNewDirectRegistration(
-            req.body,
-            options
-          );
-        }
-        statusEmitter.emit("incrementCount", "directRegistrationsSucceeded");
-        statusEmitter.emit(
-          "setStatus",
-          "mostRecentDirectRegistrationSucceeded",
-          true
-        );
-        logEmitter.emit(
-          "functionSuccess",
-          "submissions.router",
-          "createNewDirectRegistration"
-        );
+        response = await submissionsController.createNewDirectRegistration(req.body, options);
+
+        logEmitter.emit("info", DIRECT_REGISTRATION_SUCCESS); // Used for Azure alerts
         res.send(response);
       } catch (err) {
-        logEmitter.emit(
-          "errorWith",
-          "submissions.router",
-          "createNewDirectRegistration",
-          req.body
-        );
-        statusEmitter.emit("incrementCount", "directRegistrationsFailed");
-        statusEmitter.emit(
-          "setStatus",
-          "mostRecentDirectRegistrationSucceeded",
-          false
-        );
-        logEmitter.emit(
-          "functionFail",
-          "submissions.router",
-          "createNewDirectRegistration",
-          err
-        );
+        logEmitter.emit("errorWith", "submissions.router", "createNewDirectRegistration", req.body);
+        logEmitter.emit("warning", DIRECT_REGISTRATION_FAILURE); // Used for Azure alerts
+        logEmitter.emit("functionFail", "submissions.router", "createNewDirectRegistration", err);
         next(err);
       }
     }
@@ -148,41 +75,19 @@ const submissionsRouter = () => {
     "/v3/createNewDirectRegistration/:subscriber",
     createRegistrationAuth,
     async (req, res, next) => {
-      logEmitter.emit(
-        "functionCall",
-        "submissions.router",
-        "createNewDirectRegistration-v3"
-      );
+      logEmitter.emit("functionCall", "submissions.router", "createNewDirectRegistration-v3");
       try {
-        statusEmitter.emit("incrementCount", "directSubmissionsReceived");
-
         const options = {
           apiVersion: req.headers["api-version"] || "v3.0",
           subscriber: req.params.subscriber || "",
-          requestedCouncil:
-            req.query["local-authority"] || req.params.subscriber
+          requestedCouncil: req.query["local-authority"] || req.params.subscriber
         };
 
         let response;
-        if (req.headers["double-mode"]) {
-          response = registrationDouble(req.headers["double-mode"]);
-        } else {
-          response = await submissionsController.createNewDirectRegistration(
-            req.body,
-            options
-          );
-        }
-        statusEmitter.emit("incrementCount", "directRegistrationsSucceeded");
-        statusEmitter.emit(
-          "setStatus",
-          "mostRecentDirectRegistrationSucceeded",
-          true
-        );
-        logEmitter.emit(
-          "functionSuccess",
-          "submissions.router",
-          "createNewDirectRegistration-v3"
-        );
+
+        response = await submissionsController.createNewDirectRegistration(req.body, options);
+        logEmitter.emit("info", DIRECT_REGISTRATION_SUCCESS); // Used for Azure alerts
+        logEmitter.emit("functionSuccess", "submissions.router", "createNewDirectRegistration-v3");
         res.send(response);
       } catch (err) {
         logEmitter.emit(
@@ -191,12 +96,7 @@ const submissionsRouter = () => {
           "createNewDirectRegistration-v3",
           req.body
         );
-        statusEmitter.emit("incrementCount", "directRegistrationsFailed");
-        statusEmitter.emit(
-          "setStatus",
-          "mostRecentDirectRegistrationSucceeded",
-          false
-        );
+        logEmitter.emit("warning", DIRECT_REGISTRATION_FAILURE); // Used for Azure alerts
         logEmitter.emit(
           "functionFail",
           "submissions.router",

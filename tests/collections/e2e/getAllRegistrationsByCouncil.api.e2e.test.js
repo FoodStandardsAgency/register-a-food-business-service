@@ -5,8 +5,7 @@ const axios = ax.create({
     return true;
   }
 });
-const baseUrl =
-  "https://integration-fsa-rof-gateway.azure-api.net/registrations/v1/";
+const baseUrl = "https://integration-fsa-rof-gateway.azure-api.net/registrations/v1/";
 const cardiffUrl = `${baseUrl}cardiff`;
 const cardiffAPIKey = "b175199d420448fc87baa714e458ce6e";
 
@@ -54,9 +53,7 @@ describe("Retrieve all registrations through API", () => {
 
     it("Should return the appropriate error", () => {
       expect(response.statusCode).toBe(403);
-      expect(response.message).toContain(
-        "You are not authorized to access the council"
-      );
+      expect(response.message).toContain("You are not authorized to access the council");
     });
   });
 
@@ -100,9 +97,7 @@ describe("Retrieve all registrations through API", () => {
 
     it("Should return subscription key not found error", () => {
       expect(response.statusCode).toBe(401);
-      expect(response.message).toContain(
-        "Access denied due to missing subscription key."
-      );
+      expect(response.message).toContain("Access denied due to missing subscription key.");
     });
   });
 
@@ -125,9 +120,7 @@ describe("Retrieve all registrations through API", () => {
     it("should return the options validation error", () => {
       expect(response.statusCode).toBe(400);
       expect(response.errorCode).toBe("3");
-      expect(response.developerMessage).toBe(
-        "One of the supplied options is invalid"
-      );
+      expect(response.developerMessage).toBe("One of the supplied options is invalid");
       expect(response.rawError).toBe("new option must be a boolean");
     });
   });

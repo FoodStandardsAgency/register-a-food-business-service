@@ -4,9 +4,7 @@
 // 400 - Bad Request (Client Error) - A json with error \ more details should return to the client.
 // 401 - Unauthorized
 // 500 - Internal Server Error - A json with an error should return to the client only when there is no security risk by doing that.
-// Codes: DB error, notify error, tascomi error
-// 1 - TascomiAuth failure
-// 2 - TascomiRefNumber failure
+// Codes: DB error, notify error
 // 3 - validation error
 // 4 - sequelizeConnectionError
 // 95 - notifyMissingKey
@@ -14,16 +12,15 @@
 // 97 - notifyMissingPersonalisation
 // 8 - mongoConnectionError
 
-const { logger } = require("../services/winston");
+const { logEmitter } = require("../services/logging.service");
 const errorDetails = require("./errors.json");
 
 /* eslint-disable */
 const errorHandler = (err, req, res, next) => {
   /* eslint-enable */
-  logger.error(`Application error handled...`);
+  logEmitter.emit("error", `Application error handled - ${err && err.message}`); // Used for Azure alerts
 
   if (err.name) {
-    logger.error(`Application error details:`, err);
     const errorDetail = errorDetails.find((error) => {
       return error.name === err.name;
     });

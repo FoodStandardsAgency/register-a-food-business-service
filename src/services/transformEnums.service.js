@@ -15,17 +15,14 @@ const v1BusinessTypesMapping = {
   "Dairy and cheese manufacturer": "Dairies and cheese manufacturer",
   "Sweet shop or confectioner": "Sweet shop or Confectioner",
   "Market stall with permanent location": "Market stalls with permanent pitch",
-  "Restaurant, cafe, canteen, or fast food restaurant":
-    "Restaurant, cafe, canteen or fast food",
+  "Restaurant, cafe, canteen, or fast food restaurant": "Restaurant, cafe, canteen or fast food",
   "Hostel or bed & breakfast": "Hostel or bed and breakfast"
 };
 
 const transformEnumsForCollections = (apiVersion, registrations) => {
   logEmitter.emit("functionCall", "v1EnumTransform.service", "transformEnums");
   let transform =
-    Number(apiVersion) >= 2 || apiVersion === "latest"
-      ? transformToKey
-      : transformToValue;
+    Number(apiVersion) >= 2 || apiVersion === "latest" ? transformToKey : transformToValue;
 
   // DB data has been migrated to new format so only need to do this for v1 APIs
   if (Number(apiVersion) < 2) {
@@ -40,11 +37,7 @@ const transformEnumsForCollections = (apiVersion, registrations) => {
 };
 
 const applyEnumTransformsForCollections = (registration, transform) => {
-  logEmitter.emit(
-    "functionCall",
-    "transformEnums.service",
-    "applyTransformsForCollections"
-  );
+  logEmitter.emit("functionCall", "transformEnums.service", "applyTransformsForCollections");
   if (registration.establishment) {
     if (registration.establishment.operator) {
       registration.establishment.operator.operator_type = transform(
@@ -63,11 +56,10 @@ const applyEnumTransformsForCollections = (registration, transform) => {
         customerTypeEnum,
         registration.establishment.activities.customer_type
       );
-      registration.establishment.activities.import_export_activities =
-        transform(
-          importExportEnum,
-          registration.establishment.activities.import_export_activities
-        );
+      registration.establishment.activities.import_export_activities = transform(
+        importExportEnum,
+        registration.establishment.activities.import_export_activities
+      );
       registration.establishment.activities.water_supply = transform(
         waterSupplyEnum,
         registration.establishment.activities.water_supply
@@ -76,26 +68,17 @@ const applyEnumTransformsForCollections = (registration, transform) => {
         businessTypeEnum,
         registration.establishment.activities.business_type
       );
-      registration.establishment.activities.business_type =
-        transformV2BusinessTypeString(
-          registration.establishment.activities.business_type
-        );
+      registration.establishment.activities.business_type = transformV2BusinessTypeString(
+        registration.establishment.activities.business_type
+      );
     }
   }
 };
 
 const transformEnumsForService = (data, language) => {
-  logEmitter.emit(
-    "functionCall",
-    "transformEnums.service",
-    "applyTransformsForService"
-  );
+  logEmitter.emit("functionCall", "transformEnums.service", "applyTransformsForService");
   if (data.operator_type) {
-    data.operator_type = transformToValue(
-      operatorTypeEnum,
-      data.operator_type,
-      language
-    );
+    data.operator_type = transformToValue(operatorTypeEnum, data.operator_type, language);
   }
   if (data.establishment_type) {
     data.establishment_type = transformToValue(
@@ -105,11 +88,7 @@ const transformEnumsForService = (data, language) => {
     );
   }
   if (data.customer_type) {
-    data.customer_type = transformToValue(
-      customerTypeEnum,
-      data.customer_type,
-      language
-    );
+    data.customer_type = transformToValue(customerTypeEnum, data.customer_type, language);
   }
   if (data.import_export_activities) {
     data.import_export_activities = transformToValue(
@@ -119,18 +98,10 @@ const transformEnumsForService = (data, language) => {
     );
   }
   if (data.water_supply) {
-    data.water_supply = transformToValue(
-      waterSupplyEnum,
-      data.water_supply,
-      language
-    );
+    data.water_supply = transformToValue(waterSupplyEnum, data.water_supply, language);
   }
   if (data.business_type) {
-    data.business_type = transformToValue(
-      businessTypeEnum,
-      data.business_type,
-      language
-    );
+    data.business_type = transformToValue(businessTypeEnum, data.business_type, language);
   }
 };
 
@@ -148,21 +119,13 @@ const transformToKey = (enumType, value) => {
 
 // From v2 enum key to v1 value
 const transformToValue = (enumType, key, language) => {
-  logEmitter.emit(
-    "functionCall",
-    "v1EnumTransform.service",
-    "transformToValue"
-  );
+  logEmitter.emit("functionCall", "v1EnumTransform.service", "transformToValue");
   const lang = language || "en";
   return enumType[key] ? enumType[key].value[lang] : key;
 };
 
 const transformV2BusinessTypeString = (value) => {
-  logEmitter.emit(
-    "functionCall",
-    "v1EnumTransform.service",
-    "transformV2BusinessTypeString"
-  );
+  logEmitter.emit("functionCall", "v1EnumTransform.service", "transformV2BusinessTypeString");
   return v1BusinessTypesMapping[value] ? v1BusinessTypesMapping[value] : value;
 };
 

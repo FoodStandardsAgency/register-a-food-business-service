@@ -5,7 +5,6 @@ const {
   DIRECT_API_SECRET
 } = require("../config");
 const { logEmitter } = require("../../src/services/logging.service");
-const { statusEmitter } = require("../../src/services/statusEmitter.service");
 
 const authHandler = (req, res, secrets) => {
   logEmitter.emit("functionCall", "authHandler.middleware", "authHandler");
@@ -17,13 +16,7 @@ const authHandler = (req, res, secrets) => {
   if (!clientSecret) {
     const err = new Error("Client secret not found");
     err.name = "clientSecretNotFound";
-    logEmitter.emit(
-      "functionFail",
-      "authHandler.middleware",
-      "authHandler",
-      err
-    );
-    statusEmitter.emit("incrementCount", "authenticationsBlocked");
+    logEmitter.emit("functionFail", "authHandler.middleware", "authHandler", err);
     throw err;
   }
 
@@ -31,13 +24,7 @@ const authHandler = (req, res, secrets) => {
   if (!client) {
     const err = new Error("Client not found");
     err.name = "clientNotFound";
-    logEmitter.emit(
-      "functionFail",
-      "authHandler.middleware",
-      "authHandler",
-      err
-    );
-    statusEmitter.emit("incrementCount", "authenticationsBlocked");
+    logEmitter.emit("functionFail", "authHandler.middleware", "authHandler", err);
     throw err;
   }
   const secret = secrets[client];
@@ -46,13 +33,7 @@ const authHandler = (req, res, secrets) => {
   if (!secret) {
     const err = new Error("Client not supported");
     err.name = "clientNotSupported";
-    logEmitter.emit(
-      "functionFail",
-      "authHandler.middleware",
-      "authHandler",
-      err
-    );
-    statusEmitter.emit("incrementCount", "authenticationsBlocked");
+    logEmitter.emit("functionFail", "authHandler.middleware", "authHandler", err);
     throw err;
   }
 
@@ -60,16 +41,9 @@ const authHandler = (req, res, secrets) => {
   if (secret !== clientSecret) {
     const err = new Error("Secret invalid");
     err.name = "secretInvalid";
-    logEmitter.emit(
-      "functionFail",
-      "authHandler.middleware",
-      "authHandler",
-      err
-    );
-    statusEmitter.emit("incrementCount", "authenticationsBlocked");
+    logEmitter.emit("functionFail", "authHandler.middleware", "authHandler", err);
     throw err;
   }
-  statusEmitter.emit("incrementCount", "authenticationsPassed");
   logEmitter.emit("functionSuccess", "authHandler.middleware", "authHandler");
 };
 

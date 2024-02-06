@@ -32,9 +32,7 @@ const {
   updateRegistration
 } = require("./collections.controller");
 
-const {
-  transformRegForCollections
-} = require("../../services/collectionsTransform.service");
+const { transformRegForCollections } = require("../../services/collectionsTransform.service");
 
 const fullRegistration = {
   "fsa-rn": "PQQK8Q-SN9N8C-4ADETF",
@@ -232,36 +230,19 @@ describe("collections.controller", () => {
         expect(result.name).toBe("optionsValidationError");
       });
     });
-    describe("When given double mode", () => {
-      beforeEach(async () => {
-        validateOptions.mockImplementation(() => true);
-        result = await getRegistrationsByCouncil({
-          getNewRegistrations: "true",
-          double_mode: "success"
-        });
-      });
-      it("Should return the double response", () => {
-        expect(result[0].fsa_rn).toBe("PQQK8Q-SN9N8C-4ADETF");
-      });
-    });
+
     describe("When successful", () => {
       beforeEach(async () => {
         validateOptions.mockImplementation(() => true);
-        getAllRegistrationsByCouncil.mockImplementation(() => [
-          shortRegistration
-        ]);
-        transformRegForCollections.mockImplementation(
-          () => transformedShortReg
-        );
+        getAllRegistrationsByCouncil.mockImplementation(() => [shortRegistration]);
+        transformRegForCollections.mockImplementation(() => transformedShortReg);
         result = await getRegistrationsByCouncil({
           getNewRegistrations: "true",
           council: "cardiff"
         });
       });
       it("should call transformRegForCollection", () => {
-        expect(transformRegForCollections).toHaveBeenCalledWith(
-          shortRegistration
-        );
+        expect(transformRegForCollections).toHaveBeenCalledWith(shortRegistration);
       });
       it("Should return the result of getAllRegistrationsByCouncil", () => {
         expect(result).toEqual([transformedShortReg]);
@@ -284,17 +265,7 @@ describe("collections.controller", () => {
         expect(result.name).toBe("optionsValidationError");
       });
     });
-    describe("When given double mode", () => {
-      beforeEach(async () => {
-        validateOptions.mockImplementation(() => true);
-        result = await getRegistration({
-          double_mode: "single"
-        });
-      });
-      it("Should return the double response", () => {
-        expect(result.fsa_rn).toBe("PQQK8Q-SN9N8C-4ADETF");
-      });
-    });
+
     describe("When successful", () => {
       beforeEach(async () => {
         validateOptions.mockImplementation(() => true);
@@ -325,18 +296,6 @@ describe("collections.controller", () => {
 
       it("should bubble up the error", () => {
         expect(result.name).toBe("optionsValidationError");
-      });
-    });
-    describe("When given double mode", () => {
-      beforeEach(async () => {
-        validateOptions.mockImplementation(() => true);
-        result = await updateRegistration({
-          collected: true,
-          double_mode: "update"
-        });
-      });
-      it("Should return the double response", () => {
-        expect(result).toEqual({ fsa_rn: "1234", collected: true });
       });
     });
     describe("When successful", () => {
@@ -370,19 +329,6 @@ describe("collections.controller", () => {
 
       it("should bubble up the error", () => {
         expect(result.name).toBe("optionsValidationError");
-      });
-    });
-    describe("When given double mode", () => {
-      beforeEach(async () => {
-        validateOptions.mockImplementation(() => true);
-        result = await getRegistrations({
-          before: "2019-01-01",
-          after: "2019-02-01",
-          double_mode: "success"
-        });
-      });
-      it("Should return the double response", () => {
-        expect(result[0].fsa_rn).toBe("PQQK8Q-SN9N8C-4ADETF");
       });
     });
     describe("When successful", () => {

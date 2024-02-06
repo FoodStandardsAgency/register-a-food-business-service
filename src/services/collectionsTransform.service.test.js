@@ -1,6 +1,4 @@
-const {
-  transformRegForCollections
-} = require("./collectionsTransform.service");
+const { transformRegForCollections } = require("./collectionsTransform.service");
 
 const fullRegistration = {
   "fsa-rn": "PQQK8Q-SN9N8C-4ADETF",
@@ -135,9 +133,9 @@ describe("Function: transformRegistration", () => {
       expect(result.establishment.premise.establishment_street).toBe(
         result.establishment.premise.establishment_address_line_2
       );
-      expect(
-        result.establishment.premise.establishment_dependent_locality
-      ).toBe(result.establishment.premise.establishment_address_line_3);
+      expect(result.establishment.premise.establishment_dependent_locality).toBe(
+        result.establishment.premise.establishment_address_line_3
+      );
     });
     it("should return metadata unchanged", () => {
       expect(result.metadata).toBe(fullRegistration.declaration);
@@ -166,9 +164,7 @@ describe("Function: transformRegistration", () => {
       result = transformRegForCollections(fullRegistration);
     });
     it("should return the opening days as false, not null", () => {
-      expect(result.establishment.activities.opening_day_sunday).toStrictEqual(
-        false
-      );
+      expect(result.establishment.activities.opening_day_sunday).toStrictEqual(false);
     });
   });
   describe("given a registration without establishment or metadata supplied", () => {
@@ -198,9 +194,7 @@ describe("Function: transformRegistration", () => {
       result = transformRegForCollections(shortRegistration);
     });
     it("should populate council from hygieneAndStandards.local_council", () => {
-      expect(result.council).toBe(
-        shortRegistration.hygieneAndStandards.local_council
-      );
+      expect(result.council).toBe(shortRegistration.hygieneAndStandards.local_council);
     });
   });
   describe("given collected_at is populated", () => {

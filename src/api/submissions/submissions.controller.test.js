@@ -3,7 +3,6 @@ jest.mock("../../services/validation.service", () => ({
 }));
 
 jest.mock("./submissions.service", () => ({
-  sendTascomiRegistration: jest.fn(),
   getRegistrationMetaData: jest.fn(),
   getLcContactConfig: jest.fn(),
   getLcAuth: jest.fn()
@@ -19,7 +18,6 @@ jest.mock("../../connectors/cacheDb/cacheDb.connector", () => ({
 }));
 
 jest.mock("../../connectors/configDb/configDb.connector", () => ({
-  getConfigVersion: jest.fn(),
   findCouncilByUrl: jest.fn(),
   getCouncilsForSupplier: jest.fn()
 }));
@@ -32,33 +30,21 @@ jest.mock("../../connectors/cosmos.client", () => ({
   establishConnectionToCosmos: jest.fn()
 }));
 
-const {
-  getRegistrationMetaData,
-  getLcContactConfig,
-  getLcAuth
-} = require("./submissions.service");
+const { getRegistrationMetaData, getLcContactConfig, getLcAuth } = require("./submissions.service");
 
 const { validate } = require("../../services/validation.service");
 
-const {
-  cacheRegistration
-} = require("../../connectors/cacheDb/cacheDb.connector");
+const { cacheRegistration } = require("../../connectors/cacheDb/cacheDb.connector");
+
+const { createNewRegistration, createNewDirectRegistration } = require("./submissions.controller");
 
 const {
-  createNewRegistration,
-  createNewDirectRegistration
-} = require("./submissions.controller");
-
-const {
-  getConfigVersion,
   findCouncilByUrl,
   getCouncilsForSupplier
 } = require("../../connectors/configDb/configDb.connector");
 
 const { getUprn } = require("../../connectors/address-lookup/address-matcher");
-const {
-  establishConnectionToCosmos
-} = require("../../connectors/cosmos.client");
+const { establishConnectionToCosmos } = require("../../connectors/cosmos.client");
 
 const exampleLCUrl = "example-council-url";
 
@@ -95,10 +81,7 @@ describe("registration controller", () => {
     standards: {
       code: 2345,
       local_council: "Another council name",
-      local_council_notify_emails: [
-        "another@example.com",
-        "alsothisone@example.com"
-      ],
+      local_council_notify_emails: ["another@example.com", "alsothisone@example.com"],
       local_council_email: "another@example.com"
     }
   };
@@ -123,24 +106,16 @@ describe("registration controller", () => {
       }
     }
   };
-  const testDirectRegistrationWithFsaRn = Object.assign(
-    {},
-    testDirectRegistration,
-    {
-      fsa_rn: "TESTRN"
-    }
-  );
+  const testDirectRegistrationWithFsaRn = Object.assign({}, testDirectRegistration, {
+    fsa_rn: "TESTRN"
+  });
   const testLocalCouncilUrl = "example-council-url";
   const testRegDataVersion = "1.2.0";
   const manualLocalAuthority = false;
   const testOptions = {
     regDataVersion: testRegDataVersion,
     subscriber: testLocalCouncilUrl,
-    requestedCouncil: testLocalCouncilUrl,
-    doubleMode: null
-  };
-  const testConfigVersion = {
-    notify_template_keys: { key1: "abc", key2: "xyz" }
+    requestedCouncil: testLocalCouncilUrl
   };
   const testLanguage = "en";
 
@@ -163,7 +138,6 @@ describe("registration controller", () => {
             return postRegistrationMetadata;
           });
           getLcContactConfig.mockImplementation(() => exampleLcConfig);
-          getConfigVersion.mockImplementation(() => testConfigVersion);
           result = await createNewRegistration(
             testRegistration,
             testLocalCouncilUrl,
@@ -213,7 +187,6 @@ describe("registration controller", () => {
         getRegistrationMetaData.mockImplementation(() => {
           return postRegistrationMetadata;
         });
-        getConfigVersion.mockImplementation(() => testConfigVersion);
         getLcContactConfig.mockImplementation(() => exampleLcConfig);
         result = await createNewRegistration(
           testRegistration,
@@ -242,7 +215,7 @@ describe("registration controller", () => {
         getRegistrationMetaData.mockImplementation(() => {
           return postRegistrationMetadata;
         });
-        getConfigVersion.mockImplementation(() => testConfigVersion);
+
         getLcContactConfig.mockImplementation(() => exampleMultiLcConfig);
         result = await createNewRegistration(
           testRegistration,
@@ -253,9 +226,7 @@ describe("registration controller", () => {
       });
 
       it("should call getRegistrationMetaData with the hygiene council code response from getLcContactConfig", () => {
-        expect(getRegistrationMetaData).toHaveBeenLastCalledWith(
-          exampleMultiLcConfig.hygiene.code
-        );
+        expect(getRegistrationMetaData).toHaveBeenLastCalledWith(exampleMultiLcConfig.hygiene.code);
       });
 
       it("should return response with a lc_config object with the response of getLcContactConfig", () => {
@@ -306,17 +277,9 @@ describe("registration controller", () => {
 
     describe("when given valid data", () => {
       beforeEach(async () => {
-        getRegistrationMetaData.mockImplementation(() =>
-          Promise.resolve(postRegistrationMetadata)
-        );
-        getLcContactConfig.mockImplementation(() =>
-          Promise.resolve(exampleLcConfig)
-        );
-        getConfigVersion.mockImplementation(() => testConfigVersion);
-        result = await createNewDirectRegistration(
-          testDirectRegistration,
-          testOptions
-        );
+        getRegistrationMetaData.mockImplementation(() => Promise.resolve(postRegistrationMetadata));
+        getLcContactConfig.mockImplementation(() => Promise.resolve(exampleLcConfig));
+        result = await createNewDirectRegistration(testDirectRegistration, testOptions);
       });
       it("should call cache registration", () => {
         expect(cacheRegistration).toHaveBeenCalled();
@@ -331,22 +294,14 @@ describe("registration controller", () => {
 
     describe("when given valid data from a supplier", () => {
       beforeEach(async () => {
-        getRegistrationMetaData.mockImplementation(() =>
-          Promise.resolve(postRegistrationMetadata)
-        );
-        getLcContactConfig.mockImplementation(() =>
-          Promise.resolve(exampleLcConfig)
-        );
-        getConfigVersion.mockImplementation(() => testConfigVersion);
+        getRegistrationMetaData.mockImplementation(() => Promise.resolve(postRegistrationMetadata));
+        getLcContactConfig.mockImplementation(() => Promise.resolve(exampleLcConfig));
         const testSupplierOptions = {
           regDataVersion: testRegDataVersion,
           subscriber: testLocalCouncilUrl,
           requestedCouncil: "cardiff"
         };
-        result = await createNewDirectRegistration(
-          testDirectRegistration,
-          testSupplierOptions
-        );
+        result = await createNewDirectRegistration(testDirectRegistration, testSupplierOptions);
       });
       it("should call cache registration", () => {
         expect(cacheRegistration).toHaveBeenCalled();
@@ -367,10 +322,7 @@ describe("registration controller", () => {
             subscriber: testLocalCouncilUrl,
             requestedCouncil: "invalid"
           };
-          await createNewDirectRegistration(
-            testDirectRegistration,
-            testSupplierOptions
-          );
+          await createNewDirectRegistration(testDirectRegistration, testSupplierOptions);
         } catch (err) {
           expect(err.name).toBe("supplierCouncilNotFound");
         }
@@ -379,14 +331,8 @@ describe("registration controller", () => {
 
     describe("when given valid data including fsa-rn", () => {
       beforeEach(async () => {
-        getLcContactConfig.mockImplementation(() =>
-          Promise.resolve(exampleLcConfig)
-        );
-        getConfigVersion.mockImplementation(() => testConfigVersion);
-        result = await createNewDirectRegistration(
-          testDirectRegistrationWithFsaRn,
-          testOptions
-        );
+        getLcContactConfig.mockImplementation(() => Promise.resolve(exampleLcConfig));
+        result = await createNewDirectRegistration(testDirectRegistrationWithFsaRn, testOptions);
       });
       it("should not call get Metadata", () => {
         expect(getRegistrationMetaData).not.toHaveBeenCalled();
@@ -404,17 +350,9 @@ describe("registration controller", () => {
 
     describe("given the Local Council is responsible for both hygiene and standards", () => {
       beforeEach(async () => {
-        getRegistrationMetaData.mockImplementation(() =>
-          Promise.resolve(postRegistrationMetadata)
-        );
-        getLcContactConfig.mockImplementation(() =>
-          Promise.resolve(exampleLcConfig)
-        );
-        getConfigVersion.mockImplementation(() => testConfigVersion);
-        result = await createNewDirectRegistration(
-          testDirectRegistration,
-          testOptions
-        );
+        getRegistrationMetaData.mockImplementation(() => Promise.resolve(postRegistrationMetadata));
+        getLcContactConfig.mockImplementation(() => Promise.resolve(exampleLcConfig));
+        result = await createNewDirectRegistration(testDirectRegistration, testOptions);
       });
 
       it("should call getRegistrationMetaData with the hygieneAndStandards council code response from getLcContactConfig", () => {
@@ -426,23 +364,13 @@ describe("registration controller", () => {
 
     describe("given the hygiene and standards Local Councils are separate", () => {
       beforeEach(async () => {
-        getRegistrationMetaData.mockImplementation(() =>
-          Promise.resolve(postRegistrationMetadata)
-        );
-        getLcContactConfig.mockImplementation(() =>
-          Promise.resolve(exampleMultiLcConfig)
-        );
-        getConfigVersion.mockImplementation(() => testConfigVersion);
-        result = await createNewDirectRegistration(
-          testDirectRegistration,
-          testOptions
-        );
+        getRegistrationMetaData.mockImplementation(() => Promise.resolve(postRegistrationMetadata));
+        getLcContactConfig.mockImplementation(() => Promise.resolve(exampleMultiLcConfig));
+        result = await createNewDirectRegistration(testDirectRegistration, testOptions);
       });
 
       it("should call getRegistrationMetaData with the hygiene council code response from getLcContactConfig", () => {
-        expect(getRegistrationMetaData).toHaveBeenLastCalledWith(
-          exampleMultiLcConfig.hygiene.code
-        );
+        expect(getRegistrationMetaData).toHaveBeenLastCalledWith(exampleMultiLcConfig.hygiene.code);
       });
     });
 
@@ -452,10 +380,7 @@ describe("registration controller", () => {
           return ["ERROR"];
         });
         try {
-          result = await createNewDirectRegistration(
-            testDirectRegistration,
-            testOptions
-          );
+          result = await createNewDirectRegistration(testDirectRegistration, testOptions);
         } catch (err) {
           result = err;
         }
@@ -478,10 +403,7 @@ describe("registration controller", () => {
         establishConnectionToCosmos.mockImplementation(() => {});
         findCouncilByUrl.mockImplementation(() => null);
         try {
-          result = await createNewDirectRegistration(
-            testDirectRegistration,
-            testOptions
-          );
+          result = await createNewDirectRegistration(testDirectRegistration, testOptions);
         } catch (err) {
           result = err;
         }

@@ -1,42 +1,27 @@
 const { NotifyClient } = require("notifications-node-client");
-const { notifyClientDouble } = require("./notify.double");
 const { NOTIFY_KEY } = require("../../config");
-const { logEmitter, ERROR, INFO } = require("../../services/logging.service");
+const { logEmitter, ERROR, WARN, INFO } = require("../../services/logging.service");
 
 const sendStatusEmail = async (templateId, recipientEmail, flattenedData) => {
   logEmitter.emit("functionCall", "notify.connector", "sendStatusEmail");
 
   let notifyClient;
 
-  if (
-    process.env.NOTIFY_DOUBLE_MODE === "true" ||
-    process.env.DOUBLE_MODE === "true"
-  ) {
-    logEmitter.emit("doubleMode", "notify.connector", "sendStatusEmail");
-    notifyClient = notifyClientDouble;
-  } else {
-    notifyClient = new NotifyClient(NOTIFY_KEY);
-  }
+  notifyClient = new NotifyClient(NOTIFY_KEY);
 
   try {
     const notifyTemplate = await notifyClient.getTemplateById(templateId);
 
-    const requiredTemplateFields = Object.keys(
-      notifyTemplate.data.personalisation
-    );
+    const requiredTemplateFields = Object.keys(notifyTemplate.data.personalisation);
 
-    const templateFieldsWithoutSuffix = requiredTemplateFields.map(
-      (fieldName) => {
-        const trimmedFieldName = fieldName.trim();
-        return trimmedFieldName.endsWith("_exists")
-          ? trimmedFieldName.slice(0, -7)
-          : trimmedFieldName;
-      }
-    );
+    const templateFieldsWithoutSuffix = requiredTemplateFields.map((fieldName) => {
+      const trimmedFieldName = fieldName.trim();
+      return trimmedFieldName.endsWith("_exists")
+        ? trimmedFieldName.slice(0, -7)
+        : trimmedFieldName;
+    });
 
-    const templateFieldsWithoutDuplicates = new Set(
-      templateFieldsWithoutSuffix
-    );
+    const templateFieldsWithoutDuplicates = new Set(templateFieldsWithoutSuffix);
 
     const allNotifyPersonalisationData = { ...flattenedData };
 
@@ -57,11 +42,9 @@ const sendStatusEmail = async (templateId, recipientEmail, flattenedData) => {
       allNotifyPersonalisationData["northern-ireland"] = "yes";
     }
 
-    const notifyResponse = await notifyClient.sendEmail(
-      templateId,
-      recipientEmail,
-      { personalisation: allNotifyPersonalisationData }
-    );
+    const notifyResponse = await notifyClient.sendEmail(templateId, recipientEmail, {
+      personalisation: allNotifyPersonalisationData
+    });
     const responseBody = notifyResponse.body;
     logEmitter.emit("functionSuccess", "notify.connector", "sendStatusEmail");
     return responseBody;
@@ -81,12 +64,7 @@ const sendStatusEmail = async (templateId, recipientEmail, flattenedData) => {
         newError.name = "notifyMissingPersonalisation";
       }
     }
-    logEmitter.emit(
-      "functionFail",
-      "notify.connector",
-      "sendStatusEmail",
-      newError
-    );
+    logEmitter.emit("functionFail", "notify.connector", "sendStatusEmail", newError);
     return null;
   }
 };
@@ -113,15 +91,7 @@ const sendSingleEmail = async (
   logEmitter.emit("functionCall", "notify.connector", "sendSingleEmail");
   let notifyClient;
 
-  if (
-    process.env.NOTIFY_DOUBLE_MODE === "true" ||
-    process.env.DOUBLE_MODE === "true"
-  ) {
-    logEmitter.emit("doubleMode", "notify.connector", "sendSingleEmail");
-    notifyClient = notifyClientDouble;
-  } else {
-    notifyClient = new NotifyClient(NOTIFY_KEY);
-  }
+  notifyClient = new NotifyClient(NOTIFY_KEY);
 
   try {
     flattenedData.link_to_file = pdfFile
@@ -132,22 +102,16 @@ const sendSingleEmail = async (
 
     const notifyTemplate = await notifyClient.getTemplateById(templateId);
 
-    const requiredTemplateFields = Object.keys(
-      notifyTemplate.data.personalisation
-    );
+    const requiredTemplateFields = Object.keys(notifyTemplate.data.personalisation);
 
-    const templateFieldsWithoutSuffix = requiredTemplateFields.map(
-      (fieldName) => {
-        const trimmedFieldName = fieldName.trim();
-        return trimmedFieldName.endsWith("_exists")
-          ? trimmedFieldName.slice(0, -7)
-          : trimmedFieldName;
-      }
-    );
+    const templateFieldsWithoutSuffix = requiredTemplateFields.map((fieldName) => {
+      const trimmedFieldName = fieldName.trim();
+      return trimmedFieldName.endsWith("_exists")
+        ? trimmedFieldName.slice(0, -7)
+        : trimmedFieldName;
+    });
 
-    const templateFieldsWithoutDuplicates = new Set(
-      templateFieldsWithoutSuffix
-    );
+    const templateFieldsWithoutDuplicates = new Set(templateFieldsWithoutSuffix);
 
     const allNotifyPersonalisationData = { ...flattenedData };
 
@@ -168,11 +132,9 @@ const sendSingleEmail = async (
       allNotifyPersonalisationData["northern-ireland"] = "yes";
     }
 
-    const notifyResponse = await notifyClient.sendEmail(
-      templateId,
-      recipientEmail,
-      { personalisation: allNotifyPersonalisationData }
-    );
+    const notifyResponse = await notifyClient.sendEmail(templateId, recipientEmail, {
+      personalisation: allNotifyPersonalisationData
+    });
     const responseBody = notifyResponse.body;
     logEmitter.emit("functionSuccess", "notify.connector", "sendSingleEmail");
     logEmitter.emit(
@@ -191,27 +153,18 @@ const sendSingleEmail = async (
     if (err.message === "secretOrPrivateKey must have a value") {
       newError.name = "notifyMissingKey";
     }
-    if (err.statusCode === 400) {
-      if (err.error.errors[0].error === "ValidationError") {
-        newError.name = "notifyInvalidTemplate";
-      }
-      if (err.error.errors[0].error === "BadRequestError") {
-        if (
-          process.env.NODE_ENV !== "production" &&
-          err.message.includes("using a team-only API key")
-        ) {
-          // Where API doesn't send email in staging due to non-whitelisted address, mark as sent anyway
-          return true;
-        }
-        newError.name = "notifyMissingPersonalisation";
-      }
+
+    if (
+      err?.response?.status == 400 &&
+      process.env.NODE_ENV !== "production" &&
+      err?.response?.data?.errors?.some((e) => e.message.includes("using a team-only API key"))
+    ) {
+      // Where API doesn't send email in staging due to non-whitelisted address, mark as sent anyway
+      logEmitter.emit(WARN, "Non-whitelisted email not sent but will be logged as successful");
+      return true;
     }
-    logEmitter.emit(
-      "functionFail",
-      "notify.connector",
-      "sendSingleEmail",
-      newError
-    );
+
+    logEmitter.emit("functionFail", "notify.connector", "sendSingleEmail", newError);
     return null;
   }
 };

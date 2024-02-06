@@ -143,9 +143,7 @@ const createFsaRnBox = (fsarnNumber, lcInfo, i18n) => {
   fsaRnBox.push({
     text: [
       {
-        text: i18n.t(
-          "The unique food business registration application reference is"
-        ),
+        text: i18n.t("The unique food business registration application reference is"),
         color: "white",
         fontSize: 16
       }
@@ -167,16 +165,10 @@ const createLcContactSection = (lcInfo, i18n) => {
   if (lcInfo.local_council) {
     lcContactSection.push(createTitle(i18n.tLa(lcInfo.local_council), "h2"));
   } else {
-    lcContactSection.push(
-      createTitle(i18n.tLa(lcInfo.local_council_hygiene), "h2")
-    );
-    lcContactSection.push(
-      createTitle(i18n.t("Responsible local council for food hygiene"), "h3")
-    );
+    lcContactSection.push(createTitle(i18n.tLa(lcInfo.local_council_hygiene), "h2"));
+    lcContactSection.push(createTitle(i18n.t("Responsible local council for food hygiene"), "h3"));
     lcContactSection.push(createNewSpace(1));
-    lcContactSection.push(
-      createTitle(i18n.tLa(lcInfo.local_council_standards), "h2")
-    );
+    lcContactSection.push(createTitle(i18n.tLa(lcInfo.local_council_standards), "h2"));
     lcContactSection.push(
       createTitle(i18n.t("Responsible local council for food standards"), "h3")
     );
@@ -186,9 +178,7 @@ const createLcContactSection = (lcInfo, i18n) => {
 
 const createGuidanceLinksSection = (lcInfo, i18n) => {
   const guidanceLinksSectionNoSpaces = [];
-  guidanceLinksSectionNoSpaces.push(
-    createTitle(i18n.t("Guidance links provided"), "bigger")
-  );
+  guidanceLinksSectionNoSpaces.push(createTitle(i18n.t("Guidance links provided"), "bigger"));
   if (lcInfo.country === "wales" || i18n.language() === "cy") {
     guidanceLinksSectionNoSpaces.push(createTitle("English", "h2"));
   }
@@ -217,7 +207,7 @@ const createGuidanceLinksSection = (lcInfo, i18n) => {
     createHyperlinkTitle(
       "Food labelling and allergens guidance",
       "h4",
-      "https://www.food.gov.uk/business-guidance/industry-specific-advice/labelling-and-allergenss"
+      "https://www.food.gov.uk/business-guidance/industry-specific-advice/labelling-and-allergens"
     )
   );
   if (lcInfo.country == "england") {
@@ -284,11 +274,7 @@ const createGuidanceLinksSection = (lcInfo, i18n) => {
       )
     );
     guidanceLinksSectionNoSpaces.push(
-      createHyperlinkTitle(
-        "Business support",
-        "h4",
-        "https://www.nibusinessinfo.co.uk/"
-      )
+      createHyperlinkTitle("Business support", "h4", "https://www.nibusinessinfo.co.uk/")
     );
   }
   const guidanceLinksSectiion = [];
@@ -321,25 +307,10 @@ const docDefinitionGenerator = (content, pdfData) => {
 
 const fontDescriptors = {
   Roboto: {
-    normal: path.join(
-      __dirname,
-      "..",
-      "/services",
-      "/fonts/Roboto-Regular.ttf"
-    ),
+    normal: path.join(__dirname, "..", "/services", "/fonts/Roboto-Regular.ttf"),
     bold: path.join(__dirname, "..", "/services", "/fonts/Roboto-Medium.ttf"),
-    italics: path.join(
-      __dirname,
-      "..",
-      "/services",
-      "/fonts/Roboto-Italic.ttf"
-    ),
-    bolditalics: path.join(
-      __dirname,
-      "..",
-      "/services",
-      "/fonts/Roboto-MediumItalic.ttf"
-    )
+    italics: path.join(__dirname, "..", "/services", "/fonts/Roboto-Italic.ttf"),
+    bolditalics: path.join(__dirname, "..", "/services", "/fonts/Roboto-MediumItalic.ttf")
   }
 };
 

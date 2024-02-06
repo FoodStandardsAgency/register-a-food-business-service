@@ -5,8 +5,7 @@ const axios = ax.create({
     return true;
   }
 });
-const baseUrl =
-  "https://integration-fsa-rof-gateway.azure-api.net/registrations/v1/";
+const baseUrl = "https://integration-fsa-rof-gateway.azure-api.net/registrations/v1/";
 const cardiffUrl = `${baseUrl}cardiff`;
 const cardiffAPIKey = "b175199d420448fc87baa714e458ce6e";
 

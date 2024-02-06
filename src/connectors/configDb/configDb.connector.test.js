@@ -1,76 +1,16 @@
 jest.mock("mongodb");
-jest.mock("./configDb.double");
-jest.mock("../../services/statusEmitter.service");
 
 const mongodb = require("mongodb");
-const {
-  getCouncilsForSupplier,
-  getAllLocalCouncilConfig,
-  getConfigVersion
-} = require("./configDb.connector");
+const { getCouncilsForSupplier, getAllLocalCouncilConfig } = require("./configDb.connector");
 const { clearCosmosConnection } = require("../cosmos.client");
 const mockLocalCouncilConfig = require("./mockLocalCouncilConfig.json");
-const { lcConfigCollectionDouble } = require("./configDb.double");
 const mockSupplierConfig = require("./mockSupplierConfig.json");
-const mockConfigVersion = {
-  _id: "1.2.0",
-  notify_template_keys: {
-    fbo_submission_complete: "123",
-    lc_new_registration: "456"
-  },
-  path: {
-    "/index": {
-      on: true,
-      switches: {}
-    }
-  }
-};
 
 let result;
-
-describe("Function: getConfigVersion", () => {
-  describe("given the request is successful", () => {
-    beforeEach(async () => {
-      process.env.DOUBLE_MODE = false;
-      mongodb.MongoClient.connect.mockImplementation(() => ({
-        db: () => ({
-          collection: () => ({
-            findOne: jest.fn(() => mockConfigVersion)
-          })
-        })
-      }));
-      result = await getConfigVersion("1.2.0");
-    });
-
-    it("should return the configVersion data for this version", () => {
-      expect(result).toEqual(mockConfigVersion);
-    });
-  });
-  describe("given the request throws an error", () => {
-    beforeEach(async () => {
-      process.env.DOUBLE_MODE = false;
-      mongodb.MongoClient.connect.mockImplementation(() => {
-        throw new Error("example mongo error");
-      });
-
-      try {
-        result = await getConfigVersion("1.2.0");
-      } catch (err) {
-        result = err;
-      }
-    });
-
-    it("should throw mongoConnectionError error", () => {
-      expect(result.name).toBe("mongoConnectionError");
-      expect(result.message).toBe("example mongo error");
-    });
-  });
-});
 
 describe("Function: getAllLocalCouncilConfig", () => {
   describe("given the request throws an error", () => {
     beforeEach(async () => {
-      process.env.DOUBLE_MODE = false;
       mongodb.MongoClient.connect.mockImplementation(() => {
         throw new Error("example mongo error");
       });
@@ -92,7 +32,6 @@ describe("Function: getAllLocalCouncilConfig", () => {
 
   describe("given the request is successful", () => {
     beforeEach(() => {
-      process.env.DOUBLE_MODE = false;
       mongodb.MongoClient.connect.mockImplementation(() => ({
         db: () => ({
           collection: () => ({
@@ -103,30 +42,12 @@ describe("Function: getAllLocalCouncilConfig", () => {
     });
 
     it("should return the data from the find() response", async () => {
-      await expect(getAllLocalCouncilConfig()).resolves.toEqual(
-        mockLocalCouncilConfig
-      );
-    });
-  });
-
-  describe("when running in double mode", () => {
-    beforeEach(() => {
-      process.env.DOUBLE_MODE = true;
-      lcConfigCollectionDouble.find.mockImplementation(() => ({
-        toArray: () => mockLocalCouncilConfig
-      }));
-    });
-
-    it("should resolve with the data from the double's find() response", async () => {
-      await expect(getAllLocalCouncilConfig("hi")).resolves.toEqual(
-        mockLocalCouncilConfig
-      );
+      await expect(getAllLocalCouncilConfig()).resolves.toEqual(mockLocalCouncilConfig);
     });
   });
 
   describe("given the request is run more than once during this process (populated cache)", () => {
     beforeEach(() => {
-      process.env.DOUBLE_MODE = false;
       mongodb.MongoClient.connect.mockClear();
       mongodb.MongoClient.connect.mockImplementation(() => ({
         db: () => ({
@@ -145,14 +66,10 @@ describe("Function: getAllLocalCouncilConfig", () => {
       // closeCosmosConnection();
 
       // run one request
-      await expect(getAllLocalCouncilConfig()).resolves.toEqual(
-        mockLocalCouncilConfig
-      );
+      await expect(getAllLocalCouncilConfig()).resolves.toEqual(mockLocalCouncilConfig);
 
       // run a second request without clearing the cache
-      await expect(getAllLocalCouncilConfig()).resolves.toEqual(
-        mockLocalCouncilConfig
-      );
+      await expect(getAllLocalCouncilConfig()).resolves.toEqual(mockLocalCouncilConfig);
     });
 
     it("does not call the mongo connection function on the second function call", async () => {

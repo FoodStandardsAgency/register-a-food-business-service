@@ -28,19 +28,11 @@ const frontendSubmitRegistration = async () => {
       }
     };
 
-    const res = await axios(
-      `${submitUrl}/api/submissions/createNewRegistration`,
-      requestOptions
-    );
+    const res = await axios(`${submitUrl}/api/submissions/createNewRegistration`, requestOptions);
     const response = res.data;
     return response;
   } catch (err) {
-    logEmitter.emit(
-      "functionFail",
-      "getSingleRegistration",
-      "frontendSubmitRegistration",
-      err
-    );
+    logEmitter.emit("functionFail", "getSingleRegistration", "frontendSubmitRegistration", err);
   }
 };
 describe("PUT to /api/v3/collections/:lc/:fsa_rn", () => {
@@ -59,10 +51,7 @@ describe("PUT to /api/v3/collections/:lc/:fsa_rn", () => {
           "Content-Type": "application/json"
         }
       };
-      const res = await axios(
-        `${url}/${submitResponse["fsa-rn"]}`,
-        requestOptions
-      );
+      const res = await axios(`${url}/${submitResponse["fsa-rn"]}`, requestOptions);
       response = res.data;
     });
 
@@ -94,46 +83,6 @@ describe("PUT to /api/v3/collections/:lc/:fsa_rn", () => {
       expect(response.developerMessage).toBe(
         "The registration application reference specified could not be found for the council requested. Please check this reference is definitely associated with this council"
       );
-    });
-  });
-
-  describe("Given invalid parameters", () => {
-    let response;
-    beforeEach(async () => {
-      const requestOptions = {
-        headers: {
-          "Content-Type": "application/json",
-          "double-mode": "invalid double mode"
-        }
-      };
-      const res = await axios(`${url}/1234253`, requestOptions);
-      response = res.data;
-    });
-
-    it("should return the options validation error", () => {
-      expect(response.statusCode).toBe(400);
-      expect(response.errorCode).toBe("3");
-      expect(response.developerMessage).toBe(
-        "One of the supplied options is invalid"
-      );
-    });
-  });
-
-  describe("Given 'double-mode' header", () => {
-    let response;
-    beforeEach(async () => {
-      const requestOptions = {
-        headers: {
-          "Content-Type": "application/json",
-          "double-mode": "update"
-        }
-      };
-      const res = await axios(`${url}`, requestOptions);
-      response = res.data;
-    });
-
-    it("should return the double mode response", () => {
-      expect(response.fsa_rn).toBe("1234");
     });
   });
 });

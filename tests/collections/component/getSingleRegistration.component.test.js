@@ -34,12 +34,7 @@ const frontendSubmitRegistration = async () => {
     );
     return response.data;
   } catch (err) {
-    logEmitter.emit(
-      "functionFail",
-      "getSingleRegistration",
-      "frontendSubmitRegistration",
-      err
-    );
+    logEmitter.emit("functionFail", "getSingleRegistration", "frontendSubmitRegistration", err);
   }
 };
 
@@ -55,9 +50,7 @@ describe("GET to /api/collections/:lc/:fsa_rn", () => {
     });
 
     it("should return all the full details of that registration", () => {
-      expect(response.establishment.establishment_trading_name).toBe(
-        "Blanda Inc"
-      );
+      expect(response.establishment.establishment_trading_name).toBe("Blanda Inc");
       expect(response.metadata).toBeDefined();
     });
   });
@@ -75,44 +68,6 @@ describe("GET to /api/collections/:lc/:fsa_rn", () => {
       expect(response.developerMessage).toBe(
         "The registration application reference specified could not be found for the council requested. Please check this reference is definitely associated with this council"
       );
-    });
-  });
-
-  describe("Given invalid parameters", () => {
-    let response;
-    beforeEach(async () => {
-      const requestOptions = {
-        headers: {
-          "double-mode": "invalid double mode"
-        }
-      };
-      let res = await axios(`${url}/1234253`, requestOptions);
-      response = res.data;
-    });
-
-    it("should return the options validation error", () => {
-      expect(response.statusCode).toBe(400);
-      expect(response.errorCode).toBe("3");
-      expect(response.developerMessage).toBe(
-        "One of the supplied options is invalid"
-      );
-    });
-  });
-
-  describe("Given 'double-mode' header", () => {
-    let response;
-    beforeEach(async () => {
-      const requestOptions = {
-        headers: {
-          "double-mode": "single"
-        }
-      };
-      let res = await axios(`${url}`, requestOptions);
-      response = res.data;
-    });
-
-    it("should return the double mode response", () => {
-      expect(response.establishment.establishment_trading_name).toBe("Itsu");
     });
   });
 });

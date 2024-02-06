@@ -21,13 +21,12 @@ describe("Middleware: errorHandler", () => {
   describe("When given an error", () => {
     it("should find the error in errorDetails", () => {
       const error = {
-        name: "tascomiAuth"
+        name: "optionsValidationError"
       };
       errorHandler(error, "request", res);
-      expect(res.status).toBeCalledWith(500);
-      expect(res.send.mock.calls[0][0].errorCode).toBe("1");
+      expect(res.status).toBeCalledWith(400);
+      expect(res.send.mock.calls[0][0].errorCode).toBe("3");
     });
-
     it("should handle not finding error in errorDetails", () => {
       const error = {
         name: "randomUnknownError"

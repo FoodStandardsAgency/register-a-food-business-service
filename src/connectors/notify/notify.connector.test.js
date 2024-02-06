@@ -1,11 +1,9 @@
 "use strict";
 
 jest.mock("notifications-node-client");
-jest.mock("./notify.double");
 
 const { NotifyClient } = require("notifications-node-client");
 const { sendSingleEmail } = require("./notify.connector");
-const { notifyClientDouble } = require("./notify.double");
 
 describe("Function: sendSingleEmail", () => {
   let mockNotifyClient;
@@ -43,7 +41,6 @@ describe("Function: sendSingleEmail", () => {
 
   describe("given the request is successful", () => {
     beforeEach(async () => {
-      process.env.DOUBLE_MODE = false;
       jest.clearAllMocks();
       mockNotifyClient = {
         sendEmail: jest.fn(async () => {
@@ -56,9 +53,9 @@ describe("Function: sendSingleEmail", () => {
     });
 
     it("Should resolve with the success message ", async () => {
-      await expect(
-        sendSingleEmail(testTemplateId, testRecipient, ...args)
-      ).resolves.toBe("This is a success message from the notify client");
+      await expect(sendSingleEmail(testTemplateId, testRecipient, ...args)).resolves.toBe(
+        "This is a success message from the notify client"
+      );
     });
 
     it("Should have called the Notify sendEmail function with the template ID, recipient, and flattenedData (within an object)", () => {
@@ -75,51 +72,43 @@ describe("Function: sendSingleEmail", () => {
           country: "",
           country_exists: "no"
         };
-        expect(mockNotifyClient.sendEmail).toHaveBeenLastCalledWith(
-          testTemplateId,
-          testRecipient,
-          {
-            personalisation: expectedFlattenedDataWithExists
-          }
-        );
+        expect(mockNotifyClient.sendEmail).toHaveBeenLastCalledWith(testTemplateId, testRecipient, {
+          personalisation: expectedFlattenedDataWithExists
+        });
       });
     });
 
     describe("given the country of the LA", () => {
       const countries = ["england", "wales", "northern-ireland"];
-      it.each(countries)(
-        "should set personalisation to match the country",
-        (country) => {
-          testFlattenedData.country = country;
-          return sendSingleEmail(...args).then(() => {
-            const expectedFlattenedDataWithExists = {
-              example: "value",
-              example_exists: "yes",
-              some_field: "",
-              some_field_exists: "no",
-              opening_day_monday: true,
-              opening_day_monday_exists: "yes",
-              opening_day_tuesday: "",
-              opening_day_tuesday_exists: "no",
-              country: country,
-              country_exists: "yes"
-            };
-            expectedFlattenedDataWithExists[`${country}`] = "yes";
-            expect(mockNotifyClient.sendEmail).toHaveBeenLastCalledWith(
-              testTemplateId,
-              testRecipient,
-              {
-                personalisation: expectedFlattenedDataWithExists
-              }
-            );
-          });
-        }
-      );
+      it.each(countries)("should set personalisation to match the country", (country) => {
+        testFlattenedData.country = country;
+        return sendSingleEmail(...args).then(() => {
+          const expectedFlattenedDataWithExists = {
+            example: "value",
+            example_exists: "yes",
+            some_field: "",
+            some_field_exists: "no",
+            opening_day_monday: true,
+            opening_day_monday_exists: "yes",
+            opening_day_tuesday: "",
+            opening_day_tuesday_exists: "no",
+            country: country,
+            country_exists: "yes"
+          };
+          expectedFlattenedDataWithExists[`${country}`] = "yes";
+          expect(mockNotifyClient.sendEmail).toHaveBeenLastCalledWith(
+            testTemplateId,
+            testRecipient,
+            {
+              personalisation: expectedFlattenedDataWithExists
+            }
+          );
+        });
+      });
     });
 
     describe("given the NotifyClient constructor throws an error when used", () => {
       beforeEach(async () => {
-        process.env.DOUBLE_MODE = false;
         jest.clearAllMocks();
         NotifyClient.mockImplementation(() => {
           throw new Error();
@@ -133,7 +122,6 @@ describe("Function: sendSingleEmail", () => {
 
     describe("given the request throws an error", () => {
       beforeEach(() => {
-        process.env.DOUBLE_MODE = false;
         jest.clearAllMocks();
       });
 
@@ -220,28 +208,8 @@ describe("Function: sendSingleEmail", () => {
       });
     });
 
-    describe("When running in double mode", () => {
-      beforeEach(async () => {
-        process.env.DOUBLE_MODE = true;
-        jest.clearAllMocks();
-        NotifyClient.mockImplementation(() => ({}));
-        notifyClientDouble.sendEmail.mockImplementation(async () => ({
-          body: "Double response"
-        }));
-        notifyClientDouble.prepareUpload.mockImplementation(() => {});
-        notifyClientDouble.getTemplateById.mockImplementation(
-          async () => testFetchedTemplate
-        );
-      });
-
-      it("Should resolve with the double message", async () => {
-        await expect(sendSingleEmail(...args)).resolves.toBe("Double response");
-      });
-    });
-
     describe("When not given a pdfFile", () => {
       beforeEach(async () => {
-        process.env.DOUBLE_MODE = false;
         jest.clearAllMocks();
         mockNotifyClient = {
           sendEmail: jest.fn(async () => {

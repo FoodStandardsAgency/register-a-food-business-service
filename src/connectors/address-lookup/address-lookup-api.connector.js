@@ -11,7 +11,6 @@ const {
   ADDRESS_API_URL_QUERY_STANDARD
 } = require("../../config");
 const { logEmitter } = require("../../services/logging.service");
-const { addressLookupDouble } = require("./address-lookup-api.double");
 
 /**
  * Fetches addresses from the address lookup API for the given postcode
@@ -28,36 +27,14 @@ const getAddressesByPostcode = async (postcode) => {
     postcode
   );
 
-  const DOUBLE_MODE = process.env.DOUBLE_MODE;
-
   let firstJson;
-  if (DOUBLE_MODE === "true") {
-    const firstRes = addressLookupDouble(postcode);
-    if (firstRes.status === 200) {
-      firstJson = firstRes.data;
-    } else {
-      logEmitter.emit(
-        "functionFail",
-        "address-lookup-api.connector",
-        "getAddressesByPostcode",
-        `Address lookup API responded with non-200 status: ${firstRes.status}`
-      );
-      throw new Error(
-        `Address lookup API responded with non-200 status: ${firstRes.status}`
-      );
-    }
-  } else {
-    firstJson = await fetchUsingPostcoderPremium(postcode);
-    if (!firstJson || firstJson.length === 0) {
-      firstJson = await fetchUsingPostcoderStandard(postcode);
-    }
+
+  firstJson = await fetchUsingPostcoderPremium(postcode);
+  if (!firstJson || firstJson.length === 0) {
+    firstJson = await fetchUsingPostcoderStandard(postcode);
   }
 
-  logEmitter.emit(
-    "functionSuccess",
-    "address-lookup-api.connector",
-    "getAddressByPostcode"
-  );
+  logEmitter.emit("functionSuccess", "address-lookup-api.connector", "getAddressByPostcode");
   return firstJson;
 };
 
@@ -143,9 +120,7 @@ const fetchUsingPostcoderStandard = async (postcode) => {
       "fetchUsingPostcoderStandard",
       `Address lookup API responded with non-200 status: ${response.status} - ${response.statusText}`
     );
-    throw new Error(
-      `Address lookup API responded with non-200 status: ${response.status}`
-    );
+    throw new Error(`Address lookup API responded with non-200 status: ${response.status}`);
   }
 };
 

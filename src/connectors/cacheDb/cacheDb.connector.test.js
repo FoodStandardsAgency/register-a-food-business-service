@@ -1,12 +1,7 @@
 jest.mock("mongodb");
-jest.mock("../../services/statusEmitter.service");
 
 const mongodb = require("mongodb");
-const {
-  cacheRegistration,
-  updateStatusInCache,
-  updateNotificationOnSent
-} = require("./cacheDb.connector");
+const { cacheRegistration, updateNotificationOnSent } = require("./cacheDb.connector");
 
 describe("Connector: cacheDb", () => {
   let response;
@@ -18,7 +13,6 @@ describe("Connector: cacheDb", () => {
   describe("Function: cacheRegistration", () => {
     describe("given the request is successful", () => {
       beforeEach(async () => {
-        process.env.DOUBLE_MODE = false;
         mongodb.MongoClient.connect.mockImplementation(async () => ({
           db: () => ({
             collection: () => ({
@@ -36,7 +30,6 @@ describe("Connector: cacheDb", () => {
 
     describe("given the request throws an error", () => {
       beforeEach(async () => {
-        process.env.DOUBLE_MODE = false;
         mongodb.MongoClient.connect.mockImplementation(() => ({
           db: () => ({
             collection: () => ({
@@ -60,7 +53,6 @@ describe("Connector: cacheDb", () => {
 
     describe("given two requests without clearing the mongo connection", () => {
       beforeEach(async () => {
-        process.env.DOUBLE_MODE = false;
         mongodb.MongoClient.connect.mockImplementation(async () => ({
           db: () => ({
             collection: () => ({
@@ -92,72 +84,9 @@ describe("Connector: cacheDb", () => {
         expect(response.insertedId).toBe("1000");
       });
     });
-
-    describe("when running in double mode", () => {
-      beforeEach(async () => {
-        process.env.DOUBLE_MODE = "true";
-        response = await cacheRegistration();
-      });
-
-      it("should resolve with the data from the double's insertOne()", async () => {
-        expect(response.insertedId).toBe("13478de349");
-      });
-    });
   });
 
   describe("Function: updateCompletedInCache1", () => {
-    describe("When success", () => {
-      let result;
-      beforeEach(async () => {
-        process.env.DOUBLE_MODE = false;
-        mongodb.MongoClient.connect.mockImplementation(async () => ({
-          db: () => ({
-            collection: () => ({
-              findOne: () => ({ status: { register: undefined } }),
-              updateOne: () => {}
-            })
-          })
-        }));
-
-        try {
-          await updateStatusInCache("123", "123", "123");
-        } catch (err) {
-          result = err;
-        }
-      });
-
-      it("should have called this", () => {
-        expect(result).toBe(undefined);
-      });
-    });
-
-    describe("When Failure", () => {
-      let result;
-      beforeEach(async () => {
-        process.env.DOUBLE_MODE = false;
-        mongodb.MongoClient.connect.mockImplementation(async () => ({
-          db: () => ({
-            collection: () => ({
-              findOne: () => ({ status: { register: undefined } }),
-              updateOne: () => {
-                throw new Error("Example mongo error");
-              }
-            })
-          })
-        }));
-
-        try {
-          await updateStatusInCache("123", "123", "123");
-        } catch (err) {
-          result = err;
-        }
-      });
-
-      it("Shouldn't throw an error", () => {
-        expect(result).toBe(undefined);
-      });
-    });
-
     describe("Function: updateNotificationOnSent", () => {
       describe("When success", () => {
         let result;
@@ -221,60 +150,6 @@ describe("Connector: cacheDb", () => {
             ]
           });
         });
-      });
-    });
-  });
-
-  describe("Function: updateCompletedInCache2", () => {
-    describe("When success", () => {
-      let result;
-      beforeEach(async () => {
-        process.env.DOUBLE_MODE = false;
-        mongodb.MongoClient.connect.mockImplementation(async () => ({
-          db: () => ({
-            collection: () => ({
-              findOne: () => ({ completed: { register: undefined } }),
-              updateOne: () => {}
-            })
-          })
-        }));
-
-        try {
-          await updateStatusInCache("123", "123", "123");
-        } catch (err) {
-          result = err;
-        }
-      });
-
-      it("should have called this", () => {
-        expect(result).toBe(undefined);
-      });
-    });
-
-    describe("When Failure", () => {
-      let result;
-      beforeEach(async () => {
-        process.env.DOUBLE_MODE = false;
-        mongodb.MongoClient.connect.mockImplementation(async () => ({
-          db: () => ({
-            collection: () => ({
-              findOne: () => ({ completed: { register: undefined } }),
-              updateOne: () => {
-                throw new Error("Example mongo error");
-              }
-            })
-          })
-        }));
-
-        try {
-          await updateStatusInCache("123", "123", "123");
-        } catch (err) {
-          result = err;
-        }
-      });
-
-      it("Shouldn't throw an error", () => {
-        expect(result).toBe(undefined);
       });
     });
   });

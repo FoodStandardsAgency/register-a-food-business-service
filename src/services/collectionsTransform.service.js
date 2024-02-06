@@ -2,11 +2,7 @@ const { logEmitter } = require("./logging.service");
 
 const transformRegForCollections = (registration) => {
   // Transform the registrations returned from cosmos to the collections API expected format
-  logEmitter.emit(
-    "functionCall",
-    "registrationTransform.service",
-    "transformRegForCollection"
-  );
+  logEmitter.emit("functionCall", "registrationTransform.service", "transformRegForCollection");
   const establishmentObject = {};
   if (registration.establishment) {
     const establishment_keys = [
@@ -96,11 +92,10 @@ const transformRegForCollections = (registration) => {
         registration.establishment.operator[key] === false
           ? registration.establishment.operator[key]
           : key === "partners"
-          ? []
-          : null;
+            ? []
+            : null;
     });
-    operator["operator_company_house_number"] =
-      operator["operator_companies_house_number"];
+    operator["operator_company_house_number"] = operator["operator_companies_house_number"];
     delete operator["operator_companies_house_number"];
 
     activities_keys.forEach((key) => {
@@ -128,16 +123,9 @@ const transformRegForCollections = (registration) => {
 
     premise.establishment_first_line = premise.establishment_address_line_1;
     premise.establishment_street = premise.establishment_address_line_2;
-    premise.establishment_dependent_locality =
-      premise.establishment_address_line_3;
+    premise.establishment_dependent_locality = premise.establishment_address_line_3;
 
-    Object.assign(
-      establishmentObject,
-      establishment,
-      { operator },
-      { activities },
-      { premise }
-    );
+    Object.assign(establishmentObject, establishment, { operator }, { activities }, { premise });
   }
 
   const formattedRegistration = {
@@ -148,9 +136,7 @@ const transformRegForCollections = (registration) => {
     competent_authority_id: registration.source_council_id,
     local_council_url: registration.local_council_url,
     collected: registration.collected,
-    collected_at: registration.collected_at
-      ? registration.collected_at.toISOString()
-      : null,
+    collected_at: registration.collected_at ? registration.collected_at.toISOString() : null,
     createdAt: registration.reg_submission_date.toISOString(),
     updatedAt: registration.collected_at
       ? registration.collected_at.toISOString()
@@ -159,11 +145,7 @@ const transformRegForCollections = (registration) => {
     metadata: registration.declaration ? registration.declaration : {}
   };
 
-  logEmitter.emit(
-    "functionSuccess",
-    "registrationTransform.service",
-    "transformRegForCollection"
-  );
+  logEmitter.emit("functionSuccess", "registrationTransform.service", "transformRegForCollection");
   return formattedRegistration;
 };
 

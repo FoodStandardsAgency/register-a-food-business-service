@@ -18,7 +18,6 @@ const {
   FUNCTION_SUCCESS,
   FUNCTION_SUCCESS_WITH,
   FUNCTION_FAIL,
-  DOUBLE_MODE,
   INFO,
   ERROR,
   DEBUG,
@@ -135,9 +134,7 @@ describe("logEmitter", () => {
       const moduleMessage = "someModule";
       const funcMessage = "someFunction";
       const someData = { data: "data" };
-      const expected1 = `${moduleMessage}: ${funcMessage} error with: ${JSON.stringify(
-        someData
-      )}`;
+      const expected1 = `${moduleMessage}: ${funcMessage} error with: ${JSON.stringify(someData)}`;
 
       logger.info.mockImplementation(() => {
         //Mock
@@ -146,22 +143,6 @@ describe("logEmitter", () => {
       await logEmitter.emit(message, moduleMessage, funcMessage, someData);
 
       await expect(logger.info).toBeCalledWith(expected1, noSession);
-    });
-  });
-
-  describe("on doubleMode event", () => {
-    it("should call winston info with double mode", async () => {
-      const message = DOUBLE_MODE;
-      const moduleMessage = "someModule";
-      const funcMessage = "someFunction";
-      const expected = `${moduleMessage}: ${funcMessage}: running in double mode`;
-      logger.info.mockImplementation(() => {
-        //Mock
-      });
-
-      await logEmitter.emit(message, moduleMessage, funcMessage);
-
-      await expect(logger.info).toBeCalledWith(expected, noSession);
     });
   });
 

@@ -1,12 +1,9 @@
-jest.mock(
-  "../../connectors/registrationsDb-v2/registrationsDb.v2.connector",
-  () => ({
-    getAllRegistrationsByCouncils: jest.fn(),
-    getUnifiedRegistrations: jest.fn(),
-    getSingleRegistration: jest.fn(),
-    updateRegistrationCollectedByCouncil: jest.fn()
-  })
-);
+jest.mock("../../connectors/registrationsDb-v2/registrationsDb.v2.connector", () => ({
+  getAllRegistrationsByCouncils: jest.fn(),
+  getUnifiedRegistrations: jest.fn(),
+  getSingleRegistration: jest.fn(),
+  updateRegistrationCollectedByCouncil: jest.fn()
+}));
 jest.mock("../../connectors/configDb/configDb.connector", () => ({
   getCouncilsForSupplier: jest.fn()
 }));
@@ -33,12 +30,8 @@ const {
   getRegistrations,
   updateRegistration
 } = require("./collections.v2.controller");
-const {
-  getCouncilsForSupplier
-} = require("../../connectors/configDb/configDb.connector");
-const {
-  transformRegForCollections
-} = require("../../services/collectionsTransform.v2.service");
+const { getCouncilsForSupplier } = require("../../connectors/configDb/configDb.connector");
+const { transformRegForCollections } = require("../../services/collectionsTransform.v2.service");
 
 const localAuthorityOptions = {
   subscriber: "cardiff",
@@ -263,27 +256,11 @@ describe("registrations.v2.controller", () => {
         expect(result.name).toBe("optionsValidationError");
       });
     });
-    describe("When given double mode", () => {
-      beforeEach(async () => {
-        validateOptions.mockImplementation(() => true);
-        result = await getRegistrationsByCouncil({
-          getNewRegistrations: "true",
-          double_mode: "success"
-        });
-      });
-      it("Should return the double response", () => {
-        expect(result[0].fsa_rn).toBe("PQQK8Q-SN9N8C-4ADETF");
-      });
-    });
     describe("When successful", () => {
       beforeEach(async () => {
         validateOptions.mockImplementation(() => true);
-        getAllRegistrationsByCouncils.mockImplementation(() => [
-          shortRegistration
-        ]);
-        transformRegForCollections.mockImplementation(
-          () => transformedShortReg
-        );
+        getAllRegistrationsByCouncils.mockImplementation(() => [shortRegistration]);
+        transformRegForCollections.mockImplementation(() => transformedShortReg);
       });
       describe("When susbcriber is a local authority", () => {
         beforeEach(async () => {
@@ -300,9 +277,7 @@ describe("registrations.v2.controller", () => {
           );
         });
         it("should call transformRegForCollection", () => {
-          expect(transformRegForCollections).toHaveBeenCalledWith(
-            shortRegistration
-          );
+          expect(transformRegForCollections).toHaveBeenCalledWith(shortRegistration);
         });
         it("Should return the result of transformRegForCollection", () => {
           expect(result).toEqual([transformedShortReg]);
@@ -311,11 +286,7 @@ describe("registrations.v2.controller", () => {
       describe("When susbcriber is not a local authority", () => {
         describe("When requested councils is populated", () => {
           beforeEach(async () => {
-            getCouncilsForSupplier.mockImplementation(() => [
-              "cardiff",
-              "bath",
-              "bristol"
-            ]);
+            getCouncilsForSupplier.mockImplementation(() => ["cardiff", "bath", "bristol"]);
             result = await getRegistrationsByCouncil(nonLCSubscriberOptions);
           });
           it("Should call getAllRegistrationsByCouncils", () => {
@@ -328,9 +299,7 @@ describe("registrations.v2.controller", () => {
             );
           });
           it("should call transformRegForCollection", () => {
-            expect(transformRegForCollections).toHaveBeenCalledWith(
-              shortRegistration
-            );
+            expect(transformRegForCollections).toHaveBeenCalledWith(shortRegistration);
           });
           it("Should return the result of getAllRegistrationsByCouncils", () => {
             expect(result).toEqual([transformedShortReg]);
@@ -338,14 +307,8 @@ describe("registrations.v2.controller", () => {
         });
         describe("When requested councils is not populated", () => {
           beforeEach(async () => {
-            getCouncilsForSupplier.mockImplementation(() => [
-              "cardiff",
-              "bath",
-              "bristol"
-            ]);
-            result = await getRegistrationsByCouncil(
-              nonLCSubscriberNoneRequestedOptions
-            );
+            getCouncilsForSupplier.mockImplementation(() => ["cardiff", "bath", "bristol"]);
+            result = await getRegistrationsByCouncil(nonLCSubscriberNoneRequestedOptions);
           });
           it("Should call getAllRegistrationsByCouncils", () => {
             expect(getAllRegistrationsByCouncils).toHaveBeenCalledWith(
@@ -357,9 +320,7 @@ describe("registrations.v2.controller", () => {
             );
           });
           it("should call transformRegForCollection", () => {
-            expect(transformRegForCollections).toHaveBeenCalledWith(
-              shortRegistration
-            );
+            expect(transformRegForCollections).toHaveBeenCalledWith(shortRegistration);
           });
           it("Should return the result of getAllRegistrationsByCouncils", () => {
             expect(result).toEqual([transformedShortReg]);
@@ -384,17 +345,7 @@ describe("registrations.v2.controller", () => {
         expect(result.name).toBe("optionsValidationError");
       });
     });
-    describe("When given double mode", () => {
-      beforeEach(async () => {
-        validateOptions.mockImplementation(() => true);
-        result = await getRegistration({
-          double_mode: "single"
-        });
-      });
-      it("Should return the double response", () => {
-        expect(result.fsa_rn).toBe("PQQK8Q-SN9N8C-4ADETF");
-      });
-    });
+
     describe("When successful", () => {
       beforeEach(async () => {
         validateOptions.mockImplementation(() => true);
@@ -427,18 +378,7 @@ describe("registrations.v2.controller", () => {
         expect(result.name).toBe("optionsValidationError");
       });
     });
-    describe("When given double mode", () => {
-      beforeEach(async () => {
-        validateOptions.mockImplementation(() => true);
-        result = await updateRegistration({
-          collected: true,
-          double_mode: "update"
-        });
-      });
-      it("Should return the double response", () => {
-        expect(result).toEqual({ fsa_rn: "1234", collected: true });
-      });
-    });
+
     describe("When successful", () => {
       beforeEach(async () => {
         validateOptions.mockImplementation(() => true);
@@ -472,19 +412,7 @@ describe("registrations.v2.controller", () => {
         expect(result.name).toBe("optionsValidationError");
       });
     });
-    describe("When given double mode", () => {
-      beforeEach(async () => {
-        validateOptions.mockImplementation(() => true);
-        result = await getRegistrations({
-          before: "2019-01-01",
-          after: "2019-02-01",
-          double_mode: "success"
-        });
-      });
-      it("Should return the double response", () => {
-        expect(result[0].fsa_rn).toBe("PQQK8Q-SN9N8C-4ADETF");
-      });
-    });
+
     describe("When successful", () => {
       beforeEach(async () => {
         validateOptions.mockImplementation(() => true);

@@ -3,9 +3,7 @@ const logger = createLogger({
   exitOnError: false // do not exit on handled exceptions
 });
 
-const {
-  AzureApplicationInsightsLogger
-} = require("winston-azure-application-insights");
+const { AzureApplicationInsightsLogger } = require("winston-azure-application-insights");
 
 /* eslint-disable */
 const { ElasticsearchTransport } = require("winston-elasticsearch");
@@ -20,8 +18,7 @@ let options;
 // transports
 let transportConfig = [];
 let azureKey =
-  "APPINSIGHTS_INSTRUMENTATIONKEY" in process.env &&
-  process.env["APPINSIGHTS_INSTRUMENTATIONKEY"]
+  "APPINSIGHTS_INSTRUMENTATIONKEY" in process.env && process.env["APPINSIGHTS_INSTRUMENTATIONKEY"]
     ? process.env.APPINSIGHTS_INSTRUMENTATIONKEY
     : null;
 
@@ -40,9 +37,7 @@ switch (env) {
     };
 
     if (azureKey !== null) {
-      transportConfig.push(
-        new AzureApplicationInsightsLogger(options.azureOpts)
-      );
+      transportConfig.push(new AzureApplicationInsightsLogger(options.azureOpts));
     }
 
     break;

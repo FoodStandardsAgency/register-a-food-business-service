@@ -9,10 +9,8 @@ jest.mock("./submissions.controller", () => ({
   createNewRegistration: jest.fn(),
   createNewDirectRegistration: jest.fn()
 }));
-jest.mock("../../services/statusEmitter.service");
 const submissionsController = require("./submissions.controller");
 const { submissionsRouter } = require("./submissions.router");
-const { doubleResponse } = require("./submissions.double");
 describe("submissions router", () => {
   let router, send, handler, status, testRegistration;
   beforeEach(() => {
@@ -64,11 +62,9 @@ describe("submissions router", () => {
     describe("when an error is thrown", () => {
       let next;
       beforeEach(async () => {
-        submissionsController.createNewDirectRegistration.mockImplementation(
-          () => {
-            throw new Error("reg error");
-          }
-        );
+        submissionsController.createNewDirectRegistration.mockImplementation(() => {
+          throw new Error("reg error");
+        });
         status.mockImplementation(() => ({
           send: jest.fn()
         }));
@@ -88,75 +84,9 @@ describe("submissions router", () => {
           next
         );
       });
+
       it("should call next with error", () => {
         expect(next).toBeCalledWith(new Error("reg error"));
-      });
-    });
-
-    describe("when given double mode success header", () => {
-      beforeEach(async () => {
-        await handler(
-          {
-            body: {
-              registration: "reg"
-            },
-            headers: {
-              "double-mode": "success"
-            },
-            params: {
-              subscriber: "cardiff"
-            },
-            query: {}
-          },
-          { send, status }
-        );
-      });
-
-      it("should not call registrationController", () => {
-        expect(
-          submissionsController.createNewDirectRegistration
-        ).not.toHaveBeenCalled();
-      });
-
-      it("should call res.send", () => {
-        expect(send).toHaveBeenCalledWith(doubleResponse);
-      });
-    });
-
-    describe("when given double mode fail header", () => {
-      let next;
-      beforeEach(async () => {
-        next = jest.fn();
-        await handler(
-          {
-            body: {
-              registration: "reg"
-            },
-            headers: {
-              "double-mode": "fail"
-            },
-            params: {
-              subscriber: "cardiff"
-            },
-            query: {}
-          },
-          { send, status },
-          next
-        );
-      });
-
-      it("should not call registrationController", () => {
-        expect(
-          submissionsController.createNewDirectRegistration
-        ).not.toHaveBeenCalled();
-      });
-
-      it("should not call res.send", () => {
-        expect(send).not.toHaveBeenCalled();
-      });
-
-      it("should call next with error", () => {
-        expect(next).toHaveBeenCalled();
       });
     });
   });

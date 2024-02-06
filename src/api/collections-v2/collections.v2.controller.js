@@ -6,32 +6,17 @@ const {
 } = require("../../connectors/registrationsDb-v2/registrationsDb.v2.connector");
 
 const { validateOptions } = require("./collections.v2.service");
-const {
-  registrationDbDouble
-} = require("../../connectors/registrationsDb-v2/registrationsDb.v2.double");
-const {
-  transformRegForCollections
-} = require("../../services/collectionsTransform.v2.service");
+const { transformRegForCollections } = require("../../services/collectionsTransform.v2.service");
 
 const { logEmitter } = require("../../services/logging.service");
-const {
-  getCouncilsForSupplier
-} = require("../../connectors/configDb/configDb.connector");
+const { getCouncilsForSupplier } = require("../../connectors/configDb/configDb.connector");
 
 const getRegistrationsByCouncil = async (options) => {
-  logEmitter.emit(
-    "functionCall",
-    "registrations.v2.controller",
-    "getRegistrationsByCouncil"
-  );
+  logEmitter.emit("functionCall", "registrations.v2.controller", "getRegistrationsByCouncil");
 
   const validationResult = await validateOptions(options, true);
 
   if (validationResult === true) {
-    if (options.double_mode) {
-      return registrationDbDouble(options.double_mode);
-    }
-
     /*Check if single requested LA is the same as subscriber. This means it's either an LA requesting
     their own registrations or a non-LA subscriber not defining which councils they want returned.
     In the latter case all authorised registrations should be returned by default.*/
@@ -57,11 +42,7 @@ const getRegistrationsByCouncil = async (options) => {
     const formattedRegistrations = registrations.map((registration) => {
       return transformRegForCollections(registration);
     });
-    logEmitter.emit(
-      "functionSuccess",
-      "registrations.v2.controller",
-      "getRegistrationsByCouncil"
-    );
+    logEmitter.emit("functionSuccess", "registrations.v2.controller", "getRegistrationsByCouncil");
 
     return formattedRegistrations;
   } else {
@@ -73,30 +54,16 @@ const getRegistrationsByCouncil = async (options) => {
 };
 
 const getRegistration = async (options) => {
-  logEmitter.emit(
-    "functionCall",
-    "registrations.v2.controller",
-    "getRegistration"
-  );
+  logEmitter.emit("functionCall", "registrations.v2.controller", "getRegistration");
 
   const validationResult = await validateOptions(options);
 
   if (validationResult === true) {
-    if (options.double_mode) {
-      return registrationDbDouble(options.double_mode);
-    }
-    const registration = await getSingleRegistration(
-      options.fsa_rn,
-      options.requestedCouncil
-    );
+    const registration = await getSingleRegistration(options.fsa_rn, options.requestedCouncil);
 
     const formattedRegistration = transformRegForCollections(registration);
 
-    logEmitter.emit(
-      "functionSuccess",
-      "registrations.v2.controller",
-      "getRegistration"
-    );
+    logEmitter.emit("functionSuccess", "registrations.v2.controller", "getRegistration");
     return formattedRegistration;
   } else {
     const error = new Error("");
@@ -107,33 +74,20 @@ const getRegistration = async (options) => {
 };
 
 const getRegistrations = async (options) => {
-  logEmitter.emit(
-    "functionCall",
-    "registrations.v2.controller",
-    "getRegistrations"
-  );
+  logEmitter.emit("functionCall", "registrations.v2.controller", "getRegistrations");
 
   const validationResult = await validateOptions(options);
 
   if (validationResult === true) {
-    if (options.double_mode) {
-      return registrationDbDouble(options.double_mode);
-    }
-
-    const registrations = await getUnifiedRegistrations(
-      options.before,
-      options.after,
-      ["establishment", "metadata"]
-    );
+    const registrations = await getUnifiedRegistrations(options.before, options.after, [
+      "establishment",
+      "metadata"
+    ]);
 
     const formattedRegistrations = registrations.map((registration) => {
       return transformRegForCollections(registration);
     });
-    logEmitter.emit(
-      "functionSuccess",
-      "registrations.v2.controller",
-      "getRegistrations"
-    );
+    logEmitter.emit("functionSuccess", "registrations.v2.controller", "getRegistrations");
     return formattedRegistrations;
   } else {
     const error = new Error("");
@@ -144,30 +98,18 @@ const getRegistrations = async (options) => {
 };
 
 const updateRegistration = async (options) => {
-  logEmitter.emit(
-    "functionCall",
-    "registrations.v2.controller",
-    "updateRegistration"
-  );
+  logEmitter.emit("functionCall", "registrations.v2.controller", "updateRegistration");
 
   const validationResult = await validateOptions(options);
 
   if (validationResult === true) {
-    if (options.double_mode) {
-      return registrationDbDouble(options.double_mode);
-    }
-
     const response = await updateRegistrationCollectedByCouncil(
       options.fsa_rn,
       options.collected,
       options.requestedCouncil
     );
 
-    logEmitter.emit(
-      "functionSuccess",
-      "registrations.v2.controller",
-      "updateRegistration"
-    );
+    logEmitter.emit("functionSuccess", "registrations.v2.controller", "updateRegistration");
 
     return response;
   } else {

@@ -18,10 +18,7 @@ const getUprn = async (firstLine, secondLine, postcode) => {
 
   try {
     const addressLookupResponse = await getAddressesByPostcode(postcode);
-    const providedAddress = transformAddressLineForMatching(
-      firstLine,
-      secondLine
-    );
+    const providedAddress = transformAddressLineForMatching(firstLine, secondLine);
 
     if (isNumericOnly(providedAddress)) {
       return uprn;
@@ -61,9 +58,7 @@ const transformAddressLineForMatching = (line1, line2) => {
 
   // Check if line 1 contains only digits, if so combine with line 2
   if (isNumericOnly(transformedLine)) {
-    transformedLine = `${transformedLine.replace(/,/g, "")} ${(line2 || "")
-      .trim()
-      .toLowerCase()}`;
+    transformedLine = `${transformedLine.replace(/,/g, "")} ${(line2 || "").trim().toLowerCase()}`;
   }
 
   // Check if the first part of the line contains only digits (e.g. "6, Road Name"), if so combine with second part
