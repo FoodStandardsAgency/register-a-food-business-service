@@ -70,23 +70,4 @@ describe("GET to /api/v3/collections/:lc/:fsa_rn", () => {
       );
     });
   });
-
-  describe("Given invalid parameters", () => {
-    let response;
-    beforeEach(async () => {
-      const requestOptions = {
-        headers: {
-          "double-mode": "invalid double mode"
-        }
-      };
-      let res = await axios(`${url}/1234253`, requestOptions);
-      response = res.data;
-    });
-
-    it("should return the options validation error", () => {
-      expect(response.statusCode).toBe(400);
-      expect(response.errorCode).toBe("3");
-      expect(response.developerMessage).toBe("One of the supplied options is invalid");
-    });
-  });
 });

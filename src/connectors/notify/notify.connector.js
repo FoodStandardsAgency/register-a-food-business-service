@@ -1,6 +1,6 @@
 const { NotifyClient } = require("notifications-node-client");
 const { NOTIFY_KEY } = require("../../config");
-const { logEmitter, ERROR, INFO } = require("../../services/logging.service");
+const { logEmitter, ERROR, WARN, INFO } = require("../../services/logging.service");
 
 const sendStatusEmail = async (templateId, recipientEmail, flattenedData) => {
   logEmitter.emit("functionCall", "notify.connector", "sendStatusEmail");
@@ -153,21 +153,17 @@ const sendSingleEmail = async (
     if (err.message === "secretOrPrivateKey must have a value") {
       newError.name = "notifyMissingKey";
     }
-    if (err.statusCode === 400) {
-      if (err.error.errors[0].error === "ValidationError") {
-        newError.name = "notifyInvalidTemplate";
-      }
-      if (err.error.errors[0].error === "BadRequestError") {
-        if (
-          process.env.NODE_ENV !== "production" &&
-          err.message.includes("using a team-only API key")
-        ) {
-          // Where API doesn't send email in staging due to non-whitelisted address, mark as sent anyway
-          return true;
-        }
-        newError.name = "notifyMissingPersonalisation";
-      }
+
+    if (
+      err?.response?.status == 400 &&
+      process.env.NODE_ENV !== "production" &&
+      err?.response?.data?.errors?.some((e) => e.message.includes("using a team-only API key"))
+    ) {
+      // Where API doesn't send email in staging due to non-whitelisted address, mark as sent anyway
+      logEmitter.emit(WARN, "Non-whitelisted email not sent but will be logged as successful");
+      return true;
     }
+
     logEmitter.emit("functionFail", "notify.connector", "sendSingleEmail", newError);
     return null;
   }
