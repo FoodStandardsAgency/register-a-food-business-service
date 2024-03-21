@@ -35,6 +35,12 @@ const styles = {
     margin: [20, 0, 40, 0],
     fontSize: 12
   },
+  email: {
+    fontSize: 15,
+    color: "black",
+    lineHeight: "1.2",
+    font: "RobotoMono"
+  },
   code: {
     color: "white",
     fontSize: 32,
@@ -83,6 +89,27 @@ const createSingleLine = (key, value) => {
       {
         width: "*",
         text: key
+      },
+      {
+        width: "*",
+        style: "header",
+        text: value
+      }
+    ]
+  });
+  singleLine = singleLine.concat(createGreyLine());
+  return singleLine;
+};
+
+const createSingleLineEmail = (key, value) => {
+  let singleLine = [];
+  singleLine.push({
+    style: "email",
+    columns: [
+      {
+        width: "*",
+        text: key,
+        font: "Roboto"
       },
       {
         width: "*",
@@ -311,6 +338,12 @@ const fontDescriptors = {
     bold: path.join(__dirname, "..", "/services", "/fonts/Roboto-Medium.ttf"),
     italics: path.join(__dirname, "..", "/services", "/fonts/Roboto-Italic.ttf"),
     bolditalics: path.join(__dirname, "..", "/services", "/fonts/Roboto-MediumItalic.ttf")
+  },
+  RobotoMono: {
+    normal: path.join(__dirname, "..", "/services", "/fonts/RobotoMono-Regular.ttf"),
+    bold: path.join(__dirname, "..", "/services", "/fonts/RobotoMono-Medium.ttf"),
+    italics: path.join(__dirname, "..", "/services", "/fonts/RobotoMono-Italic.ttf"),
+    bolditalics: path.join(__dirname, "..", "/services", "/fonts/RobotoMono-MediumItalic.ttf")
   }
 };
 
@@ -320,6 +353,7 @@ module.exports = {
   createGreyLine,
   createTitle,
   createSingleLine,
+  createSingleLineEmail,
   createNewSpace,
   createFsaRnBox,
   createLcContactSection,
