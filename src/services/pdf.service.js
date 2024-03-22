@@ -12,7 +12,6 @@ const {
   createTitle,
   createNewSpace,
   createSingleLine,
-  createSingleLineEmail,
   createGreyLine,
   createFsaRnBox,
   createLcContactSection,
@@ -119,14 +118,9 @@ const createSingleSection = (title, sectionData, i18n) => {
     const isValueBoolean = typeof sectionData[key] === "boolean";
     const answer = isValueBoolean ? convertBoolToString(sectionData[key]) : sectionData[key];
     let newLine;
-    if (
-      (key == "establishment_email" && answer.length >= 35) ||
-      (key == "operator_email" && answer.length >= 35)
-    ) {
+    if ((key == "establishment_email" || key == "operator_email") && answer.length >= 35) {
       var answerWithBreak = answer.replace("@", "@\n");
-      newLine = createSingleLineEmail(i18n.t(displayKey), answerWithBreak);
-    } else if (key == "establishment_email" || key == "operator_email") {
-      newLine = createSingleLineEmail(i18n.t(displayKey), i18n.t(answer));
+      newLine = createSingleLine(i18n.t(displayKey), answerWithBreak);
     } else {
       newLine = createSingleLine(i18n.t(displayKey), i18n.t(answer));
     }

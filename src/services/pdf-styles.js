@@ -28,7 +28,8 @@ const styles = {
   h4: {
     fontSize: 15,
     color: "black",
-    lineHeight: "1.2"
+    lineHeight: "1.2",
+    fontFeatures: [{ liga: false }]
   },
   p: {
     color: "black",
@@ -38,8 +39,7 @@ const styles = {
   email: {
     fontSize: 15,
     color: "black",
-    lineHeight: "1.2",
-    font: "RobotoMono"
+    lineHeight: "1.2"
   },
   code: {
     color: "white",
@@ -108,8 +108,7 @@ const createSingleLineEmail = (key, value) => {
     columns: [
       {
         width: "*",
-        text: key,
-        font: "Roboto"
+        text: key
       },
       {
         width: "*",
@@ -334,16 +333,10 @@ const docDefinitionGenerator = (content, pdfData) => {
 
 const fontDescriptors = {
   Roboto: {
-    normal: path.join(__dirname, "..", "/services", "/fonts/Roboto-Regular.ttf"),
-    bold: path.join(__dirname, "..", "/services", "/fonts/Roboto-Medium.ttf"),
-    italics: path.join(__dirname, "..", "/services", "/fonts/Roboto-Italic.ttf"),
-    bolditalics: path.join(__dirname, "..", "/services", "/fonts/Roboto-MediumItalic.ttf")
-  },
-  RobotoMono: {
-    normal: path.join(__dirname, "..", "/services", "/fonts/RobotoMono-Regular.ttf"),
-    bold: path.join(__dirname, "..", "/services", "/fonts/RobotoMono-Medium.ttf"),
-    italics: path.join(__dirname, "..", "/services", "/fonts/RobotoMono-Italic.ttf"),
-    bolditalics: path.join(__dirname, "..", "/services", "/fonts/RobotoMono-MediumItalic.ttf")
+    normal: path.join(__dirname, "..", "/services", "/fonts/arial.ttf"),
+    bold: path.join(__dirname, "..", "/services", "/fonts/G_ari_bd.TTF"),
+    italics: path.join(__dirname, "..", "/services", "/fonts/G_ari_i.TTF"),
+    bolditalics: path.join(__dirname, "..", "/services", "/fonts/GEO_AI.TTF")
   }
 };
 
@@ -353,7 +346,6 @@ module.exports = {
   createGreyLine,
   createTitle,
   createSingleLine,
-  createSingleLineEmail,
   createNewSpace,
   createFsaRnBox,
   createLcContactSection,
