@@ -28,18 +28,12 @@ const styles = {
   h4: {
     fontSize: 15,
     color: "black",
-    lineHeight: "1.2",
-    fontFeatures: [{ liga: false }]
+    lineHeight: "1.2"
   },
   p: {
     color: "black",
     margin: [20, 0, 40, 0],
     fontSize: 12
-  },
-  email: {
-    fontSize: 15,
-    color: "black",
-    lineHeight: "1.2"
   },
   code: {
     color: "white",
@@ -85,26 +79,6 @@ const createSingleLine = (key, value) => {
   let singleLine = [];
   singleLine.push({
     style: "h4",
-    columns: [
-      {
-        width: "*",
-        text: key
-      },
-      {
-        width: "*",
-        style: "header",
-        text: value
-      }
-    ]
-  });
-  singleLine = singleLine.concat(createGreyLine());
-  return singleLine;
-};
-
-const createSingleLineEmail = (key, value) => {
-  let singleLine = [];
-  singleLine.push({
-    style: "email",
     columns: [
       {
         width: "*",
