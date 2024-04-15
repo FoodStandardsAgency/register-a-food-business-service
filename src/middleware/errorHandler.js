@@ -18,7 +18,7 @@ const errorDetails = require("./errors.json");
 /* eslint-disable */
 const errorHandler = (err, req, res, next) => {
   /* eslint-enable */
-  if (errorDetail.name !== "validationError") {
+  if (err.name !== "validationError") {
     logEmitter.emit("error", `Application error handled - ${err && err.message}`); // Used for Azure alerts
   }
   if (err.name) {
@@ -28,7 +28,7 @@ const errorHandler = (err, req, res, next) => {
     if (errorDetail) {
       if (errorDetail.name === "validationError") {
         errorDetail.userMessages = err.validationErrors;
-        logEmitter.emit("error", `Validation error - ${err && err.message}`);
+        logEmitter.emit("error", `Application error - ${err && err.message}`); // Does not raise alert
       }
 
       if (
