@@ -18,8 +18,9 @@ const errorDetails = require("./errors.json");
 /* eslint-disable */
 const errorHandler = (err, req, res, next) => {
   /* eslint-enable */
-  logEmitter.emit("error", `Application error handled - ${err && err.message}`); // Used for Azure alerts
-
+  if (errorDetail.name !== "validationError") {
+    logEmitter.emit("error", `Application error handled - ${err && err.message}`); // Used for Azure alerts
+  }
   if (err.name) {
     const errorDetail = errorDetails.find((error) => {
       return error.name === err.name;
@@ -27,6 +28,7 @@ const errorHandler = (err, req, res, next) => {
     if (errorDetail) {
       if (errorDetail.name === "validationError") {
         errorDetail.userMessages = err.validationErrors;
+        logEmitter.emit("error", `Validation error - ${err && err.message}`);
       }
 
       if (
