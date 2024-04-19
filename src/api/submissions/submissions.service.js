@@ -93,7 +93,6 @@ const getLcContactConfigFromArray = async (localCouncilUrl, allCouncils = []) =>
 
         if (standardsLcConfig) {
           const separateCouncils = {
-            emailReplyToId,
             hygiene: {
               code: urlLcConfig._id,
               local_council: urlLcConfig.local_council,
@@ -112,6 +111,10 @@ const getLcContactConfigFromArray = async (localCouncilUrl, allCouncils = []) =>
               hasAuth: standardsLcConfig.auth ? true : false
             }
           };
+
+          if (emailReplyToId) {
+            separateCouncils["emailReplyToId"] = emailReplyToId;
+          }
 
           if (urlLcConfig.new_authority_name) {
             separateCouncils.hygiene.new_authority_name = urlLcConfig.new_authority_name;
@@ -167,6 +170,10 @@ const getLcContactConfigFromArray = async (localCouncilUrl, allCouncils = []) =>
             hasAuth: urlLcConfig.auth ? true : false
           }
         };
+
+        if (emailReplyToId) {
+          hygieneAndStandardsCouncil["emailReplyToId"] = emailReplyToId;
+        }
 
         if (urlLcConfig.new_authority_name) {
           hygieneAndStandardsCouncil.hygieneAndStandards.new_authority_name =
@@ -228,7 +235,6 @@ const getLcContactConfig = async (localCouncilUrl) => {
 
         if (standardsLcConfig) {
           const separateCouncils = {
-            emailReplyToId,
             hygiene: {
               code: urlLcConfig._id,
               local_council: urlLcConfig.local_council,
@@ -247,6 +253,10 @@ const getLcContactConfig = async (localCouncilUrl) => {
               hasAuth: standardsLcConfig.auth ? true : false
             }
           };
+
+          if (emailReplyToId) {
+            separateCouncils["emailReplyToId"] = emailReplyToId;
+          }
 
           if (urlLcConfig.new_authority_name) {
             separateCouncils.hygiene.new_authority_name = urlLcConfig.new_authority_name;
@@ -286,7 +296,6 @@ const getLcContactConfig = async (localCouncilUrl) => {
         }
       } else {
         const hygieneAndStandardsCouncil = {
-          emailReplyToId,
           hygieneAndStandards: {
             code: urlLcConfig._id,
             local_council: urlLcConfig.local_council,
@@ -297,6 +306,10 @@ const getLcContactConfig = async (localCouncilUrl) => {
             hasAuth: urlLcConfig.auth ? true : false
           }
         };
+
+        if (emailReplyToId) {
+          hygieneAndStandardsCouncil["emailReplyToId"] = emailReplyToId;
+        }
 
         if (urlLcConfig.new_authority_name) {
           hygieneAndStandardsCouncil.hygieneAndStandards.new_authority_name =
