@@ -134,6 +134,14 @@ describe("Function: getLcContactConfig: ", () => {
           expect(result.hygieneAndStandards.local_council_phone_number).not.toBeDefined();
         });
       });
+      describe("given local_council_email_reply_to_ID exist", () => {
+        beforeEach(async () => {
+          result = await getLcContactConfig("example-reply-email-id");
+        });
+        it("the result contains reply email id", () => {
+          expect(result.emailReplyToId).toStrictEqual("12345678");
+        });
+      });
       describe("given the local council have new_authority_name and new_authority_id", () => {
         beforeEach(async () => {
           result = await getLcContactConfig("dorset");

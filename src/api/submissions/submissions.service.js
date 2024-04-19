@@ -84,6 +84,8 @@ const getLcContactConfigFromArray = async (localCouncilUrl, allCouncils = []) =>
     );
 
     if (urlLcConfig) {
+      const emailReplyToId = urlLcConfig.local_council_email_reply_to_ID;
+
       if (urlLcConfig.separate_standards_council) {
         const standardsLcConfig = allLcConfigData.find(
           (localCouncil) => localCouncil._id === urlLcConfig.separate_standards_council
@@ -91,6 +93,7 @@ const getLcContactConfigFromArray = async (localCouncilUrl, allCouncils = []) =>
 
         if (standardsLcConfig) {
           const separateCouncils = {
+            emailReplyToId,
             hygiene: {
               code: urlLcConfig._id,
               local_council: urlLcConfig.local_council,
@@ -153,6 +156,7 @@ const getLcContactConfigFromArray = async (localCouncilUrl, allCouncils = []) =>
         }
       } else {
         const hygieneAndStandardsCouncil = {
+          emailReplyToId,
           hygieneAndStandards: {
             code: urlLcConfig._id,
             local_council: urlLcConfig.local_council,
@@ -215,6 +219,8 @@ const getLcContactConfig = async (localCouncilUrl) => {
     );
 
     if (urlLcConfig) {
+      const emailReplyToId = urlLcConfig.local_council_email_reply_to_ID;
+
       if (urlLcConfig.separate_standards_council) {
         const standardsLcConfig = allLcConfigData.find(
           (localCouncil) => localCouncil._id === urlLcConfig.separate_standards_council
@@ -222,6 +228,7 @@ const getLcContactConfig = async (localCouncilUrl) => {
 
         if (standardsLcConfig) {
           const separateCouncils = {
+            emailReplyToId,
             hygiene: {
               code: urlLcConfig._id,
               local_council: urlLcConfig.local_council,
@@ -279,6 +286,7 @@ const getLcContactConfig = async (localCouncilUrl) => {
         }
       } else {
         const hygieneAndStandardsCouncil = {
+          emailReplyToId,
           hygieneAndStandards: {
             code: urlLcConfig._id,
             local_council: urlLcConfig.local_council,
