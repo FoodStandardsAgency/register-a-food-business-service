@@ -29,9 +29,12 @@ describe("Function: sendSingleEmail", () => {
     }
   };
 
+  const emailReplyToId = undefined;
+
   const args = [
     testTemplateId,
     testRecipient,
+    emailReplyToId,
     testFlattenedData,
     testPdfFile,
     "FAKEFSAID-2343",
@@ -74,6 +77,37 @@ describe("Function: sendSingleEmail", () => {
         };
         expect(mockNotifyClient.sendEmail).toHaveBeenLastCalledWith(testTemplateId, testRecipient, {
           personalisation: expectedFlattenedDataWithExists
+        });
+      });
+    });
+
+    it("Should have called the Notify sendEmail function with the reply email id", () => {
+      const argsWithReplyEmailId = [
+        testTemplateId,
+        testRecipient,
+        "1234567890",
+        testFlattenedData,
+        testPdfFile,
+        "FAKEFSAID-2343",
+        "FAKETYPE",
+        0
+      ];
+      return sendSingleEmail(...argsWithReplyEmailId).then(() => {
+        const expectedFlattenedDataWithExists = {
+          example: "value",
+          example_exists: "yes",
+          some_field: "",
+          some_field_exists: "no",
+          opening_day_monday: true,
+          opening_day_monday_exists: "yes",
+          opening_day_tuesday: "",
+          opening_day_tuesday_exists: "no",
+          country: "",
+          country_exists: "no"
+        };
+        expect(mockNotifyClient.sendEmail).toHaveBeenLastCalledWith(testTemplateId, testRecipient, {
+          personalisation: expectedFlattenedDataWithExists,
+          emailReplyToId: "1234567890"
         });
       });
     });

@@ -4,8 +4,7 @@ jest.mock("../../services/validation.service", () => ({
 
 jest.mock("./submissions.service", () => ({
   getRegistrationMetaData: jest.fn(),
-  getLcContactConfig: jest.fn(),
-  getLcAuth: jest.fn()
+  getLcContactConfig: jest.fn()
 }));
 
 jest.mock("../../services/notifications.service", () => ({
@@ -30,7 +29,7 @@ jest.mock("../../connectors/cosmos.client", () => ({
   establishConnectionToCosmos: jest.fn()
 }));
 
-const { getRegistrationMetaData, getLcContactConfig, getLcAuth } = require("./submissions.service");
+const { getRegistrationMetaData, getLcContactConfig } = require("./submissions.service");
 
 const { validate } = require("../../services/validation.service");
 
@@ -128,9 +127,6 @@ describe("registration controller", () => {
     describe("when given valid data", () => {
       describe("when auth object does not exist", () => {
         beforeEach(async () => {
-          getLcAuth.mockImplementation(() => {
-            return undefined;
-          });
           validate.mockImplementation(() => {
             return [];
           });

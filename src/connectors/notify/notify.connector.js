@@ -82,6 +82,7 @@ const sendStatusEmail = async (templateId, recipientEmail, flattenedData) => {
 const sendSingleEmail = async (
   templateId,
   recipientEmail,
+  emailReplyToId,
   flattenedData,
   pdfFile,
   fsaId = "n/a",
@@ -132,9 +133,15 @@ const sendSingleEmail = async (
       allNotifyPersonalisationData["northern-ireland"] = "yes";
     }
 
-    const notifyResponse = await notifyClient.sendEmail(templateId, recipientEmail, {
+    let options = {
       personalisation: allNotifyPersonalisationData
-    });
+    };
+
+    if (emailReplyToId) {
+      options["emailReplyToId"] = emailReplyToId;
+    }
+
+    const notifyResponse = await notifyClient.sendEmail(templateId, recipientEmail, options);
     const responseBody = notifyResponse.body;
     logEmitter.emit("functionSuccess", "notify.connector", "sendSingleEmail");
     logEmitter.emit(

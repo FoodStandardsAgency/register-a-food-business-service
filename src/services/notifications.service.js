@@ -215,6 +215,7 @@ const sendEmails = async (emailsToSend, registration, fsaId, lcContactConfig) =>
         (await sendSingleEmail(
           emailsToSend[index].templateId,
           emailsToSend[index].address,
+          emailsToSend[index].emailReplyToId,
           data,
           fileToSend,
           fsaId,
@@ -418,11 +419,17 @@ const generateEmailsToSend = (registration, lcContactConfig) => {
       }
     }
 
-    emailsToSend.push({
+    let emailToSend = {
       type: "FBO",
       address: fboEmailAddress,
       templateId: cy ? FBO_SUBMISSION_COMPLETE_TEMPLATE_ID_CY : FBO_SUBMISSION_COMPLETE_TEMPLATE_ID
-    });
+    };
+
+    if (lcContactConfig.emailReplyToId) {
+      emailToSend["emailReplyToId"] = lcContactConfig.emailReplyToId;
+    }
+
+    emailsToSend.push(emailToSend);
 
     if (registration.declaration && registration.declaration.feedback1) {
       emailsToSend.push({
