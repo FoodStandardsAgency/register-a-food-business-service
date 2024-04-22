@@ -19,7 +19,7 @@ const mockLocalCouncilConfig = require("../../connectors/configDb/mockLocalCounc
 
 const axios = require("axios");
 
-const { getRegistrationMetaData, getLcContactConfig, getLcAuth } = require("./submissions.service");
+const { getRegistrationMetaData, getLcContactConfig } = require("./submissions.service");
 
 let result;
 
@@ -284,56 +284,6 @@ describe("Function: getLcContactConfig: ", () => {
     beforeEach(async () => {
       try {
         await getLcContactConfig(undefined);
-      } catch (err) {
-        result = err;
-      }
-    });
-
-    it("should throw localCouncilNotFound error with an explanation", () => {
-      expect(result.name).toBe("localCouncilNotFound");
-      expect(result.message).toBe("Local council URL is undefined");
-    });
-  });
-});
-
-describe("Function: getLcAuth: ", () => {
-  beforeEach(() => {
-    getAllLocalCouncilConfig.mockImplementation(() => mockLocalCouncilConfig);
-  });
-
-  describe("given a valid localCouncilUrl", () => {
-    beforeEach(async () => {
-      result = await getLcAuth("dorset");
-    });
-
-    it("Should return auth", () => {
-      expect(result).toEqual({
-        url: "url",
-        public_key: "key",
-        private_key: "key"
-      });
-    });
-  });
-
-  describe("given an invalid localCouncilUrl", () => {
-    beforeEach(async () => {
-      try {
-        await getLcAuth("some-invalid-local-council");
-      } catch (err) {
-        result = err;
-      }
-    });
-
-    it("should throw localCouncilNotFound error with the URL", () => {
-      expect(result.name).toBe("localCouncilNotFound");
-      expect(result.message).toBe(`Config for "some-invalid-local-council" not found`);
-    });
-  });
-
-  describe("given a missing localCouncilUrl", () => {
-    beforeEach(async () => {
-      try {
-        await getLcAuth(undefined);
       } catch (err) {
         result = err;
       }
