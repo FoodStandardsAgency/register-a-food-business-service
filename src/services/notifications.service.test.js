@@ -265,6 +265,29 @@ describe(`generateEmailsToSend`, () => {
     ]);
   });
 
+  it(`Test emailReplyToId is included`, () => {
+    let regData = {
+      "fsa-rn": "ABCD-EFGH-JKLM-NOPR",
+      establishment: {
+        operator: {
+          contact_representative_email: "testrep"
+        }
+      }
+    };
+    let lcConfig = { emailReplyToId: "123456" };
+
+    let result = generateEmailsToSend(regData, lcConfig);
+
+    expect(result).toStrictEqual([
+      {
+        address: "testrep",
+        emailReplyToId: "123456",
+        templateId: "281514ac-c813-42cd-8a26-afd6d09c72e0",
+        type: "FBO"
+      }
+    ]);
+  });
+
   it(`Test lc councils are collated`, () => {
     let regData = {
       "fsa-rn": "ABCD-EFGH-JKLM-NOPR",
