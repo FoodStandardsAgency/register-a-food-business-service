@@ -307,10 +307,10 @@ const docDefinitionGenerator = (content, pdfData) => {
 
 const fontDescriptors = {
   Roboto: {
-    normal: path.join(__dirname, "..", "/services", "/fonts/Roboto-Regular.ttf"),
-    bold: path.join(__dirname, "..", "/services", "/fonts/Roboto-Medium.ttf"),
-    italics: path.join(__dirname, "..", "/services", "/fonts/Roboto-Italic.ttf"),
-    bolditalics: path.join(__dirname, "..", "/services", "/fonts/Roboto-MediumItalic.ttf")
+    normal: path.join(__dirname, "..", "/services", "/fonts/arial.ttf"),
+    bold: path.join(__dirname, "..", "/services", "/fonts/G_ari_bd.TTF"),
+    italics: path.join(__dirname, "..", "/services", "/fonts/G_ari_i.TTF"),
+    bolditalics: path.join(__dirname, "..", "/services", "/fonts/GEO_AI.TTF")
   }
 };
 
