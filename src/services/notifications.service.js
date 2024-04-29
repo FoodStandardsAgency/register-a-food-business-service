@@ -211,6 +211,13 @@ const sendEmails = async (emailsToSend, registration, fsaId, lcContactConfig) =>
         continue;
       }
 
+      // Checking if registration has a No reply email set up and edits notify template
+      if (emailsToSend[index].type === "FBO" && emailsToSend[index].emailReplyToId) {
+        data.noReply = false;
+      } else {
+        data.noReply = true;
+      }
+
       lastSentStatus =
         (await sendSingleEmail(
           emailsToSend[index].templateId,
