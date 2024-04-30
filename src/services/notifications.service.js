@@ -211,10 +211,18 @@ const sendEmails = async (emailsToSend, registration, fsaId, lcContactConfig) =>
         continue;
       }
 
+      // Checking if registration has a No reply email set up and edits notify template
+      if (emailsToSend[index].type === "FBO" && emailsToSend[index].emailReplyToId) {
+        data.noReply = false;
+      } else {
+        data.noReply = true;
+      }
+
       lastSentStatus =
         (await sendSingleEmail(
           emailsToSend[index].templateId,
           emailsToSend[index].address,
+          emailsToSend[index].emailReplyToId,
           data,
           fileToSend,
           fsaId,
@@ -377,11 +385,15 @@ const generateEmailsToSend = (registration, lcContactConfig) => {
         case "RNG_PENDING":
           templateID = cy ? RNG_PENDING_TEMPLATE_ID_CY : RNG_PENDING_TEMPLATE_ID;
       }
-      emailsToSend.push({
+      let emailToSend = {
         type: notification.type,
         address: notification.address,
         templateId: templateID
-      });
+      };
+      if (notification.type === "FBO" && lcContactConfig.emailReplyToId) {
+        emailToSend["emailReplyToId"] = lcContactConfig.emailReplyToId;
+      }
+      emailsToSend.push(emailToSend);
     });
   } else if (registration["fsa-rn"].startsWith("tmp_")) {
     // send only RNG pending notification
@@ -418,11 +430,17 @@ const generateEmailsToSend = (registration, lcContactConfig) => {
       }
     }
 
-    emailsToSend.push({
+    let emailToSend = {
       type: "FBO",
       address: fboEmailAddress,
       templateId: cy ? FBO_SUBMISSION_COMPLETE_TEMPLATE_ID_CY : FBO_SUBMISSION_COMPLETE_TEMPLATE_ID
-    });
+    };
+
+    if (lcContactConfig.emailReplyToId) {
+      emailToSend["emailReplyToId"] = lcContactConfig.emailReplyToId;
+    }
+
+    emailsToSend.push(emailToSend);
 
     if (registration.declaration && registration.declaration.feedback1) {
       emailsToSend.push({

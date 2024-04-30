@@ -82,5 +82,14 @@
       "public_key": "key",
       "private_key": "key"
     }
+  },
+  {
+    "_id": 8888,
+    "local_council": "Example council with reply email id",
+    "local_council_notify_emails": ["example@email.com"],
+    "local_council_email": "example@email.com",
+    "local_council_url": "example-reply-email-id",
+    "local_council_email_reply_to_ID": "12345678",
+    "separate_standards_council": 6769
   }
 ]
