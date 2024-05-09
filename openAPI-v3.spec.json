@@ -6,7 +6,7 @@
   },
   "servers": [
     {
-      "url": "https://fsa-rof-gateway.azure-api.net/registrations/v2"
+      "url": "https://fsa-rof-gateway.azure-api.net/registrations/v3"
     }
   ],
   "paths": {
@@ -575,13 +575,7 @@
           },
           "operator_type": {
             "type": "string",
-            "enum": [
-              "SOLETRADER",
-              "PARTNERSHIP",
-              "PERSON",
-              "COMPANY",
-              "CHARITY"
-            ]
+            "enum": ["SOLETRADER", "PARTNERSHIP", "PERSON", "COMPANY", "CHARITY"]
           },
           "operator_company_name": {
             "maximum": 255,
@@ -673,12 +667,7 @@
         }
       },
       "Activities": {
-        "required": [
-          "customer_type",
-          "business_type",
-          "import_export_activities",
-          "water_supply"
-        ],
+        "required": ["customer_type", "business_type", "import_export_activities", "water_supply"],
         "type": "object",
         "properties": {
           "customer_type": {

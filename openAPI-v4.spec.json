@@ -1,12 +1,12 @@
 {
-  "openapi": "3.0.1",
+  "openapi": "4.0.0",
   "info": {
     "title": "Register a food business collections",
-    "version": "v3.0"
+    "version": "v4.0"
   },
   "servers": [
     {
-      "url": "https://fsa-rof-gateway.azure-api.net/registrations/v2"
+      "url": "https://fsa-rof-gateway.azure-api.net/registrations/v4"
     }
   ],
   "paths": {
