@@ -492,8 +492,7 @@
           "operator_address_line_1",
           "operator_type",
           "operator_town",
-          "operator_postcode",
-          "operator_birthdate"
+          "operator_postcode"
         ],
         "type": "object",
         "properties": {
@@ -507,13 +506,13 @@
             "type": "string",
             "description": "Required if operator_type is 'SOLETRADER, 'PARTNERSHIP', or 'PERSON'."
           },
+          "operator_birthdate": {
+            "type": "string",
+            "description": "Required if operator_type is 'SOLETRADER, 'PARTNERSHIP', or 'PERSON'. Uses YYYY-MM-DD [npm Validator](https://www.npmjs.com/package/validator) is SO8601."
+          },
           "operator_postcode": {
             "type": "string",
             "description": "Uses [npm Validator](https://www.npmjs.com/package/validator) isPostalCode (GB)."
-          },
-          "operator_birthdate": {
-            "type": "string",
-            "description": "Uses YYYY-MM-DD [npm Validator](https://www.npmjs.com/package/validator) isISO8601."
           },
           "operator_uprn": {
             "maximum": 12,
@@ -717,7 +716,7 @@
             "type": "array",
             "items": {
               "type": "string",
-              "enum": ["RAWMEAT", "READY_TO_EAT", "COOKED_OR_REHEATED", "IMPORTED", "NONE", "ALL"]
+              "enum": ["RAW_MEAT", "READY_TO_EAT", "COOKED_OR_REHEATED", "IMPORTED", "NONE", "ALL"]
             }
           },
           "processing_activities": {
