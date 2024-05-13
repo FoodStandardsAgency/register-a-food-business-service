@@ -508,7 +508,7 @@
           },
           "operator_birthdate": {
             "type": "string",
-            "description": "Required if operator_type is 'SOLETRADER, 'PARTNERSHIP', or 'PERSON'. Uses YYYY-MM-DD [npm Validator](https://www.npmjs.com/package/validator) is SO8601."
+            "description": "Required if operator_type is 'SOLETRADER, 'PARTNERSHIP', or 'PERSON'. Uses YYYY-MM-DD [npm Validator](https://www.npmjs.com/package/validator) isSO8601."
           },
           "operator_postcode": {
             "type": "string",
