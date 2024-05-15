@@ -52,14 +52,6 @@ const applyEnumTransformsForCollections = (registration, transform) => {
       );
     }
     if (registration.establishment.activities) {
-      registration.establishment.activities.customer_type = transform(
-        customerTypeEnum,
-        registration.establishment.activities.customer_type
-      );
-      registration.establishment.activities.import_export_activities = transform(
-        importExportEnum,
-        registration.establishment.activities.import_export_activities
-      );
       registration.establishment.activities.water_supply = transform(
         waterSupplyEnum,
         registration.establishment.activities.water_supply
@@ -84,16 +76,6 @@ const transformEnumsForService = (data, language) => {
     data.establishment_type = transformToValue(
       establishmentTypeEnum,
       data.establishment_type,
-      language
-    );
-  }
-  if (data.customer_type) {
-    data.customer_type = transformToValue(customerTypeEnum, data.customer_type, language);
-  }
-  if (data.import_export_activities) {
-    data.import_export_activities = transformToValue(
-      importExportEnum,
-      data.import_export_activities,
       language
     );
   }

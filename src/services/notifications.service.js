@@ -108,6 +108,11 @@ const transformDataForNotify = (registration, lcContactConfig, i18n) => {
   delete registrationClone.establishment.premise.establishment_street;
 
   moment.locale(registration.submission_language ? registration.submission_language : "en");
+  registrationClone.establishment.operator.operator_birthdate = moment(
+    registrationClone.establishment.operator.operator_birthdate
+  ).format("DD MMM YYYY");
+
+  moment.locale(registration.submission_language ? registration.submission_language : "en");
   registrationClone.establishment.establishment_details.establishment_opening_date = moment(
     registrationClone.establishment.establishment_details.establishment_opening_date
   ).format("DD MMM YYYY");

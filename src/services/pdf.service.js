@@ -42,6 +42,11 @@ const transformDataForPdf = (registrationData, lcContactConfig) => {
   delete premise.establishment_street;
   const activities = { ...registrationData.establishment.activities };
 
+  moment.locale(registration.submission_language ? registration.submission_language : "en");
+  registrationClone.establishment.operator.operator_birthdate = moment(
+    registrationClone.establishment.operator.operator_birthdate
+  ).format("DD MMM YYYY");
+
   moment.locale(registrationData.submission_language ? registrationData.submission_language : "en");
   registrationData.establishment.establishment_details.establishment_opening_date = moment(
     registrationData.establishment.establishment_details.establishment_opening_date

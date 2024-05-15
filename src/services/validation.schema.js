@@ -235,10 +235,6 @@ const schema = {
           activities: {
             type: "object",
             properties: {
-              customer_type: {
-                type: "string",
-                validation: validateCustomerType
-              },
               business_type: {
                 type: "string",
                 validation: validateBusinessType
@@ -246,10 +242,6 @@ const schema = {
               business_type_search_term: {
                 type: "string",
                 validation: validateMandatoryString
-              },
-              import_export_activities: {
-                type: "string",
-                validation: validateImportExportActivities
               },
               water_supply: {
                 type: "string",
@@ -321,9 +313,7 @@ const schema = {
               }
             },
             required: [
-              "customer_type",
               "business_type",
-              "import_export_activities",
               "water_supply",
               "opening_day_monday",
               "opening_day_tuesday",
