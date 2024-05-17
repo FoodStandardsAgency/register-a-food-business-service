@@ -717,7 +717,7 @@
             "items": {
               "type": "string",
               "enum": [
-                "RAW_MEAT",
+                "RAW_UNWRAPPED_MEAT_FISH_SHELLFISH",
                 "READY_TO_EAT",
                 "COOKED_OR_REHEATED",
                 "IMPORTED",
