@@ -1,12 +1,12 @@
 {
-  "openapi": "3.0.1",
+  "openapi": "4.0.0",
   "info": {
     "title": "Register a food business collections",
-    "version": "v3.0"
+    "version": "v4.0"
   },
   "servers": [
     {
-      "url": "https://fsa-rof-gateway.azure-api.net/registrations/v3"
+      "url": "https://fsa-rof-gateway.azure-api.net/registrations/v4"
     }
   ],
   "paths": {
@@ -506,6 +506,10 @@
             "type": "string",
             "description": "Required if operator_type is 'SOLETRADER, 'PARTNERSHIP', or 'PERSON'."
           },
+          "operator_birthdate": {
+            "type": "string",
+            "description": "Required if operator_type is 'SOLETRADER, 'PARTNERSHIP', or 'PERSON'. Uses YYYY-MM-DD [npm Validator](https://www.npmjs.com/package/validator) isSO8601."
+          },
           "operator_postcode": {
             "type": "string",
             "description": "Uses [npm Validator](https://www.npmjs.com/package/validator) isPostalCode (GB)."
@@ -667,7 +671,13 @@
         }
       },
       "Activities": {
-        "required": ["customer_type", "business_type", "import_export_activities", "water_supply"],
+        "required": [
+          "business_type",
+          "business_scale",
+          "food_type",
+          "processing_activities",
+          "water_supply"
+        ],
         "type": "object",
         "properties": {
           "customer_type": {
@@ -684,6 +694,53 @@
           "import_export_activities": {
             "type": "string",
             "enum": ["IMPORT", "EXPORT", "BOTH", "NONE"]
+          },
+          "business_scale": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "enum": [
+                "LOCAL",
+                "NATIONAL",
+                "EXPORT",
+                "ONLINE",
+                "FBO",
+                "SENIOR_YOUTH",
+                "HEALTHCARE",
+                "NONE",
+                "DONT_KNOW"
+              ]
+            }
+          },
+          "food_type": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "enum": [
+                "RAW_UNWRAPPED_MEAT_FISH_SHELLFISH",
+                "READY_TO_EAT",
+                "COOKED_OR_REHEATED",
+                "IMPORTED",
+                "NONE",
+                "DONT_KNOW"
+              ]
+            }
+          },
+          "processing_activities": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "enum": [
+                "VACUUM_PACKING",
+                "SOUS_VIDE",
+                "FERMENTING_OR_CURING",
+                "PASTEURISING",
+                "ANIMAL_UNCOOKED",
+                "REWRAPPING_OR_RELABELLING",
+                "NONE",
+                "DONT_KNOW"
+              ]
+            }
           },
           "water_supply": {
             "type": "string",
