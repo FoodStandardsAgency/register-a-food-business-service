@@ -13,10 +13,8 @@ const {
   validateCompaniesHouseNumber,
   validateCharityName,
   validateCharityNumber,
-  validateCustomerType,
   validateBusinessType,
   validateDate,
-  validateImportExportActivities,
   validateBusinessScale,
   validateFoodType,
   validateProcessingActivities,
@@ -241,10 +239,6 @@ const schema = {
           activities: {
             type: "object",
             properties: {
-              customer_type: {
-                type: "string",
-                validation: validateCustomerType
-              },
               business_type: {
                 type: "string",
                 validation: validateBusinessType
@@ -252,10 +246,6 @@ const schema = {
               business_type_search_term: {
                 type: "string",
                 validation: validateOptionalString
-              },
-              import_export_activities: {
-                type: "string",
-                validation: validateImportExportActivities
               },
               business_scale: {
                 type: "array",
