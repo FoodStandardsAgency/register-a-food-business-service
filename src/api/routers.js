@@ -3,6 +3,7 @@ const swaggerUi = require("swagger-ui-express");
 const swaggerV1Document = require("../../openAPI.spec.json");
 const swaggerV2Document = require("../../openAPI-v2.spec.json");
 const swaggerV3Document = require("../../openAPI-v3.spec.json");
+const swaggerV4Document = require("../../openAPI-v4.spec.json");
 const { submissionsRouter } = require("./submissions/submissions.router");
 const { collectionsRouter } = require("./collections/collections.router");
 const { collectionsV2Router } = require("./collections-v2/collections.v2.router");
@@ -20,13 +21,14 @@ const routers = () => {
   router.use("/api/v3/collections", collectionsV3Router());
 
   router.use("/api-docs", swaggerUi.serve);
-  router.get("/api-docs", swaggerUi.setup(swaggerV3Document));
+  router.get("/api-docs", swaggerUi.setup(swaggerV4Document));
   router.get("/api-docs/v1", swaggerUi.setup(swaggerV1Document));
   router.get("/api-docs/v2", swaggerUi.setup(swaggerV2Document));
   router.get("/api-docs/v3", swaggerUi.setup(swaggerV3Document));
+  router.get("/api-docs/v4", swaggerUi.setup(swaggerV4Document));
 
   router.use("/", (req, res) => {
-    res.send(swaggerV3Document);
+    res.send(swaggerV4Document);
   });
 
   return router;
