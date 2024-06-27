@@ -12,10 +12,11 @@ const {
   validateCompaniesHouseNumber,
   validateCharityName,
   validateCharityNumber,
-  validateCustomerType,
   validateBusinessType,
   validateDate,
-  validateImportExportActivities,
+  validateBusinessScale,
+  validateFoodType,
+  validateProcessingActivities,
   validateBusinessOtherDetails,
   validateOpeningDaysIrregular,
   validateOpeningDay,
@@ -99,6 +100,10 @@ const schema = {
                 type: "string",
                 validation: validateName
               },
+              operator_birth_date: {
+                type: "string",
+                validation: validateDate
+              },
               operator_postcode: {
                 type: "string",
                 validation: validatePostCode
@@ -181,7 +186,9 @@ const schema = {
                     required: ["operator_company_name", "operator_companies_house_number"]
                   },
                   { required: ["operator_charity_name"] },
-                  { required: ["operator_first_name", "operator_last_name"] },
+                  {
+                    required: ["operator_first_name", "operator_last_name", "operator_birth_date"]
+                  },
                   { required: ["partners"] }
                 ]
               },
@@ -235,10 +242,6 @@ const schema = {
           activities: {
             type: "object",
             properties: {
-              customer_type: {
-                type: "string",
-                validation: validateCustomerType
-              },
               business_type: {
                 type: "string",
                 validation: validateBusinessType
@@ -247,9 +250,17 @@ const schema = {
                 type: "string",
                 validation: validateMandatoryString
               },
-              import_export_activities: {
-                type: "string",
-                validation: validateImportExportActivities
+              business_scale: {
+                type: "array",
+                validation: validateBusinessScale
+              },
+              food_type: {
+                type: "array",
+                validation: validateFoodType
+              },
+              processing_activities: {
+                type: "array",
+                validation: validateProcessingActivities
               },
               water_supply: {
                 type: "string",
@@ -321,9 +332,10 @@ const schema = {
               }
             },
             required: [
-              "customer_type",
               "business_type",
-              "import_export_activities",
+              "business_scale",
+              "food_type",
+              "processing_activities",
               "water_supply",
               "opening_day_monday",
               "opening_day_tuesday",

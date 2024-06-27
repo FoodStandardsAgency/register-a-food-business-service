@@ -18,6 +18,7 @@ const {
   validateBusinessScale,
   validateFoodType,
   validateProcessingActivities,
+  validateOperatorType,
   validateBusinessOtherDetails,
   validateOpeningDaysIrregular,
   validateOpeningDay,
@@ -147,7 +148,7 @@ const schema = {
               },
               operator_type: {
                 type: "string",
-                validation: validateRadioButtons
+                validation: validateOperatorType
               },
               operator_company_name: {
                 type: "string",
