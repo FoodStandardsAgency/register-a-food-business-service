@@ -13,6 +13,7 @@
         "operator": {
           "operator_first_name": "Darline",
           "operator_last_name": "Bridgewater",
+          "operator_birth_date": "1990-02-05",
           "operator_postcode": "WV98 1PS",
           "operator_address_line_1": "1998",
           "operator_address_line_2": "Bartelt",
@@ -30,9 +31,10 @@
           "establishment_type": "DOMESTIC"
         },
         "activities": {
-          "customer_type": "END_CONSUMER",
           "business_type": "043",
-          "import_export_activities": "BOTH",
+          "business_scale": ["NATIONAL", "LOCAL", "FBO"],
+          "food_type": ["READY_TO_EAT", "IMPORTED"],
+          "processing_activities": ["REWRAPPING_OR_RELABELLING"],
           "water_supply": "PUBLIC",
           "business_other_details": "Suspendisse potenti. Cras in purus eu magna vulputate luctus. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus.",
           "opening_day_monday": true,
@@ -74,6 +76,7 @@
         "operator": {
           "operator_first_name": "Pansie",
           "operator_last_name": "Finlay",
+          "operator_birth_date": "1990-02-05",
           "operator_postcode": "WA14 4HE",
           "operator_address_line_1": "41321",
           "operator_address_line_2": "Larry",
@@ -99,9 +102,10 @@
           "establishment_type": "DOMESTIC"
         },
         "activities": {
-          "customer_type": "END_CONSUMER",
           "business_type": "042",
-          "import_export_activities": "BOTH",
+          "business_scale": ["NATIONAL", "LOCAL", "FBO"],
+          "food_type": ["READY_TO_EAT", "IMPORTED"],
+          "processing_activities": ["REWRAPPING_OR_RELABELLING"],
           "water_supply": "PUBLIC",
           "business_other_details": "Duis ac nibh. Fusce lacus purus, aliquet at, feugiat non, pretium quis, lectus. Suspendisse potenti.",
           "opening_day_monday": true,
