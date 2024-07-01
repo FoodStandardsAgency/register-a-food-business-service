@@ -6,8 +6,8 @@ const axios = ax.create({
   }
 });
 const baseUrl = process.env.SERVICE_BASE_URL || "http://localhost:4000";
-const directSubmitUrl = `${baseUrl}/api/submissions/v3/createNewDirectRegistration/cardiff`;
-const collectUrl = `${baseUrl}/api/v3/collections/cardiff`;
+const directSubmitUrl = `${baseUrl}/api/submissions/v4/createNewDirectRegistration/cardiff`;
+const collectUrl = `${baseUrl}/api/v4/collections/cardiff`;
 
 const registration = {
   establishment: {
@@ -19,6 +19,7 @@ const registration = {
       operator_type: "SOLETRADER",
       operator_first_name: "Loras",
       operator_last_name: "Tyrell",
+      operator_birth_date: "1990-02-05",
       operator_address_line_1: "12",
       operator_address_line_2: "Pie Lane",
       operator_address_line_3: "Test",
@@ -29,9 +30,10 @@ const registration = {
       operator_uprn: "123456789"
     },
     activities: {
-      customer_type: "END_CONSUMER",
       business_type: "005",
-      import_export_activities: "NONE",
+      business_scale: ["NATIONAL", "LOCAL", "FBO"],
+      food_type: ["READY_TO_EAT", "IMPORTED"],
+      processing_activities: ["REWRAPPING_OR_RELABELLING"],
       water_supply: "PUBLIC",
       opening_day_monday: true,
       opening_day_tuesday: true,
@@ -70,6 +72,7 @@ const registrationWithFSARN = {
       operator_type: "SOLETRADER",
       operator_first_name: "Loras",
       operator_last_name: "Tyrell",
+      operator_birth_date: "1990-02-05",
       operator_address_line_1: "12",
       operator_address_line_2: "Pie Lane",
       operator_address_line_3: "Test",
@@ -80,9 +83,10 @@ const registrationWithFSARN = {
       operator_uprn: "123456789"
     },
     activities: {
-      customer_type: "END_CONSUMER",
       business_type: "005",
-      import_export_activities: "NONE",
+      business_scale: ["NATIONAL", "LOCAL", "FBO"],
+      food_type: ["READY_TO_EAT", "IMPORTED"],
+      processing_activities: ["REWRAPPING_OR_RELABELLING"],
       water_supply: "PUBLIC",
       opening_day_monday: true,
       opening_day_tuesday: true,
@@ -232,7 +236,7 @@ describe("Submit a single registration through the API as a council", () => {
       };
 
       const res = await axios(
-        `${baseUrl}/api/submissions/v3/createNewDirectRegistration/unknown`,
+        `${baseUrl}/api/submissions/v4/createNewDirectRegistration/unknown`,
         postRequestOptions
       );
       const response = res.data;

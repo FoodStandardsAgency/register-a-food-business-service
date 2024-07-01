@@ -1,6 +1,6 @@
 const { transformRegForCollections } = require("./collectionsTransform.service");
 
-const fullRegistration = {
+const fullRegistrationV3 = {
   "fsa-rn": "PQQK8Q-SN9N8C-4ADETF",
   collected: false,
   collected_at: null,
@@ -17,7 +17,7 @@ const fullRegistration = {
     operator: {
       operator_type: "SOLETRADER",
       operator_company_name: "name",
-      operator_companies_house_number: null,
+      operator_companies_house_number: "12345",
       operator_charity_name: null,
       operator_charity_number: null,
       operator_first_name: "Fred",
@@ -102,118 +102,131 @@ const transformedShortReg = {
   metadata: {}
 };
 let result;
+let apiVersion;
 
 describe("Function: transformRegistration", () => {
-  beforeEach(() => {
-    result = transformRegForCollections(shortRegistration);
-  });
-  describe("given a registration with establishment and metadata supplied", () => {
+  describe("V3 Transform", () => {
     beforeEach(() => {
-      result = transformRegForCollections(fullRegistration);
+      apiVersion = "v3";
+      result = transformRegForCollections(shortRegistration, apiVersion);
     });
-    it("should return the establishment object with the correct structure", () => {
-      expect(result.establishment.establishment_details).not.toBeDefined();
-      expect(result.establishment.operator).toBeDefined();
-      expect(result.establishment.activities).toBeDefined();
-      expect(result.establishment.premise).toBeDefined();
-    });
-    it("should populate add first_line, street and dependent_locality fields", () => {
-      expect(result.establishment.operator.operator_first_line).toBe(
-        result.establishment.operator.operator_address_line_1
-      );
-      expect(result.establishment.operator.operator_street).toBe(
-        result.establishment.operator.operator_address_line_2
-      );
-      expect(result.establishment.operator.operator_dependent_locality).toBe(
-        result.establishment.operator.operator_address_line_3
-      );
-      expect(result.establishment.premise.establishment_first_line).toBe(
-        result.establishment.premise.establishment_address_line_1
-      );
-      expect(result.establishment.premise.establishment_street).toBe(
-        result.establishment.premise.establishment_address_line_2
-      );
-      expect(result.establishment.premise.establishment_dependent_locality).toBe(
-        result.establishment.premise.establishment_address_line_3
-      );
-    });
-    it("should return metadata unchanged", () => {
-      expect(result.metadata).toBe(fullRegistration.declaration);
-    });
-    it("should return supplied establishment fields populated and the rest as null", () => {
-      const fields = Object.keys(fullRegistration.establishment.premise);
-      fields.forEach((field) => {
-        fullRegistration.establishment.premise[field]
-          ? expect(result.establishment.premise[field]).toBe(
-              fullRegistration.establishment.premise[field]
-            )
-          : expect(result.establishment.premise[field]).toBeNull();
+    describe("given a registration with establishment and metadata supplied", () => {
+      beforeEach(() => {
+        result = transformRegForCollections(fullRegistrationV3, apiVersion);
+      });
+      it("should return the establishment object with the correct structure", () => {
+        expect(result.establishment.establishment_details).not.toBeDefined();
+        expect(result.establishment.operator).toBeDefined();
+        expect(result.establishment.activities).toBeDefined();
+        expect(result.establishment.premise).toBeDefined();
+      });
+      it("should return metadata unchanged", () => {
+        expect(result.metadata).toBe(fullRegistrationV3.declaration);
+      });
+      it("should return supplied establishment fields populated and the rest as null", () => {
+        const premiseFields = Object.keys(fullRegistrationV3.establishment.premise);
+        premiseFields.forEach((field) => {
+          fullRegistrationV3.establishment.premise[field] ||
+          fullRegistrationV3.establishment.premise[field] === "" ||
+          fullRegistrationV3.establishment.premise[field] === false
+            ? expect(result.establishment.premise[field]).toBe(
+                fullRegistrationV3.establishment.premise[field]
+              )
+            : expect(result.establishment.premise[field]).toBeNull();
+        });
+        const activityFields = Object.keys(fullRegistrationV3.establishment.activities);
+        activityFields.forEach((field) => {
+          fullRegistrationV3.establishment.activities[field] ||
+          fullRegistrationV3.establishment.activities[field] === "" ||
+          fullRegistrationV3.establishment.activities[field] === false
+            ? expect(result.establishment.activities[field]).toBe(
+                fullRegistrationV3.establishment.activities[field]
+              )
+            : expect(result.establishment.activities[field]).toBeNull();
+        });
+        const operatorFields = Object.keys(fullRegistrationV3.establishment.operator);
+        operatorFields.forEach((field) => {
+          if (field === "operator_companies_house_number") {
+            expect(result.establishment.operator[field]).not.toBeDefined();
+            expect(result.establishment.operator["operator_company_house_number"]).toBe(
+              fullRegistrationV3.establishment.operator["operator_companies_house_number"]
+            );
+          } else {
+            fullRegistrationV3.establishment.operator[field] ||
+            fullRegistrationV3.establishment.operator[field] === "" ||
+            fullRegistrationV3.establishment.operator[field] === false
+              ? expect(result.establishment.operator[field]).toBe(
+                  fullRegistrationV3.establishment.operator[field]
+                )
+              : expect(result.establishment.operator[field]).toBeNull();
+          }
+        });
       });
     });
-  });
-  describe("given partners isn't populated", () => {
-    beforeEach(() => {
-      result = transformRegForCollections(fullRegistration);
+    describe("given partners isn't populated", () => {
+      beforeEach(() => {
+        result = transformRegForCollections(fullRegistrationV3, apiVersion);
+      });
+      it("should return an empty array", () => {
+        expect(result.establishment.operator.partners).toStrictEqual([]);
+      });
     });
-    it("should return an empty array", () => {
-      expect(result.establishment.operator.partners).toStrictEqual([]);
+    describe("given opening days are false", () => {
+      beforeEach(() => {
+        result = transformRegForCollections(fullRegistrationV3, apiVersion);
+      });
+      it("should return the opening days as false, not null", () => {
+        expect(result.establishment.activities.opening_day_sunday).toStrictEqual(false);
+      });
     });
-  });
-  describe("given opening days are false", () => {
-    beforeEach(() => {
-      result = transformRegForCollections(fullRegistration);
+    describe("given a registration without establishment or metadata supplied", () => {
+      beforeEach(() => {
+        result = transformRegForCollections(shortRegistration, apiVersion);
+      });
+      it("should return empty establishment and metadata objects", () => {
+        expect(result.establishment).toEqual({});
+        expect(result.metadata).toEqual({});
+      });
     });
-    it("should return the opening days as false, not null", () => {
-      expect(result.establishment.activities.opening_day_sunday).toStrictEqual(false);
+    describe("given there is a seperate standards council", () => {
+      beforeEach(() => {
+        shortRegistration.hygiene = {};
+        shortRegistration.hygiene.local_council = "West Dorset Council";
+        result = transformRegForCollections(shortRegistration, apiVersion);
+      });
+      afterEach(() => {
+        delete shortRegistration.hygiene;
+      });
+      it("should populate council from hygiene.local_council", () => {
+        expect(result.council).toBe(shortRegistration.hygiene.local_council);
+      });
     });
-  });
-  describe("given a registration without establishment or metadata supplied", () => {
-    beforeEach(() => {
-      result = transformRegForCollections(shortRegistration);
+    describe("given there is not a seperate standards council", () => {
+      beforeEach(() => {
+        result = transformRegForCollections(shortRegistration, apiVersion);
+      });
+      it("should populate council from hygieneAndStandards.local_council", () => {
+        expect(result.council).toBe(shortRegistration.hygieneAndStandards.local_council);
+      });
     });
-    it("should return empty establishment and metadata objects", () => {
-      expect(result.establishment).toEqual({});
-      expect(result.metadata).toEqual({});
+    describe("given collected_at is populated", () => {
+      beforeEach(() => {
+        result = transformRegForCollections(shortRegistration, apiVersion);
+      });
+      it("should convert it to an ISO String", () => {
+        expect(result.collected_at).toBe("2018-10-30T14:51:47.303Z");
+      });
     });
-  });
-  describe("given there is a seperate standards council", () => {
-    beforeEach(() => {
-      shortRegistration.hygiene = {};
-      shortRegistration.hygiene.local_council = "West Dorset Council";
-      result = transformRegForCollections(shortRegistration);
+    describe("given the collected_at is null", () => {
+      beforeEach(() => {
+        result = transformRegForCollections(fullRegistrationV3, apiVersion);
+      });
+      it("should convert it to an ISO String", () => {
+        expect(result.collected_at).toBeNull();
+      });
     });
-    afterEach(() => {
-      delete shortRegistration.hygiene;
+    it("should return the transformed registration", () => {
+      expect(result).toEqual(transformedShortReg);
     });
-    it("should populate council from hygiene.local_council", () => {
-      expect(result.council).toBe(shortRegistration.hygiene.local_council);
-    });
-  });
-  describe("given there is not a seperate standards council", () => {
-    beforeEach(() => {
-      result = transformRegForCollections(shortRegistration);
-    });
-    it("should populate council from hygieneAndStandards.local_council", () => {
-      expect(result.council).toBe(shortRegistration.hygieneAndStandards.local_council);
-    });
-  });
-  describe("given collected_at is populated", () => {
-    beforeEach(() => {
-      result = transformRegForCollections(shortRegistration);
-    });
-    it("should convert it to an ISO String", () => {
-      expect(result.collected_at).toBe("2018-10-30T14:51:47.303Z");
-    });
-  });
-  describe("given the collected_at is null", () => {
-    beforeEach(() => {
-      result = transformRegForCollections(fullRegistration);
-    });
-    it("should stay null", () => {
-      expect(result.collected_at).toBeNull();
-    });
-  });
-  it("should return the transformed registration", () => {
-    expect(result).toEqual(transformedShortReg);
   });
 });

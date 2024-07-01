@@ -29,7 +29,7 @@ const createNewRegistration = async (
     throw new Error("registration is undefined");
   }
 
-  const errors = validate(registration);
+  const errors = validate(registration, "latest");
   if (errors.length) {
     const err = new Error();
     err.name = "validationError";
@@ -104,7 +104,7 @@ const createNewDirectRegistration = async (registration, options) => {
   }
 
   // Validate according to correct schema
-  const errors = validate(registration, true);
+  const errors = validate(registration, options.apiVersion, true);
   if (errors.length) {
     const err = new Error();
     err.name = "validationError";

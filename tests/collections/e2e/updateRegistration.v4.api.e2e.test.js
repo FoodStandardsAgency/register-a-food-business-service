@@ -5,7 +5,7 @@ const axios = ax.create({
     return true;
   }
 });
-const baseUrl = "https://integration-fsa-rof-gateway.azure-api.net/registrations/v1/";
+const baseUrl = "https://integration-fsa-rof-gateway.azure-api.net/registrations/v4/";
 const cardiffUrl = `${baseUrl}cardiff`;
 const cardiffAPIKey = "b175199d420448fc87baa714e458ce6e";
 
@@ -29,13 +29,13 @@ describe("Update single registration through API", () => {
     let response;
     beforeEach(async () => {
       const update = {
+        data: {
+          collected: true
+        },
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
           "Ocp-Apim-Subscription-Key": cardiffAPIKey
-        },
-        data: {
-          collected: true
         }
       };
       const res = await axios(
@@ -55,13 +55,13 @@ describe("Update single registration through API", () => {
     let response;
     beforeEach(async () => {
       const update = {
+        data: {
+          incorrect: true
+        },
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
           "Ocp-Apim-Subscription-Key": cardiffAPIKey
-        },
-        data: {
-          incorrect: true
         }
       };
       const res = await axios(
@@ -81,13 +81,13 @@ describe("Update single registration through API", () => {
     let response;
     beforeEach(async () => {
       const update = {
+        data: {
+          collected: false
+        },
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
           "Ocp-Apim-Subscription-Key": cardiffAPIKey
-        },
-        data: {
-          collected: false
         }
       };
       const res = await axios(
@@ -107,13 +107,13 @@ describe("Update single registration through API", () => {
     let response;
     beforeEach(async () => {
       const update = {
+        data: {
+          collected: true
+        },
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
           "Ocp-Apim-Subscription-Key": "incorrectKey"
-        },
-        data: {
-          collected: true
         }
       };
       const res = await axios(

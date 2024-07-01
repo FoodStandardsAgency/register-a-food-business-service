@@ -9,9 +9,11 @@ const { logEmitter } = require("../../../src/services/logging.service");
 const mockRegistrationData = require("./mock-registration-data.json");
 
 const baseUrl = process.env.COMPONENT_TEST_BASE_URL || "http://localhost:4000";
-const url = `${baseUrl}/api/collections/cardiff`;
+const url = `${baseUrl}/api/v4/collections/cardiff`;
 const submitUrl = process.env.SERVICE_BASE_URL || "http://localhost:4000";
 let submitResponses = [];
+
+jest.setTimeout(30000);
 
 jest.setTimeout(30000);
 
@@ -21,6 +23,7 @@ const frontendSubmitRegistration = async () => {
       const requestOptions = {
         method: "POST",
         data: mockRegistrationData[index],
+        body: JSON.stringify(mockRegistrationData[index]),
         headers: {
           "Content-Type": "application/json",
           "client-name": process.env.FRONT_END_NAME,
@@ -40,7 +43,7 @@ const frontendSubmitRegistration = async () => {
   }
 };
 
-describe("GET to /api/collections/:lc", () => {
+describe("GET to /api/v4/collections/:lc", () => {
   beforeAll(async () => {
     await frontendSubmitRegistration();
   });

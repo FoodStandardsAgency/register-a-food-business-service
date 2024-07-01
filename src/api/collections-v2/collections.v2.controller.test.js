@@ -8,7 +8,7 @@ jest.mock("../../connectors/configDb/configDb.connector", () => ({
   getCouncilsForSupplier: jest.fn()
 }));
 
-jest.mock("../../services/collectionsTransform.v2.service", () => ({
+jest.mock("../../services/collectionsTransform.service", () => ({
   transformRegForCollections: jest.fn()
 }));
 
@@ -31,7 +31,7 @@ const {
   updateRegistration
 } = require("./collections.v2.controller");
 const { getCouncilsForSupplier } = require("../../connectors/configDb/configDb.connector");
-const { transformRegForCollections } = require("../../services/collectionsTransform.v2.service");
+const { transformRegForCollections } = require("../../services/collectionsTransform.service");
 
 const localAuthorityOptions = {
   subscriber: "cardiff",
@@ -277,7 +277,7 @@ describe("registrations.v2.controller", () => {
           );
         });
         it("should call transformRegForCollection", () => {
-          expect(transformRegForCollections).toHaveBeenCalledWith(shortRegistration);
+          expect(transformRegForCollections).toHaveBeenCalledWith(shortRegistration, "v2");
         });
         it("Should return the result of transformRegForCollection", () => {
           expect(result).toEqual([transformedShortReg]);
@@ -299,7 +299,7 @@ describe("registrations.v2.controller", () => {
             );
           });
           it("should call transformRegForCollection", () => {
-            expect(transformRegForCollections).toHaveBeenCalledWith(shortRegistration);
+            expect(transformRegForCollections).toHaveBeenCalledWith(shortRegistration, "v2");
           });
           it("Should return the result of getAllRegistrationsByCouncils", () => {
             expect(result).toEqual([transformedShortReg]);
@@ -320,7 +320,7 @@ describe("registrations.v2.controller", () => {
             );
           });
           it("should call transformRegForCollection", () => {
-            expect(transformRegForCollections).toHaveBeenCalledWith(shortRegistration);
+            expect(transformRegForCollections).toHaveBeenCalledWith(shortRegistration, "v2");
           });
           it("Should return the result of getAllRegistrationsByCouncils", () => {
             expect(result).toEqual([transformedShortReg]);

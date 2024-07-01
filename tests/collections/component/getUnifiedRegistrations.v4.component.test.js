@@ -9,7 +9,7 @@ const { logEmitter } = require("../../../src/services/logging.service");
 const mockRegistrationData = require("./mock-registration-data.json");
 
 const baseUrl = process.env.COMPONENT_TEST_BASE_URL || "http://localhost:4000";
-const url = `${baseUrl}/api/collections/unified`;
+const url = `${baseUrl}/api/v4/collections/unified`;
 const submitUrl = process.env.SERVICE_BASE_URL || "http://localhost:4000";
 let submitResponses = [];
 
@@ -40,7 +40,7 @@ const frontendSubmitRegistration = async () => {
   }
 };
 
-describe("GET to /api/collections/unified", () => {
+describe("GET to /api/v4/collections/unified", () => {
   beforeAll(async () => {
     await frontendSubmitRegistration();
   });
@@ -50,7 +50,6 @@ describe("GET to /api/collections/unified", () => {
       const before = new Date();
       let after = new Date();
       after.setMinutes(after.getMinutes() - 1);
-
       var res = await axios(`${url}?before=${before.toISOString()}&after=${after.toISOString()}`);
       response = res.data;
     });
@@ -90,7 +89,13 @@ describe("GET to /api/collections/unified", () => {
       before.setMinutes(before.getMinutes() - 5);
       after.setMinutes(after.getMinutes() - 10);
 
-      var res = await axios(`${url}?before=${before.toISOString()}&after=${after.toISOString()}`);
+      const requestOptions = {
+        json: true
+      };
+      var res = await axios(
+        `${url}?before=${before.toISOString()}&after=${after.toISOString()}`,
+        requestOptions
+      );
       response = res.data;
     });
 
@@ -101,6 +106,7 @@ describe("GET to /api/collections/unified", () => {
       );
     });
   });
+
   describe("Given before and after range greater than 7 days", () => {
     let response;
     beforeEach(async () => {

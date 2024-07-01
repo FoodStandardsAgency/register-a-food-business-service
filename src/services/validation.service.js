@@ -1,7 +1,8 @@
 const { Validator } = require("jsonschema");
 const { logEmitter } = require("./logging.service");
 const schema = require("./validation.schema");
-const directSubmissionSchema = require("./validation.directSubmission.schema");
+const directSubmissionSchemaV3 = require("./validation.directSubmission.v3.schema");
+const directSubmissionSchemaV4 = require("./validation.directSubmission.v4.schema");
 
 const errorMessages = {
   declaration1: "Invalid declaration1",
@@ -10,6 +11,7 @@ const errorMessages = {
   operator_type: "Invalid operator type",
   operator_first_name: "Invalid operator first name",
   operator_last_name: "Invalid operator last name",
+  operator_birthdate: "Invalid operator birth date",
   operator_town: "Invalid operator town name",
   operator_address_line_1: "Invalid operator first line of address",
   operator_address_line_2: "Invalid operator second line of address",
@@ -44,6 +46,9 @@ const errorMessages = {
   contact_representative_role: "Invalid representative role",
   contact_representative_email: "Invalid representative email",
   import_export_activities: "Invalid business activities",
+  business_scale: "Invalid business scale(s)",
+  food_type: "Invalid food type(s)",
+  processing_activities: "Invalid processing activities",
   business_other_details: "Invalid business other details",
   opening_days_irregular: "Invalid opening days irregular",
   opening_day_monday: "Invalid opening day monday",
@@ -81,14 +86,17 @@ validator.attributes.validation = (instance, schema, options, ctx) => {
   return undefined;
 };
 
-module.exports.validate = (data, isDirectSubmission = false) => {
+module.exports.validate = (data, apiVersion, isDirectSubmission = false) => {
   logEmitter.emit("functionCall", "validation.service", "validate");
   const result = [];
 
   var validationSchema = schema;
   if (isDirectSubmission) {
     logEmitter.emit("info", "Validating with direct submission schema");
-    validationSchema = directSubmissionSchema;
+    validationSchema =
+      Number(apiVersion.replace(/^v/, "")) >= 4 || apiVersion === "latest"
+        ? directSubmissionSchemaV4
+        : directSubmissionSchemaV3;
   } else {
     logEmitter.emit("info", "Validating with standard schema");
   }

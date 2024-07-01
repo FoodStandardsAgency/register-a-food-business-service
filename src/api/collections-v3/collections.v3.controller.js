@@ -6,10 +6,12 @@ const {
 } = require("../../connectors/registrationsDb-v3/registrationsDb.v3.connector");
 
 const { validateOptions } = require("./collections.v3.service");
-const { transformRegForCollections } = require("../../services/collectionsTransform.v3.service");
+const { transformRegForCollections } = require("../../services/collectionsTransform.service");
 
 const { logEmitter } = require("../../services/logging.service");
 const { getCouncilsForSupplier } = require("../../connectors/configDb/configDb.connector");
+
+const apiVersion = "v3";
 
 const getRegistrationsByCouncil = async (options) => {
   logEmitter.emit("functionCall", "registrations.v3.controller", "getRegistrationsByCouncil");
@@ -40,7 +42,7 @@ const getRegistrationsByCouncil = async (options) => {
     );
 
     const formattedRegistrations = registrations.map((registration) => {
-      return transformRegForCollections(registration);
+      return transformRegForCollections(registration, apiVersion);
     });
     logEmitter.emit("functionSuccess", "registrations.v3.controller", "getRegistrationsByCouncil");
 
@@ -61,7 +63,7 @@ const getRegistration = async (options) => {
   if (validationResult === true) {
     const registration = await getSingleRegistration(options.fsa_rn, options.requestedCouncil);
 
-    const formattedRegistration = transformRegForCollections(registration);
+    const formattedRegistration = transformRegForCollections(registration, apiVersion);
 
     logEmitter.emit("functionSuccess", "registrations.v3.controller", "getRegistration");
     return formattedRegistration;
@@ -85,7 +87,7 @@ const getRegistrations = async (options) => {
     ]);
 
     const formattedRegistrations = registrations.map((registration) => {
-      return transformRegForCollections(registration);
+      return transformRegForCollections(registration, apiVersion);
     });
     logEmitter.emit("functionSuccess", "registrations.v3.controller", "getRegistrations");
     return formattedRegistrations;
