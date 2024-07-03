@@ -22,7 +22,10 @@ const {
   establishmentTypeEnum,
   importExportEnum,
   operatorTypeEnum,
-  waterSupplyEnum
+  waterSupplyEnum,
+  businessScaleEnum,
+  foodTypeEnum,
+  processingActivitiesEnum
 } = require("@slice-and-dice/register-a-food-business-validation");
 
 const i18n = require("../utils/i18n/i18n");
@@ -39,6 +42,7 @@ const exampleRegistrationEstablishment = {
   },
   operator: {
     operator_first_name: "Fred",
+    operator_birth_date: "1990-10-15",
     operator_type: operatorTypeEnum.COMPANY.key
   },
   premise: {
@@ -49,7 +53,14 @@ const exampleRegistrationEstablishment = {
     customer_type: customerTypeEnum.END_CONSUMER.key,
     business_type: businessTypeEnum["001"].key,
     import_export_activities: importExportEnum.BOTH.key,
-    water_supply: waterSupplyEnum.PUBLIC.key
+    water_supply: waterSupplyEnum.PUBLIC.key,
+    business_scale: [
+      businessScaleEnum.NATIONAL.key,
+      businessScaleEnum.LOCAL.key,
+      businessScaleEnum.FBO.key
+    ],
+    food_type: [foodTypeEnum.IMPORTED.key, foodTypeEnum.READY_TO_EAT.key],
+    processing_activities: [processingActivitiesEnum.PASTEURISING.key]
   }
 };
 
@@ -449,12 +460,16 @@ describe("Function: transformDataForNotify", () => {
         const expectedFormat = {
           establishment_trading_name: "Itsu",
           operator_first_name: "Fred",
+          operator_birth_date: "15 Oct 1990",
           operator_type: operatorTypeEnum.COMPANY.value.en,
           establishment_postcode: "SW12 9RQ",
           establishment_type: establishmentTypeEnum.COMMERCIAL.value.en,
           establishment_opening_date: "30 Dec 2017",
           customer_type: customerTypeEnum.END_CONSUMER.value.en,
           business_type: businessTypeEnum["001"].value.en,
+          business_scale: `${businessScaleEnum.NATIONAL.value.en},\n${businessScaleEnum.LOCAL.value.en},\n${businessScaleEnum.FBO.value.en}`,
+          food_type: `${foodTypeEnum.IMPORTED.value.en},\n${foodTypeEnum.READY_TO_EAT.value.en}`,
+          processing_activities: processingActivitiesEnum.PASTEURISING.value.en,
           import_export_activities: importExportEnum.BOTH.value.en,
           water_supply: waterSupplyEnum.PUBLIC.value.en,
           declaration1: "Declaration",
@@ -488,12 +503,16 @@ describe("Function: transformDataForNotify", () => {
         const expectedFormat = {
           establishment_trading_name: "Itsu",
           operator_first_name: "Fred",
+          operator_birth_date: "15 Oct 1990",
           operator_type: operatorTypeEnum.COMPANY.value.en,
           establishment_postcode: "SW12 9RQ",
           establishment_type: establishmentTypeEnum.COMMERCIAL.value.en,
           establishment_opening_date: "30 Dec 2017",
           customer_type: customerTypeEnum.END_CONSUMER.value.en,
           business_type: businessTypeEnum["001"].value.en,
+          business_scale: `${businessScaleEnum.NATIONAL.value.en},\n${businessScaleEnum.LOCAL.value.en},\n${businessScaleEnum.FBO.value.en}`,
+          food_type: `${foodTypeEnum.IMPORTED.value.en},\n${foodTypeEnum.READY_TO_EAT.value.en}`,
+          processing_activities: processingActivitiesEnum.PASTEURISING.value.en,
           import_export_activities: importExportEnum.BOTH.value.en,
           water_supply: waterSupplyEnum.PUBLIC.value.en,
           declaration1: "Declaration",
@@ -524,12 +543,16 @@ describe("Function: transformDataForNotify", () => {
         const expectedFormat = {
           establishment_trading_name: "Itsu",
           operator_first_name: "Fred",
+          operator_birth_date: "15 Oct 1990",
           operator_type: operatorTypeEnum.COMPANY.value.en,
           establishment_postcode: "SW12 9RQ",
           establishment_type: establishmentTypeEnum.COMMERCIAL.value.en,
           establishment_opening_date: "30 Dec 2017",
           customer_type: customerTypeEnum.END_CONSUMER.value.en,
           business_type: businessTypeEnum["001"].value.en,
+          business_scale: `${businessScaleEnum.NATIONAL.value.en},\n${businessScaleEnum.LOCAL.value.en},\n${businessScaleEnum.FBO.value.en}`,
+          food_type: `${foodTypeEnum.IMPORTED.value.en},\n${foodTypeEnum.READY_TO_EAT.value.en}`,
+          processing_activities: processingActivitiesEnum.PASTEURISING.value.en,
           import_export_activities: importExportEnum.BOTH.value.en,
           water_supply: waterSupplyEnum.PUBLIC.value.en,
           declaration1: "Declaration",
@@ -555,6 +578,7 @@ describe("Function: transformDataForNotify", () => {
         const expectedFormat = {
           establishment_trading_name: "Itsu",
           operator_first_name: "Fred",
+          operator_birth_date: "15 Oct 1990",
           operator_type: operatorTypeEnum.COMPANY.value.en,
           establishment_postcode: "SW12 9RQ",
           establishment_type: establishmentTypeEnum.COMMERCIAL.value.en,
@@ -562,6 +586,9 @@ describe("Function: transformDataForNotify", () => {
           customer_type: customerTypeEnum.END_CONSUMER.value.en,
           business_type: businessTypeEnum["001"].value.en,
           import_export_activities: importExportEnum.BOTH.value.en,
+          business_scale: `${businessScaleEnum.NATIONAL.value.en},\n${businessScaleEnum.LOCAL.value.en},\n${businessScaleEnum.FBO.value.en}`,
+          food_type: `${foodTypeEnum.IMPORTED.value.en},\n${foodTypeEnum.READY_TO_EAT.value.en}`,
+          processing_activities: processingActivitiesEnum.PASTEURISING.value.en,
           water_supply: waterSupplyEnum.PUBLIC.value.en,
           declaration1: "Declaration",
           reg_submission_date: "01 Dec 2018",

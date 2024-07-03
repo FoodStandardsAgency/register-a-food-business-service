@@ -25,6 +25,7 @@ describe("Pdf Service: ", () => {
             operator_first_name: "Fred",
             operator_last_name: "Bloggs",
             operator_postcode: "SW12 9RQ",
+            operator_birth_date: "1990-02-20",
             operator_address_line_1: "335",
             operator_address_line_2: "Some St.",
             operator_address_line_3: "Locality",
@@ -46,6 +47,9 @@ describe("Pdf Service: ", () => {
             business_type: "002",
             import_export_activities: "NONE",
             water_supply: "PUBLIC",
+            business_scale: ["NATIONAL", "LOCAL", "FBO"],
+            food_type: ["READY_TO_EAT", "IMPORTED"],
+            processing_activities: ["REWRAPPING_OR_RELABELLING"],
             opening_day_monday: true,
             opening_day_tuesday: true,
             opening_day_wednesday: true,
@@ -136,6 +140,9 @@ describe("Pdf Service: ", () => {
         it("Should return lcInfo.country", () => {
           expect(result.metaData.lcInfo.country).toBe("wales");
         });
+        it("Should return correct value for date transformed fields", () => {
+          expect(result.operator.operator_birth_date).toBe("20 Feb 1990");
+        });
         it("Should return correct value for key transformed fields", () => {
           expect(result.operator.operator_type).toBe("Sole trader");
           expect(result.establishment.establishment_type).toBe("Home or domestic premises");
@@ -143,6 +150,15 @@ describe("Pdf Service: ", () => {
           expect(result.activities.business_type).toBe("Livestock farm");
           expect(result.activities.import_export_activities).toBe("None");
           expect(result.activities.water_supply).toBe("Public");
+          expect(result.activities.processing_activities).toEqual(
+            "Rewrapping and relabelling previously wrapped food"
+          );
+          expect(result.activities.food_type).toEqual(
+            "Ready to eat food (food that will not be cooked or reheated before serving),\nFood that your business has imported (from outside the UK)"
+          );
+          expect(result.activities.business_scale).toEqual(
+            "To national customers (who live or work across the UK),\nTo local customers (who live or work in the local area),\nTo provide food directly to other businesses"
+          );
         });
       });
     });

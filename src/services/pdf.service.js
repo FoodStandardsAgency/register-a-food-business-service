@@ -51,6 +51,10 @@ const transformDataForPdf = (registrationData, lcContactConfig) => {
     "DD MMM YYYY"
   );
 
+  if (operator.operator_birth_date) {
+    operator.operator_birth_date = moment(operator.operator_birth_date).format("DD MMM YYYY");
+  }
+
   transformEnumsForService(operator, registrationData.submission_language);
   transformEnumsForService(premise, registrationData.submission_language);
   transformEnumsForService(activities, registrationData.submission_language);

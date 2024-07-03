@@ -4,7 +4,10 @@ const {
   customerTypeEnum,
   importExportEnum,
   waterSupplyEnum,
-  businessTypeEnum
+  businessTypeEnum,
+  businessScaleEnum,
+  foodTypeEnum,
+  processingActivitiesEnum
 } = require("@slice-and-dice/register-a-food-business-validation");
 
 const { logEmitter } = require("./logging.service");
@@ -103,6 +106,19 @@ const transformEnumsForService = (data, language) => {
   if (data.business_type) {
     data.business_type = transformToValue(businessTypeEnum, data.business_type, language);
   }
+  if (data.business_scale) {
+    data.business_scale = transformArrayToValues(businessScaleEnum, data.business_scale, language);
+  }
+  if (data.food_type) {
+    data.food_type = transformArrayToValues(foodTypeEnum, data.food_type, language);
+  }
+  if (data.processing_activities) {
+    data.processing_activities = transformArrayToValues(
+      processingActivitiesEnum,
+      data.processing_activities,
+      language
+    );
+  }
 };
 
 // From v1 value to v2 enum key
@@ -122,6 +138,15 @@ const transformToValue = (enumType, key, language) => {
   logEmitter.emit("functionCall", "v1EnumTransform.service", "transformToValue");
   const lang = language || "en";
   return enumType[key] ? enumType[key].value[lang] : key;
+};
+
+const transformArrayToValues = (enumType, keys, language) => {
+  logEmitter.emit("functionCall", "tranformEnums.service", "transformArrayToValues");
+  let arrayString = "";
+  for (var i = 0; i < keys.length; i++) {
+    arrayString += `${transformToValue(enumType, keys[i], language)}${i < keys.length - 1 ? ",\n" : ""}`;
+  }
+  return arrayString;
 };
 
 const transformV2BusinessTypeString = (value) => {
