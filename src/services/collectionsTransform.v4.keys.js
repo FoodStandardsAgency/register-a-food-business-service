@@ -14,7 +14,7 @@ const operator_keys = [
   "operator_charity_number",
   "operator_first_name",
   "operator_last_name",
-  "operator_birth_date",
+  "operator_birthdate",
   "operator_postcode",
   "operator_uprn",
   "operator_address_line_1",

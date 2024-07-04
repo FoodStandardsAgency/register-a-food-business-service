@@ -72,7 +72,7 @@ Given("I have a new registration with all valid required fields", function () {
         operator: {
           operator_first_name: "Fred",
           operator_last_name: "Bloggs",
-          operator_birth_date: "1990-10-01",
+          operator_birthdate: "1990-10-01",
           operator_postcode: "SW12 9RQ",
           operator_address_line_1: "335",
           operator_address_line_2: "Some St.",
@@ -129,7 +129,7 @@ Given("I have a new direct submission registration with all valid required field
       operator: {
         operator_first_name: "Fred",
         operator_last_name: "Bloggs",
-        operator_birth_date: "1990-10-01",
+        operator_birthdate: "1990-10-01",
         operator_postcode: "SW12 9RQ",
         operator_address_line_1: "335",
         operator_address_line_2: "Some St.",

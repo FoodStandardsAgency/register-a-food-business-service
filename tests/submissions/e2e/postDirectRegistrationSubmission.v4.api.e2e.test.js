@@ -20,7 +20,7 @@ const registration = {
       operator_type: "SOLETRADER",
       operator_first_name: "Loras",
       operator_last_name: "Tyrell",
-      operator_birth_date: "1990-01-02",
+      operator_birthdate: "1990-01-02",
       operator_address_line_1: "12",
       operator_address_line_2: "Pie Lane",
       operator_address_line_3: "Test",

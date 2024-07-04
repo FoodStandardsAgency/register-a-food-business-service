@@ -31,7 +31,7 @@ const fullRegistration = {
       operator_charity_number: null,
       operator_first_name: "Fred",
       operator_last_name: "Bloggs",
-      operator_birth_date: "2018-06-07",
+      operator_birthdate: "2018-06-07",
       operator_address_line_1: "12",
       operator_address_line_2: "Pie Lane",
       operator_address_line_3: "Test",

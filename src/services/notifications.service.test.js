@@ -42,7 +42,7 @@ const exampleRegistrationEstablishment = {
   },
   operator: {
     operator_first_name: "Fred",
-    operator_birth_date: "1990-10-15",
+    operator_birthdate: "1990-10-15",
     operator_type: operatorTypeEnum.COMPANY.key
   },
   premise: {
@@ -460,7 +460,7 @@ describe("Function: transformDataForNotify", () => {
         const expectedFormat = {
           establishment_trading_name: "Itsu",
           operator_first_name: "Fred",
-          operator_birth_date: "15 Oct 1990",
+          operator_birthdate: "15 Oct 1990",
           operator_type: operatorTypeEnum.COMPANY.value.en,
           establishment_postcode: "SW12 9RQ",
           establishment_type: establishmentTypeEnum.COMMERCIAL.value.en,
@@ -503,7 +503,7 @@ describe("Function: transformDataForNotify", () => {
         const expectedFormat = {
           establishment_trading_name: "Itsu",
           operator_first_name: "Fred",
-          operator_birth_date: "15 Oct 1990",
+          operator_birthdate: "15 Oct 1990",
           operator_type: operatorTypeEnum.COMPANY.value.en,
           establishment_postcode: "SW12 9RQ",
           establishment_type: establishmentTypeEnum.COMMERCIAL.value.en,
@@ -543,7 +543,7 @@ describe("Function: transformDataForNotify", () => {
         const expectedFormat = {
           establishment_trading_name: "Itsu",
           operator_first_name: "Fred",
-          operator_birth_date: "15 Oct 1990",
+          operator_birthdate: "15 Oct 1990",
           operator_type: operatorTypeEnum.COMPANY.value.en,
           establishment_postcode: "SW12 9RQ",
           establishment_type: establishmentTypeEnum.COMMERCIAL.value.en,
@@ -578,7 +578,7 @@ describe("Function: transformDataForNotify", () => {
         const expectedFormat = {
           establishment_trading_name: "Itsu",
           operator_first_name: "Fred",
-          operator_birth_date: "15 Oct 1990",
+          operator_birthdate: "15 Oct 1990",
           operator_type: operatorTypeEnum.COMPANY.value.en,
           establishment_postcode: "SW12 9RQ",
           establishment_type: establishmentTypeEnum.COMMERCIAL.value.en,

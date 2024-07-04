@@ -13,7 +13,7 @@
         "operator": {
           "operator_first_name": "Darline",
           "operator_last_name": "Bridgewater",
-          "operator_birth_date": "1990-02-05",
+          "operator_birthdate": "1990-02-05",
           "operator_postcode": "WV98 1PS",
           "operator_address_line_1": "1998",
           "operator_address_line_2": "Bartelt",
@@ -76,7 +76,7 @@
         "operator": {
           "operator_first_name": "Pansie",
           "operator_last_name": "Finlay",
-          "operator_birth_date": "1990-02-05",
+          "operator_birthdate": "1990-02-05",
           "operator_postcode": "WA14 4HE",
           "operator_address_line_1": "41321",
           "operator_address_line_2": "Larry",

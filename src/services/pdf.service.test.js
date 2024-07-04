@@ -25,7 +25,7 @@ describe("Pdf Service: ", () => {
             operator_first_name: "Fred",
             operator_last_name: "Bloggs",
             operator_postcode: "SW12 9RQ",
-            operator_birth_date: "1990-02-20",
+            operator_birthdate: "1990-02-20",
             operator_address_line_1: "335",
             operator_address_line_2: "Some St.",
             operator_address_line_3: "Locality",
@@ -141,7 +141,7 @@ describe("Pdf Service: ", () => {
           expect(result.metaData.lcInfo.country).toBe("wales");
         });
         it("Should return correct value for date transformed fields", () => {
-          expect(result.operator.operator_birth_date).toBe("20 Feb 1990");
+          expect(result.operator.operator_birthdate).toBe("20 Feb 1990");
         });
         it("Should return correct value for key transformed fields", () => {
           expect(result.operator.operator_type).toBe("Sole trader");

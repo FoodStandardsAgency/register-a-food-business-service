@@ -100,7 +100,7 @@ const schema = {
                 type: "string",
                 validation: validateName
               },
-              operator_birth_date: {
+              operator_birthdate: {
                 type: "string",
                 validation: validateDate
               },
@@ -187,7 +187,7 @@ const schema = {
                   },
                   { required: ["operator_charity_name"] },
                   {
-                    required: ["operator_first_name", "operator_last_name", "operator_birth_date"]
+                    required: ["operator_first_name", "operator_last_name", "operator_birthdate"]
                   },
                   { required: ["partners"] }
                 ]
