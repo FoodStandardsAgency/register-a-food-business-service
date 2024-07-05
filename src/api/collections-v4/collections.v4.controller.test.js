@@ -13,7 +13,7 @@ jest.mock("../../services/collectionsTransform.service", () => ({
 }));
 
 jest.mock("../../services/logging.service");
-jest.mock("./collections.v4.service");
+jest.mock("../collections/collections.service");
 
 const { validateOptions } = require("../collections/collections.service");
 
