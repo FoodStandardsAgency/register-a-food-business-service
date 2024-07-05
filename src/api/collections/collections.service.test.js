@@ -3,10 +3,10 @@ jest.mock("../../connectors/configDb/configDb.connector", () => ({
   getCouncilsForSupplier: jest.fn()
 }));
 
-const { validateOptions } = require("./collections.v3.service");
+const { validateOptions } = require("./collections.service");
 const { getCouncilsForSupplier } = require("../../connectors/configDb/configDb.connector");
 
-describe("registrations.v3.service", () => {
+describe("collections.service", () => {
   afterEach(() => {
     jest.clearAllMocks();
   });

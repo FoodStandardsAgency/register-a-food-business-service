@@ -92,7 +92,7 @@ const validationFields = {
 };
 
 const validateOptions = async (options, unlimitedDateRange) => {
-  logEmitter.emit("functionCall", "registrations.v2.service", "validateOptions");
+  logEmitter.emit("functionCall", "collections.service", "validateOptions");
 
   for (const key in options) {
     // Check if the validation function for each key returns true or false for the associated value
@@ -130,17 +130,12 @@ const validateOptions = async (options, unlimitedDateRange) => {
     }
   }
 
-  logEmitter.emit("functionSuccess", "registrations.v2.service", "validateOptions");
+  logEmitter.emit("functionSuccess", "collections.service", "validateOptions");
   return true;
 };
 
 const raiseValidationError = (message) => {
-  logEmitter.emit(
-    "functionFail",
-    "registrations.v2.service",
-    "validateOptions",
-    new Error(message)
-  );
+  logEmitter.emit("functionFail", "collections.service", "validateOptions", new Error(message));
   return message;
 };
 

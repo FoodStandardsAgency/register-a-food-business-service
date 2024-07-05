@@ -1,4 +1,4 @@
-jest.mock("../../connectors/registrationsDb-v2/registrationsDb.v2.connector", () => ({
+jest.mock("../../connectors/registrationsDb/registrationsDb.connector", () => ({
   getAllRegistrationsByCouncils: jest.fn(),
   getUnifiedRegistrations: jest.fn(),
   getSingleRegistration: jest.fn(),
@@ -15,14 +15,14 @@ jest.mock("../../services/collectionsTransform.service", () => ({
 jest.mock("../../services/logging.service");
 jest.mock("./collections.v2.service");
 
-const { validateOptions } = require("./collections.v2.service");
+const { validateOptions } = require("../collections/collections.service");
 
 const {
   getAllRegistrationsByCouncils,
   getSingleRegistration,
   getUnifiedRegistrations,
   updateRegistrationCollectedByCouncil
-} = require("../../connectors/registrationsDb-v2/registrationsDb.v2.connector");
+} = require("../../connectors/registrationsDb/registrationsDb.connector");
 
 const {
   getRegistrationsByCouncil,

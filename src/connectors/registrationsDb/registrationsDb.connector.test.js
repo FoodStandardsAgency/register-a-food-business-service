@@ -8,7 +8,7 @@ const {
   getAllRegistrationsByCouncils,
   getSingleRegistration,
   updateRegistrationCollectedByCouncil
-} = require("./registrationsDb.v4.connector");
+} = require("./registrationsDb.connector");
 const { clearCosmosConnection } = require("../cosmos.client");
 
 const fullRegistration = {

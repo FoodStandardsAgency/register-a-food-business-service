@@ -3,9 +3,9 @@ const {
   getAllRegistrationsByCouncils,
   getUnifiedRegistrations,
   updateRegistrationCollectedByCouncil
-} = require("../../connectors/registrationsDb-v3/registrationsDb.v3.connector");
+} = require("../../connectors/registrationsDb/registrationsDb.connector");
 
-const { validateOptions } = require("./collections.v3.service");
+const { validateOptions } = require("../collections/collections.service");
 const { transformRegForCollections } = require("../../services/collectionsTransform.service");
 
 const { logEmitter } = require("../../services/logging.service");
@@ -14,7 +14,7 @@ const { getCouncilsForSupplier } = require("../../connectors/configDb/configDb.c
 const apiVersion = "v3";
 
 const getRegistrationsByCouncil = async (options) => {
-  logEmitter.emit("functionCall", "registrations.v3.controller", "getRegistrationsByCouncil");
+  logEmitter.emit("functionCall", "collections.v3.controller", "getRegistrationsByCouncil");
 
   const validationResult = await validateOptions(options, true);
 
@@ -44,7 +44,7 @@ const getRegistrationsByCouncil = async (options) => {
     const formattedRegistrations = registrations.map((registration) => {
       return transformRegForCollections(registration, apiVersion);
     });
-    logEmitter.emit("functionSuccess", "registrations.v3.controller", "getRegistrationsByCouncil");
+    logEmitter.emit("functionSuccess", "collections.v3.controller", "getRegistrationsByCouncil");
 
     return formattedRegistrations;
   } else {
@@ -56,7 +56,7 @@ const getRegistrationsByCouncil = async (options) => {
 };
 
 const getRegistration = async (options) => {
-  logEmitter.emit("functionCall", "registrations.v3.controller", "getRegistration");
+  logEmitter.emit("functionCall", "collections.v3.controller", "getRegistration");
 
   const validationResult = await validateOptions(options);
 
@@ -65,7 +65,7 @@ const getRegistration = async (options) => {
 
     const formattedRegistration = transformRegForCollections(registration, apiVersion);
 
-    logEmitter.emit("functionSuccess", "registrations.v3.controller", "getRegistration");
+    logEmitter.emit("functionSuccess", "collections.v3.controller", "getRegistration");
     return formattedRegistration;
   } else {
     const error = new Error("");
@@ -76,7 +76,7 @@ const getRegistration = async (options) => {
 };
 
 const getRegistrations = async (options) => {
-  logEmitter.emit("functionCall", "registrations.v3.controller", "getRegistrations");
+  logEmitter.emit("functionCall", "collections.v3.controller", "getRegistrations");
 
   const validationResult = await validateOptions(options);
 
@@ -89,7 +89,7 @@ const getRegistrations = async (options) => {
     const formattedRegistrations = registrations.map((registration) => {
       return transformRegForCollections(registration, apiVersion);
     });
-    logEmitter.emit("functionSuccess", "registrations.v3.controller", "getRegistrations");
+    logEmitter.emit("functionSuccess", "collections.v3.controller", "getRegistrations");
     return formattedRegistrations;
   } else {
     const error = new Error("");
@@ -100,7 +100,7 @@ const getRegistrations = async (options) => {
 };
 
 const updateRegistration = async (options) => {
-  logEmitter.emit("functionCall", "registrations.v3.controller", "updateRegistration");
+  logEmitter.emit("functionCall", "collections.v3.controller", "updateRegistration");
 
   const validationResult = await validateOptions(options);
 
@@ -111,7 +111,7 @@ const updateRegistration = async (options) => {
       options.requestedCouncil
     );
 
-    logEmitter.emit("functionSuccess", "registrations.v3.controller", "updateRegistration");
+    logEmitter.emit("functionSuccess", "collections.v3.controller", "updateRegistration");
 
     return response;
   } else {
