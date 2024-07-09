@@ -145,14 +145,26 @@ describe("Submit a single registration through the API as a council", () => {
     it("should successfully submit the registration and return a fsa-rn", () => {
       expect(postResponse["fsa-rn"]).toBeDefined();
     });
-    it("should be retrievable through the collcetions API", () => {
+    it("should be retrievable through the collections API", () => {
       expect(getResponse.fsa_rn).toBe(postResponse["fsa-rn"]);
       expect(getResponse.establishment).toBeDefined();
       expect(getResponse.establishment.operator.operator_first_name).toBe(
         registration.establishment.operator.operator_first_name
       );
+      expect(getResponse.establishment.operator.operator_birthdate).toBe(
+        registration.establishment.operator.operator_birthdate
+      );
       expect(getResponse.establishment.activities.water_supply).toBe(
         registration.establishment.activities.water_supply
+      );
+      expect(getResponse.establishment.activities.processing_activities).toEqual(
+        registration.establishment.activities.processing_activities
+      );
+      expect(getResponse.establishment.activities.food_type).toEqual(
+        registration.establishment.activities.food_type
+      );
+      expect(getResponse.establishment.activities.business_scale).toEqual(
+        registration.establishment.activities.business_scale
       );
       expect(getResponse.establishment.premise.establishment_town).toBe(
         registration.establishment.premise.establishment_town

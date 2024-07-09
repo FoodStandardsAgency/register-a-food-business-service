@@ -15,15 +15,12 @@ let submitResponses = [];
 
 jest.setTimeout(30000);
 
-jest.setTimeout(30000);
-
 const frontendSubmitRegistration = async () => {
   try {
     for (let index in mockRegistrationData) {
       const requestOptions = {
         method: "POST",
         data: mockRegistrationData[index],
-        body: JSON.stringify(mockRegistrationData[index]),
         headers: {
           "Content-Type": "application/json",
           "client-name": process.env.FRONT_END_NAME,
