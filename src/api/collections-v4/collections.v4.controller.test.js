@@ -1,12 +1,11 @@
 jest.mock("../../connectors/registrationsDb/registrationsDb.connector", () => ({
-  getAllRegistrationsByCouncil: jest.fn(),
+  getAllRegistrationsByCouncils: jest.fn(),
   getUnifiedRegistrations: jest.fn(),
   getSingleRegistration: jest.fn(),
   updateRegistrationCollectedByCouncil: jest.fn()
 }));
-
-jest.mock("../../services/transformEnums.service", () => ({
-  transformEnumsForCollections: jest.fn()
+jest.mock("../../connectors/configDb/configDb.connector", () => ({
+  getCouncilsForSupplier: jest.fn()
 }));
 
 jest.mock("../../services/collectionsTransform.service", () => ({
@@ -14,12 +13,12 @@ jest.mock("../../services/collectionsTransform.service", () => ({
 }));
 
 jest.mock("../../services/logging.service");
-jest.mock("./collections.service");
+jest.mock("../collections/collections.service");
 
-const { validateOptions } = require("./collections.service");
+const { validateOptions } = require("../collections/collections.service");
 
 const {
-  getAllRegistrationsByCouncil,
+  getAllRegistrationsByCouncils,
   getSingleRegistration,
   getUnifiedRegistrations,
   updateRegistrationCollectedByCouncil
@@ -30,9 +29,36 @@ const {
   getRegistration,
   getRegistrations,
   updateRegistration
-} = require("./collections.controller");
-
+} = require("./collections.v4.controller");
+const { getCouncilsForSupplier } = require("../../connectors/configDb/configDb.connector");
 const { transformRegForCollections } = require("../../services/collectionsTransform.service");
+
+const localAuthorityOptions = {
+  subscriber: "cardiff",
+  requestedCouncils: ["cardiff"],
+  new: "true",
+  fields: [],
+  before: "2000-01-06",
+  after: "2000-01-01"
+};
+
+const nonLCSubscriberOptions = {
+  subscriber: "northgate",
+  requestedCouncils: ["cardiff", "bath"],
+  new: "true",
+  fields: [],
+  before: "2000-01-06",
+  after: "2000-01-01"
+};
+
+const nonLCSubscriberNoneRequestedOptions = {
+  subscriber: "northgate",
+  requestedCouncils: ["northgate"],
+  new: "true",
+  fields: [],
+  before: "2000-01-06",
+  after: "2000-01-01"
+};
 
 const fullRegistration = {
   "fsa-rn": "PQQK8Q-SN9N8C-4ADETF",
@@ -46,6 +72,7 @@ const fullRegistration = {
     establishment_primary_number: "329857245",
     establishment_secondary_number: "84345245",
     establishment_email: "django@email.com",
+    establishment_web_address: "test.com",
     operator: {
       operator_type: "SOLETRADER",
       operator_company_name: "name",
@@ -54,6 +81,7 @@ const fullRegistration = {
       operator_charity_number: null,
       operator_first_name: "Fred",
       operator_last_name: "Bloggs",
+      operator_birthdate: "1989-02-01",
       operator_address_line_1: "12",
       operator_address_line_2: "Pie Lane",
       operator_address_line_3: "Test",
@@ -68,10 +96,11 @@ const fullRegistration = {
       contact_representative_email: null
     },
     activities: {
-      customer_type: "END_CONSUMER",
       business_type: "001",
       business_type_search_term: null,
-      import_export_activities: "BOTH",
+      business_scale: ["NATIONAL", "LOCAL", "FBO"],
+      food_type: ["READY_TO_EAT", "IMPORTED"],
+      processing_activities: ["REWRAPPING_OR_RELABELLING"],
       water_supply: "PUBLIC",
       business_other_details: null,
       opening_days_irregular: null,
@@ -139,6 +168,7 @@ const transformedFullReg = {
     establishment_primary_number: "329857245",
     establishment_secondary_number: "84345245",
     establishment_email: "django@email.com",
+    establishment_web_address: "test.com",
     operator: {
       operator_type: "SOLETRADER",
       operator_company_name: "name",
@@ -147,6 +177,7 @@ const transformedFullReg = {
       operator_charity_number: null,
       operator_first_name: "Fred",
       operator_last_name: "Bloggs",
+      operator_birthdate: "1989-02-01",
       operator_address_line_1: "12",
       operator_address_line_2: "Pie Lane",
       operator_address_line_3: "Test",
@@ -161,10 +192,11 @@ const transformedFullReg = {
       contact_representative_email: null
     },
     activities: {
-      customer_type: "END_CONSUMER",
       business_type: "001",
       business_type_search_term: null,
-      import_export_activities: "BOTH",
+      business_scale: ["NATIONAL", "LOCAL", "FBO"],
+      food_type: ["READY_TO_EAT", "IMPORTED"],
+      processing_activities: ["REWRAPPING_OR_RELABELLING"],
       water_supply: "PUBLIC",
       business_other_details: null,
       opening_days_irregular: null,
@@ -211,7 +243,7 @@ const transformedShortReg = {
   metadata: {}
 };
 
-describe("collections.controller", () => {
+describe("registrations.v4.controller", () => {
   let result;
   describe("Function: getRegistrationsByCouncil", () => {
     describe("When given invalid getNewRegistrations option", () => {
@@ -234,18 +266,73 @@ describe("collections.controller", () => {
     describe("When successful", () => {
       beforeEach(async () => {
         validateOptions.mockImplementation(() => true);
-        getAllRegistrationsByCouncil.mockImplementation(() => [shortRegistration]);
+        getAllRegistrationsByCouncils.mockImplementation(() => [shortRegistration]);
         transformRegForCollections.mockImplementation(() => transformedShortReg);
-        result = await getRegistrationsByCouncil({
-          getNewRegistrations: "true",
-          council: "cardiff"
+      });
+      describe("When subscriber is a local authority", () => {
+        beforeEach(async () => {
+          getCouncilsForSupplier.mockImplementation(() => []);
+          result = await getRegistrationsByCouncil(localAuthorityOptions);
+        });
+        it("Should call getAllRegistrationsByCouncils", () => {
+          expect(getAllRegistrationsByCouncils).toHaveBeenCalledWith(
+            ["cardiff"],
+            "true",
+            [],
+            "2000-01-06",
+            "2000-01-01"
+          );
+        });
+        it("should call transformRegForCollection", () => {
+          expect(transformRegForCollections).toHaveBeenCalledWith(shortRegistration, "v4");
+        });
+        it("Should return the result of transformRegForCollection", () => {
+          expect(result).toEqual([transformedShortReg]);
         });
       });
-      it("should call transformRegForCollection", () => {
-        expect(transformRegForCollections).toHaveBeenCalledWith(shortRegistration);
-      });
-      it("Should return the result of getAllRegistrationsByCouncil", () => {
-        expect(result).toEqual([transformedShortReg]);
+      describe("When susbcriber is not a local authority", () => {
+        describe("When requested councils is populated", () => {
+          beforeEach(async () => {
+            getCouncilsForSupplier.mockImplementation(() => ["cardiff", "bath", "bristol"]);
+            result = await getRegistrationsByCouncil(nonLCSubscriberOptions);
+          });
+          it("Should call getAllRegistrationsByCouncils", () => {
+            expect(getAllRegistrationsByCouncils).toHaveBeenCalledWith(
+              ["cardiff", "bath"],
+              "true",
+              [],
+              "2000-01-06",
+              "2000-01-01"
+            );
+          });
+          it("should call transformRegForCollection", () => {
+            expect(transformRegForCollections).toHaveBeenCalledWith(shortRegistration, "v4");
+          });
+          it("Should return the result of getAllRegistrationsByCouncils", () => {
+            expect(result).toEqual([transformedShortReg]);
+          });
+        });
+        describe("When requested councils is not populated", () => {
+          beforeEach(async () => {
+            getCouncilsForSupplier.mockImplementation(() => ["cardiff", "bath", "bristol"]);
+            result = await getRegistrationsByCouncil(nonLCSubscriberNoneRequestedOptions);
+          });
+          it("Should call getAllRegistrationsByCouncils", () => {
+            expect(getAllRegistrationsByCouncils).toHaveBeenCalledWith(
+              ["cardiff", "bath", "bristol"],
+              "true",
+              [],
+              "2000-01-06",
+              "2000-01-01"
+            );
+          });
+          it("should call transformRegForCollection", () => {
+            expect(transformRegForCollections).toHaveBeenCalledWith(shortRegistration, "v4");
+          });
+          it("Should return the result of getAllRegistrationsByCouncils", () => {
+            expect(result).toEqual([transformedShortReg]);
+          });
+        });
       });
     });
   });
@@ -277,7 +364,7 @@ describe("collections.controller", () => {
         });
       });
 
-      it("Should return the result of getSingleRegistration", () => {
+      it("Should return the result of transformRegForCollection", () => {
         expect(result).toEqual(transformedFullReg);
       });
     });
@@ -298,6 +385,7 @@ describe("collections.controller", () => {
         expect(result.name).toBe("optionsValidationError");
       });
     });
+
     describe("When successful", () => {
       beforeEach(async () => {
         validateOptions.mockImplementation(() => true);
@@ -331,6 +419,7 @@ describe("collections.controller", () => {
         expect(result.name).toBe("optionsValidationError");
       });
     });
+
     describe("When successful", () => {
       beforeEach(async () => {
         validateOptions.mockImplementation(() => true);

@@ -1,19 +1,20 @@
-const { logEmitter } = require("../../services/logging.service");
 const { establishConnectionToCosmos } = require("../cosmos.client");
+const { logEmitter } = require("../../services/logging.service");
 
-const getRegistrationsByCouncil = async (council, collected, before, after) => {
-  logEmitter.emit("functionCall", "registrationsDb.v1.connector", "getRegistrationsByCouncil");
+const getRegistrationsByCouncils = async (councils, collected, before, after) => {
+  logEmitter.emit("functionCall", "registrationsDb.connector", "getRegistrationsByCouncils");
   try {
     const registrationsCollection = await establishConnectionToCosmos(
       "registrations",
       "registrations"
     );
+
     const registrations = await registrationsCollection
       .find(
         {
           $and: [
             { "fsa-rn": { $not: { $regex: /^tmp_/ } } },
-            { local_council_url: council },
+            { local_council_url: { $in: councils } },
             { collected: { $in: collected } },
             { reg_submission_date: { $gte: new Date(after) } },
             { reg_submission_date: { $lte: new Date(before) } }
@@ -23,21 +24,17 @@ const getRegistrationsByCouncil = async (council, collected, before, after) => {
       )
       .toArray();
 
-    logEmitter.emit("functionSuccess", "registrationsDb.v1.connector", "getRegistrationsByCouncil");
+    logEmitter.emit("functionSuccess", "registrationsDb.connector", "getRegistrationsByCouncils");
+
     return registrations;
   } catch (err) {
-    logEmitter.emit(
-      "functionFail",
-      "registrationsDb.v1.connector",
-      "getRegistrationsByCouncil",
-      err
-    );
+    logEmitter.emit("functionFail", "registrationsDb.connector", "getRegistrationsByCouncils", err);
     throw err;
   }
 };
 
 const getAllRegistrations = async (before, after) => {
-  logEmitter.emit("functionCall", "registrationsDb.v1.connector", "getAllRegistrations");
+  logEmitter.emit("functionCall", "registrationsDb.connector", "getAllRegistrations");
   try {
     let registrationsCollection = await establishConnectionToCosmos(
       "registrations",
@@ -56,16 +53,16 @@ const getAllRegistrations = async (before, after) => {
         { projection: { _id: 0, "fsa-rn": 1 } }
       )
       .toArray();
-    logEmitter.emit("functionSuccess", "registrationsDb.v1.connector", "getAllRegistrations");
+    logEmitter.emit("functionSuccess", "registrationsDb.connector", "getAllRegistrations");
     return registrations;
   } catch (err) {
-    logEmitter.emit("functionFail", "registrationsDb.v1.connector", "getAllRegistrations", err);
+    logEmitter.emit("functionFail", "registrationsDb.connector", "getAllRegistrations", err);
     throw err;
   }
 };
 
 const getFullRegistration = async (fsa_rn, fields = []) => {
-  logEmitter.emit("functionCall", "registrationsDb.v1.connector", "getFullRegistration");
+  logEmitter.emit("functionCall", "registrationsDb.connector", "getFullRegistration");
   try {
     const projection = Object.assign(
       {
@@ -97,17 +94,17 @@ const getFullRegistration = async (fsa_rn, fields = []) => {
       { projection: projection }
     );
 
-    logEmitter.emit("functionSuccess", "registrationsDb.v1.connector", "getFullRegistration");
+    logEmitter.emit("functionSuccess", "registrationsDb.connector", "getFullRegistration");
 
     return registration;
   } catch (err) {
-    logEmitter.emit("functionFail", "registrationsDb.v1.connector", "getFullRegistration", err);
+    logEmitter.emit("functionFail", "registrationsDb.connector", "getFullRegistration", err);
     throw err;
   }
 };
 
 const getSingleRegistration = async (fsa_rn, council) => {
-  logEmitter.emit("functionCall", "registrationsDb.v1.connector", "getSingleRegistration");
+  logEmitter.emit("functionCall", "registrationsDb.connector", "getSingleRegistration");
 
   const projection = Object.assign({
     _id: 0,
@@ -136,57 +133,52 @@ const getSingleRegistration = async (fsa_rn, council) => {
   if (registration === null) {
     const error = new Error("getRegistrationNotFoundError");
     error.name = "getRegistrationNotFoundError";
-    logEmitter.emit("functionFail", "registrationsDb.v1.connector", "getSingleRegistration", error);
+    logEmitter.emit("functionFail", "registrationsDb.connector", "getSingleRegistration", error);
     throw error;
   }
-  logEmitter.emit("functionSuccess", "registrationsDb.v1.connector", "getSingleRegistration");
+  logEmitter.emit("functionSuccess", "registrationsDb.connector", "getSingleRegistration");
 
   return registration;
 };
 
 const getUnifiedRegistrations = async (before, after) => {
-  logEmitter.emit("functionCall", "registrationsDb.v1.connector", "getUnifiedRegistrations");
+  logEmitter.emit("functionCall", "registrationsDb.connector", "getUnifiedRegistrations");
 
   // convert ISOStrings to Date type
   const beforeDate = new Date(before);
   const afterDate = new Date(after);
 
   const registrations = await getAllRegistrations(beforeDate, afterDate);
-
   const fullRegistrations = await Promise.all(
     registrations.map(async (registration) => {
       return getFullRegistration(registration["fsa-rn"], ["establishment", "metadata"]);
     })
   );
 
-  logEmitter.emit("functionSuccess", "registrationsDb.v1.connector", "getUnifiedRegistrations");
+  logEmitter.emit("functionSuccess", "registrationsDb.connector", "getUnifiedRegistrations");
   return fullRegistrations;
 };
 
-const getAllRegistrationsByCouncil = async (council, newRegistrations, fields, before, after) => {
-  logEmitter.emit("functionCall", "registrationsDb.v1.connector", "getAllRegistrationsByCouncil");
+const getAllRegistrationsByCouncils = async (councils, newRegistrations, fields, before, after) => {
+  logEmitter.emit("functionCall", "registrationsDb.connector", "getAllRegistrationsByCouncils");
 
   // get NEW [false, null] or EVERYTHING [true, false, null]
   const queryArray = newRegistrations === "true" ? [false] : [true, false];
-  const registrations = await getRegistrationsByCouncil(council, queryArray, before, after);
+  const registrations = await getRegistrationsByCouncils(councils, queryArray, before, after);
 
   const fullRegistrations = await Promise.all(
     registrations.map(async (registration) => {
       return getFullRegistration(registration["fsa-rn"], fields);
     })
   );
-  logEmitter.emit(
-    "functionSuccess",
-    "registrationsDb.v1.connector",
-    "getAllRegistrationsByCouncil"
-  );
+  logEmitter.emit("functionSuccess", "registrationsDb.connector", "getAllRegistrationsByCouncils");
   return fullRegistrations;
 };
 
 const updateRegistrationCollectedByCouncil = async (fsa_rn, collected, council) => {
   logEmitter.emit(
     "functionCall",
-    "registrationsDb.v1.connector",
+    "registrationsDb.connector",
     "updateRegistrationCollectedByCouncil"
   );
 
@@ -210,7 +202,7 @@ const updateRegistrationCollectedByCouncil = async (fsa_rn, collected, council) 
     error.name = "updateRegistrationNotFoundError";
     logEmitter.emit(
       "functionFail",
-      "registrationsDb.v1.connector",
+      "registrationsDb.connector",
       "updateRegistrationCollectedByCouncil",
       error
     );
@@ -218,15 +210,15 @@ const updateRegistrationCollectedByCouncil = async (fsa_rn, collected, council) 
   }
   logEmitter.emit(
     "functionSuccess",
-    "registrationsDb.v1.connector",
+    "registrationsDb.connector",
     "updateRegistrationCollectedByCouncil"
   );
   return { fsa_rn, collected };
 };
 
 module.exports = {
-  getUnifiedRegistrations,
-  getAllRegistrationsByCouncil,
   getSingleRegistration,
+  getUnifiedRegistrations,
+  getAllRegistrationsByCouncils,
   updateRegistrationCollectedByCouncil
 };

@@ -15,8 +15,6 @@ let submitResponses = [];
 
 jest.setTimeout(30000);
 
-jest.setTimeout(30000);
-
 const frontendSubmitRegistration = async () => {
   try {
     for (let index in mockRegistrationData) {

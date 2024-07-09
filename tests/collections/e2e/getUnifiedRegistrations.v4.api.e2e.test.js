@@ -5,7 +5,7 @@ const axios = ax.create({
     return true;
   }
 });
-const baseUrl = "https://integration-fsa-rof-gateway.azure-api.net/registrations/v1/";
+const baseUrl = "https://integration-fsa-rof-gateway.azure-api.net/registrations/v4/";
 const unifiedUrl = `${baseUrl}unified`;
 const unifiedAPIKey = "022a06ae44724035abbdcd7d00074125";
 

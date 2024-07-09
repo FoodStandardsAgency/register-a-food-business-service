@@ -90,7 +90,10 @@ let data = {
     business_type: "048",
     import_export_activities: "NONE",
     water_supply: "PRIVATE",
-    business_other_details: "business other details"
+    business_other_details: "business other details",
+    business_scale: ["NATIONAL", "LOCAL", "FBO"],
+    food_type: ["READY_TO_EAT", "IMPORTED"],
+    processing_activities: ["REWRAPPING_OR_RELABELLING"]
   }
 };
 
@@ -179,6 +182,15 @@ describe("applyEnumTransformsForService", () => {
     it("should only transform enum keys to english enum values", () => {
       expect(data.activities.customer_type).toEqual("End consumer");
       expect(data.activities.business_other_details).toEqual("business other details");
+      expect(data.activities.processing_activities).toEqual(
+        "Rewrapping and relabelling previously wrapped food"
+      );
+      expect(data.activities.food_type).toEqual(
+        "Ready to eat food (food that will not be cooked or reheated before serving),\nFood that your business has imported (from outside the UK)"
+      );
+      expect(data.activities.business_scale).toEqual(
+        "To national customers (who live or work across the UK),\nTo local customers (who live or work in the local area),\nTo provide food directly to other businesses"
+      );
     });
   });
   describe("when language is welsh", () => {

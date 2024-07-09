@@ -3,16 +3,18 @@ const {
   getAllRegistrationsByCouncils,
   getUnifiedRegistrations,
   updateRegistrationCollectedByCouncil
-} = require("../../connectors/registrationsDb-v2/registrationsDb.v2.connector");
+} = require("../../connectors/registrationsDb/registrationsDb.connector");
 
-const { validateOptions } = require("./collections.v2.service");
-const { transformRegForCollections } = require("../../services/collectionsTransform.v2.service");
+const { validateOptions } = require("../collections/collections.service");
+const { transformRegForCollections } = require("../../services/collectionsTransform.service");
 
 const { logEmitter } = require("../../services/logging.service");
 const { getCouncilsForSupplier } = require("../../connectors/configDb/configDb.connector");
 
+const apiVersion = "v2";
+
 const getRegistrationsByCouncil = async (options) => {
-  logEmitter.emit("functionCall", "registrations.v2.controller", "getRegistrationsByCouncil");
+  logEmitter.emit("functionCall", "collections.v2.controller", "getRegistrationsByCouncil");
 
   const validationResult = await validateOptions(options, true);
 
@@ -40,9 +42,9 @@ const getRegistrationsByCouncil = async (options) => {
     );
 
     const formattedRegistrations = registrations.map((registration) => {
-      return transformRegForCollections(registration);
+      return transformRegForCollections(registration, apiVersion);
     });
-    logEmitter.emit("functionSuccess", "registrations.v2.controller", "getRegistrationsByCouncil");
+    logEmitter.emit("functionSuccess", "collections.v2.controller", "getRegistrationsByCouncil");
 
     return formattedRegistrations;
   } else {
@@ -54,16 +56,16 @@ const getRegistrationsByCouncil = async (options) => {
 };
 
 const getRegistration = async (options) => {
-  logEmitter.emit("functionCall", "registrations.v2.controller", "getRegistration");
+  logEmitter.emit("functionCall", "collections.v2.controller", "getRegistration");
 
   const validationResult = await validateOptions(options);
 
   if (validationResult === true) {
     const registration = await getSingleRegistration(options.fsa_rn, options.requestedCouncil);
 
-    const formattedRegistration = transformRegForCollections(registration);
+    const formattedRegistration = transformRegForCollections(registration, apiVersion);
 
-    logEmitter.emit("functionSuccess", "registrations.v2.controller", "getRegistration");
+    logEmitter.emit("functionSuccess", "collections.v2.controller", "getRegistration");
     return formattedRegistration;
   } else {
     const error = new Error("");
@@ -74,7 +76,7 @@ const getRegistration = async (options) => {
 };
 
 const getRegistrations = async (options) => {
-  logEmitter.emit("functionCall", "registrations.v2.controller", "getRegistrations");
+  logEmitter.emit("functionCall", "collections.v2.controller", "getRegistrations");
 
   const validationResult = await validateOptions(options);
 
@@ -85,9 +87,9 @@ const getRegistrations = async (options) => {
     ]);
 
     const formattedRegistrations = registrations.map((registration) => {
-      return transformRegForCollections(registration);
+      return transformRegForCollections(registration, apiVersion);
     });
-    logEmitter.emit("functionSuccess", "registrations.v2.controller", "getRegistrations");
+    logEmitter.emit("functionSuccess", "collections.v2.controller", "getRegistrations");
     return formattedRegistrations;
   } else {
     const error = new Error("");
@@ -98,7 +100,7 @@ const getRegistrations = async (options) => {
 };
 
 const updateRegistration = async (options) => {
-  logEmitter.emit("functionCall", "registrations.v2.controller", "updateRegistration");
+  logEmitter.emit("functionCall", "collections.v2.controller", "updateRegistration");
 
   const validationResult = await validateOptions(options);
 
@@ -109,7 +111,7 @@ const updateRegistration = async (options) => {
       options.requestedCouncil
     );
 
-    logEmitter.emit("functionSuccess", "registrations.v2.controller", "updateRegistration");
+    logEmitter.emit("functionSuccess", "collections.v2.controller", "updateRegistration");
 
     return response;
   } else {

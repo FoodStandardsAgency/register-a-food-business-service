@@ -5,7 +5,7 @@ const axios = ax.create({
     return true;
   }
 });
-const baseUrl = "https://integration-fsa-rof-gateway.azure-api.net/registrations/v3/";
+const baseUrl = "https://integration-fsa-rof-gateway.azure-api.net/registrations/v4/";
 const highgardenUrl = `${baseUrl}highgarden`;
 const highgardenAPIKey = "414d6fb61355434694c6a9fcd600e9e4";
 const cardiffAPIKey = "b175199d420448fc87baa714e458ce6e";
@@ -20,6 +20,7 @@ const registration = {
       operator_type: "SOLETRADER",
       operator_first_name: "Loras",
       operator_last_name: "Tyrell",
+      operator_birthdate: "1990-01-02",
       operator_address_line_1: "12",
       operator_address_line_2: "Pie Lane",
       operator_address_line_3: "Test",
@@ -30,9 +31,10 @@ const registration = {
       operator_uprn: "123456789"
     },
     activities: {
-      customer_type: "END_CONSUMER",
       business_type: "005",
-      import_export_activities: "NONE",
+      business_scale: ["NATIONAL", "LOCAL", "FBO"],
+      food_type: ["READY_TO_EAT", "IMPORTED"],
+      processing_activities: ["REWRAPPING_OR_RELABELLING"],
       water_supply: "PUBLIC",
       opening_day_monday: true,
       opening_day_tuesday: true,

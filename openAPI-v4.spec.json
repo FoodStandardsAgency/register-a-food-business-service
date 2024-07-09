@@ -508,7 +508,7 @@
           },
           "operator_birthdate": {
             "type": "string",
-            "description": "Required if operator_type is 'SOLETRADER, 'PARTNERSHIP', or 'PERSON'. Uses YYYY-MM-DD [npm Validator](https://www.npmjs.com/package/validator) isSO8601."
+            "description": "Required if operator_type is 'SOLETRADER, 'PARTNERSHIP', or 'PERSON'. Uses YYYY-MM-DD [npm Validator](https://www.npmjs.com/package/validator) isISO8601."
           },
           "operator_postcode": {
             "type": "string",
@@ -682,7 +682,8 @@
         "properties": {
           "customer_type": {
             "type": "string",
-            "enum": ["OTHER_BUSINESSES", "END_CONSUMER", "BOTH"]
+            "enum": ["OTHER_BUSINESSES", "END_CONSUMER", "BOTH"],
+            "deprecated": true
           },
           "business_type": {
             "type": "string",
@@ -693,7 +694,8 @@
           },
           "import_export_activities": {
             "type": "string",
-            "enum": ["IMPORT", "EXPORT", "BOTH", "NONE"]
+            "enum": ["IMPORT", "EXPORT", "BOTH", "NONE"],
+            "deprecated": true
           },
           "business_scale": {
             "type": "array",

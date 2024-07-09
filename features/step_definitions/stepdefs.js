@@ -15,8 +15,7 @@ const {
 
 setDefaultTimeout(120 * 1000);
 
-let apiUrl =
-  "https://staging-register-a-food-business-service.azurewebsites.net";
+let apiUrl = "https://staging-register-a-food-business-service.azurewebsites.net";
 
 apiUrl = process.env.API_URL ? process.env.API_URL : apiUrl;
 
@@ -45,22 +44,17 @@ const sendDirectRequest = async (body) => {
     "client-name": DIRECT_API_NAME,
     "registration-data-version": "1.7.0"
   };
-  const res = await axios(
-    `${apiUrl}/api/submissions/v2/createNewDirectRegistration/cardiff`,
-    {
-      method: "POST",
-      headers,
-      data: body
-    }
-  );
+  const res = await axios(`${apiUrl}/api/submissions/v4/createNewDirectRegistration/cardiff`, {
+    method: "POST",
+    headers,
+    data: body
+  });
   return res.data;
 };
 ////////
 
 const triggerNotificationTask = async () => {
-  const res = await axios(
-    `${apiUrl}/api/tasks/bulk/sendnotification?dryrun=true`
-  );
+  const res = await axios(`${apiUrl}/api/tasks/bulk/sendnotification?dryrun=true`);
   return res.data;
 };
 
@@ -78,6 +72,7 @@ Given("I have a new registration with all valid required fields", function () {
         operator: {
           operator_first_name: "Fred",
           operator_last_name: "Bloggs",
+          operator_birthdate: "1990-10-01",
           operator_postcode: "SW12 9RQ",
           operator_address_line_1: "335",
           operator_address_line_2: "Some St.",
@@ -96,9 +91,10 @@ Given("I have a new registration with all valid required fields", function () {
           establishment_type: "DOMESTIC"
         },
         activities: {
-          customer_type: "END_CONSUMER",
           business_type: "002",
-          import_export_activities: "NONE",
+          business_scale: ["NATIONAL", "LOCAL", "FBO"],
+          food_type: ["READY_TO_EAT", "IMPORTED"],
+          processing_activities: ["REWRAPPING_OR_RELABELLING"],
           business_other_details: "Food business",
           opening_days_irregular: "Open christmas",
           opening_day_monday: true,
@@ -122,16 +118,59 @@ Given("I have a new registration with all valid required fields", function () {
   };
 });
 
-Given(
-  "I have a new direct submission registration with all valid required fields",
-  function () {
-    this.registration = {
+Given("I have a new direct submission registration with all valid required fields", function () {
+  this.registration = {
+    establishment: {
+      establishment_trading_name: "Itsu",
+      establishment_primary_number: "329857245",
+      establishment_secondary_number: "84345245",
+      establishment_email: "fsatestemail.valid@gmail.com",
+      establishment_opening_date: "2018-06-07",
+      operator: {
+        operator_first_name: "Fred",
+        operator_last_name: "Bloggs",
+        operator_birthdate: "1990-10-01",
+        operator_postcode: "SW12 9RQ",
+        operator_address_line_1: "335",
+        operator_address_line_2: "Some St.",
+        operator_address_line_3: "Locality",
+        operator_town: "London",
+        operator_primary_number: "9827235",
+        operator_email: "fsatestemail.valid@gmail.com",
+        operator_type: "SOLETRADER"
+      },
+      premise: {
+        establishment_postcode: "SW12 9RQ",
+        establishment_address_line_1: "123",
+        establishment_address_line_2: "Street",
+        establishment_address_line_3: "Locality",
+        establishment_town: "London",
+        establishment_type: "DOMESTIC"
+      },
+      activities: {
+        business_type: "002",
+        business_scale: ["NATIONAL", "LOCAL", "FBO"],
+        food_type: ["READY_TO_EAT", "IMPORTED"],
+        processing_activities: ["REWRAPPING_OR_RELABELLING"],
+        business_other_details: "Food business",
+        opening_days_irregular: "Open christmas",
+        water_supply: "PUBLIC"
+      }
+    }
+  };
+});
+
+Given("I have a new establishment with some invalid required fields", function () {
+  this.registration = {
+    registration: {
       establishment: {
-        establishment_trading_name: "Itsu",
-        establishment_primary_number: "329857245",
-        establishment_secondary_number: "84345245",
-        establishment_email: "fsatestemail.valid@gmail.com",
-        establishment_opening_date: "2018-06-07",
+        establishment_details: {
+          establishment_trading_name: "Itsu",
+          establishment_primary_number: "349785766",
+          establishment_secondary_number: "84345245",
+          establishment_email: "dfg",
+          establishment_opening_date: "2018-06-07"
+        },
         operator: {
           operator_first_name: "Fred",
           operator_last_name: "Bloggs",
@@ -142,82 +181,34 @@ Given(
           operator_town: "London",
           operator_primary_number: "9827235",
           operator_email: "fsatestemail.valid@gmail.com",
-          operator_type: "SOLETRADER"
+          operator_type: "Sole trader"
         },
         premise: {
           establishment_postcode: "SW12 9RQ",
           establishment_address_line_1: "123",
           establishment_address_line_2: "Street",
-          establishment_address_line_3: "Locality",
+          establishment_address_line_3: "Locailty",
           establishment_town: "London",
-          establishment_type: "DOMESTIC"
+          establishment_type: "domestic"
         },
         activities: {
-          customer_type: "END_CONSUMER",
-          business_type: "002",
-          import_export_activities: "NONE",
-          business_other_details: "Food business",
-          opening_days_irregular: "Open christmas",
-          water_supply: "PUBLIC"
-        }
-      }
-    };
-  }
-);
-
-Given(
-  "I have a new establishment with some invalid required fields",
-  function () {
-    this.registration = {
-      registration: {
-        establishment: {
-          establishment_details: {
-            establishment_trading_name: "Itsu",
-            establishment_primary_number: "349785766",
-            establishment_secondary_number: "84345245",
-            establishment_email: "dfg",
-            establishment_opening_date: "2018-06-07"
-          },
-          operator: {
-            operator_first_name: "Fred",
-            operator_last_name: "Bloggs",
-            operator_postcode: "SW12 9RQ",
-            operator_address_line_1: "335",
-            operator_address_line_2: "Some St.",
-            operator_address_line_3: "Locality",
-            operator_town: "London",
-            operator_primary_number: "9827235",
-            operator_email: "fsatestemail.valid@gmail.com",
-            operator_type: "Sole trader"
-          },
-          premise: {
-            establishment_postcode: "SW12 9RQ",
-            establishment_address_line_1: "123",
-            establishment_address_line_2: "Street",
-            establishment_address_line_3: "Locailty",
-            establishment_town: "London",
-            establishment_type: "domestic"
-          },
-          activities: {
-            customer_type: "End consumer",
-            opening_day_monday: "true",
-            opening_hours_monday: "09:00 to 17:00",
-            water_supply: "Public"
-          }
-        },
-        declaration: {
-          declaration1: "Declaration",
-          declaration2: "Declaration",
-          declaration3: "Declaration"
+          customer_type: "End consumer",
+          opening_day_monday: "true",
+          opening_hours_monday: "09:00 to 17:00",
+          water_supply: "Public"
         }
       },
-      local_council_url: "west-dorset"
-    };
-  }
-);
+      declaration: {
+        declaration1: "Declaration",
+        declaration2: "Declaration",
+        declaration3: "Declaration"
+      }
+    },
+    local_council_url: "west-dorset"
+  };
+});
 Given("I have multiple conditional required fields", function () {
-  this.registration.registration.establishment.operator.operator_charity_name =
-    "Op Charity Name";
+  this.registration.registration.establishment.operator.operator_charity_name = "Op Charity Name";
 });
 
 When("I submit it to the backend", async function () {
@@ -265,7 +256,6 @@ When("The send notifications task is triggered", async function () {
   this.response = await triggerNotificationTask();
 });
 
-
 Then("I get a success response", async function () {
   assert.ok(this.response["fsa-rn"]);
 });
@@ -282,18 +272,7 @@ Then("It returns an array of attempted registrations", async function () {
   assert.ok(this.response["attempted"]);
 });
 
-Then(
-  "Only front-end submission registrations are attempted",
-  async function () {
-    assert.ok(
-      frontendRegistrationFSARNs.every((rn) =>
-        this.response["attempted"].includes(rn)
-      )
-    );
-    assert.ok(
-      directRegistrationFSARNs.every(
-        (rn) => !this.response["attempted"].includes(rn)
-      )
-    );
-  }
-);
+Then("Only front-end submission registrations are attempted", async function () {
+  assert.ok(frontendRegistrationFSARNs.every((rn) => this.response["attempted"].includes(rn)));
+  assert.ok(directRegistrationFSARNs.every((rn) => !this.response["attempted"].includes(rn)));
+});

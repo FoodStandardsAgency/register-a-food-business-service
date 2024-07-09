@@ -116,6 +116,12 @@ const transformDataForNotify = (registration, lcContactConfig, i18n) => {
     "DD MMM YYYY"
   );
 
+  if (registrationClone.establishment.operator.operator_birthdate) {
+    registrationClone.establishment.operator.operator_birthdate = moment(
+      registrationClone.establishment.operator.operator_birthdate
+    ).format("DD MMM YYYY");
+  }
+
   let flattenedData = Object.assign(
     {},
     registrationClone.establishment.premise,

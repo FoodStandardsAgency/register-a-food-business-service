@@ -8,6 +8,7 @@ const {
   validatePhoneNumber,
   validatePhoneNumberOptional,
   validateEmail,
+  validateRadioButtons,
   validateCompanyName,
   validateCompaniesHouseNumber,
   validateCharityName,
@@ -17,6 +18,7 @@ const {
   validateBusinessScale,
   validateFoodType,
   validateProcessingActivities,
+  validateOperatorType,
   validateBusinessOtherDetails,
   validateOpeningDaysIrregular,
   validateOpeningDay,
@@ -25,8 +27,7 @@ const {
   validatePartnerName,
   validateOpeningHours,
   validateWaterSupply,
-  validateOperatorType,
-  validateEstablishmentType,
+  validateFsaReferenceNumber,
   validateWebAddress
 } = require("@slice-and-dice/register-a-food-business-validation");
 
@@ -37,40 +38,29 @@ const schema = {
       establishment: {
         type: "object",
         properties: {
-          establishment_details: {
-            type: "object",
-            properties: {
-              establishment_trading_name: {
-                type: "string",
-                validation: validateEstablishmentTradingName
-              },
-              establishment_primary_number: {
-                type: "string",
-                validation: validatePhoneNumber
-              },
-              establishment_secondary_number: {
-                type: "string",
-                validation: validatePhoneNumberOptional
-              },
-              establishment_email: {
-                type: "string",
-                validation: validateEmail
-              },
-              establishment_web_address: {
-                type: "string",
-                validation: validateWebAddress
-              },
-              establishment_opening_date: {
-                type: "string",
-                validation: validateDate
-              }
-            },
-            required: [
-              "establishment_trading_name",
-              "establishment_primary_number",
-              "establishment_email",
-              "establishment_opening_date"
-            ]
+          establishment_trading_name: {
+            type: "string",
+            validation: validateEstablishmentTradingName
+          },
+          establishment_primary_number: {
+            type: "string",
+            validation: validatePhoneNumber
+          },
+          establishment_secondary_number: {
+            type: "string",
+            validation: validatePhoneNumberOptional
+          },
+          establishment_email: {
+            type: "string",
+            validation: validateEmail
+          },
+          establishment_web_address: {
+            type: "string",
+            validation: validateWebAddress
+          },
+          establishment_opening_date: {
+            type: "string",
+            validation: validateDate
           },
           operator: {
             type: "object",
@@ -124,6 +114,10 @@ const schema = {
                 type: "string",
                 validation: validateMandatoryString
               },
+              operator_uprn: {
+                type: "string",
+                validation: validateOptionalString
+              },
               operator_primary_number: {
                 type: "string",
                 validation: validatePhoneNumber
@@ -174,10 +168,10 @@ const schema = {
               }
             },
             required: [
-              "operator_type",
-              "operator_postcode",
               "operator_address_line_1",
-              "operator_town"
+              "operator_type",
+              "operator_town",
+              "operator_postcode"
             ],
             allOf: [
               {
@@ -227,9 +221,13 @@ const schema = {
                 type: "string",
                 validation: validateMandatoryString
               },
+              establishment_uprn: {
+                type: "string",
+                validation: validateOptionalString
+              },
               establishment_type: {
                 type: "string",
-                validation: validateEstablishmentType
+                validation: validateRadioButtons
               }
             },
             required: [
@@ -248,7 +246,7 @@ const schema = {
               },
               business_type_search_term: {
                 type: "string",
-                validation: validateMandatoryString
+                validation: validateOptionalString
               },
               business_scale: {
                 type: "array",
@@ -336,33 +334,47 @@ const schema = {
               "business_scale",
               "food_type",
               "processing_activities",
-              "water_supply",
-              "opening_day_monday",
-              "opening_day_tuesday",
-              "opening_day_wednesday",
-              "opening_day_thursday",
-              "opening_day_friday",
-              "opening_day_saturday",
-              "opening_day_sunday"
+              "water_supply"
+            ],
+            oneOf: [
+              {
+                required: [
+                  "opening_day_monday",
+                  "opening_day_tuesday",
+                  "opening_day_wednesday",
+                  "opening_day_thursday",
+                  "opening_day_friday",
+                  "opening_day_saturday",
+                  "opening_day_sunday"
+                ]
+              },
+              { required: ["opening_days_irregular"] }
             ]
           }
         },
-        required: ["establishment_details", "operator", "premise", "activities"]
+        required: [
+          "establishment_trading_name",
+          "establishment_primary_number",
+          "establishment_email",
+          "establishment_opening_date",
+          "operator",
+          "premise",
+          "activities"
+        ]
       },
-      declaration: {
+      metadata: {
         type: "object",
         properties: {
           declaration1: { type: "string", validation: validateDeclaration },
           declaration2: { type: "string", validation: validateDeclaration },
           declaration3: { type: "string", validation: validateDeclaration },
           feedback1: { type: "string", validation: validateDeclaration }
-        },
-        required: ["declaration1", "declaration2", "declaration3"]
-      }
+        }
+      },
+      fsa_rn: { type: "string", validation: validateFsaReferenceNumber }
     },
-    required: ["establishment", "declaration"]
-  },
-  local_council_url: { type: "string" }
+    required: ["establishment"]
+  }
 };
 
 module.exports = schema;
