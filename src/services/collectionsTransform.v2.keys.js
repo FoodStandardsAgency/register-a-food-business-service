@@ -27,7 +27,8 @@ const operator_keys = [
   "contact_representative_number",
   "contact_representative_email",
   "partners",
-  "operator_companies_house_number"
+  "operator_company_house_number", // from Direct Registration
+  "operator_companies_house_number" // from Front-end submission
 ];
 
 const activities_keys = [
