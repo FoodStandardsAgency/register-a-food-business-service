@@ -42,7 +42,7 @@ const transformRegForCollections = (registration, apiVersion) => {
 
       // Front end uses "operator_companies_house_number" but API uses operator_company_house_number
       // so needs conversion for collections
-      if (operator["operator_companies_house_number"]) {
+      if (!operator["operator_company_house_number"]) {
         operator["operator_company_house_number"] = operator["operator_companies_house_number"];
       }
       delete operator["operator_companies_house_number"];
