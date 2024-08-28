@@ -16,7 +16,7 @@ const registration = {
     establishment_primary_number: "329857245",
     establishment_email: "test@email.com",
     operator: {
-      operator_type: "SOLE_TRADER",
+      operator_type: "SOLETRADER",
       operator_first_name: "Loras",
       operator_last_name: "Tyrell",
       operator_address_line_1: "12",
@@ -67,7 +67,7 @@ const registrationWithFSARN = {
     establishment_primary_number: "329857245",
     establishment_email: "test@email.com",
     operator: {
-      operator_type: "SOLE_TRADER",
+      operator_type: "SOLETRADER",
       operator_first_name: "Loras",
       operator_last_name: "Tyrell",
       operator_address_line_1: "12",

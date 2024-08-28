@@ -5,7 +5,7 @@ const mongodb = require("mongodb");
 
 const {
   getUnifiedRegistrations,
-  getAllRegistrationsByCouncil,
+  getAllRegistrationsByCouncils,
   getSingleRegistration,
   updateRegistrationCollectedByCouncil
 } = require("./registrationsDb.connector");
@@ -31,6 +31,7 @@ const fullRegistration = {
       operator_charity_number: null,
       operator_first_name: "Fred",
       operator_last_name: "Bloggs",
+      operator_birthdate: "2018-06-07",
       operator_address_line_1: "12",
       operator_address_line_2: "Pie Lane",
       operator_address_line_3: "Test",
@@ -45,10 +46,11 @@ const fullRegistration = {
       contact_representative_email: null
     },
     activities: {
-      customer_type: "END_CONSUMER",
       business_type: "001",
       business_type_search_term: null,
-      import_export_activities: "BOTH",
+      business_scale: ["NATIONAL", "LOCAL", "FBO"],
+      food_type: ["READY_TO_EAT", "IMPORTED"],
+      processing_activities: ["REWRAPPING_OR_RELABELLING"],
       water_supply: "PUBLIC",
       business_other_details: null,
       opening_days_irregular: null,
@@ -231,7 +233,7 @@ describe("Function: getAllRegistrationsByCouncils", () => {
       });
 
       try {
-        await getAllRegistrationsByCouncil(councils, newRegistrations, [], before, after);
+        await getAllRegistrationsByCouncils(councils, newRegistrations, [], before, after);
       } catch (err) {
         result = err;
       }
@@ -262,7 +264,13 @@ describe("Function: getAllRegistrationsByCouncils", () => {
             })
           })
         }));
-        results = await getAllRegistrationsByCouncil(councils, newRegistrations, [], before, after);
+        results = await getAllRegistrationsByCouncils(
+          councils,
+          newRegistrations,
+          [],
+          before,
+          after
+        );
       });
       it("should return full registrations", () => {
         expect(results).toStrictEqual([shortRegistration]);
@@ -284,7 +292,7 @@ describe("Function: getAllRegistrationsByCouncils", () => {
             })
           })
         }));
-        results = await getAllRegistrationsByCouncil(
+        results = await getAllRegistrationsByCouncils(
           councils,
           newRegistrations,
           ["establishment", "metadata"],
@@ -312,7 +320,7 @@ describe("Function: getAllRegistrationsByCouncils", () => {
             })
           })
         }));
-        results = await getAllRegistrationsByCouncil(councils, "false", [], before, after);
+        results = await getAllRegistrationsByCouncils(councils, "false", [], before, after);
       });
       it("should return full registrations", () => {
         expect(results).toStrictEqual([shortRegistration]);

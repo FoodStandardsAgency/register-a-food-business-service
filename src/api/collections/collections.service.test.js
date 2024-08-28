@@ -1,18 +1,24 @@
-const { validateOptions } = require("./collections.service");
 jest.mock("../../services/logging.service");
+jest.mock("../../connectors/configDb/configDb.connector", () => ({
+  getCouncilsForSupplier: jest.fn()
+}));
 
-describe("registrations.service", () => {
+const { validateOptions } = require("./collections.service");
+const { getCouncilsForSupplier } = require("../../connectors/configDb/configDb.connector");
+
+describe("collections.service", () => {
   afterEach(() => {
     jest.clearAllMocks();
   });
   let result;
+  const validsubscriber = "cardiff";
   describe("Function: validateOptions", () => {
-    describe("When given valid council", () => {
-      beforeEach(() => {
+    describe("When given valid subscriber", () => {
+      beforeEach(async () => {
         const options = {
-          council: "cardiff"
+          subscriber: validsubscriber
         };
-        result = validateOptions(options);
+        result = await validateOptions(options);
       });
 
       it("should return true", () => {
@@ -20,20 +26,62 @@ describe("registrations.service", () => {
       });
     });
 
-    describe("When given invalid council", () => {
+    describe("When given invalid subscriber", () => {
       const invalidCouncils = [1233, [], {}, false, null, undefined];
-      invalidCouncils.forEach((council) => {
-        result = validateOptions({ council });
+      invalidCouncils.forEach(async (subscriber) => {
+        result = await validateOptions({ subscriber });
+        expect(result).not.toBe(true);
+      });
+    });
+
+    describe("When given valid requestedCouncils", () => {
+      beforeEach(async () => {
+        const validCouncils = ["cardiff", "bath"];
+        getCouncilsForSupplier.mockImplementation(() => validCouncils);
+        const options = {
+          subscriber: validsubscriber,
+          requestedCouncils: validCouncils
+        };
+        result = await validateOptions(options);
+      });
+
+      it("should return true", () => {
+        expect(result).toBe(true);
+      });
+    });
+
+    describe("When given invalid requestedCouncils", () => {
+      const invalidCouncils = [1233, "council", false, null, undefined];
+      invalidCouncils.forEach(async (requestedCouncils) => {
+        result = await validateOptions({
+          subscriber: validsubscriber,
+          requestedCouncils: requestedCouncils
+        });
+        expect(result).not.toBe(true);
+      });
+    });
+
+    describe("When given unauthorized requestedCouncils", () => {
+      beforeEach(async () => {
+        getCouncilsForSupplier.mockImplementation(() => ["cardiff", "bath"]);
+        const options = {
+          subscriber: validsubscriber,
+          requestedCouncils: ["west-dorset"]
+        };
+        result = await validateOptions(options);
+      });
+
+      it("should not return true", () => {
         expect(result).not.toBe(true);
       });
     });
 
     describe("When given valid new", () => {
-      beforeEach(() => {
+      beforeEach(async () => {
         const options = {
           new: "true"
         };
-        result = validateOptions(options);
+        result = await validateOptions(options);
       });
 
       it("should return true", () => {
@@ -43,18 +91,18 @@ describe("registrations.service", () => {
 
     describe("When given invalid new", () => {
       const invalidNew = [1233, [], {}, false, null, undefined, "normal string"];
-      invalidNew.forEach((newOption) => {
-        result = validateOptions({ new: newOption });
+      invalidNew.forEach(async (newOption) => {
+        result = await validateOptions({ new: newOption });
         expect(result).not.toBe(true);
       });
     });
 
     describe("When given valid fields", () => {
-      beforeEach(() => {
+      beforeEach(async () => {
         const options = {
           fields: ["establishment"]
         };
-        result = validateOptions(options);
+        result = await validateOptions(options);
       });
 
       it("should return true", () => {
@@ -64,18 +112,18 @@ describe("registrations.service", () => {
 
     describe("When given invalid fields", () => {
       const invalidFields = [1233, ["invalid"], {}, false, null, undefined, "thing"];
-      invalidFields.forEach((fields) => {
-        result = validateOptions({ fields });
+      invalidFields.forEach(async (fields) => {
+        result = await validateOptions({ fields });
         expect(result).not.toBe(true);
       });
     });
 
     describe("When given valid collected", () => {
-      beforeEach(() => {
+      beforeEach(async () => {
         const options = {
           collected: true
         };
-        result = validateOptions(options);
+        result = await validateOptions(options);
       });
 
       it("should return true", () => {
@@ -85,8 +133,8 @@ describe("registrations.service", () => {
 
     describe("When given invalid collected", () => {
       const invalidCollected = [1233, ["invalid"], {}, "false", null, undefined, "thing"];
-      invalidCollected.forEach((collected) => {
-        result = validateOptions({ collected });
+      invalidCollected.forEach(async (collected) => {
+        result = await validateOptions({ collected });
         expect(result).not.toBe(true);
       });
     });
@@ -100,8 +148,8 @@ describe("registrations.service", () => {
         "2020-06-30 23:15:00"
       ];
 
-      validBefore.forEach((before) => {
-        result = validateOptions({ before });
+      validBefore.forEach(async (before) => {
+        result = await validateOptions({ before });
         expect(result).toBe(true);
       });
     });
@@ -121,8 +169,8 @@ describe("registrations.service", () => {
         "2020-06-30 7:1:8",
         "20-6-1"
       ];
-      invalidBefore.forEach((before) => {
-        result = validateOptions({ before });
+      invalidBefore.forEach(async (before) => {
+        result = await validateOptions({ before });
         expect(result).not.toBe(true);
       });
     });
@@ -136,8 +184,8 @@ describe("registrations.service", () => {
         "2020-06-30 23:15:00"
       ];
 
-      validAfter.forEach((after) => {
-        result = validateOptions({ after });
+      validAfter.forEach(async (after) => {
+        result = await validateOptions({ after });
         expect(result).toBe(true);
       });
     });
@@ -157,30 +205,40 @@ describe("registrations.service", () => {
         "2020-06-30 7:1:8",
         "20-6-1"
       ];
-      invalidAfter.forEach((after) => {
-        result = validateOptions({ after });
+      invalidAfter.forEach(async (after) => {
+        result = await validateOptions({ after });
         expect(result).not.toBe(true);
       });
     });
 
     describe("When given a valid range (no longer than 7 days)", () => {
-      const options = {
-        after: "2019-01-15T12:00:00",
-        before: "2019-01-22T12:00:00"
-      };
+      beforeEach(async () => {
+        const options = {
+          after: "2019-01-15T12:00:00",
+          before: "2019-01-22T12:00:00"
+        };
 
-      result = validateOptions(options);
-      expect(result).toBe(true);
+        result = await validateOptions(options);
+      });
+
+      it("should return true", () => {
+        expect(result).toBe(true);
+      });
     });
 
     describe("When given an invalid range (longer than 7 days)", () => {
-      const options = {
-        after: "2019-01-15T12:00:00",
-        before: "2019-01-22T12:00:01"
-      };
+      beforeEach(async () => {
+        const options = {
+          after: "2019-01-15T12:00:00",
+          before: "2019-01-22T12:00:01"
+        };
 
-      result = validateOptions(options);
-      expect(result).not.toBe(true);
+        result = await validateOptions(options);
+      });
+
+      it("should return true", () => {
+        expect(result).not.toBe(true);
+      });
     });
   });
 });

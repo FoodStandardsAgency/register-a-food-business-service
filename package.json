@@ -1,6 +1,6 @@
 {
   "name": "register-a-food-business-service",
-  "version": "15.2.1",
+  "version": "16.0.0",
   "description": "",
   "main": "src/app.js",
   "engines": {
@@ -45,7 +45,7 @@
   },
   "homepage": "https://github.com/FoodStandardsAgency/register-a-food-business-service#readme",
   "dependencies": {
-    "@slice-and-dice/register-a-food-business-validation": "^1.28.0",
+    "@slice-and-dice/register-a-food-business-validation": "^1.29.3",
     "applicationinsights": "^2.9.2",
     "applicationinsights-native-metrics": "^0.0.10",
     "axios": "^1.6.5",

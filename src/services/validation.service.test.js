@@ -38,11 +38,23 @@ jest.mock("./validation.schema", () => ({
   }
 }));
 
-jest.mock("./validation.directSubmission.schema", () => ({
+jest.mock("./validation.directSubmission.v3.schema", () => ({
   registration: {
     type: "object",
     properties: {
-      test_lc_submission: {
+      test_lc_submission_v3: {
+        type: "string",
+        validation: (input) => input === "true"
+      }
+    }
+  }
+}));
+
+jest.mock("./validation.directSubmission.v4.schema", () => ({
+  registration: {
+    type: "object",
+    properties: {
+      test_lc_submission_v4: {
         type: "string",
         validation: (input) => input === "true"
       }
@@ -74,7 +86,7 @@ describe("Function: validate", () => {
       };
 
       // Act
-      const response = validate(establishment);
+      const response = validate(establishment, "latest");
 
       // Assert
       expect(response).toEqual([]);
@@ -96,7 +108,7 @@ describe("Function: validate", () => {
       };
 
       // Act
-      const response = validate(registration);
+      const response = validate(registration, "latest");
 
       // Assert
       expect(response).toHaveLength(8);
@@ -111,15 +123,30 @@ describe("Function: validate", () => {
     });
   });
 
-  describe("When given valid input for LC direct submission", () => {
+  describe("When given valid input for LC direct submission v3", () => {
     it("Should return empty array using LC validation schema", () => {
       // Arrange
       const establishment = {
-        test_lc_submission: "true"
+        test_lc_submission_v3: "true"
       };
 
       // Act
-      const response = validate(establishment, true);
+      const response = validate(establishment, "v3.0", true);
+
+      // Assert
+      expect(response).toEqual([]);
+    });
+  });
+
+  describe("When given valid input for LC direct submission v4", () => {
+    it("Should return empty array using LC validation schema", () => {
+      // Arrange
+      const establishment = {
+        test_lc_submission_v4: "true"
+      };
+
+      // Act
+      const response = validate(establishment, "v4.0", true);
 
       // Assert
       expect(response).toEqual([]);
@@ -140,7 +167,7 @@ describe("Function: validate", () => {
       };
 
       // Act
-      const response = validate(establishment);
+      const response = validate(establishment, "latest");
 
       // Assert
       expect(response).toHaveLength(0);

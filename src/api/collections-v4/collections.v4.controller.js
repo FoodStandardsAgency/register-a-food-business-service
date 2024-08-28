@@ -1,26 +1,40 @@
 const {
   getSingleRegistration,
-  getAllRegistrationsByCouncil,
+  getAllRegistrationsByCouncils,
   getUnifiedRegistrations,
   updateRegistrationCollectedByCouncil
 } = require("../../connectors/registrationsDb/registrationsDb.connector");
 
-const { validateOptions } = require("./collections.service");
-
+const { validateOptions } = require("../collections/collections.service");
 const { transformRegForCollections } = require("../../services/collectionsTransform.service");
 
 const { logEmitter } = require("../../services/logging.service");
-const { transformEnumsForCollections } = require("../../services/transformEnums.service");
-const version = 1;
+const { getCouncilsForSupplier } = require("../../connectors/configDb/configDb.connector");
+
+const apiVersion = "v4";
 
 const getRegistrationsByCouncil = async (options) => {
-  logEmitter.emit("functionCall", "registrations.controller", "getRegistrationsByCouncil");
+  logEmitter.emit("functionCall", "collections.v4.controller", "getRegistrationsByCouncil");
 
   const validationResult = await validateOptions(options, true);
 
   if (validationResult === true) {
-    const registrations = await getAllRegistrationsByCouncil(
-      options.council,
+    /*Check if single requested LA is the same as subscriber. This means it's either an LA requesting
+    their own registrations or a non-LA subscriber not defining which councils they want returned.
+    In the latter case all authorised registrations should be returned by default.*/
+    if (
+      options.requestedCouncils.length === 1 &&
+      options.requestedCouncils[0] === options.subscriber
+    ) {
+      const validCouncils = await getCouncilsForSupplier(options.subscriber);
+      // validCouncils will return empty array if LA subscriber.
+      if (validCouncils.length > 0) {
+        options.requestedCouncils = validCouncils;
+      }
+    }
+
+    const registrations = await getAllRegistrationsByCouncils(
+      options.requestedCouncils,
       options.new,
       options.fields,
       options.before,
@@ -28,10 +42,10 @@ const getRegistrationsByCouncil = async (options) => {
     );
 
     const formattedRegistrations = registrations.map((registration) => {
-      return transformRegForCollections(registration);
+      return transformRegForCollections(registration, apiVersion);
     });
-    transformEnumsForCollections(version, formattedRegistrations);
-    logEmitter.emit("functionSuccess", "registrations.controller", "getRegistrationsByCouncil");
+    logEmitter.emit("functionSuccess", "collections.v4.controller", "getRegistrationsByCouncil");
+
     return formattedRegistrations;
   } else {
     const error = new Error("");
@@ -42,16 +56,16 @@ const getRegistrationsByCouncil = async (options) => {
 };
 
 const getRegistration = async (options) => {
-  logEmitter.emit("functionCall", "registrations.controller", "getRegistration");
+  logEmitter.emit("functionCall", "collections.v4.controller", "getRegistration");
 
   const validationResult = await validateOptions(options);
 
   if (validationResult === true) {
-    const registration = await getSingleRegistration(options.fsa_rn, options.council);
+    const registration = await getSingleRegistration(options.fsa_rn, options.requestedCouncil);
 
-    const formattedRegistration = transformRegForCollections(registration);
-    transformEnumsForCollections(version, formattedRegistration);
-    logEmitter.emit("functionSuccess", "registrations.controller", "getRegistration");
+    const formattedRegistration = transformRegForCollections(registration, apiVersion);
+
+    logEmitter.emit("functionSuccess", "collections.v4.controller", "getRegistration");
     return formattedRegistration;
   } else {
     const error = new Error("");
@@ -62,7 +76,7 @@ const getRegistration = async (options) => {
 };
 
 const getRegistrations = async (options) => {
-  logEmitter.emit("functionCall", "registrations.controller", "getRegistrations");
+  logEmitter.emit("functionCall", "collections.v4.controller", "getRegistrations");
 
   const validationResult = await validateOptions(options);
 
@@ -73,10 +87,9 @@ const getRegistrations = async (options) => {
     ]);
 
     const formattedRegistrations = registrations.map((registration) => {
-      return transformRegForCollections(registration);
+      return transformRegForCollections(registration, apiVersion);
     });
-    transformEnumsForCollections(version, formattedRegistrations);
-    logEmitter.emit("functionSuccess", "registrations.controller", "getRegistrations");
+    logEmitter.emit("functionSuccess", "collections.v4.controller", "getRegistrations");
     return formattedRegistrations;
   } else {
     const error = new Error("");
@@ -87,7 +100,7 @@ const getRegistrations = async (options) => {
 };
 
 const updateRegistration = async (options) => {
-  logEmitter.emit("functionCall", "registrations.controller", "updateRegistration");
+  logEmitter.emit("functionCall", "collections.v4.controller", "updateRegistration");
 
   const validationResult = await validateOptions(options);
 
@@ -95,10 +108,10 @@ const updateRegistration = async (options) => {
     const response = await updateRegistrationCollectedByCouncil(
       options.fsa_rn,
       options.collected,
-      options.council
+      options.requestedCouncil
     );
 
-    logEmitter.emit("functionSuccess", "registrations.controller", "updateRegistration");
+    logEmitter.emit("functionSuccess", "collections.v4.controller", "updateRegistration");
 
     return response;
   } else {

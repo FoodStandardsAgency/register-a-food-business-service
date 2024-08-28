@@ -5,13 +5,13 @@ const {
   getRegistration,
   getRegistrations,
   updateRegistration
-} = require("./collections.v3.controller");
+} = require("./collections.v4.controller");
 
-const collectionsV3Router = () => {
+const collectionsV4Router = () => {
   const router = Router();
 
   router.get("/unified", async (req, res, next) => {
-    logEmitter.emit("functionCall", "collections.v3.router", "GET /unified route");
+    logEmitter.emit("functionCall", "collections.v4.router", "GET /unified route");
     try {
       let registrations;
       const options = {
@@ -21,16 +21,16 @@ const collectionsV3Router = () => {
 
       registrations = await getRegistrations(options);
 
-      logEmitter.emit("functionSuccess", "collections.v3.router", "GET /unified route");
+      logEmitter.emit("functionSuccess", "collections.v4.router", "GET /unified route");
       res.send(registrations);
     } catch (err) {
-      logEmitter.emit("functionFail", "collections.v3.router", "GET /unified route", err);
+      logEmitter.emit("functionFail", "collections.v4.router", "GET /unified route", err);
       next(err);
     }
   });
 
   router.get("/:subscriber", async (req, res, next) => {
-    logEmitter.emit("functionCall", "collections.v3.router", "/:subscriber route");
+    logEmitter.emit("functionCall", "collections.v4.router", "/:subscriber route");
     try {
       const fields = req.query.fields ? req.query.fields.split(",") : [];
       const options = {
@@ -46,16 +46,16 @@ const collectionsV3Router = () => {
 
       const registrations = await getRegistrationsByCouncil(options);
 
-      logEmitter.emit("functionSuccess", "collections.v3.router", "GET /:subscriber route");
+      logEmitter.emit("functionSuccess", "collections.v4.router", "GET /:subscriber route");
       res.send(registrations);
     } catch (err) {
-      logEmitter.emit("functionFail", "collections.v3.router", "GET /:subscriber route", err);
+      logEmitter.emit("functionFail", "collections.v4.router", "GET /:subscriber route", err);
       next(err);
     }
   });
 
   router.get("/:subscriber/:fsa_rn", async (req, res, next) => {
-    logEmitter.emit("functionCall", "collections.v3.router", "GET /:subscriber/:fsa_rn route");
+    logEmitter.emit("functionCall", "collections.v4.router", "GET /:subscriber/:fsa_rn route");
     try {
       const options = {
         fsa_rn: req.params.fsa_rn,
@@ -65,12 +65,12 @@ const collectionsV3Router = () => {
 
       const registration = await getRegistration(options);
 
-      logEmitter.emit("functionSuccess", "collections.v3.router", "GET /:subscriber/:fsa_rn route");
+      logEmitter.emit("functionSuccess", "collections.v4.router", "GET /:subscriber/:fsa_rn route");
       res.send(registration);
     } catch (err) {
       logEmitter.emit(
         "functionFail",
-        "collections.v3.router",
+        "collections.v4.router",
         "GET /:subscriber/:fsa_rn route",
         err
       );
@@ -79,7 +79,7 @@ const collectionsV3Router = () => {
   });
 
   router.put("/:subscriber/:fsa_rn", async (req, res, next) => {
-    logEmitter.emit("functionCall", "collections.v3.router", "PUT /:subscriber/:fsa_rn route");
+    logEmitter.emit("functionCall", "collections.v4.router", "PUT /:subscriber/:fsa_rn route");
     try {
       const options = {
         collected: req.body.collected,
@@ -90,12 +90,12 @@ const collectionsV3Router = () => {
 
       const response = await updateRegistration(options);
 
-      logEmitter.emit("functionSuccess", "collections.v3.router", "PUT /:subscriber/:fsa_rn route");
+      logEmitter.emit("functionSuccess", "collections.v4.router", "PUT /:subscriber/:fsa_rn route");
       res.send(response);
     } catch (err) {
       logEmitter.emit(
         "functionFail",
-        "collections.v3.router",
+        "collections.v4.router",
         "PUT /:subscriber/:fsa_rn route",
         err
       );
@@ -106,4 +106,4 @@ const collectionsV3Router = () => {
   return router;
 };
 
-module.exports = { collectionsV3Router };
+module.exports = { collectionsV4Router };

@@ -1,4 +1,4 @@
-jest.mock("../../connectors/registrationsDb-v3/registrationsDb.v3.connector", () => ({
+jest.mock("../../connectors/registrationsDb/registrationsDb.connector", () => ({
   getAllRegistrationsByCouncils: jest.fn(),
   getUnifiedRegistrations: jest.fn(),
   getSingleRegistration: jest.fn(),
@@ -8,21 +8,21 @@ jest.mock("../../connectors/configDb/configDb.connector", () => ({
   getCouncilsForSupplier: jest.fn()
 }));
 
-jest.mock("../../services/collectionsTransform.v3.service", () => ({
+jest.mock("../../services/collectionsTransform.service", () => ({
   transformRegForCollections: jest.fn()
 }));
 
 jest.mock("../../services/logging.service");
-jest.mock("./collections.v3.service");
+jest.mock("../collections/collections.service");
 
-const { validateOptions } = require("./collections.v3.service");
+const { validateOptions } = require("../collections/collections.service");
 
 const {
   getAllRegistrationsByCouncils,
   getSingleRegistration,
   getUnifiedRegistrations,
   updateRegistrationCollectedByCouncil
-} = require("../../connectors/registrationsDb-v3/registrationsDb.v3.connector");
+} = require("../../connectors/registrationsDb/registrationsDb.connector");
 
 const {
   getRegistrationsByCouncil,
@@ -31,7 +31,7 @@ const {
   updateRegistration
 } = require("./collections.v3.controller");
 const { getCouncilsForSupplier } = require("../../connectors/configDb/configDb.connector");
-const { transformRegForCollections } = require("../../services/collectionsTransform.v3.service");
+const { transformRegForCollections } = require("../../services/collectionsTransform.service");
 
 const localAuthorityOptions = {
   subscriber: "cardiff",
@@ -280,7 +280,7 @@ describe("registrations.v3.controller", () => {
           );
         });
         it("should call transformRegForCollection", () => {
-          expect(transformRegForCollections).toHaveBeenCalledWith(shortRegistration);
+          expect(transformRegForCollections).toHaveBeenCalledWith(shortRegistration, "v3");
         });
         it("Should return the result of transformRegForCollection", () => {
           expect(result).toEqual([transformedShortReg]);
@@ -302,7 +302,7 @@ describe("registrations.v3.controller", () => {
             );
           });
           it("should call transformRegForCollection", () => {
-            expect(transformRegForCollections).toHaveBeenCalledWith(shortRegistration);
+            expect(transformRegForCollections).toHaveBeenCalledWith(shortRegistration, "v3");
           });
           it("Should return the result of getAllRegistrationsByCouncils", () => {
             expect(result).toEqual([transformedShortReg]);
@@ -323,7 +323,7 @@ describe("registrations.v3.controller", () => {
             );
           });
           it("should call transformRegForCollection", () => {
-            expect(transformRegForCollections).toHaveBeenCalledWith(shortRegistration);
+            expect(transformRegForCollections).toHaveBeenCalledWith(shortRegistration, "v3");
           });
           it("Should return the result of getAllRegistrationsByCouncils", () => {
             expect(result).toEqual([transformedShortReg]);

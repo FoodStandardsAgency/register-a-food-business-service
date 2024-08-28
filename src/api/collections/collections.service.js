@@ -1,5 +1,6 @@
 const { logEmitter } = require("../../services/logging.service");
 const { isISO8601 } = require("validator");
+const { getCouncilsForSupplier } = require("../../connectors/configDb/configDb.connector");
 
 const validateString = (value) => {
   return typeof value === "string";
@@ -23,6 +24,10 @@ const validateFields = (value) => {
   return value.every((val) => allowedFields.includes(val));
 };
 
+const validateArray = (value) => {
+  return Array.isArray(value);
+};
+
 const dateRange = (afterValue, beforeValue) => {
   const after = new Date(afterValue);
   let before = new Date(beforeValue);
@@ -41,10 +46,11 @@ const validateDateTime = (value) => {
 const dateTimeFormat = "yyyy-MM-ddTHH:mm:ssZ";
 
 const validationFields = {
-  council: {
+  subscriber: {
     function: validateString,
-    message: "council option must be a string"
+    message: "subscriber option must be a string"
   },
+
   new: {
     function: validateBooleanString,
     message: "new option must be a boolean"
@@ -71,11 +77,22 @@ const validationFields = {
   },
   dateRange: {
     message: "range between before and after options must be less than 7 days"
+  },
+  requestedCouncil: {
+    function: validateString,
+    message: "local-authority option must be a string"
+  },
+  requestedCouncils: {
+    function: validateArray,
+    message: "requested local-authorities must be a valid list of local authorities"
+  },
+  authorizedCouncils: {
+    message: "requested local-authorities must only contain authorized local authorities"
   }
 };
 
-const validateOptions = (options, unlimitedDateRange) => {
-  logEmitter.emit("functionCall", "registrations.service", "validateOptions");
+const validateOptions = async (options, unlimitedDateRange) => {
+  logEmitter.emit("functionCall", "collections.service", "validateOptions");
 
   for (const key in options) {
     // Check if the validation function for each key returns true or false for the associated value
@@ -84,6 +101,7 @@ const validateOptions = (options, unlimitedDateRange) => {
     }
   }
 
+  // validate date range
   if (
     !unlimitedDateRange &&
     options.before &&
@@ -92,12 +110,32 @@ const validateOptions = (options, unlimitedDateRange) => {
   ) {
     return raiseValidationError(validationFields["dateRange"].message);
   }
-  logEmitter.emit("functionSuccess", "registrations.service", "validateOptions");
+
+  // validate subscriber has access to requested councils
+  const requestedCouncils = options.requestedCouncil
+    ? [options.requestedCouncil]
+    : options.requestedCouncils;
+  // This should always be true due to previous validation
+  if (options.subscriber && requestedCouncils && requestedCouncils.length > 0) {
+    // No need to validate if council is just looking for their own registrations
+    if (requestedCouncils.length > 1 || requestedCouncils[0] !== options.subscriber) {
+      const validCouncils = await getCouncilsForSupplier(options.subscriber);
+      if (
+        !requestedCouncils.every(function (val) {
+          return validCouncils.indexOf(val) >= 0;
+        })
+      ) {
+        return raiseValidationError(validationFields["authorizedCouncils"].message);
+      }
+    }
+  }
+
+  logEmitter.emit("functionSuccess", "collections.service", "validateOptions");
   return true;
 };
 
 const raiseValidationError = (message) => {
-  logEmitter.emit("functionFail", "registrations.service", "validateOptions", new Error(message));
+  logEmitter.emit("functionFail", "collections.service", "validateOptions", new Error(message));
   return message;
 };
 

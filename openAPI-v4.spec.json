@@ -1,12 +1,12 @@
 {
   "openapi": "3.0.1",
   "info": {
-    "title": "Register a food business collections",
-    "version": "v3.0"
+    "title": "Register a food business registrations",
+    "version": "v4.0"
   },
   "servers": [
     {
-      "url": "https://fsa-rof-gateway.azure-api.net/registrations/v3"
+      "url": "https://fsa-rof-gateway.azure-api.net/registrations/v4"
     }
   ],
   "paths": {
@@ -44,6 +44,11 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ArrayOfRegistrations"
+                },
+                "examples": {
+                  "valid-response": {
+                    "$ref": "#/components/examples/RegistrationArrayResponseExample"
+                  }
                 }
               }
             }
@@ -137,6 +142,11 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ArrayOfRegistrations"
+                },
+                "examples": {
+                  "valid-response": {
+                    "$ref": "#/components/examples/RegistrationArrayResponseExample"
+                  }
                 }
               }
             }
@@ -183,6 +193,11 @@
             "application/json": {
               "schema": {
                 "$ref": "#/components/schemas/DirectRegistration"
+              },
+              "examples": {
+                "valid-registration": {
+                  "$ref": "#/components/examples/DirectRegistrationExample"
+                }
               }
             }
           }
@@ -262,6 +277,11 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/Registration"
+                },
+                "examples": {
+                  "valid-response": {
+                    "$ref": "#/components/examples/RegistrationResponseExample"
+                  }
                 }
               }
             }
@@ -506,6 +526,10 @@
             "type": "string",
             "description": "Required if operator_type is 'SOLETRADER, 'PARTNERSHIP', or 'PERSON'."
           },
+          "operator_birthdate": {
+            "type": "string",
+            "description": "Required if operator_type is 'SOLETRADER, 'PARTNERSHIP', or 'PERSON'. Uses YYYY-MM-DD [npm Validator](https://www.npmjs.com/package/validator) isISO8601."
+          },
           "operator_postcode": {
             "type": "string",
             "description": "Uses [npm Validator](https://www.npmjs.com/package/validator) isPostalCode (GB)."
@@ -667,12 +691,19 @@
         }
       },
       "Activities": {
-        "required": ["customer_type", "business_type", "import_export_activities", "water_supply"],
+        "required": [
+          "business_type",
+          "business_scale",
+          "food_type",
+          "processing_activities",
+          "water_supply"
+        ],
         "type": "object",
         "properties": {
           "customer_type": {
             "type": "string",
-            "enum": ["OTHER_BUSINESSES", "END_CONSUMER", "BOTH"]
+            "enum": ["OTHER_BUSINESSES", "END_CONSUMER", "BOTH"],
+            "deprecated": true
           },
           "business_type": {
             "type": "string",
@@ -683,7 +714,55 @@
           },
           "import_export_activities": {
             "type": "string",
-            "enum": ["IMPORT", "EXPORT", "BOTH", "NONE"]
+            "enum": ["IMPORT", "EXPORT", "BOTH", "NONE"],
+            "deprecated": true
+          },
+          "business_scale": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "enum": [
+                "LOCAL",
+                "NATIONAL",
+                "EXPORT",
+                "ONLINE",
+                "FBO",
+                "SENIOR_YOUTH",
+                "HEALTHCARE",
+                "NONE",
+                "DONT_KNOW"
+              ]
+            }
+          },
+          "food_type": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "enum": [
+                "RAW_UNWRAPPED_MEAT_FISH_SHELLFISH",
+                "READY_TO_EAT",
+                "COOKED_OR_REHEATED",
+                "IMPORTED",
+                "NONE",
+                "DONT_KNOW"
+              ]
+            }
+          },
+          "processing_activities": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "enum": [
+                "VACUUM_PACKING",
+                "SOUS_VIDE",
+                "FERMENTING_OR_CURING",
+                "PASTEURISING",
+                "ANIMAL_UNCOOKED",
+                "REWRAPPING_OR_RELABELLING",
+                "NONE",
+                "DONT_KNOW"
+              ]
+            }
           },
           "water_supply": {
             "type": "string",
@@ -784,6 +863,168 @@
         "properties": {
           "collected": {
             "type": "boolean"
+          }
+        }
+      }
+    },
+    "examples": {
+      "RegistrationArrayResponseExample": {
+        "value": [
+          {
+            "fsa_rn": "HP6NHX-JFDCWT-P3ZPRW",
+            "council": "City of Cardiff Council",
+            "competent_authority_id": 8015,
+            "local_council_url": "cardiff",
+            "collected": false,
+            "collected_at": null,
+            "createdAt": "2024-07-22T12:10:04.407Z",
+            "updatedAt": "2024-07-22T12:10:04.407Z",
+            "establishment": {},
+            "metadata": {}
+          },
+          {
+            "fsa_rn": "ECHSYS-DBRL1A-2GXAEP",
+            "council": "City of Cardiff Council",
+            "competent_authority_id": 8015,
+            "local_council_url": "cardiff",
+            "collected": false,
+            "collected_at": null,
+            "createdAt": "2024-07-22T12:10:09.139Z",
+            "updatedAt": "2024-07-22T12:10:09.139Z",
+            "establishment": {},
+            "metadata": {}
+          }
+        ]
+      },
+      "RegistrationResponseExample": {
+        "value": {
+          "fsa_rn": "HP6BBX-JFDCWT-P3ZAAW",
+          "council": "Highgarden",
+          "competent_authority_id": 1000111,
+          "local_council_url": "highgarden",
+          "collected": true,
+          "collected_at": "2024-07-26T07:46:42.626Z",
+          "createdAt": "2024-07-26T07:46:42.626Z",
+          "updatedAt": "2024-07-26T07:46:42.626Z",
+          "establishment": {
+            "establishment_trading_name": "Bob's Burgers",
+            "establishment_opening_date": "2018-06-07",
+            "establishment_primary_number": "329857245",
+            "establishment_secondary_number": "7784345245",
+            "establishment_web_address": "www.bobsburgers.burgers.com",
+            "establishment_email": "bobsburgers@burgers.com",
+            "operator": {
+              "operator_type": "SOLETRADER",
+              "operator_company_name": null,
+              "operator_charity_name": null,
+              "operator_charity_number": null,
+              "operator_first_name": "Bob",
+              "operator_last_name": "Bloggs",
+              "operator_birthdate": "1980-01-01",
+              "operator_postcode": "SW12 9XX",
+              "operator_uprn": null,
+              "operator_address_line_1": "335",
+              "operator_address_line_2": null,
+              "operator_address_line_3": null,
+              "operator_town": "London",
+              "operator_primary_number": "329857245",
+              "operator_secondary_number": null,
+              "operator_email": "bobsburgers@burgers.com",
+              "contact_representative_name": null,
+              "contact_representative_role": null,
+              "contact_representative_number": null,
+              "contact_representative_email": null,
+              "partners": [],
+              "operator_company_house_number": null
+            },
+            "activities": {
+              "customer_type": null,
+              "business_type": "043",
+              "business_type_search_term": null,
+              "business_scale": ["NATIONAL", "LOCAL", "FBO"],
+              "food_type": ["READY_TO_EAT", "IMPORTED"],
+              "processing_activities": ["REWRAPPING_OR_RELABELLING"],
+              "import_export_activities": null,
+              "water_supply": "PUBLIC",
+              "business_other_details": "Suspendisse potenti. Cras in purus eu magna vulputate luctus. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus.",
+              "opening_days_irregular": "Open odd times",
+              "opening_day_monday": null,
+              "opening_day_tuesday": null,
+              "opening_day_wednesday": null,
+              "opening_day_thursday": null,
+              "opening_day_friday": null,
+              "opening_day_saturday": null,
+              "opening_day_sunday": null,
+              "opening_hours_monday": null,
+              "opening_hours_tuesday": null,
+              "opening_hours_wednesday": null,
+              "opening_hours_thursday": null,
+              "opening_hours_friday": null,
+              "opening_hours_saturday": null,
+              "opening_hours_sunday": null
+            },
+            "premise": {
+              "establishment_address_line_1": "1 Bob's Lane",
+              "establishment_address_line_2": "Bob Town",
+              "establishment_address_line_3": "null",
+              "establishment_town": "London",
+              "establishment_postcode": "CF10 5NE",
+              "establishment_uprn": null,
+              "establishment_type": "COMMERCIAL"
+            }
+          },
+          "metadata": {
+            "declaration1": "I declare that the information I have given on this form is correct and complete to the best of my knowledge and belief.",
+            "declaration2": "I, or the operator, will notify food authorities of any significant changes to the business activity, including closure, within 28 days of the change happening.",
+            "declaration3": "I, or the operator, understands the operator is legally responsible for the safety and authenticity of the food being produced or served at this establishment."
+          }
+        }
+      },
+      "DirectRegistrationExample": {
+        "value": {
+          "fsa_rn": "HP6BBX-JFDCWT-P3ZAAW",
+          "local_council_url": "london",
+          "establishment": {
+            "establishment_trading_name": "Bob's Burgers",
+            "establishment_primary_number": "329857245",
+            "establishment_secondary_number": "7784345245",
+            "establishment_email": "bobsburgers@burgers.com",
+            "establishment_web_address": "www.bobsburgers.burgers.com",
+            "establishment_opening_date": "2018-06-07",
+            "operator": {
+              "operator_first_name": "Bob",
+              "operator_last_name": "Bloggs",
+              "operator_birthdate": "1980-01-01",
+              "operator_postcode": "SW12 9XX",
+              "operator_address_line_1": "335",
+              "operator_street": "Some St.",
+              "operator_town": "London",
+              "operator_primary_number": "329857245",
+              "operator_email": "bobsburgers@burgers.com",
+              "operator_type": "SOLETRADER"
+            },
+            "premise": {
+              "establishment_postcode": "CF10 5NE",
+              "establishment_address_line_1": "1 Bob's Lane",
+              "establishment_address_line_2": "Bob Town",
+              "establishment_address_line_3": null,
+              "establishment_town": "London",
+              "establishment_type": "COMMERCIAL"
+            },
+            "activities": {
+              "business_type": "043",
+              "business_scale": ["NATIONAL", "LOCAL", "FBO"],
+              "food_type": ["READY_TO_EAT", "IMPORTED"],
+              "processing_activities": ["REWRAPPING_OR_RELABELLING"],
+              "water_supply": "PUBLIC",
+              "business_other_details": "Suspendisse potenti. Cras in purus eu magna vulputate luctus. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus.",
+              "opening_days_irregular": "Open odd times"
+            },
+            "metadata": {
+              "declaration1": "I declare that the information I have given on this form is correct and complete to the best of my knowledge and belief.",
+              "declaration2": "The operator will notify their local council of any significant changes to the business activity, including closure, within 28 days of the change happening.",
+              "declaration3": "The operator understands they are legally responsible for the safety and authenticity of the food being produced or served at this establishment."
+            }
           }
         }
       }
