@@ -96,9 +96,8 @@ const runSeed = async () => {
       throw new Error(err);
     }
   }
-  /* eslint-disable */
+
   process.exit(0);
-  /* eslint-enable */
 };
 
 runSeed();

@@ -15,9 +15,7 @@
 const { logEmitter } = require("../services/logging.service");
 const errorDetails = require("./errors.json");
 
-/* eslint-disable */
 const errorHandler = (err, req, res, next) => {
-  /* eslint-enable */
   if (err.name !== "validationError") {
     logEmitter.emit("error", `Application error handled - ${err && err.message}`); // Used for Azure alerts
   }

@@ -5,9 +5,7 @@ const logger = createLogger({
 
 const { AzureApplicationInsightsLogger } = require("winston-azure-application-insights");
 
-/* eslint-disable */
 const { ElasticsearchTransport } = require("winston-elasticsearch");
-/* eslint-enable */
 
 let env = process.env.NODE_ENV;
 let logLevel = env === "production" ? "error" : "info";
