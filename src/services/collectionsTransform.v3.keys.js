@@ -66,7 +66,6 @@ const premise_keys = [
   "establishment_type"
 ];
 
-// eslint-disable-next-line no-unused-vars
 const versionSpecificTransforms = (establishment, operator, activities, premise) => {
   // No specific logic for V3
 };

@@ -34,7 +34,6 @@ const noSession = {
 };
 
 describe("logEmitter", () => {
-  /* eslint-disable */
   let clsNamespace;
 
   beforeEach(async () => {
@@ -43,7 +42,7 @@ describe("logEmitter", () => {
   afterEach(async () => {
     cls.reset();
   });
-  /* eslint-enable */
+
   describe("on functionCall event", () => {
     it("should call winston info with called", async () => {
       const message = FUNCTION_CALL;

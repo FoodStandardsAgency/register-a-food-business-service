@@ -157,7 +157,7 @@ describe("Pdf Service: ", () => {
             "Ready to eat food (food that will not be cooked or reheated before serving),\nFood that your business has imported (from outside the UK)"
           );
           expect(result.activities.business_scale).toEqual(
-            "To national customers (who live or work across the UK),\nTo local customers (who live or work in the local area),\nTo provide food directly to other businesses"
+            "To national customers (who live or work across the UK),\nTo local customers (who live or work in the local area),\nTo provide food directly to other food businesses"
           );
         });
       });
