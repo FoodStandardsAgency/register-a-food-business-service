@@ -45,7 +45,7 @@
   },
   "homepage": "https://github.com/FoodStandardsAgency/register-a-food-business-service#readme",
   "dependencies": {
-    "@slice-and-dice/register-a-food-business-validation": "^1.29.4",
+    "@slice-and-dice/register-a-food-business-validation": "^1.30.0",
     "applicationinsights": "^3.3.0",
     "applicationinsights-native-metrics": "^0.0.11",
     "axios": "^1.7.7",
