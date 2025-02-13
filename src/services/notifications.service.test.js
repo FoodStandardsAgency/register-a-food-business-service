@@ -38,7 +38,8 @@ const exampleDeclaration = {
 const exampleRegistrationEstablishment = {
   establishment_details: {
     establishment_trading_name: "Itsu",
-    establishment_opening_date: "2017-12-30"
+    establishment_opening_date: "2017-12-30",
+    establishment_additional_trading_names: "Itsu 1, Itsu 2"
   },
   operator: {
     operator_first_name: "Fred",
@@ -67,7 +68,8 @@ const exampleRegistrationEstablishment = {
 const exampleRegistrationEstablishmentWithFalseEnums = {
   establishment_details: {
     establishment_trading_name: "Itsu",
-    establishment_opening_date: "2017-12-30"
+    establishment_opening_date: "2017-12-30",
+    establishment_additional_trading_names: "Itsu 1, Itsu 2"
   },
   operator: {
     operator_first_name: "Fred",
@@ -102,7 +104,8 @@ const testRegistrationDataWithFalseEnums = {
 const examplePartnershipRegistrationEstablishment = {
   establishment_details: {
     establishment_trading_name: "Itsu",
-    establishment_opening_date: "2017-12-30"
+    establishment_opening_date: "2017-12-30",
+    establishment_additional_trading_names: "Itsu 1, Itsu 2"
   },
   operator: {
     operator_first_name: "Fred",
@@ -226,7 +229,7 @@ describe(`generateEmailsToSend`, () => {
       },
       {
         address: "testop",
-        templateId: "281514ac-c813-42cd-8a26-afd6d09c72e0",
+        templateId: "336ca481-565b-4fa9-be87-de50ac1f1a0c",
         type: "FBO"
       }
     ]);
@@ -248,7 +251,7 @@ describe(`generateEmailsToSend`, () => {
     expect(result).toStrictEqual([
       {
         address: "testop",
-        templateId: "281514ac-c813-42cd-8a26-afd6d09c72e0",
+        templateId: "336ca481-565b-4fa9-be87-de50ac1f1a0c",
         type: "FBO"
       }
     ]);
@@ -270,7 +273,7 @@ describe(`generateEmailsToSend`, () => {
     expect(result).toStrictEqual([
       {
         address: "testrep",
-        templateId: "281514ac-c813-42cd-8a26-afd6d09c72e0",
+        templateId: "336ca481-565b-4fa9-be87-de50ac1f1a0c",
         type: "FBO"
       }
     ]);
@@ -293,7 +296,7 @@ describe(`generateEmailsToSend`, () => {
       {
         address: "testrep",
         emailReplyToId: "123456",
-        templateId: "281514ac-c813-42cd-8a26-afd6d09c72e0",
+        templateId: "336ca481-565b-4fa9-be87-de50ac1f1a0c",
         type: "FBO"
       }
     ]);
@@ -323,27 +326,27 @@ describe(`generateEmailsToSend`, () => {
       {
         type: "LC",
         address: "fake_notify_1@test.com",
-        templateId: "9b17b8ea-5639-435d-977e-9949f9f1e8c5"
+        templateId: "fa0c23b8-0862-4030-967e-b9eb4211b495"
       },
       {
         type: "LC",
         address: "fake_notify_2@test.com",
-        templateId: "9b17b8ea-5639-435d-977e-9949f9f1e8c5"
+        templateId: "fa0c23b8-0862-4030-967e-b9eb4211b495"
       },
       {
         type: "LC",
         address: "fake_notify_3@test.com",
-        templateId: "9b17b8ea-5639-435d-977e-9949f9f1e8c5"
+        templateId: "fa0c23b8-0862-4030-967e-b9eb4211b495"
       },
       {
         type: "LC",
         address: "fake_notify_4@test.com",
-        templateId: "9b17b8ea-5639-435d-977e-9949f9f1e8c5"
+        templateId: "fa0c23b8-0862-4030-967e-b9eb4211b495"
       },
       {
         type: "FBO",
         address: "testrep",
-        templateId: "281514ac-c813-42cd-8a26-afd6d09c72e0"
+        templateId: "336ca481-565b-4fa9-be87-de50ac1f1a0c"
       }
     ]);
   });
@@ -368,17 +371,17 @@ describe(`generateEmailsToSend`, () => {
       {
         type: "FBO",
         address: "testrep",
-        templateId: "281514ac-c813-42cd-8a26-afd6d09c72e0"
+        templateId: "336ca481-565b-4fa9-be87-de50ac1f1a0c"
       },
       {
         type: "FBO_FB",
         address: "testrep",
-        templateId: "e36a8f9e-c20b-4ab3-908e-3ceaaafec12a"
+        templateId: "257dba18-18ff-4496-9896-e23f6ebf3a02"
       },
       {
         type: "FD_FB",
         address: "fsatestemail.valid@gmail.com",
-        templateId: "c58c834f-97c5-486d-a4fa-6b42edc171b7"
+        templateId: "c39fa70e-5a02-4a96-ba3b-ae4af3a1e240"
       }
     ]);
   });
@@ -422,22 +425,22 @@ describe(`generateEmailsToSend`, () => {
       {
         type: "LC",
         address: "test_lc1@email.com",
-        templateId: "9b17b8ea-5639-435d-977e-9949f9f1e8c5"
+        templateId: "fa0c23b8-0862-4030-967e-b9eb4211b495"
       },
       {
         type: "LC",
         address: "test_lc2@email.com",
-        templateId: "9b17b8ea-5639-435d-977e-9949f9f1e8c5"
+        templateId: "fa0c23b8-0862-4030-967e-b9eb4211b495"
       },
       {
         type: "LC",
         address: "test_lc3@email.com",
-        templateId: "9b17b8ea-5639-435d-977e-9949f9f1e8c5"
+        templateId: "fa0c23b8-0862-4030-967e-b9eb4211b495"
       },
       {
         type: "FBO",
         address: "test_fbo@email.com",
-        templateId: "281514ac-c813-42cd-8a26-afd6d09c72e0"
+        templateId: "336ca481-565b-4fa9-be87-de50ac1f1a0c"
       }
     ]);
   });
@@ -485,7 +488,8 @@ describe("Function: transformDataForNotify", () => {
           local_council_email_standards: "standards@example.com",
           local_council_phone_number_standards: "123456789",
           example: "value",
-          establishment_postcode_FD: "SW12"
+          establishment_postcode_FD: "SW12",
+          establishment_additional_trading_names: "Itsu 1, Itsu 2"
         };
         expect(result).toEqual(expectedFormat);
       });
@@ -524,7 +528,8 @@ describe("Function: transformDataForNotify", () => {
           hasAuth: true,
           local_council_phone_number: "123456789",
           example: "value",
-          establishment_postcode_FD: "SW12"
+          establishment_postcode_FD: "SW12",
+          establishment_additional_trading_names: "Itsu 1, Itsu 2"
         };
         expect(result).toEqual(expectedFormat);
       });
@@ -562,7 +567,8 @@ describe("Function: transformDataForNotify", () => {
           country: undefined,
           hasAuth: undefined,
           example: "value",
-          establishment_postcode_FD: "SW12"
+          establishment_postcode_FD: "SW12",
+          establishment_additional_trading_names: "Itsu 1, Itsu 2"
         };
 
         expect(result).toEqual(expectedFormat);
@@ -599,7 +605,8 @@ describe("Function: transformDataForNotify", () => {
           local_council_standards: "Standards council name",
           local_council_email_standards: "standards@example.com",
           example: "value",
-          establishment_postcode_FD: "SW12"
+          establishment_postcode_FD: "SW12",
+          establishment_additional_trading_names: "Itsu 1, Itsu 2"
         };
 
         expect(result).toEqual(expectedFormat);
@@ -636,7 +643,8 @@ describe("Function: transformDataForNotify", () => {
           local_council_standards: "Standards council name",
           local_council_email_standards: "standards@example.com",
           local_council_phone_number_standards: "123456789",
-          reg_submission_date: "01 Dec 2018"
+          reg_submission_date: "01 Dec 2018",
+          establishment_additional_trading_names: "Itsu 1, Itsu 2"
         };
 
         expect(result).toEqual(expectedFormat);
@@ -680,7 +688,8 @@ describe("Function: transformDataForNotify", () => {
           local_council_standards: "Standards council name",
           local_council_email_standards: "standards@example.com",
           local_council_phone_number_standards: "123456789",
-          establishment_postcode_FD: "SW12"
+          establishment_postcode_FD: "SW12",
+          establishment_additional_trading_names: "Itsu 1, Itsu 2"
         };
 
         expect(result).toEqual(expectedFormat);
@@ -717,7 +726,8 @@ describe("Function: transformDataForNotify", () => {
           country: "wales",
           hasAuth: true,
           local_council_phone_number: "123456789",
-          establishment_postcode_FD: "SW12"
+          establishment_postcode_FD: "SW12",
+          establishment_additional_trading_names: "Itsu 1, Itsu 2"
         };
 
         expect(result).toEqual(expectedFormat);
@@ -753,7 +763,8 @@ describe("Function: transformDataForNotify", () => {
           local_council_email: "both@example.com",
           country: undefined,
           hasAuth: undefined,
-          establishment_postcode_FD: "SW12"
+          establishment_postcode_FD: "SW12",
+          establishment_additional_trading_names: "Itsu 1, Itsu 2"
         };
 
         expect(result).toEqual(expectedFormat);
@@ -791,7 +802,8 @@ describe("Function: transformDataForNotify", () => {
           hasAuth: undefined,
           local_council_standards: "Standards council name",
           local_council_email_standards: "standards@example.com",
-          establishment_postcode_FD: "SW12"
+          establishment_postcode_FD: "SW12",
+          establishment_additional_trading_names: "Itsu 1, Itsu 2"
         };
 
         expect(result).toEqual(expectedFormat);
