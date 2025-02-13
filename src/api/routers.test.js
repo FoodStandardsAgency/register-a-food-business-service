@@ -1,7 +1,8 @@
 jest.mock("express", () => ({
   Router: jest.fn(() => ({
     use: jest.fn(),
-    get: jest.fn()
+    get: jest.fn(),
+    put: jest.fn()
   }))
 }));
 
@@ -50,12 +51,14 @@ describe("Function: routers", () => {
     expect(result.use.mock.calls[2][0]).toBe("/api/v2/collections");
     expect(result.use.mock.calls[3][0]).toBe("/api/v3/collections");
     expect(result.use.mock.calls[4][0]).toBe("/api/v4/collections");
-    expect(result.use.mock.calls[5][0]).toBe("/api-docs");
-    expect(result.use.mock.calls[6][0]).toBe("/");
+    expect(result.use.mock.calls[5][0]).toBe("/api/v5/collections");
+    expect(result.use.mock.calls[6][0]).toBe("/api-docs");
+    expect(result.use.mock.calls[7][0]).toBe("/");
 
     expect(result.get.mock.calls[0][0]).toBe("/api-docs");
     expect(result.get.mock.calls[1][0]).toBe("/api-docs/v2");
     expect(result.get.mock.calls[2][0]).toBe("/api-docs/v3");
     expect(result.get.mock.calls[3][0]).toBe("/api-docs/v4");
+    expect(result.get.mock.calls[4][0]).toBe("/api-docs/v5");
   });
 });
