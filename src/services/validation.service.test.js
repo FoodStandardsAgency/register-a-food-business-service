@@ -62,6 +62,18 @@ jest.mock("./validation.directSubmission.v4.schema", () => ({
   }
 }));
 
+jest.mock("./validation.directSubmission.v5.schema", () => ({
+  registration: {
+    type: "object",
+    properties: {
+      test_lc_submission_v5: {
+        type: "string",
+        validation: (input) => input === "true"
+      }
+    }
+  }
+}));
+
 jest.mock("./logging.service", () => ({
   logEmitter: {
     emit: jest.fn()
@@ -147,6 +159,21 @@ describe("Function: validate", () => {
 
       // Act
       const response = validate(establishment, "v4.0", true);
+
+      // Assert
+      expect(response).toEqual([]);
+    });
+  });
+
+  describe("When given valid input for LC direct submission v5", () => {
+    it("Should return empty array using LC validation schema", () => {
+      // Arrange
+      const establishment = {
+        test_lc_submission_v5: "true"
+      };
+
+      // Act
+      const response = validate(establishment, "v5.0", true);
 
       // Assert
       expect(response).toEqual([]);
