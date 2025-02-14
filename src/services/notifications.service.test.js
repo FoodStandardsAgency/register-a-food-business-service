@@ -229,7 +229,7 @@ describe(`generateEmailsToSend`, () => {
       },
       {
         address: "testop",
-        templateId: "336ca481-565b-4fa9-be87-de50ac1f1a0c",
+        templateId: "281514ac-c813-42cd-8a26-afd6d09c72e0",
         type: "FBO"
       }
     ]);
@@ -251,7 +251,7 @@ describe(`generateEmailsToSend`, () => {
     expect(result).toStrictEqual([
       {
         address: "testop",
-        templateId: "336ca481-565b-4fa9-be87-de50ac1f1a0c",
+        templateId: "281514ac-c813-42cd-8a26-afd6d09c72e0",
         type: "FBO"
       }
     ]);
@@ -273,7 +273,7 @@ describe(`generateEmailsToSend`, () => {
     expect(result).toStrictEqual([
       {
         address: "testrep",
-        templateId: "336ca481-565b-4fa9-be87-de50ac1f1a0c",
+        templateId: "281514ac-c813-42cd-8a26-afd6d09c72e0",
         type: "FBO"
       }
     ]);
@@ -296,7 +296,7 @@ describe(`generateEmailsToSend`, () => {
       {
         address: "testrep",
         emailReplyToId: "123456",
-        templateId: "336ca481-565b-4fa9-be87-de50ac1f1a0c",
+        templateId: "281514ac-c813-42cd-8a26-afd6d09c72e0",
         type: "FBO"
       }
     ]);
@@ -326,27 +326,27 @@ describe(`generateEmailsToSend`, () => {
       {
         type: "LC",
         address: "fake_notify_1@test.com",
-        templateId: "fa0c23b8-0862-4030-967e-b9eb4211b495"
+        templateId: "9b17b8ea-5639-435d-977e-9949f9f1e8c5"
       },
       {
         type: "LC",
         address: "fake_notify_2@test.com",
-        templateId: "fa0c23b8-0862-4030-967e-b9eb4211b495"
+        templateId: "9b17b8ea-5639-435d-977e-9949f9f1e8c5"
       },
       {
         type: "LC",
         address: "fake_notify_3@test.com",
-        templateId: "fa0c23b8-0862-4030-967e-b9eb4211b495"
+        templateId: "9b17b8ea-5639-435d-977e-9949f9f1e8c5"
       },
       {
         type: "LC",
         address: "fake_notify_4@test.com",
-        templateId: "fa0c23b8-0862-4030-967e-b9eb4211b495"
+        templateId: "9b17b8ea-5639-435d-977e-9949f9f1e8c5"
       },
       {
         type: "FBO",
         address: "testrep",
-        templateId: "336ca481-565b-4fa9-be87-de50ac1f1a0c"
+        templateId: "281514ac-c813-42cd-8a26-afd6d09c72e0"
       }
     ]);
   });
@@ -371,17 +371,17 @@ describe(`generateEmailsToSend`, () => {
       {
         type: "FBO",
         address: "testrep",
-        templateId: "336ca481-565b-4fa9-be87-de50ac1f1a0c"
+        templateId: "281514ac-c813-42cd-8a26-afd6d09c72e0"
       },
       {
         type: "FBO_FB",
         address: "testrep",
-        templateId: "257dba18-18ff-4496-9896-e23f6ebf3a02"
+        templateId: "e36a8f9e-c20b-4ab3-908e-3ceaaafec12a"
       },
       {
         type: "FD_FB",
         address: "fsatestemail.valid@gmail.com",
-        templateId: "c39fa70e-5a02-4a96-ba3b-ae4af3a1e240"
+        templateId: "c58c834f-97c5-486d-a4fa-6b42edc171b7"
       }
     ]);
   });
@@ -425,22 +425,22 @@ describe(`generateEmailsToSend`, () => {
       {
         type: "LC",
         address: "test_lc1@email.com",
-        templateId: "fa0c23b8-0862-4030-967e-b9eb4211b495"
+        templateId: "9b17b8ea-5639-435d-977e-9949f9f1e8c5"
       },
       {
         type: "LC",
         address: "test_lc2@email.com",
-        templateId: "fa0c23b8-0862-4030-967e-b9eb4211b495"
+        templateId: "9b17b8ea-5639-435d-977e-9949f9f1e8c5"
       },
       {
         type: "LC",
         address: "test_lc3@email.com",
-        templateId: "fa0c23b8-0862-4030-967e-b9eb4211b495"
+        templateId: "9b17b8ea-5639-435d-977e-9949f9f1e8c5"
       },
       {
         type: "FBO",
         address: "test_fbo@email.com",
-        templateId: "336ca481-565b-4fa9-be87-de50ac1f1a0c"
+        templateId: "281514ac-c813-42cd-8a26-afd6d09c72e0"
       }
     ]);
   });
