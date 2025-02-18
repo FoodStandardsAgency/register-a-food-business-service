@@ -101,6 +101,8 @@ const transformDataForNotify = (registration, lcContactConfig, i18n) => {
   const registrationClone = JSON.parse(JSON.stringify(registration));
 
   const partners = registrationClone.establishment.operator.partners;
+  const tradingNames =
+    registrationClone.establishment.establishment_details.establishment_additional_trading_names;
   delete registrationClone.establishment.operator.partners;
   delete registrationClone.establishment.operator.operator_first_line;
   delete registrationClone.establishment.operator.operator_street;
@@ -120,6 +122,11 @@ const transformDataForNotify = (registration, lcContactConfig, i18n) => {
     registrationClone.establishment.operator.operator_birthdate = moment(
       registrationClone.establishment.operator.operator_birthdate
     ).format("DD MMM YYYY");
+  }
+
+  if (Array.isArray(tradingNames)) {
+    registrationClone.establishment.establishment_details.establishment_additional_trading_names =
+      transformTradingNamesForNotify(tradingNames);
   }
 
   let flattenedData = Object.assign(
@@ -479,6 +486,15 @@ const transformPartnersForNotify = (partners) => {
     partnerNames.push(partners[partner].partner_name);
   }
   return partnerNames.join(", ");
+};
+
+/**
+ * Converts trading names array to string
+ * @param {array} tradingNames trading names array
+ * @returns {string} Comma-separated trading names
+ */
+const transformTradingNamesForNotify = (tradingNames) => {
+  return tradingNames.join(", ");
 };
 
 /**

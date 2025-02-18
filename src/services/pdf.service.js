@@ -41,6 +41,10 @@ const transformDataForPdf = (registrationData, lcContactConfig) => {
   delete premise.establishment_first_line;
   delete premise.establishment_street;
   const activities = { ...registrationData.establishment.activities };
+  const additionalTradingNames =
+    registrationData.establishment.establishment_details.establishment_additional_trading_names;
+  delete registrationData.establishment.establishment_details
+    .establishment_additional_trading_names;
 
   moment.locale(registrationData.submission_language ? registrationData.submission_language : "en");
   registrationData.establishment.establishment_details.establishment_opening_date = moment(
@@ -62,6 +66,11 @@ const transformDataForPdf = (registrationData, lcContactConfig) => {
   const pdfData = {
     operator,
     establishment: {
+      establishment_trading_name:
+        registrationData.establishment.establishment_details.establishment_trading_name,
+      ...(additionalTradingNames?.length > 0 && {
+        establishment_additional_trading_names: transformTradingNamesForPdf(additionalTradingNames)
+      }),
       ...registrationData.establishment.establishment_details,
       ...premise
     },
@@ -79,6 +88,10 @@ const transformDataForPdf = (registrationData, lcContactConfig) => {
   }
 
   return pdfData;
+};
+
+const transformTradingNamesForPdf = (tradingNames) => {
+  return tradingNames.join(", ");
 };
 
 const transformPartnersForPdf = (partners) => {

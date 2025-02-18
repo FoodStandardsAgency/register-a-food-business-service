@@ -3,6 +3,7 @@ const { logEmitter } = require("./logging.service");
 const schema = require("./validation.schema");
 const directSubmissionSchemaV3 = require("./validation.directSubmission.v3.schema");
 const directSubmissionSchemaV4 = require("./validation.directSubmission.v4.schema");
+const directSubmissionSchemaV5 = require("./validation.directSubmission.v5.schema");
 
 const errorMessages = {
   declaration1: "Invalid declaration1",
@@ -58,6 +59,7 @@ const errorMessages = {
   opening_day_friday: "Invalid opening day friday",
   opening_day_saturday: "Invalid opening day saturday",
   opening_day_sunday: "Invalid opening day sunday",
+  establishment_additional_trading_names: "Invalid establishment additional trading names",
   partners: "Invalid partners",
   partner_is_primary_contact: "Invalid partner is primary contact",
   partner_name: "Invalid partner name",
@@ -94,9 +96,11 @@ module.exports.validate = (data, apiVersion, isDirectSubmission = false) => {
   if (isDirectSubmission) {
     logEmitter.emit("info", "Validating with direct submission schema");
     validationSchema =
-      Number(apiVersion.replace(/^v/, "")) >= 4 || apiVersion === "latest"
-        ? directSubmissionSchemaV4
-        : directSubmissionSchemaV3;
+      apiVersion.includes("v5") || apiVersion === "latest"
+        ? directSubmissionSchemaV5
+        : apiVersion.includes("v4")
+          ? directSubmissionSchemaV4
+          : directSubmissionSchemaV3;
   } else {
     logEmitter.emit("info", "Validating with standard schema");
   }

@@ -28,7 +28,7 @@ describe("submissions router", () => {
 
   describe("Post to /v4/createNewDirectRegistration", () => {
     beforeEach(() => {
-      handler = router.post.mock.calls[1][2];
+      handler = router.post.mock.calls[3][2];
     });
 
     describe("when making a valid request", () => {

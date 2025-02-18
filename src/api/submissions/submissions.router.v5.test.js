@@ -26,9 +26,9 @@ describe("submissions router", () => {
 
   afterEach(() => jest.clearAllMocks());
 
-  describe("Post to /v3/createNewDirectRegistration", () => {
+  describe("Post to /v5/createNewDirectRegistration", () => {
     beforeEach(() => {
-      handler = router.post.mock.calls[2][2];
+      handler = router.post.mock.calls[4][2];
     });
 
     describe("when making a valid request", () => {
@@ -39,7 +39,7 @@ describe("submissions router", () => {
               registration: "reg"
             },
             headers: {
-              "registration-data-version": "3.0"
+              "registration-data-version": "1.6.0"
             },
             params: {
               subscriber: "cardiff"
@@ -84,7 +84,6 @@ describe("submissions router", () => {
           next
         );
       });
-
       it("should call next with error", () => {
         expect(next).toBeCalledWith(new Error("reg error"));
       });
