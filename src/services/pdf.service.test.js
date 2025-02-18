@@ -5,7 +5,7 @@ const {
   convertBoolToString
 } = require("./pdf.service");
 const i18n = require("../utils/i18n/i18n");
-const i18nUtil = new i18n("cy");
+const i18nUtil = new i18n("en");
 const fs = require("fs");
 describe("Pdf Service: ", () => {
   let result;
@@ -84,8 +84,8 @@ describe("Pdf Service: ", () => {
         beforeEach(async () => {
           result = transformDataForPdf(mockRegistraionData, mockLcContactConfig);
           // test pdf generation
-          pdf = await pdfGenerator(result, i18nUtil);
-          fs.writeFileSync("/home/ernest/Source/test.pdf", pdf);
+          // pdf = await pdfGenerator(result, i18nUtil);
+          // fs.writeFileSync("/home/ernest/Source/test.pdf", pdf);
         });
 
         it("Should return an object with required sections", () => {
