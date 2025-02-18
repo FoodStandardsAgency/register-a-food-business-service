@@ -13,6 +13,7 @@ describe("Pdf Service: ", () => {
   describe("Function: transformDataForPdf", () => {
     describe("when registration role is not partnership", () => {
       const mockRegistraionData = {
+        "fsa-rn": "A35YQJ-VDGBAE-68J0HT",
         establishment: {
           establishment_details: {
             establishment_trading_name: "Itsu",
