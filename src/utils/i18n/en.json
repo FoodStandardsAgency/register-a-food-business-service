@@ -8,6 +8,8 @@
   "Operator first name": "Operator first name",
   "Operator last name": "Operator last name",
   "Operator address line 1": "Operator address line 1",
+  "Operator address line 2": "Operator address line 2",
+  "Operator address line 3": "Operator address line 3",
   "Operator town": "Operator town",
   "Operator postcode": "Operator postcode",
   "Operator uprn": "Operator uprn",
@@ -17,6 +19,7 @@
   "Operator type": "Operator type",
   "Operator company name": "Operator company name",
   "Operator companies house number": "Operator companies house number",
+  "Operator birthdate": "Operator birthdate",
   "Partnership details": "Partnership details",
   "Names": "Names",
   "Main contact": "Main contact",
@@ -36,6 +39,8 @@
   "Establishment opening date": "Establishment opening date",
   "Establishment type": "Establishment type",
   "Establishment address line 1": "Establishment address line 1",
+  "Establishment address line 2": "Establishment address line 2",
+  "Establishment address line 3": "Establishment address line 3",
   "Establishment town": "Establishment town",
   "Establishment postcode": "Establishment postcode",
   "Establishment uprn": "Establishment uprn",
@@ -75,5 +80,8 @@
   "Business support & helpline": "Business support & helpline",
   "I declare that the information I have given on this form is correct and complete to the best of my knowledge and belief.": "I declare that the information I have given on this form is correct and complete to the best of my knowledge and belief.",
   "The operator will notify their local council of any significant changes to the business activity, including closure, within 28 days of the change happening.": "The operator will notify their local council of any significant changes to the business activity, including closure, within 28 days of the change happening.",
-  "The operator understands they are legally responsible for the safety and authenticity of the food being produced or served at this establishment.": "The operator understands they are legally responsible for the safety and authenticity of the food being produced or served at this establishment."
+  "The operator understands they are legally responsible for the safety and authenticity of the food being produced or served at this establishment.": "The operator understands they are legally responsible for the safety and authenticity of the food being produced or served at this establishment.",
+  "Business scale": "Business scale",
+  "Food type": "Food type",
+  "Processing activities": "Processing activities"
 }

@@ -124,9 +124,8 @@ const createGreyLine = () => {
 
 const createFsaRnBox = (fsarnNumber, lcInfo, i18n) => {
   const fsaRnBox = [];
-  const yPositionText = lcInfo.local_council ? 285 : 355;
-  const yPositionNumber = lcInfo.local_council ? 320 : 390;
   fsaRnBox.push({
+    relativePosition: { x: 0, y: 0 },
     canvas: [
       {
         type: "rect",
@@ -148,13 +147,13 @@ const createFsaRnBox = (fsarnNumber, lcInfo, i18n) => {
         fontSize: 16
       }
     ],
-    absolutePosition: { x: 30, y: yPositionText },
-    alignment: "center"
+    alignment: "center",
+    margin: [30, 35, 30, 0] // [left, top, right, bottom]
   });
   fsaRnBox.push({
     text: fsarnNumber,
-    absolutePosition: { x: 30, y: yPositionNumber },
-    style: "code"
+    style: "code",
+    margin: [30, 5, 30, 30]
   });
   fsaRnBox.push(createNewSpace(2));
   return fsaRnBox;
