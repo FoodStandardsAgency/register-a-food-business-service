@@ -13,16 +13,16 @@ describe("Pdf Service: ", () => {
   describe("Function: transformDataForPdf", () => {
     describe("when registration role is not partnership", () => {
       const mockRegistraionData = {
-        "fsa-rn": "A35YQJ-VDGBAE-68J0HT",
+        "fsa-rn": "A35YQJ-VDGBAE-68J0HT!",
         establishment: {
           establishment_details: {
             establishment_trading_name: "Itsu",
+            establishment_additional_trading_names: ["Itsu 1", "Itsu 2"],
             establishment_primary_number: "329857245",
             establishment_secondary_number: "84345245",
             establishment_email: "django@email.com",
             establishment_web_address: "test.com",
-            establishment_opening_date: "2018-06-07",
-            establishment_additional_trading_names: ["Itsu 1", "Itsu 2"]
+            establishment_opening_date: "2018-06-07"
           },
           operator: {
             operator_first_name: "Fred",
@@ -82,6 +82,8 @@ describe("Pdf Service: ", () => {
         };
 
         beforeEach(async () => {
+          mockRegistraionData.establishment.establishment_details.establishment_additional_trading_names =
+            ["Itsu 1", "Itsu 2"];
           result = transformDataForPdf(mockRegistraionData, mockLcContactConfig);
           // test pdf generation
           // pdf = await pdfGenerator(result, i18nUtil);
@@ -347,7 +349,7 @@ describe("Pdf Service: ", () => {
         },
         establishment: {
           establishment_trading_name: "Itsu",
-          establishment_additional_trading_names: "Itsu 1, Itsu 2",
+          establishment_additional_trading_names: ["Itsu 1", "Itsu 2"],
           establishment_primary_number: "329857245",
           establishment_secondary_number: "84345245",
           establishment_email: "django@email.com",
@@ -411,7 +413,7 @@ describe("Pdf Service: ", () => {
         },
         establishment: {
           establishment_trading_name: "Itsu",
-          establishment_additional_trading_names: "Itsu 1, Itsu 2",
+          establishment_additional_trading_names: ["Itsu 1", "Itsu 2"],
           establishment_primary_number: "329857245",
           establishment_secondary_number: "84345245",
           establishment_email: "django@email.com",
