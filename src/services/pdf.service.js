@@ -91,7 +91,8 @@ const transformDataForPdf = (registrationData, lcContactConfig) => {
 };
 
 const transformTradingNamesForPdf = (tradingNames) => {
-  return tradingNames.join(", ");
+  // Add bullet points to each trading name and join them with a new line
+  return tradingNames.map((name) => `• ${name}`).join("\n");
 };
 
 const transformPartnersForPdf = (partners) => {

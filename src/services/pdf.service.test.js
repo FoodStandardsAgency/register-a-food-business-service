@@ -103,6 +103,12 @@ describe("Pdf Service: ", () => {
         it("Should return lcInfo.country", () => {
           expect(result.metaData.lcInfo.country).toBe("wales");
         });
+
+        it("Should return correct value for additional_trading_names transformed fields", () => {
+          expect(result.establishment.establishment_additional_trading_names).toBe(
+            "• Itsu 1\n• Itsu 2"
+          );
+        });
       });
 
       describe("When given seperate hygiene and standards council", () => {
