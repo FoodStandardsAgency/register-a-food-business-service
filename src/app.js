@@ -1,13 +1,14 @@
 const cls = require("cls-hooked");
 const appInsights = require("applicationinsights");
 
-require("dotenv").config();
-if (process.env.APPINSIGHTS_CONNECTION_STRING) {
-  console.log(`Setting up application insights modules`);
-  // applicationinsights sdk v3 not support setting cloud role name, so we setting directly to the open telemetry env variable
-  process.env["OTEL_SERVICE_NAME"] = process.env.CLOUD_ROLE;
-  appInsights.setup(process.env.APPINSIGHTS_CONNECTION_STRING);
-  appInsights.start();
+if (
+  "APPINSIGHTS_INSTRUMENTATIONKEY" in process.env &&
+  process.env["APPINSIGHTS_INSTRUMENTATIONKEY"] !== ""
+) {
+  appInsights.setup().start();
+  appInsights.defaultClient.addTelemetryProcessor((envelope) => {
+    envelope.tags["ai.cloud.role"] = process.env.CLOUD_ROLE;
+  });
 }
 
 const { logger } = require("./services/winston");

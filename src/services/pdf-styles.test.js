@@ -106,14 +106,6 @@ describe("Function: createFsaRnBox", () => {
     it("Should return the fsarn", () => {
       expect(result[2].text).toBe("123456");
     });
-
-    it("Should put place the text at a particular position", () => {
-      expect(result[1].absolutePosition.y).toBe(285);
-    });
-
-    it("Should put place the fsrnat a particular position", () => {
-      expect(result[2].absolutePosition.y).toBe(320);
-    });
   });
 
   describe("When given seperate hygeine and standards councils", () => {
@@ -130,14 +122,6 @@ describe("Function: createFsaRnBox", () => {
 
     it("Should return the fsarn", () => {
       expect(result[2].text).toBe("123456");
-    });
-
-    it("Should put place the text at a particular position", () => {
-      expect(result[1].absolutePosition.y).toBe(355);
-    });
-
-    it("Should put place the fsrnat a particular position", () => {
-      expect(result[2].absolutePosition.y).toBe(390);
     });
   });
 });

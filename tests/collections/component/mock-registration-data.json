@@ -4,6 +4,7 @@
       "establishment": {
         "establishment_details": {
           "establishment_trading_name": "Blanda Inc",
+          "establishment_additional_trading_names": ["Blanda Inc 1", "Blanda Inc 2"],
           "establishment_primary_number": "4113016343",
           "establishment_secondary_number": "4511307229",
           "establishment_email": "dbridgewater0@blogs.com",

@@ -145,6 +145,43 @@ const submissionsRouter = () => {
     }
   );
 
+  router.post(
+    "/v5/createNewDirectRegistration/:subscriber",
+    createRegistrationAuth,
+    async (req, res, next) => {
+      logEmitter.emit("functionCall", "submissions.router", "createNewDirectRegistration-v5");
+      try {
+        const options = {
+          apiVersion: req.headers["api-version"] || "v5.0",
+          subscriber: req.params.subscriber || "",
+          requestedCouncil: req.query["local-authority"] || req.params.subscriber
+        };
+
+        let response;
+
+        response = await submissionsController.createNewDirectRegistration(req.body, options);
+        logEmitter.emit("info", DIRECT_REGISTRATION_SUCCESS); // Used for Azure alerts
+        logEmitter.emit("functionSuccess", "submissions.router", "createNewDirectRegistration-v5");
+        res.send(response);
+      } catch (err) {
+        logEmitter.emit(
+          "errorWith",
+          "submissions.router",
+          "createNewDirectRegistration-v5",
+          req.body
+        );
+        logEmitter.emit("warning", DIRECT_REGISTRATION_FAILURE); // Used for Azure alerts
+        logEmitter.emit(
+          "functionFail",
+          "submissions.router",
+          "createNewDirectRegistration-v5",
+          err
+        );
+        next(err);
+      }
+    }
+  );
+
   return router;
 };
 

@@ -6,15 +6,18 @@ const {
 } = require("./pdf.service");
 const i18n = require("../utils/i18n/i18n");
 const i18nUtil = new i18n("en");
+const fs = require("fs");
 describe("Pdf Service: ", () => {
   let result;
 
   describe("Function: transformDataForPdf", () => {
     describe("when registration role is not partnership", () => {
       const mockRegistraionData = {
+        "fsa-rn": "A35YQJ-VDGBAE-68J0HT!",
         establishment: {
           establishment_details: {
             establishment_trading_name: "Itsu",
+            establishment_additional_trading_names: ["Itsu 1", "Itsu 2"],
             establishment_primary_number: "329857245",
             establishment_secondary_number: "84345245",
             establishment_email: "django@email.com",
@@ -78,8 +81,13 @@ describe("Pdf Service: ", () => {
           }
         };
 
-        beforeEach(() => {
+        beforeEach(async () => {
+          mockRegistraionData.establishment.establishment_details.establishment_additional_trading_names =
+            ["Itsu 1", "Itsu 2"];
           result = transformDataForPdf(mockRegistraionData, mockLcContactConfig);
+          // test pdf generation
+          // pdf = await pdfGenerator(result, i18nUtil);
+          // fs.writeFileSync("/home/ernest/Source/test.pdf", pdf);
         });
 
         it("Should return an object with required sections", () => {
@@ -96,6 +104,12 @@ describe("Pdf Service: ", () => {
         });
         it("Should return lcInfo.country", () => {
           expect(result.metaData.lcInfo.country).toBe("wales");
+        });
+
+        it("Should return correct value for additional_trading_names transformed fields", () => {
+          expect(result.establishment.establishment_additional_trading_names).toBe(
+            "• Itsu 1\n• Itsu 2"
+          );
         });
       });
 
@@ -171,7 +185,8 @@ describe("Pdf Service: ", () => {
             establishment_secondary_number: "84345245",
             establishment_email: "django@email.com",
             establishment_web_address: "test.com",
-            establishment_opening_date: "2018-06-07"
+            establishment_opening_date: "2018-06-07",
+            establishment_additional_trading_names: ["Itsu 1", "Itsu 2"]
           },
           operator: {
             operator_postcode: "SW12 9RQ",
@@ -334,6 +349,7 @@ describe("Pdf Service: ", () => {
         },
         establishment: {
           establishment_trading_name: "Itsu",
+          establishment_additional_trading_names: ["Itsu 1", "Itsu 2"],
           establishment_primary_number: "329857245",
           establishment_secondary_number: "84345245",
           establishment_email: "django@email.com",
@@ -397,6 +413,7 @@ describe("Pdf Service: ", () => {
         },
         establishment: {
           establishment_trading_name: "Itsu",
+          establishment_additional_trading_names: ["Itsu 1", "Itsu 2"],
           establishment_primary_number: "329857245",
           establishment_secondary_number: "84345245",
           establishment_email: "django@email.com",

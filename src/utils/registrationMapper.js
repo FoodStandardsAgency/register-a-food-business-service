@@ -6,6 +6,8 @@ const mapFromCollectionsRegistration = (reg) => {
     establishment: {
       establishment_details: {
         establishment_trading_name: reg.establishment.establishment_trading_name,
+        establishment_additional_trading_names:
+          reg.establishment.establishment_additional_trading_names,
         establishment_primary_number: reg.establishment.establishment_primary_number,
         establishment_secondary_number: reg.establishment.establishment_secondary_number,
         establishment_web_address: reg.establishment.establishment_web_address || "",
