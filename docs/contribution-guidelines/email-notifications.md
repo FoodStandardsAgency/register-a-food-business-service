@@ -13,7 +13,7 @@ sequenceDiagram
 participant router as TaskRouter.router
 participant controller as Tasks.controller
 participant notifyservice as notifications.service
-participant cache as cacheDb.connector
+participant cache as notificationsDb.connector
 participant db as configDb.connector
 participant submissions as submissions.service
 

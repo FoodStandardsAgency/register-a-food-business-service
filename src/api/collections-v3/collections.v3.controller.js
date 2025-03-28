@@ -3,7 +3,7 @@ const {
   getAllRegistrationsByCouncils,
   getUnifiedRegistrations,
   updateRegistrationCollectedByCouncil
-} = require("../../connectors/registrationsDb/registrationsDb.connector");
+} = require("../../connectors/collectionsDb/collectionsDb.connector");
 
 const { validateOptions } = require("../collections/collections.service");
 const { transformRegForCollections } = require("../../services/collectionsTransform.service");

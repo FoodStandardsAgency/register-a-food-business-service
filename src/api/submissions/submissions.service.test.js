@@ -11,7 +11,7 @@ jest.mock("../../services/notifications.service");
 jest.mock("axios");
 
 jest.mock("../../services/pdf.service");
-jest.mock("../../connectors/cacheDb/cacheDb.connector");
+jest.mock("../../connectors/submissionsDb/submissionsDb.connector");
 
 const { getAllLocalCouncilConfig } = require("../../connectors/configDb/configDb.connector");
 

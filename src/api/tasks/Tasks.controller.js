@@ -9,11 +9,14 @@ const { getFsaRn } = require("../submissions/submissions.service");
 const { getLcContactConfigFromArray } = require("../submissions/submissions.service");
 
 const {
-  findOneById,
   findAllBlankRegistrations,
-  findAllFailedNotificationsRegistrations,
+  findAllFailedNotificationsRegistrations
+} = require("../../connectors/notificationsDb/notificationsDb.connector");
+
+const {
+  findOneById,
   findAllTmpRegistrations
-} = require("../../connectors/cacheDb/cacheDb.connector");
+} = require("../../connectors/submissionsDb/submissionsDb.connector");
 
 const { getAllLocalCouncilConfig } = require("../../connectors/configDb/configDb.connector");
 

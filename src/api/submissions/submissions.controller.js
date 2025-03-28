@@ -1,7 +1,7 @@
 const { validate } = require("../../services/validation.service");
 const { getRegistrationMetaData, getLcContactConfig } = require("./submissions.service");
 
-const { cacheRegistration } = require("../../connectors/cacheDb/cacheDb.connector");
+const { cacheRegistration } = require("../../connectors/submissionsDb/submissionsDb.connector");
 
 const { getUprn } = require("../../connectors/address-lookup/address-matcher");
 

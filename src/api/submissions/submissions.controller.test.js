@@ -11,7 +11,7 @@ jest.mock("../../services/notifications.service", () => ({
   sendNotifications: jest.fn()
 }));
 
-jest.mock("../../connectors/cacheDb/cacheDb.connector", () => ({
+jest.mock("../../connectors/submissionsDb/submissionsDb.connector", () => ({
   cacheRegistration: jest.fn(),
   updateCompletedInCache: jest.fn()
 }));
@@ -33,7 +33,7 @@ const { getRegistrationMetaData, getLcContactConfig } = require("./submissions.s
 
 const { validate } = require("../../services/validation.service");
 
-const { cacheRegistration } = require("../../connectors/cacheDb/cacheDb.connector");
+const { cacheRegistration } = require("../../connectors/submissionsDb/submissionsDb.connector");
 
 const { createNewRegistration, createNewDirectRegistration } = require("./submissions.controller");
 

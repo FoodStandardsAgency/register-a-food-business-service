@@ -23,7 +23,7 @@ const {
   getStatus,
   updateStatus,
   updateNotificationOnSent
-} = require("../connectors/cacheDb/cacheDb.connector");
+} = require("../connectors/notificationsDb/notificationsDb.connector");
 const { has, isArrayLikeObject } = require("lodash");
 const { transformEnumsForService } = require("./transformEnums.service");
 const i18n = require("../utils/i18n/i18n");
