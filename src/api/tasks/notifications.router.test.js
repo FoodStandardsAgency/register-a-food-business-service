@@ -6,7 +6,7 @@ jest.mock("express", () => ({
 }));
 jest.mock("./notifications.controller");
 
-const { taskRouter } = require("./tasks.router");
+const { taskRouter } = require("./notifications.router");
 const {
   sendNotificationsForRegistrationAction,
   sendAllNotificationsForRegistrationsAction

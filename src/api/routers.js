@@ -9,7 +9,7 @@ const { collectionsV2Router } = require("./collections-v2/collections.v2.router"
 const { collectionsV3Router } = require("./collections-v3/collections.v3.router");
 const { collectionsV4Router } = require("./collections-v4/collections.v4.router");
 const { collectionsV5Router } = require("./collections-v5/collections.v5.router");
-const { taskRouter } = require("./tasks/tasks.router");
+const { taskRouter } = require("./tasks/notifications.router");
 
 const routers = () => {
   const router = Router();

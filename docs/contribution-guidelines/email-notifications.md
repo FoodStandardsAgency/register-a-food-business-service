@@ -1,6 +1,6 @@
 # Email notifications
 
-Email notifications are sent asynchronously by the registration service in order that submissions from the front-end are not delayed. An application endpoint, `/bulk/sendnotification`, is defined in `src/api/tasks/tasks.router.js`. This is called every few minutes by a logic app running in Azure and attempts to send emails for all registrations that have unsent or failed notifications, as recorded in the registration record itself.
+Email notifications are sent asynchronously by the registration service in order that submissions from the front-end are not delayed. An application endpoint, `/bulk/sendnotification`, is defined in `src/api/tasks/notifications.router.js`. This is called every few minutes by a logic app running in Azure and attempts to send emails for all registrations that have unsent or failed notifications, as recorded in the registration record itself.
 
 ## Process
 
@@ -10,7 +10,7 @@ The highlighted purple box is where the key functionality is and so are describe
 
 ```mermaid
 sequenceDiagram
-participant router as tasks.router
+participant router as notifications.router
 participant controller as notifications.controller
 participant notifyservice as notifications.service
 participant cache as notificationsDb.connector
