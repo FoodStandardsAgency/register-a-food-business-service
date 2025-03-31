@@ -11,7 +11,7 @@ const {
 
 // const { viewDeleteRegistrationAuth } = require("../../middleware/authHandler");
 
-const taskRouter = () => {
+const notificationsRouter = () => {
   const router = Router();
 
   //apply any middleware
@@ -50,4 +50,4 @@ const taskRouter = () => {
   return router;
 };
 
-module.exports = { taskRouter };
+module.exports = { notificationsRouter };

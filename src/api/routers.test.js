@@ -7,7 +7,7 @@ jest.mock("express", () => ({
 }));
 
 jest.mock("./tasks/notifications.router", () => ({
-  taskRouter: jest.fn()
+  notificationsRouter: jest.fn()
 }));
 
 jest.mock("./submissions/submissions.router", () => ({
