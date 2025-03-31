@@ -12,7 +12,7 @@ jest.mock("../../services/notifications.service", () => ({
 }));
 
 jest.mock("../../connectors/submissionsDb/submissionsDb.connector", () => ({
-  cacheRegistration: jest.fn(),
+  saveRegistration: jest.fn(),
   updateCompletedInCache: jest.fn()
 }));
 
@@ -33,7 +33,7 @@ const { getRegistrationMetaData, getLcContactConfig } = require("./submissions.s
 
 const { validate } = require("../../services/validation.service");
 
-const { cacheRegistration } = require("../../connectors/submissionsDb/submissionsDb.connector");
+const { saveRegistration } = require("../../connectors/submissionsDb/submissionsDb.connector");
 
 const { createNewRegistration, createNewDirectRegistration } = require("./submissions.controller");
 
@@ -143,7 +143,7 @@ describe("registration controller", () => {
           );
         });
         it("should call cache registration", () => {
-          expect(cacheRegistration).toHaveBeenCalled();
+          expect(saveRegistration).toHaveBeenCalled();
           const expectedToCache = Object.assign(
             {},
             {
@@ -170,7 +170,7 @@ describe("registration controller", () => {
               source_council_id: exampleCouncil._id
             }
           );
-          expect(cacheRegistration).toHaveBeenLastCalledWith(expectedToCache);
+          expect(saveRegistration).toHaveBeenLastCalledWith(expectedToCache);
         });
       });
     });
@@ -247,7 +247,7 @@ describe("registration controller", () => {
       });
 
       it("should not cache the registration", () => {
-        expect(cacheRegistration).not.toHaveBeenCalled();
+        expect(saveRegistration).not.toHaveBeenCalled();
       });
     });
 
@@ -278,7 +278,7 @@ describe("registration controller", () => {
         result = await createNewDirectRegistration(testDirectRegistration, testOptions);
       });
       it("should call cache registration", () => {
-        expect(cacheRegistration).toHaveBeenCalled();
+        expect(saveRegistration).toHaveBeenCalled();
       });
 
       it("should return generated fsa_rn", () => {
@@ -300,7 +300,7 @@ describe("registration controller", () => {
         result = await createNewDirectRegistration(testDirectRegistration, testSupplierOptions);
       });
       it("should call cache registration", () => {
-        expect(cacheRegistration).toHaveBeenCalled();
+        expect(saveRegistration).toHaveBeenCalled();
       });
 
       it("should return generated fsa_rn", () => {
@@ -334,7 +334,7 @@ describe("registration controller", () => {
         expect(getRegistrationMetaData).not.toHaveBeenCalled();
       });
       it("should call cache registration", () => {
-        expect(cacheRegistration).toHaveBeenCalled();
+        expect(saveRegistration).toHaveBeenCalled();
       });
 
       it("should return provided fsa_rn", () => {
@@ -387,7 +387,7 @@ describe("registration controller", () => {
       });
 
       it("should not cache the registration", () => {
-        expect(cacheRegistration).not.toHaveBeenCalled();
+        expect(saveRegistration).not.toHaveBeenCalled();
       });
     });
 
@@ -410,7 +410,7 @@ describe("registration controller", () => {
       });
 
       it("should not cache the registration", () => {
-        expect(cacheRegistration).not.toHaveBeenCalled();
+        expect(saveRegistration).not.toHaveBeenCalled();
       });
     });
 

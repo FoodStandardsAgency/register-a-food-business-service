@@ -1,7 +1,7 @@
 jest.mock("mongodb");
 
 const mongodb = require("mongodb");
-const { cacheRegistration, updateNotificationOnSent } = require("./submissionsDb.connector");
+const { saveRegistration, updateNotificationOnSent } = require("./submissionsDb.connector");
 
 describe("Connector: submissionsDb", () => {
   let response;
@@ -10,7 +10,7 @@ describe("Connector: submissionsDb", () => {
     jest.clearAllMocks();
   });
 
-  describe("Function: cacheRegistration", () => {
+  describe("Function: saveRegistration", () => {
     describe("given the request is successful", () => {
       beforeEach(async () => {
         mongodb.MongoClient.connect.mockImplementation(async () => ({
@@ -20,7 +20,7 @@ describe("Connector: submissionsDb", () => {
             })
           })
         }));
-        response = await cacheRegistration({ reg: "data" });
+        response = await saveRegistration({ reg: "data" });
       });
 
       it("should return the response from the insertOne()", () => {
@@ -40,7 +40,7 @@ describe("Connector: submissionsDb", () => {
           })
         }));
         try {
-          response = await cacheRegistration({ reg: "data" });
+          response = await saveRegistration({ reg: "data" });
         } catch (err) {
           response = err;
         }
@@ -64,7 +64,7 @@ describe("Connector: submissionsDb", () => {
           }
         }));
 
-        response = await cacheRegistration({ reg: "data" });
+        response = await saveRegistration({ reg: "data" });
 
         mongodb.MongoClient.connect.mockImplementation(async () => ({
           db: () => ({
@@ -77,7 +77,7 @@ describe("Connector: submissionsDb", () => {
           }
         }));
 
-        response = await cacheRegistration({ reg: "data" });
+        response = await saveRegistration({ reg: "data" });
       });
 
       it("should have used the first mongo connnection both times", () => {

@@ -1,17 +1,17 @@
 const { logEmitter } = require("../../services/logging.service");
 const { establishConnectionToCosmos } = require("../cosmos.client");
 
-const cacheRegistration = async (registration) => {
-  logEmitter.emit("functionCall", "submissionsDb.connector", "cacheRegistration");
+const saveRegistration = async (registration) => {
+  logEmitter.emit("functionCall", "submissionsDb.connector", "saveRegistration");
   try {
     const cachedRegistrations = await establishConnectionToCosmos("registrations", "registrations");
     const response = await cachedRegistrations.insertOne(registration);
 
-    logEmitter.emit("functionSuccess", "submissionsDb.connector", "cacheRegistration");
+    logEmitter.emit("functionSuccess", "submissionsDb.connector", "saveRegistration");
 
     return response;
   } catch (err) {
-    logEmitter.emit("functionFail", "submissionsDb.connector", "cacheRegistration", err);
+    logEmitter.emit("functionFail", "submissionsDb.connector", "saveRegistration", err);
 
     const newError = new Error();
     newError.name = "mongoConnectionError";
@@ -48,6 +48,6 @@ const findOneById = async (cachedRegistrations, fsa_rn) => {
 
 module.exports = {
   findAllTmpRegistrations,
-  cacheRegistration,
+  saveRegistration,
   findOneById
 };

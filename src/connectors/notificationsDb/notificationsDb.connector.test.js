@@ -1,7 +1,7 @@
 jest.mock("mongodb");
 
 const mongodb = require("mongodb");
-const { cacheRegistration } = require("../submissionsDb/submissionsDb.connector");
+const { saveRegistration } = require("../submissionsDb/submissionsDb.connector");
 const { updateNotificationOnSent } = require("./notificationsDb.connector");
 
 describe("Connector: submissionsDb", () => {
