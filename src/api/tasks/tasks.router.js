@@ -7,7 +7,7 @@ const { logEmitter } = require("../../services/logging.service");
 const {
   sendNotificationsForRegistrationAction,
   sendAllNotificationsForRegistrationsAction
-} = require("./tasks.controller");
+} = require("./notifications.controller");
 
 // const { viewDeleteRegistrationAuth } = require("../../middleware/authHandler");
 

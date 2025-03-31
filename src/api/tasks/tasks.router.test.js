@@ -4,13 +4,13 @@ jest.mock("express", () => ({
     get: jest.fn()
   }))
 }));
-jest.mock("./tasks.controller");
+jest.mock("./notifications.controller");
 
 const { taskRouter } = require("./tasks.router");
 const {
   sendNotificationsForRegistrationAction,
   sendAllNotificationsForRegistrationsAction
-} = require("./tasks.controller");
+} = require("./notifications.controller");
 
 describe("/api/tasks route: ", () => {
   let router, handler;

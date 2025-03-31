@@ -11,7 +11,7 @@ The highlighted purple box is where the key functionality is and so are describe
 ```mermaid
 sequenceDiagram
 participant router as tasks.router
-participant controller as tasks.controller
+participant controller as notifications.controller
 participant notifyservice as notifications.service
 participant cache as notificationsDb.connector
 participant db as configDb.connector
