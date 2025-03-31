@@ -4,9 +4,9 @@ const { logEmitter, INFO, ERROR } = require("../../services/logging.service");
 const { sendNotifications } = require("../../services/notifications.service");
 const { isEmpty } = require("lodash");
 const { success } = require("../../utils/express/response");
-const { getFsaRn } = require("../submissions/submissions.service");
+const { getFsaRn } = require("../../services/submissions.service");
 
-const { getLcContactConfigFromArray } = require("../submissions/submissions.service");
+const { getLcContactConfigFromArray } = require("../../services/submissions.service");
 
 const {
   findAllBlankRegistrations,

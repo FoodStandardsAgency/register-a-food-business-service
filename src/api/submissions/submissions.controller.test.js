@@ -2,7 +2,7 @@ jest.mock("../../services/validation.service", () => ({
   validate: jest.fn()
 }));
 
-jest.mock("./submissions.service", () => ({
+jest.mock("../../services/submissions.service", () => ({
   getRegistrationMetaData: jest.fn(),
   getLcContactConfig: jest.fn()
 }));
@@ -29,7 +29,10 @@ jest.mock("../../connectors/cosmos.client", () => ({
   establishConnectionToCosmos: jest.fn()
 }));
 
-const { getRegistrationMetaData, getLcContactConfig } = require("./submissions.service");
+const {
+  getRegistrationMetaData,
+  getLcContactConfig
+} = require("../../services/submissions.service");
 
 const { validate } = require("../../services/validation.service");
 

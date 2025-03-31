@@ -1,5 +1,8 @@
 const { validate } = require("../../services/validation.service");
-const { getRegistrationMetaData, getLcContactConfig } = require("./submissions.service");
+const {
+  getRegistrationMetaData,
+  getLcContactConfig
+} = require("../../services/submissions.service");
 
 const { saveRegistration } = require("../../connectors/submissionsDb/submissionsDb.connector");
 

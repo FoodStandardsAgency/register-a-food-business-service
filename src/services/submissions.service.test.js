@@ -1,21 +1,21 @@
-jest.mock("../../connectors/notify/notify.connector", () => ({
+jest.mock("../connectors/notify/notify.connector", () => ({
   sendSingleEmail: jest.fn()
 }));
 
-jest.mock("../../connectors/configDb/configDb.connector", () => ({
+jest.mock("../connectors/configDb/configDb.connector", () => ({
   getAllLocalCouncilConfig: jest.fn()
 }));
 
-jest.mock("../../services/notifications.service");
+jest.mock("./notifications.service");
 
 jest.mock("axios");
 
-jest.mock("../../services/pdf.service");
-jest.mock("../../connectors/submissionsDb/submissionsDb.connector");
+jest.mock("./pdf.service");
+jest.mock("../connectors/submissionsDb/submissionsDb.connector");
 
-const { getAllLocalCouncilConfig } = require("../../connectors/configDb/configDb.connector");
+const { getAllLocalCouncilConfig } = require("../connectors/configDb/configDb.connector");
 
-const mockLocalCouncilConfig = require("../../connectors/configDb/mockLocalCouncilConfig.json");
+const mockLocalCouncilConfig = require("../connectors/configDb/mockLocalCouncilConfig.json");
 
 const axios = require("axios");
 
