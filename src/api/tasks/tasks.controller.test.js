@@ -3,7 +3,7 @@ jest.mock("mongodb");
 
 const { getFsaRn } = require("../../services/submissions.service");
 const mongodb = require("mongodb");
-const { tryResolveRegistrationNumber } = require("./Tasks.controller");
+const { tryResolveRegistrationNumber } = require("./tasks.controller");
 
 let fsaRn;
 

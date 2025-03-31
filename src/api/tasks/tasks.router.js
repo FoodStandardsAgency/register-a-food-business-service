@@ -7,45 +7,45 @@ const { logEmitter } = require("../../services/logging.service");
 const {
   sendNotificationsForRegistrationAction,
   sendAllNotificationsForRegistrationsAction
-} = require("./Tasks.controller");
+} = require("./tasks.controller");
 
 // const { viewDeleteRegistrationAuth } = require("../../middleware/authHandler");
 
-const TaskRouter = () => {
+const taskRouter = () => {
   const router = Router();
 
   //apply any middleware
   //router.use(viewDeleteRegistrationAuth);
   // SEND EMAILS AND STUFF
   router.get("/bulk/sendnotification", async (req, res) => {
-    logEmitter.emit("functionCall", "TaskRouter.router", "bulk/sendnotification");
+    logEmitter.emit("functionCall", "tasks.router", "bulk/sendnotification");
     let dryrun = !!req.query.dryrun;
     let throttle = req.query && req.query.throttle ? req.query.throttle : 500;
 
     try {
       await sendAllNotificationsForRegistrationsAction(req, res, dryrun, throttle);
     } catch (e) {
-      logEmitter.emit("functionFail", "TaskRouter.router", "bulk/sendnotification");
+      logEmitter.emit("functionFail", "tasks.router", "bulk/sendnotification");
       await fail(406, res, e.message);
       throw e;
     }
-    logEmitter.emit("functionSuccess", "TaskRouter.router", "bulk/sendnotification");
+    logEmitter.emit("functionSuccess", "tasks.router", "bulk/sendnotification");
   });
 
   router.get("/sendnotification/:fsaId", async (req, res) => {
-    logEmitter.emit("functionCall", "TaskRouter.router", "sendnotification/:fsaId");
+    logEmitter.emit("functionCall", "tasks.router", "sendnotification/:fsaId");
     const { fsaId = null } = req.params;
     try {
       await sendNotificationsForRegistrationAction(fsaId, req, res);
     } catch (e) {
-      logEmitter.emit("functionFail", "TaskRouter.router", "sendnotification/:fsaId");
+      logEmitter.emit("functionFail", "tasks.router", "sendnotification/:fsaId");
       await fail(406, res, e.message);
       throw e;
     }
-    logEmitter.emit("functionSuccess", "TaskRouter.router", "sendnotification/:fsaId");
+    logEmitter.emit("functionSuccess", "tasks.router", "sendnotification/:fsaId");
   });
 
   return router;
 };
 
-module.exports = { TaskRouter };
+module.exports = { taskRouter };

@@ -25,7 +25,7 @@ const { establishConnectionToCosmos } = require("../../connectors/cosmos.client"
 //actions
 
 const sendAllNotificationsForRegistrationsAction = async (req, res, dryrun, throttle = 0) => {
-  logEmitter.emit("functionCall", "Tasks.controller", "sendAllNotificationsForRegistrationsAction");
+  logEmitter.emit("functionCall", "tasks.controller", "sendAllNotificationsForRegistrationsAction");
   let idsAttempted = [];
   let registrationsCollection = await establishConnectionToCosmos("registrations", "registrations");
 
@@ -84,7 +84,7 @@ within the 5 minute window before the next batch begins.  */
 
   logEmitter.emit(
     "functionSuccess",
-    "Tasks.controller",
+    "tasks.controller",
     "sendAllNotificationsForRegistrationsAction"
   );
   await success(res, {
@@ -125,7 +125,7 @@ const tryResolveRegistrationNumber = async (registration) => {
 };
 
 const sendNotificationsForRegistrationAction = async (fsaId, req, res) => {
-  logEmitter.emit("functionCall", "Tasks.controller", "sendNotificationsForRegistrationAction");
+  logEmitter.emit("functionCall", "tasks.controller", "sendNotificationsForRegistrationAction");
   let allLcConfigData = await getAllLocalCouncilConfig();
 
   //GET REGISTRATION
@@ -161,7 +161,7 @@ const sendNotificationsForRegistrationAction = async (fsaId, req, res) => {
   await sendNotifications(fsaId, lcContactConfig, registration);
 
   logEmitter.emit(INFO, `Send notifications for ${fsaId}`);
-  logEmitter.emit("functionSuccess", "Tasks.controller", "sendNotificationsForRegistrationAction");
+  logEmitter.emit("functionSuccess", "tasks.controller", "sendNotificationsForRegistrationAction");
 
   await success(res, { fsaId, message: `Updated notifications status` });
 };
@@ -193,9 +193,9 @@ const multiSendNotifications = async (registration, allLocalCouncils) => {
 };
 
 const getRegistration = async (fsaId) => {
-  logEmitter.emit("functionCall", "Tasks.controller", "getRegistration");
+  logEmitter.emit("functionCall", "tasks.controller", "getRegistration");
   const cachedRegistrations = await establishConnectionToCosmos("registrations", "registrations");
-  logEmitter.emit("functionSuccess", "Tasks.controller", "getRegistration");
+  logEmitter.emit("functionSuccess", "tasks.controller", "getRegistration");
   return await findOneById(cachedRegistrations, fsaId);
 };
 
@@ -218,14 +218,14 @@ const getRegistration = async (fsaId) => {
 // };
 
 const findCouncilByIdInArray = (id, allCouncils = []) => {
-  logEmitter.emit("functionCall", "Tasks.controller", "findCouncilByIdInArray");
+  logEmitter.emit("functionCall", "tasks.controller", "findCouncilByIdInArray");
   let out = allCouncils.find((council) => council._id === id);
-  logEmitter.emit("functionSuccess", "Tasks.controller", "findCouncilByIdInArray");
+  logEmitter.emit("functionSuccess", "tasks.controller", "findCouncilByIdInArray");
   return out;
 };
 
 const getLocalCouncilIdForRegistration = (registration) => {
-  logEmitter.emit("functionCall", "Tasks.controller", "getLocalCouncilIdForRegistration");
+  logEmitter.emit("functionCall", "tasks.controller", "getLocalCouncilIdForRegistration");
   let councilId;
 
   if (registration.source_council_id) {
@@ -238,7 +238,7 @@ const getLocalCouncilIdForRegistration = (registration) => {
       : registration.hygiene.code;
   }
 
-  logEmitter.emit("functionSuccess", "Tasks.controller", "getLocalCouncilIdForRegistration");
+  logEmitter.emit("functionSuccess", "tasks.controller", "getLocalCouncilIdForRegistration");
 
   return councilId;
 };
