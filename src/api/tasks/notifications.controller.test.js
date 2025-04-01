@@ -1,9 +1,9 @@
-jest.mock("../submissions/submissions.service");
+jest.mock("../../services/submissions.service");
 jest.mock("mongodb");
 
-const { getFsaRn } = require("../submissions/submissions.service");
+const { getFsaRn } = require("../../services/submissions.service");
 const mongodb = require("mongodb");
-const { tryResolveRegistrationNumber } = require("./Tasks.controller");
+const { tryResolveRegistrationNumber } = require("./notifications.controller");
 
 let fsaRn;
 

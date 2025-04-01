@@ -1,6 +1,4 @@
-const {
-  requestPromise
-} = require("jest-transform-stealthy-require/dist/presets");
+const { requestPromise } = require("jest-transform-stealthy-require/dist/presets");
 
 module.exports = {
   transform: {
@@ -12,10 +10,7 @@ module.exports = {
   setupFilesAfterEnv: ["./tests/jestSetup.js"],
   reporters: [
     "default",
-    [
-      "jest-junit",
-      { outputName: `./reports/TEST-${process.env.TEST_TYPE}.xml` }
-    ]
+    ["jest-junit", { outputName: `./reports/TEST-${process.env.TEST_TYPE}.xml` }]
   ],
   coverageReporters: ["cobertura", "lcov", "json", "text"],
   moduleNameMapper: {
@@ -31,11 +26,17 @@ module.exports = {
     "!**/jest.config.js",
     "!**/cucumber.js",
     "!**/src/app.js",
+    "!eslint.config.js",
     "!**/src/rootMutation.js",
     "!**/src/rootQuery.js",
     "!**/src/schema.js",
+    "!**/scripts/*.js",
+    "!**/src/services/winston.js",
     "!**/src/services/validation.schema.js",
     "!**/src/services/validation.directSubmission.schema.js",
+    "!**/src/services/validation.directSubmission.*.schema.js",
+    "!**/src/services/collectionsTransform.*.keys.js",
+    "!**/src/utils/express/response.js",
     "!**/src/connectors/address-lookup/addressSchema.js",
     "!**/src/db/**",
     "!**/src/config.js",

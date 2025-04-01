@@ -9,12 +9,12 @@ const { collectionsV2Router } = require("./collections-v2/collections.v2.router"
 const { collectionsV3Router } = require("./collections-v3/collections.v3.router");
 const { collectionsV4Router } = require("./collections-v4/collections.v4.router");
 const { collectionsV5Router } = require("./collections-v5/collections.v5.router");
-const { TaskRouter } = require("./tasks/TaskRouter.router");
+const { notificationsRouter } = require("./tasks/notifications.router");
 
 const routers = () => {
   const router = Router();
 
-  router.use("/api/tasks", TaskRouter());
+  router.use("/api/tasks", notificationsRouter());
   router.use("/api/submissions", submissionsRouter());
   router.use("/api/v2/collections", collectionsV2Router());
   router.use("/api/v3/collections", collectionsV3Router());

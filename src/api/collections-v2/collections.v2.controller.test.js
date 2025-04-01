@@ -1,4 +1,4 @@
-jest.mock("../../connectors/registrationsDb/registrationsDb.connector", () => ({
+jest.mock("../../connectors/collectionsDb/collectionsDb.connector", () => ({
   getAllRegistrationsByCouncils: jest.fn(),
   getUnifiedRegistrations: jest.fn(),
   getSingleRegistration: jest.fn(),
@@ -22,7 +22,7 @@ const {
   getSingleRegistration,
   getUnifiedRegistrations,
   updateRegistrationCollectedByCouncil
-} = require("../../connectors/registrationsDb/registrationsDb.connector");
+} = require("../../connectors/collectionsDb/collectionsDb.connector");
 
 const {
   getRegistrationsByCouncil,

@@ -1,7 +1,10 @@
 const { validate } = require("../../services/validation.service");
-const { getRegistrationMetaData, getLcContactConfig } = require("./submissions.service");
+const {
+  getRegistrationMetaData,
+  getLcContactConfig
+} = require("../../services/submissions.service");
 
-const { cacheRegistration } = require("../../connectors/cacheDb/cacheDb.connector");
+const { saveRegistration } = require("../../connectors/submissionsDb/submissionsDb.connector");
 
 const { getUprn } = require("../../connectors/address-lookup/address-matcher");
 
@@ -85,7 +88,7 @@ const createNewRegistration = async (
     postRegistrationMetadata
   );
 
-  await cacheRegistration(completeCacheRecord);
+  await saveRegistration(completeCacheRecord);
 
   const combinedResponse = Object.assign({}, postRegistrationMetadata, {
     lc_config: lcContactConfig
@@ -229,7 +232,7 @@ const createNewDirectRegistration = async (registration, options) => {
     supplierDetails
   );
 
-  await cacheRegistration(completeCacheRecord);
+  await saveRegistration(completeCacheRecord);
 
   const response = { "fsa-rn": regMetadata["fsa-rn"] };
 

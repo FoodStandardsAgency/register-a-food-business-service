@@ -1,13 +1,10 @@
 const axios = require("axios");
 const uuid = require("uuid");
 const HttpsProxyAgent = require("https-proxy-agent");
-const {
-  getAllLocalCouncilConfig,
-  mongodb
-} = require("../../connectors/configDb/configDb.connector");
+const { getAllLocalCouncilConfig, mongodb } = require("../connectors/configDb/configDb.connector");
 
-const { logEmitter } = require("../../services/logging.service");
-const { RNG_API_URL } = require("../../config");
+const { logEmitter } = require("./logging.service");
+const { RNG_API_URL } = require("../config");
 
 const getRegistrationMetaData = async (councilCode) => {
   logEmitter.emit("functionCall", "submissions.service", "getRegistrationMetaData");

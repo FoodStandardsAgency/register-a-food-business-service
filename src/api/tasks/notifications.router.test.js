@@ -4,13 +4,13 @@ jest.mock("express", () => ({
     get: jest.fn()
   }))
 }));
-jest.mock("./Tasks.controller");
+jest.mock("./notifications.controller");
 
-const { TaskRouter } = require("./TaskRouter.router");
+const { notificationsRouter } = require("./notifications.router");
 const {
   sendNotificationsForRegistrationAction,
   sendAllNotificationsForRegistrationsAction
-} = require("./Tasks.controller");
+} = require("./notifications.controller");
 
 describe("/api/tasks route: ", () => {
   let router, handler;
@@ -18,7 +18,7 @@ describe("/api/tasks route: ", () => {
 
   describe("GET to /bulk/sendnotification", () => {
     beforeEach(() => {
-      router = TaskRouter();
+      router = notificationsRouter();
       sendAllNotificationsForRegistrationsAction.mockImplementation(() => {});
       handler = router.get.mock.calls[0][1];
 
@@ -39,7 +39,7 @@ describe("/api/tasks route: ", () => {
     });
 
     it("Should call sendAllNotificationsForRegistrationsAction with dryrun true", () => {
-      router = TaskRouter();
+      router = notificationsRouter();
       sendAllNotificationsForRegistrationsAction.mockImplementation(() => {});
       handler = router.get.mock.calls[0][1];
 
@@ -61,7 +61,7 @@ describe("/api/tasks route: ", () => {
   describe("GET to /sendnotification", () => {
     let fsaId = "test";
     beforeEach(() => {
-      router = TaskRouter();
+      router = notificationsRouter();
       sendNotificationsForRegistrationAction.mockImplementation(() => {});
       handler = router.get.mock.calls[1][1];
       req = { params: { fsaId } };
