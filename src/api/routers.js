@@ -10,10 +10,12 @@ const { collectionsV3Router } = require("./collections-v3/collections.v3.router"
 const { collectionsV4Router } = require("./collections-v4/collections.v4.router");
 const { collectionsV5Router } = require("./collections-v5/collections.v5.router");
 const { notificationsRouter } = require("./tasks/notifications.router");
+const { tradingStatusRouter } = require("./tasks/trading-status-checks.router");
 
 const routers = () => {
   const router = Router();
 
+  router.use("/api/trading-status-checks", tradingStatusRouter());
   router.use("/api/tasks", notificationsRouter());
   router.use("/api/submissions", submissionsRouter());
   router.use("/api/v2/collections", collectionsV2Router());

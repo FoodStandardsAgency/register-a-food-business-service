@@ -65,3 +65,5 @@ saved-data
 
 # JsDocs styling 
 docs/jsdoc
+
+/**/reports/*.xml
