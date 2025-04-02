@@ -14,8 +14,8 @@ const {
 const { findOneById } = require("../../connectors/submissionsDb/submissionsDb.connector");
 const { getAllLocalCouncilConfig } = require("../../connectors/configDb/configDb.connector");
 
-const processTradingStatusChecks = async (req, res, throttle) => {
-  logEmitter.emit("functionCall", "trading-status-checks.controller", "processTradingStatusChecks");
+const processTradingStatus = async (req, res, throttle) => {
+  logEmitter.emit("functionCall", "trading-status-checks.controller", "processTradingStatus");
   let idsAttempted = [];
   let registrationsCollection = await establishConnectionToCosmos("registrations", "registrations");
   let allLcConfigData = await getAllLocalCouncilConfig();
