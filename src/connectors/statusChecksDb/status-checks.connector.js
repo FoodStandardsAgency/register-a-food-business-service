@@ -1,79 +1,45 @@
-const { logEmitter } = require("../../services/logging.service");
+"use strict";
+
+const { logEmitter, ERROR } = require("../../services/logging.service");
 const { establishConnectionToCosmos } = require("../cosmos.client");
 
-const findActionableRegistrations = async (limit = 100) => {
-  logEmitter.emit("functionCall", "configDb.connector", "getAllLocalCouncilConfig");
+/**
+ * Finds actionable registrations that are due for a status check.
+ *
+ * @param {number} [limit=50] - Maximum number of registrations to retrieve.
+ * @returns {Promise<Array>} Array of actionable registrations.
+ * @throws Will throw an error if registration lookup fails.
+ */
+const findActionableRegistrations = async (limit = 50) => {
+  logEmitter.emit("functionCall", "status-checks.connector", "findActionableRegistrations");
 
   try {
     const registrations = await establishConnectionToCosmos("registrations", "registrations");
     const actionableRegistrations = await registrations
-      .find({ next_status_date: { $lte: true } })
+      .find({ next_status_date: { $lte: new Date() } })
+      .limit(limit)
       .toArray();
-    allLcConfigData = allLcConfigDataCursor.toArray();
-  } catch (err) {}
-
-  return await cachedRegistrations
-    .find({
-      $and: [
-        { "fsa-rn": { $not: { $regex: /^tmp_/ } } },
-        {
-          "status.notifications": {
-            $elemMatch: { sent: { $ne: true } }
-          }
-        },
-        {
-          $or: [
-            { direct_submission: { $exists: false } },
-            { direct_submission: null },
-            { direct_submission: false }
-          ]
-        }
-      ]
-    })
-    .sort({ reg_submission_date: 1 })
-    .limit(limit);
-};
-
-const findAllBlankRegistrations = async (cachedRegistrations, limit = 100) => {
-  return await cachedRegistrations
-    .find({
-      $and: [
-        { "fsa-rn": { $not: { $regex: /^tmp_/ } } },
-        {
-          $or: [{ "status.notifications": { $exists: false } }, { "status.notifications": null }]
-        },
-        {
-          $or: [
-            { direct_submission: { $exists: false } },
-            { direct_submission: null },
-            { direct_submission: false }
-          ]
-        }
-      ]
-    })
-    .sort({ reg_submission_date: 1 })
-    .limit(limit);
-};
-
-const getStatus = async (cachedRegistrations, fsa_rn) => {
-  const cachedRegistration = await cachedRegistrations.findOne({
-    "fsa-rn": fsa_rn
-  });
-  return Object.assign({}, cachedRegistration.status);
+    logEmitter.emit("functionSuccess", "status-checks.connector", "findActionableRegistrations");
+    return actionableRegistrations;
+  } catch (err) {
+    logEmitter.emit(ERROR, "Registration data lookup failure");
+    logEmitter.emit("functionFail", "status-checks.connector", "findActionableRegistrations", err);
+    throw err;
+  }
 };
 
 const updateStatus = async (cachedRegistrations, fsa_rn, newStatus) => {
-  logEmitter.emit("functionCall", "notificationsDb.connector", "updateStatus");
+  logEmitter.emit("functionCall", "status-checks.connector", "updateStatus");
   try {
     await cachedRegistrations.updateOne(
       { "fsa-rn": fsa_rn },
       {
-        $set: { status: newStatus }
+        $set: { trading_status: newStatus }
       }
     );
-    logEmitter.emit("functionSuccess", "notificationsDb.connector", "updateStatus");
+    logEmitter.emit("functionSuccess", "status-checks.connector", "updateStatus");
   } catch (err) {
-    logEmitter.emit("functionFail", "notificationsDb.connector", "updateStatus", err);
+    logEmitter.emit("functionFail", "status-checks.connector", "updateStatus", err);
   }
 };
 
@@ -101,9 +67,7 @@ const updateNotificationOnSent = (status, fsa_rn, emailsToSend, index, sent, dat
 };
 
 module.exports = {
-  findAllFailedNotificationsRegistrations,
-  findAllBlankRegistrations,
+  findActionableRegistrations,
   updateNotificationOnSent,
-  getStatus,
   updateStatus
 };

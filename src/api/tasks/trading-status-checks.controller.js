@@ -1,36 +1,64 @@
 "use strict";
 
 const { logEmitter, INFO, ERROR } = require("../../services/logging.service");
-const {
-  getTradingStatusAction,
-  processTradingStatusChecks
-} = require("../../services/status-checks.service");
+const { processTradingStatus } = require("../../services/status-checks.service");
 const { isEmpty } = require("lodash");
-const { success } = require("../../utils/express/response");
 
 const {
   findActionableRegistrations
-} = require("../../connectors/notificationsDb/notificationsDb.connector");
+} = require("../../connectors/statusChecksDb/status-checks.connector");
 const { findOneById } = require("../../connectors/submissionsDb/submissionsDb.connector");
-const { getAllLocalCouncilConfig } = require("../../connectors/configDb/configDb.connector");
+const {
+  getAllLocalCouncilConfig,
+  findCouncilByUrl
+} = require("../../connectors/configDb/configDb.connector");
 
-const processTradingStatus = async (req, res, throttle) => {
-  logEmitter.emit("functionCall", "trading-status-checks.controller", "processTradingStatus");
-  let idsAttempted = [];
-  let registrationsCollection = await establishConnectionToCosmos("registrations", "registrations");
-  let allLcConfigData = await getAllLocalCouncilConfig();
-  return processTradingStatusChecks();
+/**
+ * Processes all due trading status checks for actionable registrations.
+ *
+ * @param {Object} req - Express request object.
+ * @param {Object} res - Express response object.
+ * @param {number} throttle - Throttle value for processing.
+ * @returns {Promise<Array>} Array of results from processing trading status checks.
+ */
+const processTradingStatusChecksDue = async (req, res, throttle) => {
+  logEmitter.emit(
+    "functionCall",
+    "trading-status-checks.controller",
+    "processTradingStatusChecksDue"
+  );
+
+  let registrationsCollection = await findActionableRegistrations(throttle);
+  let allLaConfigData = await getAllLocalCouncilConfig();
+
+  const result = processTradingStatusChecks(registrationsCollection, allLaConfigData);
+
+  logEmitter.emit(
+    "functionSuccess",
+    "trading-status-checks.controller",
+    "processTradingStatusChecksDue"
+  );
+
+  return result;
 };
 
+/**
+ * Processes trading status checks for a single registration identified by fsaId.
+ *
+ * @param {string} fsaId - The registration ID.
+ * @param {Object} req - Express request object.
+ * @param {Object} res - Express response object.
+ * @throws Will throw an error if the registration is not found.
+ */
 const processTradingStatusChecksForId = async (fsaId, req, res) => {
   logEmitter.emit(
     "functionCall",
     "trading-status-checks.controller",
-    "sendNotificationsForRegistrationAction"
+    "processTradingStatusChecksForId"
   );
-  let allLcConfigData = await getAllLocalCouncilConfig();
+  let allLaConfigData = await getAllLocalCouncilConfig();
 
-  //GET REGISTRATION
+  // Get registration for the fsaId
   let registration = await getRegistration(fsaId);
 
   if (isEmpty(registration)) {
@@ -40,124 +68,58 @@ const processTradingStatusChecksForId = async (fsaId, req, res) => {
   }
   logEmitter.emit(INFO, `Found registration with ID ${fsaId}`);
 
-  //GET LOCAL COUNCIL
-  let localCouncilId = getLocalCouncilIdForRegistration(registration);
-  let localCouncil = findCouncilByIdInArray(localCouncilId, allLcConfigData);
-  if (isEmpty(localCouncil)) {
-    let message = `Could not find local council with ID ${localCouncilId}`;
-    logEmitter.emit(ERROR, message);
-    throw new Error(`${message}`);
-  }
-
-  //this method is in dire need of refactoring...
-  let lcContactConfig = await getLcContactConfigFromArray(
-    localCouncil.local_council_url,
-    allLcConfigData
-  );
-  if (isEmpty(lcContactConfig)) {
-    let message = `Could not find local council config ${fsaId} ${localCouncil.local_council_url}`;
-    logEmitter.emit(ERROR, message);
-    throw new Error(`${message}`);
-  }
-
-  await sendNotifications(fsaId, lcContactConfig, registration);
+  await processTradingStatusChecks([registration], allLaConfigData);
 
   logEmitter.emit(INFO, `Send notifications for ${fsaId}`);
   logEmitter.emit(
     "functionSuccess",
     "trading-status-checks.controller",
-    "sendNotificationsForRegistrationAction"
+    "processTradingStatusChecksForId"
   );
-
-  await success(res, { fsaId, message: `Updated notifications status` });
 };
 
-// Convenience methods for this controller - dont put else where
-const multiSendNotifications = async (registration, allLocalCouncils) => {
-  let fsaId = registration["fsa-rn"];
+/**
+ * Processes trading status checks for an array of registrations.
+ *
+ * @param {Array} registrations - Array of registration objects.
+ * @param {Array} laConfig - Local authority configuration data.
+ * @returns {Promise<Array>} Array of results from processing each trading status.
+ */
+const processTradingStatusChecks = async (registrations, laConfig) => {
+  logEmitter.emit("functionCall", "trading-status-checks.controller", "processTradingStatusChecks");
 
-  let localCouncilId = getLocalCouncilIdForRegistration(registration);
-  let localCouncil = await findCouncilByIdInArray(localCouncilId, allLocalCouncils);
-  if (isEmpty(localCouncil)) {
-    let message = `Could not find local council with ID ${localCouncilId}`;
-    logEmitter.emit(ERROR, message);
-    throw new Error(`${message}`);
-  }
+  const results = [];
+  for (const registration of registrations) {
+    let localCouncil = findCouncilByUrl(laConfig, registration.local_council_url);
 
-  //this method is in dire need of refactoring...
-  let lcContactConfig = await getLcContactConfigFromArray(
-    localCouncil.local_council_url,
-    allLocalCouncils
-  );
-  if (isEmpty(lcContactConfig)) {
-    let message = `Could not find lcContactConfig ${fsaId} ${localCouncil.local_council_url}`;
-    logEmitter.emit(ERROR, message);
-    throw new Error(`${message}`);
-  }
+    if (!localCouncil) {
+      let message = `Could not find local council config for registration ${registration.fsa_rn} with url ${registration.local_council_url}`;
+      logEmitter.emit(ERROR, message);
+      continue;
+    }
 
-  await sendNotifications(fsaId, lcContactConfig, registration);
-};
+    // Add data retention period from environment variable
+    localCouncil.data_retention_period = process.env.DATA_RETENTION_PERIOD || 7;
 
-const getRegistration = async (fsaId) => {
-  logEmitter.emit("functionCall", "trading-status-checks.controller", "getRegistration");
-  const cachedRegistrations = await establishConnectionToCosmos("registrations", "registrations");
-  logEmitter.emit("functionSuccess", "trading-status-checks.controller", "getRegistration");
-  return await findOneById(cachedRegistrations, fsaId);
-};
+    logEmitter.emit(
+      INFO,
+      `Processing registration ${registration.fsa_rn} for council ${localCouncil.local_council_url}`
+    );
 
-// const getCouncilFromConfigDb = async (client, registration) => {
-//   //this is a strange nasty hack to extract the council id of the initial registration for older records
-//   const lcConfigCollection = await LocalCouncilConfigDbCollection(client);
-//   let councilId;
-//   if (registration.source_council_id) {
-//     // POST feature RS-79
-//     councilId = registration.source_council_id;
-//   } else {
-//     // PRE feature RS-79
-//     councilId = registration.hygieneAndStandards
-//       ? registration.hygieneAndStandards.code
-//       : registration.hygiene.code;
-//   }
-//
-//   //can return null
-//   return await findCouncilById(lcConfigCollection, councilId);
-// };
-
-const findCouncilByIdInArray = (id, allCouncils = []) => {
-  logEmitter.emit("functionCall", "trading-status-checks.controller", "findCouncilByIdInArray");
-  let out = allCouncils.find((council) => council._id === id);
-  logEmitter.emit("functionSuccess", "trading-status-checks.controller", "findCouncilByIdInArray");
-  return out;
-};
-
-const getLocalCouncilIdForRegistration = (registration) => {
-  logEmitter.emit(
-    "functionCall",
-    "trading-status-checks.controller",
-    "getLocalCouncilIdForRegistration"
-  );
-  let councilId;
-
-  if (registration.source_council_id) {
-    // POST feature RS-79
-    councilId = registration.source_council_id;
-  } else {
-    // PRE feature RS-79
-    councilId = registration.hygieneAndStandards
-      ? registration.hygieneAndStandards.code
-      : registration.hygiene.code;
+    const result = await processTradingStatus(registration, localCouncil);
+    results.push(result);
   }
 
   logEmitter.emit(
     "functionSuccess",
     "trading-status-checks.controller",
-    "getLocalCouncilIdForRegistration"
+    "processTradingStatusChecks"
   );
 
-  return councilId;
+  return results;
 };
 
 module.exports = {
-  processTradingStatusChecks,
+  processTradingStatusChecksDue,
   processTradingStatusChecksForId
 };
