@@ -1,6 +1,30 @@
 "use strict";
 
 const moment = require("moment");
+const {
+  INITIAL_REGISTRATION,
+  INITIAL_CHECK,
+  INITIAL_CHECK_CHASE,
+  REGULAR_CHECK,
+  REGULAR_CHECK_CHASE,
+  CONFIRMED_TRADING,
+  CONFIRMED_NOT_TRADING,
+  FINISHED_TRADING_LA,
+  STILL_TRADING_LA,
+  DELETE_REGISTRATION,
+  INITIAL_CHECK_TEMPLATE_ID,
+  INITIAL_CHECK_CHASE_TEMPLATE_ID,
+  REGULAR_CHECK_TEMPLATE_ID,
+  REGULAR_CHECK_CHASE_TEMPLATE_ID,
+  FINISHED_TRADING_LA_TEMPLATE_ID,
+  STILL_TRADING_LA_TEMPLATE_ID,
+  INITIAL_CHECK_TEMPLATE_ID_CY,
+  INITIAL_CHECK_CHASE_TEMPLATE_ID_CY,
+  REGULAR_CHECK_TEMPLATE_ID_CY,
+  REGULAR_CHECK_CHASE_TEMPLATE_ID_CY,
+  FINISHED_TRADING_LA_TEMPLATE_ID_CY,
+  STILL_TRADING_LA_TEMPLATE_ID_CY
+} = require("../config");
 
 /**
  * Processes the trading status of a registration and updates the local authority configuration accordingly.
@@ -11,6 +35,37 @@ const moment = require("moment");
  */
 const processTradingStatus = (registration, laConfig) => {
   const action = getTradingStatusAction(registration, laConfig);
+  if (action.time.isBefore(moment())) {
+    // Perform the action based on the trading status
+    switch (action.type) {
+      case FINISHED_TRADING_LA:
+        // Notify local authority of finished trading
+        break;
+      case DELETE_REGISTRATION:
+        // Delete registration after retention period
+        break;
+      case REGULAR_CHECK:
+        // Schedule regular check
+        break;
+      case INITIAL_CHECK:
+        // Schedule initial check
+        break;
+      case INITIAL_CHECK_CHASE:
+        // Chase initial check
+        break;
+      case REGULAR_CHECK_CHASE:
+        // Chase regular check
+        break;
+      default:
+        throw new Error(`Unknown action type: ${action.type}`);
+    }
+    const nextAction = getNextActionAndDate(action, laConfig.trading_status);
+    // Schedule the next action
+    // e.g., update the registration with the next action date
+    registration.next_status_date = nextAction.time;
+  } else {
+    registration.next_status_date = action.time;
+  }
 };
 
 /**
@@ -28,6 +83,7 @@ const getTradingStatusAction = (registration, laConfig) => {
   }
   const mostRecentCheck = getMostRecentCheck(tradingStatusDates);
   const nextAction = getNextActionAndDate(mostRecentCheck, laConfig.trading_status);
+  return nextAction;
 };
 
 /**
@@ -52,7 +108,7 @@ const getVerifiedRegistrationDates = (registration) => {
   if (submission_date && moment(submission_date).isValid()) {
     result.submission_date = moment(submission_date).clone();
     result.trading_status_checks.push({
-      type: "REGISTRATION_SUBMISSION",
+      type: INITIAL_REGISTRATION,
       time: moment(submission_date).clone()
     });
   } else {
@@ -66,7 +122,7 @@ const getVerifiedRegistrationDates = (registration) => {
     if (moment(last_confirmed_trading).isValid()) {
       result.last_confirmed_trading = moment(last_confirmed_trading).clone();
       result.trading_status_checks.push({
-        type: "CONFIRMED_TRADING",
+        type: CONFIRMED_TRADING,
         time: moment(last_confirmed_trading).clone()
       });
     } else {
@@ -143,85 +199,85 @@ const getMostRecentCheck = (tradingStatusChecks, type) => {
  * @returns {Object|null} Object containing the type and time of the next action, or null if no action needed.
  */
 const getNextActionAndDate = (mostRecentCheck, tradingStatusConfig) => {
-  if (mostRecentCheck.type === "CONFIRMED_NOT_TRADING") {
+  if (mostRecentCheck.type === CONFIRMED_NOT_TRADING) {
     // LA notification not sent yet
-    return { type: "FINISHED_TRADING_LA", time: mostRecentCheck.time };
+    return { type: FINISHED_TRADING_LA, time: mostRecentCheck.time };
   }
 
-  if (mostRecentCheck.type === "FINISHED_TRADING_LA") {
+  if (mostRecentCheck.type === FINISHED_TRADING_LA) {
     // LA notification sent, but not yet deleted
     const deleteTime = moment(mostRecentCheck.time).add(
       tradingStatusConfig.data_retention_period,
       "years"
     );
 
-    return { type: "DELETE_REGISTRATION", time: deleteTime };
+    return { type: DELETE_REGISTRATION, time: deleteTime };
   }
 
   const mostRecentCheckTime = moment(mostRecentCheck.time).clone();
 
-  if (mostRecentCheck.type === "CONFIRMED_TRADING") {
+  if (mostRecentCheck.type === CONFIRMED_TRADING || mostRecentCheck.type === STILL_TRADING_LA) {
     if (tradingStatusConfig.regular_check) {
       const nextActionTime = mostRecentCheckTime.add(tradingStatusConfig.regular_check, "months");
 
-      return { type: "REGULAR_CHECK", time: nextActionTime };
+      return { type: REGULAR_CHECK, time: nextActionTime };
     }
   }
 
-  if (mostRecentCheck.type === "INITIAL_REGISTRATION") {
+  if (mostRecentCheck.type === INITIAL_REGISTRATION) {
     if (tradingStatusConfig.initial_check) {
       const nextActionTime = mostRecentCheckTime.add(tradingStatusConfig.initial_check, "months");
 
-      return { type: "INITIAL_CHECK", time: nextActionTime };
+      return { type: INITIAL_CHECK, time: nextActionTime };
     } else if (tradingStatusConfig.regular_check) {
       const nextActionTime = mostRecentCheckTime.add(tradingStatusConfig.regular_check, "months");
 
-      return { type: "REGULAR_CHECK", time: nextActionTime };
+      return { type: REGULAR_CHECK, time: nextActionTime };
     }
   }
 
-  if (mostRecentCheck.type === "INITIAL_CHECK") {
+  if (mostRecentCheck.type === INITIAL_CHECK) {
     if (tradingStatusConfig.initial_check && tradingStatusConfig.chase) {
       const nextActionTime = mostRecentCheckTime.add(2, "weeks");
 
       // Sanity check to ensure old initial check is not chased e.g. due to config change
       if (nextActionTime.clone().add(2, "weeks").isAfter(moment())) {
-        return { type: "INITIAL_CHECK_CHASE", time: nextActionTime };
+        return { type: INITIAL_CHECK_CHASE, time: nextActionTime };
       }
     }
 
     if (tradingStatusConfig.regular_check) {
       const nextActionTime = mostRecentCheckTime.add(tradingStatusConfig.regular_check, "months");
 
-      return { type: "REGULAR_CHECK", time: nextActionTime };
+      return { type: REGULAR_CHECK, time: nextActionTime };
     }
   }
 
-  if (mostRecentCheck.type === "REGULAR_CHECK") {
+  if (mostRecentCheck.type === REGULAR_CHECK) {
     if (tradingStatusConfig.regular_check && tradingStatusConfig.chase) {
       const nextActionTime = mostRecentCheckTime.clone().add(2, "weeks");
 
       // Sanity check to ensure old regular check is not chased e.g. due to config change
       if (nextActionTime.clone().add(2, "weeks").isAfter(moment())) {
-        return { type: "REGULAR_CHECK_CHASE", time: nextActionTime };
+        return { type: REGULAR_CHECK_CHASE, time: nextActionTime };
       }
     }
 
     if (tradingStatusConfig.regular_check) {
       const nextActionTime = mostRecentCheckTime.add(tradingStatusConfig.regular_check, "months");
 
-      return { type: "REGULAR_CHECK", time: nextActionTime };
+      return { type: REGULAR_CHECK, time: nextActionTime };
     }
   }
 
   if (
-    mostRecentCheck.type === "INITIAL_CHECK_CHASE" ||
-    mostRecentCheck.type === "REGULAR_CHECK_CHASE"
+    mostRecentCheck.type === INITIAL_CHECK_CHASE ||
+    mostRecentCheck.type === REGULAR_CHECK_CHASE
   ) {
     if (tradingStatusConfig.regular_check) {
       const nextActionTime = mostRecentCheckTime.add(tradingStatusConfig.regular_check, "months");
 
-      return { type: "REGULAR_CHECK", time: nextActionTime };
+      return { type: REGULAR_CHECK, time: nextActionTime };
     }
   }
 
@@ -233,7 +289,77 @@ const getNextActionAndDate = (mostRecentCheck, tradingStatusConfig) => {
  *
  * @returns {Object} Email content and metadata.
  */
-const generateStatusEmailToSend = () => {};
+const generateStatusEmailToSend = (registration, emailType, lcContactConfig) => {
+  const cy = registration.submission_language === "cy";
+  let emailsToSend = [];
+  const fboEmailAddress =
+    registration.establishment.operator.operator_email ||
+    registration.establishment.operator.contact_representative_email;
+
+  switch (emailType) {
+    case INITIAL_CHECK:
+      templateID = cy ? INITIAL_CHECK_TEMPLATE_ID_CY : INITIAL_CHECK_TEMPLATE_ID;
+      break;
+    case INITIAL_CHECK_CHASE:
+      templateID = cy ? INITIAL_CHECK_CHASE_TEMPLATE_ID_CY : INITIAL_CHECK_CHASE_TEMPLATE_ID;
+      break;
+    case REGULAR_CHECK:
+      templateID = cy ? REGULAR_CHECK_TEMPLATE_ID_CY : REGULAR_CHECK_TEMPLATE_ID;
+      break;
+    case REGULAR_CHECK_CHASE:
+      templateID = cy ? REGULAR_CHECK_CHASE_TEMPLATE_ID_CY : REGULAR_CHECK_CHASE_TEMPLATE_ID;
+      break;
+    case FINISHED_TRADING_LA:
+      templateID = cy ? FINISHED_TRADING_LA_TEMPLATE_ID_CY : FINISHED_TRADING_LA_TEMPLATE_ID;
+      break;
+    case STILL_TRADING_LA:
+      templateID = cy ? STILL_TRADING_LA_TEMPLATE_ID_CY : STILL_TRADING_LA_TEMPLATE_ID;
+      break;
+    default:
+      templateID = null;
+      break;
+  }
+
+  let emailToSend = {
+    type: emailType,
+    address: fboEmailAddress,
+    templateId: templateID
+  };
+
+  if (emailType === INITIAL_CHECK && lcContactConfig.emailReplyToId) {
+    emailToSend["emailReplyToId"] = lcContactConfig.emailReplyToId;
+  }
+
+  emailsToSend.push(emailToSend);
+
+  for (let typeOfCouncil in lcContactConfig) {
+    const lcNotificationEmailAddresses = lcContactConfig[typeOfCouncil].local_council_notify_emails;
+
+    for (let recipientEmailAddress in lcNotificationEmailAddresses) {
+      emailsToSend.push({
+        type: "LC",
+        address: lcNotificationEmailAddresses[recipientEmailAddress],
+        templateId: cy ? INITIAL_CHECK_TEMPLATE_ID_CY : INITIAL_CHECK_TEMPLATE_ID
+      });
+    }
+  }
+
+  if (registration.declaration && registration.declaration.feedback1) {
+    emailsToSend.push({
+      type: "FBO_FB",
+      address: fboEmailAddress,
+      templateId: cy ? REGULAR_CHECK_TEMPLATE_ID_CY : REGULAR_CHECK_TEMPLATE_ID
+    });
+
+    emailsToSend.push({
+      type: "FD_FB",
+      address: "future_delivery_email@example.com",
+      templateId: REGULAR_CHECK_TEMPLATE_ID
+    });
+  }
+
+  return emailsToSend;
+};
 
 /**
  * Sends emails for trading status updates and notifications to appropriate recipients.
