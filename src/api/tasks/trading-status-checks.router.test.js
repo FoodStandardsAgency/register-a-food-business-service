@@ -3,12 +3,18 @@ jest.mock("express", () => ({
     post: jest.fn()
   }))
 }));
-jest.mock("./trading-status-checks.controller");
+
+// Mock the controller methods
+jest.mock("./trading-status-checks.controller", () => ({
+  processTradingStatusChecksDue: jest.fn(),
+  processTradingStatusChecksForId: jest.fn()
+}));
+
 const { fail } = require("../../utils/express/response");
 
 const { tradingStatusRouter } = require("./trading-status-checks.router");
 const {
-  processTradingStatusChecks,
+  processTradingStatusChecksDue,
   processTradingStatusChecksForId
 } = require("./trading-status-checks.controller");
 
@@ -23,19 +29,20 @@ describe("/api/trading-status-checks route: ", () => {
 
       req = { query: {} };
       res = {
+        status: jest.fn(() => res),
         send: jest.fn()
       };
     });
 
     it("Should call processTradingStatusChecks", async () => {
       await handler(req, res);
-      expect(processTradingStatusChecks).toHaveBeenLastCalledWith(req, res, 50);
+      expect(processTradingStatusChecksDue).toHaveBeenLastCalledWith(req, res, 50);
     });
 
     it("Should call processTradingStatusChecks with throttle set to 10", async () => {
       req = { query: { throttle: 10 } };
       await handler(req, res);
-      expect(processTradingStatusChecks).toHaveBeenLastCalledWith(req, res, 10);
+      expect(processTradingStatusChecksDue).toHaveBeenLastCalledWith(req, res, 10);
     });
   });
 
@@ -44,7 +51,7 @@ describe("/api/trading-status-checks route: ", () => {
 
     beforeEach(() => {
       router = tradingStatusRouter();
-      processTradingStatusChecks.mockImplementation(() => {
+      processTradingStatusChecksDue.mockImplementation(() => {
         throw new Error(errorMessage);
       });
       handler = router.post.mock.calls[0][1];
@@ -71,6 +78,7 @@ describe("/api/trading-status-checks route: ", () => {
       handler = router.post.mock.calls[1][1];
       req = { params: { fsaId } };
       res = {
+        status: jest.fn(() => res),
         send: jest.fn()
       };
     });

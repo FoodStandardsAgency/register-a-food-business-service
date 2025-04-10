@@ -24,6 +24,7 @@ describe("/api/tasks route: ", () => {
 
       req = { query: {} };
       res = {
+        status: jest.fn(() => res),
         send: jest.fn()
       };
       handler(req, res);

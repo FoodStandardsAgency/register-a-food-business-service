@@ -1,5 +1,7 @@
 "use strict";
 
+const moment = require("moment");
+
 /**
  * Processes the trading status of a registration and updates the local authority configuration accordingly.
  * It checks if the registration is due for a status check, updates the status, and sends notifications.
@@ -141,14 +143,17 @@ const getMostRecentCheck = (tradingStatusChecks, type) => {
  * @returns {Object|null} Object containing the type and time of the next action, or null if no action needed.
  */
 const getNextActionAndDate = (mostRecentCheck, tradingStatusConfig) => {
-  if (mostRecentCheck === "CONFIRMED_NOT_TRADING") {
+  if (mostRecentCheck.type === "CONFIRMED_NOT_TRADING") {
     // LA notification not sent yet
     return { type: "FINISHED_TRADING_LA", time: mostRecentCheck.time };
   }
 
-  if (mostRecentCheck === "FINISHED_TRADING_LA") {
+  if (mostRecentCheck.type === "FINISHED_TRADING_LA") {
     // LA notification sent, but not yet deleted
-    const deleteTime = moment(mostRecentCheck.time).add(laConfig.data_retention_period, "years");
+    const deleteTime = moment(mostRecentCheck.time).add(
+      tradingStatusConfig.data_retention_period,
+      "years"
+    );
 
     return { type: "DELETE_REGISTRATION", time: deleteTime };
   }
@@ -194,7 +199,7 @@ const getNextActionAndDate = (mostRecentCheck, tradingStatusConfig) => {
 
   if (mostRecentCheck.type === "REGULAR_CHECK") {
     if (tradingStatusConfig.regular_check && tradingStatusConfig.chase) {
-      const nextActionTime = mostRecentCheckTime.add(2, "weeks");
+      const nextActionTime = mostRecentCheckTime.clone().add(2, "weeks");
 
       // Sanity check to ensure old regular check is not chased e.g. due to config change
       if (nextActionTime.clone().add(2, "weeks").isAfter(moment())) {
@@ -240,6 +245,9 @@ const sendTradingStatusEmails = () => {};
 module.exports = {
   processTradingStatus,
   getTradingStatusAction,
+  getNextActionAndDate,
+  getMostRecentCheck,
+  getVerifiedRegistrationDates,
   generateStatusEmailToSend,
   sendTradingStatusEmails
 };
