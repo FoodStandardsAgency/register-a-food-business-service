@@ -20,16 +20,12 @@ const processTradingStatus = (registration, laConfig) => {
  * @returns {string} The action to be taken ("check_status", "notify_inactive", or "no_action").
  */
 const getTradingStatusAction = (registration, laConfig) => {
-  const tradingStatusDates = getAndCheckRegistrationDates(registration);
+  const tradingStatusDates = getVerifiedRegistrationDates(registration);
   if (!tradingStatusDates.valid) {
     throw new Error(`Trading status checks validation error: ${tradingStatusDates.error}`);
   }
-
-  const nextAction = getNextActionAndDate(
-    registration,
-    tradingStatusDates,
-    laConfig.trading_status
-  );
+  const mostRecentCheck = getMostRecentCheck(tradingStatusDates);
+  const nextAction = getNextActionAndDate(mostRecentCheck, laConfig.trading_status);
 };
 
 /**
@@ -40,7 +36,7 @@ const getTradingStatusAction = (registration, laConfig) => {
  * @param {Object} registration - The registration object containing date fields to validate.
  * @returns {Object} An object containing validated moment dates or error messages for each field.
  */
-const getAndCheckRegistrationDates = (registration) => {
+const getVerifiedRegistrationDates = (registration) => {
   const result = {
     submission_date: null,
     last_confirmed_trading: null,
@@ -82,6 +78,10 @@ const getAndCheckRegistrationDates = (registration) => {
   if (confirmed_not_trading) {
     if (moment(confirmed_not_trading).isValid()) {
       result.confirmed_not_trading = moment(confirmed_not_trading).clone();
+      result.confirmed_not_trading.push({
+        type: "CONFIRMED_NOT_TRADING",
+        time: moment(confirmed_not_trading).clone()
+      });
     } else {
       result.valid = false;
       result.error = `Invalid finished trading date for registration ${registration.fsa_rn}`;
@@ -133,108 +133,27 @@ const getMostRecentCheck = (tradingStatusChecks, type) => {
 };
 
 /**
- * Gets the most recent action configured for trading status checks.
- *
- * @param {Object} tradingStatus - Trading status configuration.
- * @returns {Object} The most recently configured action.
- */
-const getMostRecentActionConfigured = (tradingStatus) => {};
-
-/**
- * Calculates the schedule for configured actions based on trading status configuration.
- * This includes initial checks, regular checks, and chase notifications.
- *
- * @param {Array} tradingStatusChecks - Array of trading status check objects.
- * @param {Object} tradingStatusConfig - Configuration for trading status checks.
- * @returns {Object} Schedule of configured actions with their dates.
- */
-const getConfiguredActionSchedule = (tradingStatusChecks, tradingStatusConfig) => {
-  const mostRecentInitialCheck = getMostRecentCheck("INITIAL_CHECK"); // There should only be one anyway
-  const mostRecentRegularCheck = getMostRecentCheck("REGULAR_CHECK"); // There should only be one anyway
-  const nextRegularCheck = getNextRegularCheck(
-    tradingStatusConfig,
-    tradingStatusChecks.reg_submission_date,
-    mostRecentInitialCheck,
-    mostRecentRegularCheck
-  );
-
-  return {
-    INITIAL_CHECK:
-      tradingStatusConfig.initial_check &&
-      regSubmissionDate.add(tradingStatusConfig.initial_check, "months"),
-    INITIAL_CHECK_CHASE:
-      tradingStatusConfig.initial_check &&
-      tradingStatusConfig.chase &&
-      regSubmissionDate.add(tradingStatusConfig.initial_check, "months").add(2, "weeks"),
-    REGULAR_CHECK: tradingStatusConfig.regular_check && nextRegularCheck,
-    REGULAR_CHECK_CHASE:
-      tradingStatusConfig.regular_check &&
-      tradingStatusConfig.chase &&
-      nextRegularCheck.add(2, "weeks")
-  };
-};
-
-/**
- * Calculates the date of the next regular check based on configuration and previous checks.
- *
- * @param {Object} tradingStatusConfig - Configuration for trading status checks.
- * @param {Object} regSubmissionDate - Registration submission date as moment object.
- * @param {Object} mostRecentInitialCheck - Most recent initial check.
- * @param {Object} mostRecentRegularCheck - Most recent regular check.
- * @returns {Object} Moment date object for the next regular check.
- */
-const getNextRegularCheck = (
-  tradingStatusConfig,
-  regSubmissionDate,
-  mostRecentInitialCheck,
-  mostRecentRegularCheck
-) => {
-  const nextRegularCheck = null;
-  if (tradingStatusConfig.regular_check) {
-    if (mostRecentRegularCheck) {
-      nextRegularCheck = mostRecentRegularCheck.add(tradingStatusConfig.regular_check, "months");
-    } else if (mostRecentInitialCheck) {
-      nextRegularCheck = mostRecentInitialCheck.add(tradingStatusConfig.regular_check, "months");
-    } else {
-      if (tradingStatusConfig.initial_check) {
-        nextRegularCheck = regSubmissionDate
-          .add(tradingStatusConfig.initial_check, "months")
-          .add(tradingStatusConfig.regular_check, "months");
-      }
-    }
-
-    return nextRegularCheck;
-  }
-};
-
-/**
  * Determines the next action that should be taken for a registration based on
  * its trading status history and configuration.
  *
- * @param {Object} registration - The registration object.
- * @param {Object} tradingStatusChecks - Validated trading status checks.
+ * @param {Object} mostRecentCheck - The most recent notification/status event.
  * @param {Object} tradingStatusConfig - Configuration for trading status checks.
  * @returns {Object|null} Object containing the type and time of the next action, or null if no action needed.
  */
-const getNextActionAndDate = (registration, tradingStatusChecks, tradingStatusConfig) => {
-  if (tradingStatusChecks.confirmed_not_trading) {
-    const confirmedNotTrading = moment(tradingStatusChecks.confirmed_not_trading);
+const getNextActionAndDate = (mostRecentCheck, tradingStatusConfig) => {
+  if (mostRecentCheck === "CONFIRMED_NOT_TRADING") {
+    // LA notification not sent yet
+    return { type: "FINISHED_TRADING_LA", time: mostRecentCheck.time };
+  }
 
-    if (mostRecentCheck.type !== "FINISHED_TRADING_LA") {
-      // LA notification not sent yet
-      return { type: "FINISHED_TRADING_LA", time: confirmedNotTrading };
-    }
+  if (mostRecentCheck === "FINISHED_TRADING_LA") {
+    // LA notification sent, but not yet deleted
+    const deleteTime = moment(mostRecentCheck.time).add(laConfig.data_retention_period, "years");
 
-    const deleteTime = moment(confirmedNotTrading)
-      .clone()
-      .add(laConfig.data_retention_period, "years");
-
-    // Date is older than data retention period so delete record
     return { type: "DELETE_REGISTRATION", time: deleteTime };
   }
 
-  const mostRecentCheck = getMostRecentCheck(tradingStatusChecks);
-  mostRecentCheckTime = moment(mostRecentCheck.time).clone();
+  const mostRecentCheckTime = moment(mostRecentCheck.time).clone();
 
   if (mostRecentCheck.type === "CONFIRMED_TRADING") {
     if (tradingStatusConfig.regular_check) {
@@ -257,11 +176,44 @@ const getNextActionAndDate = (registration, tradingStatusChecks, tradingStatusCo
   }
 
   if (mostRecentCheck.type === "INITIAL_CHECK") {
-    if (tradingStatusConfig.regular_check) {
-      const nextActionTime = mostRecentCheckTime.add(tradingStatusConfig.initial_check, "months");
+    if (tradingStatusConfig.initial_check && tradingStatusConfig.chase) {
+      const nextActionTime = mostRecentCheckTime.add(2, "weeks");
 
-      return { type: "INITIAL_CHECK", time: nextActionTime };
-    } else if (tradingStatusConfig.regular_check) {
+      // Sanity check to ensure old initial check is not chased e.g. due to config change
+      if (nextActionTime.clone().add(2, "weeks").isAfter(moment())) {
+        return { type: "INITIAL_CHECK_CHASE", time: nextActionTime };
+      }
+    }
+
+    if (tradingStatusConfig.regular_check) {
+      const nextActionTime = mostRecentCheckTime.add(tradingStatusConfig.regular_check, "months");
+
+      return { type: "REGULAR_CHECK", time: nextActionTime };
+    }
+  }
+
+  if (mostRecentCheck.type === "REGULAR_CHECK") {
+    if (tradingStatusConfig.regular_check && tradingStatusConfig.chase) {
+      const nextActionTime = mostRecentCheckTime.add(2, "weeks");
+
+      // Sanity check to ensure old regular check is not chased e.g. due to config change
+      if (nextActionTime.clone().add(2, "weeks").isAfter(moment())) {
+        return { type: "REGULAR_CHECK_CHASE", time: nextActionTime };
+      }
+    }
+
+    if (tradingStatusConfig.regular_check) {
+      const nextActionTime = mostRecentCheckTime.add(tradingStatusConfig.regular_check, "months");
+
+      return { type: "REGULAR_CHECK", time: nextActionTime };
+    }
+  }
+
+  if (
+    mostRecentCheck.type === "INITIAL_CHECK_CHASE" ||
+    mostRecentCheck.type === "REGULAR_CHECK_CHASE"
+  ) {
+    if (tradingStatusConfig.regular_check) {
       const nextActionTime = mostRecentCheckTime.add(tradingStatusConfig.regular_check, "months");
 
       return { type: "REGULAR_CHECK", time: nextActionTime };
