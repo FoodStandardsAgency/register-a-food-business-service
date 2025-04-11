@@ -1,6 +1,12 @@
 "use strict";
 
-const getLaNotifyAddresses = async (localCouncilUrl, allLaConfigData = []) => {
+/**
+ * Gets the LA config data for the provided URL and combines all notification email addresses
+ * from the local council and separate standards council if applicable.
+ *
+ * @returns {object} LA config object.
+ */
+const getLaConfigWithAllNotifyAddresses = async (localCouncilUrl, allLaConfigData = []) => {
   logEmitter.emit("functionCall", "laConfig.service", "getLaNotifyAddresses");
 
   const laConfig = allLaConfigData.find(
@@ -35,4 +41,8 @@ const getLaNotifyAddresses = async (localCouncilUrl, allLaConfigData = []) => {
 
   logEmitter.emit("functionSuccess", "laConfig.service", "getLaNotifyAddresses");
   return laConfig;
+};
+
+module.exports = {
+  getLaConfigWithAllNotifyAddresses
 };
