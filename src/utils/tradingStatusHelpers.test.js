@@ -1,5 +1,5 @@
 const moment = require("moment");
-const { getNextActionAndDate } = require("./status-checks.service");
+const { getNextActionAndDate } = require("./tradingStatusHelpers");
 const {
   INITIAL_REGISTRATION,
   INITIAL_CHECK,

@@ -2,6 +2,7 @@
 
 const { logEmitter, INFO, ERROR } = require("../../services/logging.service");
 const { processTradingStatus } = require("../../services/status-checks.service");
+const { getLaConfigWithAllNotifyAddresses } = require("../../services/laConfig.service");
 const { isEmpty } = require("lodash");
 
 const {
@@ -90,25 +91,29 @@ const processTradingStatusChecks = async (registrations, laConfig) => {
 
   const results = [];
   for (const registration of registrations) {
-    let localCouncil = findCouncilByUrl(laConfig, registration.local_council_url);
+    try {
+      const localCouncil = await getLaConfigWithAllNotifyAddresses(
+        registration.local_council_url,
+        laConfig
+      );
 
-    if (!localCouncil) {
-      let message = `Could not find local council config for registration ${registration.fsa_rn} with url ${registration.local_council_url}`;
+      localCouncil.data_retention_period = process.env.DATA_RETENTION_PERIOD || 7;
+
+      logEmitter.emit(
+        INFO,
+        `Processing registration ${registration.fsa_rn} for council ${localCouncil.local_council_url}`
+      );
+
+      const result = await processTradingStatus(registration, localCouncil);
+      results.push(result);
+    } catch (error) {
+      let message = `Processing registration ${registration.fsa_rn} for council failed: ${error.message}`;
       logEmitter.emit(ERROR, message);
-      continue;
+      results.push({ fsaId: registration.fsa_rn, error: message });
     }
-
-    // Add data retention period from environment variable
-    localCouncil.data_retention_period = process.env.DATA_RETENTION_PERIOD || 7;
-
-    logEmitter.emit(
-      INFO,
-      `Processing registration ${registration.fsa_rn} for council ${localCouncil.local_council_url}`
-    );
-
-    const result = await processTradingStatus(registration, localCouncil);
-    results.push(result);
   }
+
+  return results;
 
   logEmitter.emit(
     "functionSuccess",
