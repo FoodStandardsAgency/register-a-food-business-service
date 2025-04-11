@@ -59,6 +59,17 @@ describe("getNextActionAndDate", () => {
       expect(result.type).toEqual(DELETE_REGISTRATION);
       expect(compareDateEquality(result.time, expectedTime)).toBeTruthy();
     });
+
+    test("should schedule STILL_TRADING_LA when most recent is CONFIRMED_TRADING and confirmed trading notifications are enabled", () => {
+      const mockRecentCheck = createMockRecentCheck(CONFIRMED_TRADING);
+      tradingStatusConfig.confirmed_trading_notifications = true;
+      const expectedTime = mockRecentCheck.time.clone();
+
+      const result = getNextActionAndDate(mockRecentCheck, tradingStatusConfig);
+
+      expect(result.type).toEqual(STILL_TRADING_LA);
+      expect(compareDateEquality(result.time, expectedTime)).toBeTruthy();
+    });
   });
 
   describe("Initial check cases", () => {
@@ -139,8 +150,21 @@ describe("getNextActionAndDate", () => {
   });
 
   describe("Regular check cases", () => {
-    test("should schedule REGULAR_CHECK when most recent is CONFIRMED_TRADING", () => {
+    test("should schedule REGULAR_CHECK when most recent is CONFIRMED_TRADING and confirmed trading notifications are not enabled", () => {
       const mockRecentCheck = createMockRecentCheck(CONFIRMED_TRADING);
+      tradingStatusConfig.confirmed_trading_notifications = false;
+      const expectedTime = mockRecentCheck.time
+        .clone()
+        .add(tradingStatusConfig.regular_check, "months");
+
+      const result = getNextActionAndDate(mockRecentCheck, tradingStatusConfig);
+
+      expect(result.type).toEqual(REGULAR_CHECK);
+      expect(compareDateEquality(result.time, expectedTime)).toBeTruthy();
+    });
+
+    test("should schedule REGULAR_CHECK when most recent is STILL_TRADING_LA", () => {
+      const mockRecentCheck = createMockRecentCheck(STILL_TRADING_LA);
       const expectedTime = mockRecentCheck.time
         .clone()
         .add(tradingStatusConfig.regular_check, "months");

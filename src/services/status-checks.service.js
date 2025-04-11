@@ -216,7 +216,19 @@ const getNextActionAndDate = (mostRecentCheck, tradingStatusConfig) => {
 
   const mostRecentCheckTime = moment(mostRecentCheck.time).clone();
 
-  if (mostRecentCheck.type === CONFIRMED_TRADING || mostRecentCheck.type === STILL_TRADING_LA) {
+  if (mostRecentCheck.type === STILL_TRADING_LA) {
+    if (tradingStatusConfig.regular_check) {
+      const nextActionTime = mostRecentCheckTime.add(tradingStatusConfig.regular_check, "months");
+
+      return { type: REGULAR_CHECK, time: nextActionTime };
+    }
+  }
+
+  if (mostRecentCheck.type === CONFIRMED_TRADING) {
+    if (tradingStatusConfig.confirmed_trading_notifications) {
+      return { type: STILL_TRADING_LA, time: mostRecentCheckTime };
+    }
+
     if (tradingStatusConfig.regular_check) {
       const nextActionTime = mostRecentCheckTime.add(tradingStatusConfig.regular_check, "months");
 
