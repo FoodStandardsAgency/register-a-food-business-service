@@ -6,13 +6,10 @@ const { getLaConfigWithAllNotifyAddresses } = require("../../services/laConfig.s
 const { isEmpty } = require("lodash");
 
 const {
+  findRegistrationByFsaId,
   findActionableRegistrations
 } = require("../../connectors/statusChecksDb/status-checks.connector");
-const { findOneById } = require("../../connectors/submissionsDb/submissionsDb.connector");
-const {
-  getAllLocalCouncilConfig,
-  findCouncilByUrl
-} = require("../../connectors/configDb/configDb.connector");
+const { getAllLocalCouncilConfig } = require("../../connectors/configDb/configDb.connector");
 
 /**
  * Processes all due trading status checks for actionable registrations.
@@ -60,7 +57,7 @@ const processTradingStatusChecksForId = async (fsaId, req, res) => {
   let allLaConfigData = await getAllLocalCouncilConfig();
 
   // Get registration for the fsaId
-  let registration = await getRegistration(fsaId);
+  let registration = await findRegistrationByFsaId(fsaId);
 
   if (isEmpty(registration)) {
     let message = `Could not find registration with ID ${fsaId}`;
@@ -110,6 +107,7 @@ const processTradingStatusChecks = async (registrations, laConfig) => {
       let message = `Processing registration ${registration.fsa_rn} for council failed: ${error.message}`;
       logEmitter.emit(ERROR, message);
       results.push({ fsaId: registration.fsa_rn, error: message });
+      throw error;
     }
   }
 

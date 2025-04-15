@@ -53,7 +53,7 @@ const getVerifiedRegistrationDates = (registration) => {
     });
   } else {
     result.valid = false;
-    result.error = `Invalid registration submission date for registration ${registration.fsa_rn}`;
+    result.error = `Invalid registration submission date for registration ${registration["fsa-rn"]}`;
   }
 
   // Last confirmed trading date should be valid if present
@@ -67,7 +67,7 @@ const getVerifiedRegistrationDates = (registration) => {
       });
     } else {
       result.valid = false;
-      result.error = `Invalid last confirmed trading date for registration ${registration.fsa_rn}`;
+      result.error = `Invalid last confirmed trading date for registration ${registration["fsa-rn"]}`;
     }
   }
 
@@ -82,7 +82,7 @@ const getVerifiedRegistrationDates = (registration) => {
       });
     } else {
       result.valid = false;
-      result.error = `Invalid finished trading date for registration ${registration.fsa_rn}`;
+      result.error = `Invalid finished trading date for registration ${registration["fsa-rn"]}`;
     }
   }
 
@@ -99,7 +99,7 @@ const getVerifiedRegistrationDates = (registration) => {
         });
       } else {
         result.valid = false;
-        result.error = `Invalid trading status check date for ${check.type} for registration ${registration.fsa_rn}`;
+        result.error = `Invalid trading status check date for ${check.type} for registration ${registration["fsa-rn"]}`;
       }
     });
   }
@@ -301,7 +301,7 @@ const generateStatusEmailToSend = (registration, emailType, lcContactConfig) => 
 
     if (lcContactConfig.emailReplyToId) {
       // Update reply-to email address for emails to FBO
-      emailToSend["emailReplyToId"] = lcContactConfig.emailReplyToId;
+      emailToSend.emailReplyToId = lcContactConfig.emailReplyToId;
     }
 
     emailsToSend.push(emailToSend);
@@ -320,8 +320,10 @@ const generateStatusEmailToSend = (registration, emailType, lcContactConfig) => 
 };
 
 module.exports = {
+  getUnsuccessfulChecks,
   getNextActionAndDate,
   getMostRecentCheck,
   getVerifiedRegistrationDates,
+  getTemplateIdFromEmailType,
   generateStatusEmailToSend
 };

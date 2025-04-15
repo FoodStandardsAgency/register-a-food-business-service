@@ -3,6 +3,23 @@
 const { logEmitter, ERROR } = require("../../services/logging.service");
 const { establishConnectionToCosmos } = require("../cosmos.client");
 
+const findRegistrationByFsaId = async (fsa_rn) => {
+  logEmitter.emit("functionCall", "status-checks.connector", "findOneById");
+
+  try {
+    const registrations = await establishConnectionToCosmos("registrations", "registrations");
+    const registration = await registrations.findOne({
+      "fsa-rn": fsa_rn
+    });
+    logEmitter.emit("functionSuccess", "status-checks.connector", "findOneById");
+    return registration;
+  } catch (err) {
+    logEmitter.emit(ERROR, "Single registration data lookup failure");
+    logEmitter.emit("functionFail", "status-checks.connector", "findOneById", err);
+    throw err;
+  }
+};
+
 /**
  * Finds actionable registrations that are due for a status check.
  *
@@ -35,7 +52,7 @@ const updateTradingStatusCheck = async (fsa_rn, newStatus) => {
     // Get the existing document to check trading_status
     const registration = await registrations.findOne({ "fsa-rn": fsa_rn });
 
-    if (!registration || !Array.isArray(registration.trading_status)) {
+    if (!Array.isArray(registration.trading_status)) {
       // If trading_status doesn't exist or isn't an array, set it as a new array with the new status
       await registrations.updateOne(
         { "fsa-rn": fsa_rn },
@@ -69,30 +86,8 @@ const updateTradingStatusCheck = async (fsa_rn, newStatus) => {
   }
 };
 
-/**
- * Updates a specific notification when sent, finding the notification status from the type and address and updating the time and result fields
- * @param status
- * @param {string} fsa_rn The FSA-RN number for the registration to be updated
- * @param emailsToSend
- * @param index The index of the email - we need this to make sure we update the right item if the same email address has been used multiple times.
- * @param sent
- * @param date
- */
-const updateNotificationOnSent = (status, fsa_rn, emailsToSend, index, sent, date = null) => {
-  logEmitter.emit("functionCall", "notificationsDb.connector", "updateNotificationOnSent");
-  let { type, address } = emailsToSend[index];
-  status.notifications[index].address = address;
-  status.notifications[index].type = type;
-  status.notifications[index].time = date || new Date();
-  status.notifications[index].sent = sent;
-
-  logEmitter.emit("functionSuccess", "notificationsDb.connector", "updateNotificationOnSent");
-
-  return status;
-};
-
 module.exports = {
+  findRegistrationByFsaId,
   findActionableRegistrations,
-  updateNotificationOnSent,
-  updateStatus: updateTradingStatusCheck
+  updateTradingStatusCheck
 };

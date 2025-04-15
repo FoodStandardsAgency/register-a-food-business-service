@@ -1,5 +1,7 @@
 "use strict";
 
+const { logEmitter } = require("./logging.service");
+
 /**
  * Gets the LA config data for the provided URL and combines all notification email addresses
  * from the local council and separate standards council if applicable.
