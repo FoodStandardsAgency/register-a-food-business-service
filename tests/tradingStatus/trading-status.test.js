@@ -25,7 +25,7 @@ process.env.DATA_RETENTION_PERIOD = "7";
 // Test data
 const testRegistration = {
   "fsa-rn": "TEST-FSA-ID",
-  reg_submission_date: { $date: moment().subtract(1, "years").toDate() },
+  reg_submission_date: moment().subtract(3, "months").subtract(1, "days").toISOString(),
   local_council_url: "test-council",
   establishment: {
     operator: {
@@ -33,7 +33,7 @@ const testRegistration = {
     }
   },
   submission_language: "en",
-  next_status_date: { $date: moment().subtract(1, "days").toDate() }
+  next_status_date: moment().subtract(1, "days").toISOString()
 };
 
 const testCouncilConfig = {
@@ -118,12 +118,29 @@ describe("Trading Status Checks Integration Tests", () => {
 
       // Verify the response from the controller
       expect(results).toBeDefined();
+      expect(results.length).toBe(1);
+      expect(results[0].fsaId).toBe("TEST-FSA-ID");
+      const initialCheckDate = moment(testRegistration.reg_submission_date).add(3, "months");
+      const initialCheckDateChase = initialCheckDate.clone().add(2, "weeks");
+      expect(results[0].message).toBe(
+        `INITIAL_CHECK emails sent, INITIAL_CHECK_CHASE scheduled for ${initialCheckDateChase.toISOString()}`
+      );
 
       // Verify database was updated
       const updatedRegistration = await registrationsCollection.findOne({
         "fsa-rn": "TEST-FSA-ID"
       });
       expect(updatedRegistration).toBeDefined();
+      expect(moment(updatedRegistration.next_status_date).format("YYYY-MM-DD")).toBe(
+        initialCheckDateChase.format("YYYY-MM-DD")
+      );
+      expect(updatedRegistration.status.trading_status_checks).toBeDefined();
+      expect(updatedRegistration.status.trading_status_checks.length).toBe(1);
+      expect(updatedRegistration.status.trading_status_checks[0].type).toBe("INITIAL_CHECK");
+      expect(updatedRegistration.status.trading_status_checks[0].email).toBe(
+        testRegistration.establishment.operator.operator_email
+      );
+      expect(updatedRegistration.status.trading_status_checks[0].sent).toBeTruthy();
     });
 
     it("should respect the throttle parameter", async () => {
@@ -161,7 +178,7 @@ describe("Trading Status Checks Integration Tests", () => {
       await registrationsCollection.insertMany([
         {
           "fsa-rn": "TEST-FSA-ID-2",
-          reg_submission_date: { $date: moment().subtract(2, "years").toDate() },
+          reg_submission_date: moment().subtract(2, "years").toISOString(),
           local_council_url: "test-council",
           establishment: {
             operator: {
@@ -169,11 +186,11 @@ describe("Trading Status Checks Integration Tests", () => {
             }
           },
           submission_language: "en",
-          next_status_date: { $date: moment().subtract(3, "years").toDate() }
+          next_status_date: moment().subtract(3, "years").toISOString()
         },
         {
           "fsa-rn": "TEST-FSA-ID-3",
-          reg_submission_date: { $date: moment().subtract(2, "years").toDate() },
+          reg_submission_date: moment().subtract(2, "years").toISOString(),
           local_council_url: "test-council",
           establishment: {
             operator: {
@@ -181,7 +198,7 @@ describe("Trading Status Checks Integration Tests", () => {
             }
           },
           submission_language: "en",
-          next_status_date: { $date: moment().subtract(3, "days").toDate() }
+          next_status_date: moment().subtract(3, "days").toISOString()
         }
       ]);
     });

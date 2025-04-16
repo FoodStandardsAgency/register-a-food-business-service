@@ -33,7 +33,7 @@ const findActionableRegistrations = async (limit = 50) => {
   try {
     const registrations = await establishConnectionToCosmos("registrations", "registrations");
     const actionableRegistrations = await registrations
-      .find({ next_status_date: { $lte: new Date() } })
+      .find({ next_status_date: { $lte: new Date().toISOString() } })
       .limit(limit)
       .toArray();
     logEmitter.emit("functionSuccess", "status-checks.connector", "findActionableRegistrations");
@@ -52,16 +52,20 @@ const updateTradingStatusCheck = async (fsa_rn, newStatus) => {
     // Get the existing document to check trading_status
     const registration = await registrations.findOne({ "fsa-rn": fsa_rn });
 
-    if (!Array.isArray(registration.trading_status)) {
+    if (!registration) {
+      throw new Error(`Registration with ID ${fsa_rn} not found`);
+    }
+
+    if (!Array.isArray(registration.status?.trading_status_checks)) {
       // If trading_status doesn't exist or isn't an array, set it as a new array with the new status
       await registrations.updateOne(
         { "fsa-rn": fsa_rn },
-        { $set: { trading_status: [newStatus] } },
+        { $set: { "status.trading_status_checks": [newStatus] } },
         { upsert: true }
       );
     } else {
       // Check if an item with same type exists
-      const typeIndex = registration.trading_status.findIndex(
+      const typeIndex = registration.status.trading_status_checks.findIndex(
         (status) => status.type === newStatus.type
       );
 
@@ -69,13 +73,13 @@ const updateTradingStatusCheck = async (fsa_rn, newStatus) => {
         // Replace the existing item at the found index
         await registrations.updateOne(
           { "fsa-rn": fsa_rn },
-          { $set: { [`trading_status.${typeIndex}`]: newStatus } }
+          { $set: { [`status.trading_status_checks.${typeIndex}`]: newStatus } }
         );
       } else {
         // Add the new status to the array
         await registrations.updateOne(
           { "fsa-rn": fsa_rn },
-          { $push: { trading_status: newStatus } }
+          { $push: { "status.trading_status_checks": newStatus } }
         );
       }
     }
@@ -86,8 +90,43 @@ const updateTradingStatusCheck = async (fsa_rn, newStatus) => {
   }
 };
 
+/**
+ * Updates the next_status_date for a registration with the given fsa_rn.
+ *
+ * @param {string} fsa_rn - The FSA registration number of the registration to update.
+ * @param {string} nextStatusDate - The new next_status_date value (ISO format string).
+ * @returns {Promise<void>}
+ * @throws Will throw an error if registration is not found or update fails.
+ */
+const updateNextStatusDate = async (fsa_rn, nextStatusDate) => {
+  logEmitter.emit("functionCall", "status-checks.connector", "updateNextStatusDate");
+  const registrations = await establishConnectionToCosmos("registrations", "registrations");
+
+  try {
+    // Get the existing document to check if it exists
+    const registration = await registrations.findOne({ "fsa-rn": fsa_rn });
+
+    if (!registration) {
+      throw new Error(`Registration with ID ${fsa_rn} not found`);
+    }
+
+    // Update only the next_status_date field
+    await registrations.updateOne(
+      { "fsa-rn": fsa_rn },
+      { $set: { next_status_date: nextStatusDate.toISOString() } }
+    );
+
+    logEmitter.emit("functionSuccess", "status-checks.connector", "updateNextStatusDate");
+  } catch (err) {
+    logEmitter.emit(ERROR, "Failed to update next_status_date");
+    logEmitter.emit("functionFail", "status-checks.connector", "updateNextStatusDate", err);
+    throw err;
+  }
+};
+
 module.exports = {
   findRegistrationByFsaId,
   findActionableRegistrations,
-  updateTradingStatusCheck
+  updateTradingStatusCheck,
+  updateNextStatusDate
 };

@@ -12,7 +12,8 @@ const {
 } = require("../utils/tradingStatusHelpers.js");
 const { sendSingleEmail } = require("../connectors/notify/notify.connector");
 const {
-  updateTradingStatusCheck
+  updateTradingStatusCheck,
+  updateNextStatusDate
 } = require("../connectors/statusChecksDb/status-checks.connector");
 const {
   INITIAL_REGISTRATION,
@@ -47,10 +48,17 @@ const processTradingStatus = async (registration, laConfig) => {
       email: check.email,
       templateId: getTemplateIdFromEmailType(check.type, registration.submission_language === "cy")
     }));
-    await sendTradingStatusEmails(registration, emailsToSend);
+    const success = await sendTradingStatusEmails(registration, emailsToSend);
+    return success
+      ? { fsaId: registration.fsa_rn, message: "Previously unsuccessful emails sent" }
+      : {
+          fsaId: registration.fsa_rn,
+          error: "At least one previously unsuccessful email failed again"
+        };
   } else {
     // No unsuccessful checks, proceed with the next action
     const action = getTradingStatusAction(tradingStatusDates, laConfig);
+    let result;
     if (action.time.isBefore(moment())) {
       // Perform the action based on the trading status
       switch (action.type) {
@@ -65,6 +73,7 @@ const processTradingStatus = async (registration, laConfig) => {
         case STILL_TRADING_LA:
           const emailsToSend = generateStatusEmailToSend(registration, action.type, laConfig);
           await sendTradingStatusEmails(registration, emailsToSend);
+          result = { fsaId: registration["fsa-rn"], message: `${action.type} emails sent` };
           break;
         case INITIAL_REGISTRATION:
         case CONFIRMED_TRADING:
@@ -74,11 +83,19 @@ const processTradingStatus = async (registration, laConfig) => {
           throw new Error(`Unknown action type: ${action.type}`);
       }
       const nextAction = getNextActionAndDate(action, laConfig.trading_status);
+
       // Schedule the next action
-      // e.g., update the registration with the next action date
-      registration.next_status_date = nextAction.time;
+      await updateNextStatusDate(registration["fsa-rn"], nextAction.time);
+
+      result.message += `, ${nextAction.type} scheduled for ${nextAction.time.toISOString()}`;
+      return result;
     } else {
-      registration.next_status_date = action.time;
+      await updateNextStatusDate(registration["fsa-rn"], action.time);
+
+      return {
+        fsaId: registration.fsa_rn,
+        message: `${action.type} rescheduled for ${action.time.format("YYYY-MM-DD HH:mm:ss")}`
+      };
     }
   }
 };
@@ -127,10 +144,11 @@ const sendTradingStatusEmails = async (registration, emailsToSend) => {
       logEmitter.emit(ERROR, `Failed to send ${type} email to ${address}: ${error.message}`);
     }
 
-    await updateTradingStatusCheck(registration.fsa_rn, {
+    await updateTradingStatusCheck(registration["fsa-rn"], {
       type,
-      date: new Date(),
-      email: address
+      time: moment().toISOString(),
+      email: address,
+      sent: success
     });
   }
 

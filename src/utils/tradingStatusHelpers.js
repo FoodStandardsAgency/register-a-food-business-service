@@ -44,7 +44,7 @@ const getVerifiedRegistrationDates = (registration) => {
   };
 
   // Submission date should always be supplied and valid
-  const submission_date = registration?.reg_submission_date?.$date;
+  const submission_date = registration?.reg_submission_date;
   if (submission_date && moment(submission_date).isValid()) {
     result.submission_date = moment(submission_date).clone();
     result.trading_status_checks.push({
@@ -57,7 +57,7 @@ const getVerifiedRegistrationDates = (registration) => {
   }
 
   // Last confirmed trading date should be valid if present
-  const last_confirmed_trading = registration?.last_confirmed_trading?.$date;
+  const last_confirmed_trading = registration?.last_confirmed_trading;
   if (last_confirmed_trading) {
     if (moment(last_confirmed_trading).isValid()) {
       result.last_confirmed_trading = moment(last_confirmed_trading).clone();
@@ -72,7 +72,7 @@ const getVerifiedRegistrationDates = (registration) => {
   }
 
   // Finished trading date should be valid if present
-  const confirmed_not_trading = registration?.confirmed_not_trading?.$date;
+  const confirmed_not_trading = registration?.confirmed_not_trading;
   if (confirmed_not_trading) {
     if (moment(confirmed_not_trading).isValid()) {
       result.confirmed_not_trading = moment(confirmed_not_trading).clone();
@@ -90,10 +90,10 @@ const getVerifiedRegistrationDates = (registration) => {
   const tradingStatus = registration.status?.trading_status_checks;
   if (Array.isArray(tradingStatus) && tradingStatus.length > 0) {
     tradingStatus.forEach((check) => {
-      if (check.time && check.time.$date && moment(check.time.$date).isValid()) {
+      if (check.time && check.time && moment(check.time).isValid()) {
         result.trading_status_checks.push({
           type: check.type,
-          time: moment(check.time.$date).clone(),
+          time: moment(check.time).clone(),
           address: check.address,
           success: check.success || false
         });
@@ -205,7 +205,7 @@ const getNextActionAndDate = (mostRecentCheck, tradingStatusConfig) => {
 
   if (mostRecentCheck.type === INITIAL_CHECK) {
     if (tradingStatusConfig.initial_check && tradingStatusConfig.chase) {
-      const nextActionTime = mostRecentCheckTime.add(2, "weeks");
+      const nextActionTime = mostRecentCheckTime.clone().add(2, "weeks");
 
       // Sanity check to ensure old initial check is not chased e.g. due to config change
       if (nextActionTime.clone().add(2, "weeks").isAfter(moment())) {
@@ -307,12 +307,23 @@ const generateStatusEmailToSend = (registration, emailType, lcContactConfig) => 
     emailsToSend.push(emailToSend);
   } else {
     // Send email to local authority addresses
-    for (let recipientEmailAddress in lcContactConfig.tradingStatusEmailAddresses) {
+    for (let recipientEmailAddress in lcContactConfig.tradingStatusLaEmailAddresses) {
       emailsToSend.push({
         type: emailType,
         address: recipientEmailAddress,
         templateId: templateID
       });
+    }
+
+    // Only send finished trading email to standards authority addresses
+    if (emailType === FINISHED_TRADING_LA) {
+      for (let recipientEmailAddress in lcContactConfig.tradingStatusStandardsEmailAddresses) {
+        emailsToSend.push({
+          type: emailType,
+          address: recipientEmailAddress,
+          templateId: templateID
+        });
+      }
     }
   }
 

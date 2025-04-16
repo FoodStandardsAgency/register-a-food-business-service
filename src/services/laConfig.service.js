@@ -16,7 +16,7 @@ const getLaConfigWithAllNotifyAddresses = async (localCouncilUrl, allLaConfigDat
   );
 
   if (laConfig) {
-    laConfig.tradingStatusEmailAddresses = [...laConfig.local_council_notify_emails];
+    laConfig.tradingStatusLaEmailAddresses = [...laConfig.local_council_notify_emails];
 
     if (laConfig.separate_standards_council) {
       const standardsLcConfig = allLaConfigData.find(
@@ -24,7 +24,9 @@ const getLaConfigWithAllNotifyAddresses = async (localCouncilUrl, allLaConfigDat
       );
 
       if (standardsLcConfig) {
-        laConfig.tradingStatusEmailAddresses.push(...standardsLcConfig.local_council_notify_emails);
+        laConfig.tradingStatusStandardsEmailAddresses = [
+          ...standardsLcConfig.local_council_notify_emails
+        ];
       } else {
         const newError = new Error();
         newError.name = "localCouncilNotFound";

@@ -107,7 +107,6 @@ const processTradingStatusChecks = async (registrations, laConfig) => {
       let message = `Processing registration ${registration.fsa_rn} for council failed: ${error.message}`;
       logEmitter.emit(ERROR, message);
       results.push({ fsaId: registration.fsa_rn, error: message });
-      throw error;
     }
   }
 
