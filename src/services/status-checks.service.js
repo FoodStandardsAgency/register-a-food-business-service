@@ -46,6 +46,7 @@ const processTradingStatus = async (registration, laConfig) => {
     const emailsToSend = unsuccessfulChecks.map((check) => ({
       type: check.type,
       email: check.email,
+      emailReplyToId: laConfig.emailReplyToId,
       templateId: getTemplateIdFromEmailType(check.type, registration.submission_language === "cy")
     }));
     const success = await sendTradingStatusEmails(registration, emailsToSend);
@@ -117,13 +118,15 @@ const getTradingStatusAction = (tradingStatusDates, laConfig) => {
 /**
  * Sends emails for trading status updates and notifications to appropriate recipients.
  *
- * @returns {Promise} Promise that resolves when emails are sent.
+ * @returns {Promise<boolean>} Promise that resolves to true if all emails were sent successfully, false otherwise.
  */
 const sendTradingStatusEmails = async (registration, emailsToSend) => {
   logEmitter.emit("functionCall", "status-checks.service", "sendTradingStatusEmails");
   logEmitter.emit(INFO, `Started sendTradingStatusEmails for FSAid: ${registration.fsa_rn}`);
 
-  const data = {};
+  const data = {
+    fsaRegistrationNumber: registration["fsa-rn"]
+  };
   let success = true;
 
   for (const emailToSend of emailsToSend) {
@@ -135,7 +138,7 @@ const sendTradingStatusEmails = async (registration, emailsToSend) => {
         emailReplyToId,
         data,
         null,
-        registration.fsa_rn,
+        registration["fsa-rn"],
         type
       );
       logEmitter.emit(INFO, `Sent ${type} email to ${address}`);
@@ -159,6 +162,8 @@ const sendTradingStatusEmails = async (registration, emailsToSend) => {
     logEmitter.emit(WARN, "Email notification failure"); // Used for Azure alerts
     logEmitter.emit("functionFail", "status-checks.service", "sendTradingStatusEmails");
   }
+
+  return success;
 };
 
 module.exports = {

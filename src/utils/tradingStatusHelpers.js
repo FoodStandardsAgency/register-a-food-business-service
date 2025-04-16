@@ -299,9 +299,9 @@ const generateStatusEmailToSend = (registration, emailType, lcContactConfig) => 
       templateId: templateID
     };
 
-    if (lcContactConfig.emailReplyToId) {
+    if (lcContactConfig.local_council_email_reply_to_ID) {
       // Update reply-to email address for emails to FBO
-      emailToSend.emailReplyToId = lcContactConfig.emailReplyToId;
+      emailToSend.emailReplyToId = lcContactConfig.local_council_email_reply_to_ID;
     }
 
     emailsToSend.push(emailToSend);

@@ -1,9 +1,54 @@
 "use strict";
 
+// Set up environment variables required for the tests BEFORE any imports
+process.env.COSMOSDB_URL = process.env.MONGODB_TEST_URL || "mongodb://localhost:27017";
+process.env.DATA_RETENTION_PERIOD = "7";
+process.env.INITIAL_CHECK_TEMPLATE_ID = "initial-check-template-id";
+process.env.INITIAL_CHECK_CHASE_TEMPLATE_ID = "initial-check-chase-template-id";
+process.env.REGULAR_CHECK_TEMPLATE_ID = "regular-check-template-id";
+process.env.REGULAR_CHECK_CHASE_TEMPLATE_ID = "regular-check-chase-template-id";
+process.env.FINISHED_TRADING_LA_TEMPLATE_ID = "finished-trading-la-template-id";
+process.env.STILL_TRADING_LA_TEMPLATE_ID = "still-trading-la-template-id";
+process.env.INITIAL_CHECK_TEMPLATE_ID_CY = "initial-check-template-id-cy";
+process.env.INITIAL_CHECK_CHASE_TEMPLATE_ID_CY = "initial-check-chase-template-id-cy";
+process.env.REGULAR_CHECK_TEMPLATE_ID_CY = "regular-check-template-id-cy";
+process.env.REGULAR_CHECK_CHASE_TEMPLATE_ID_CY = "regular-check-chase-template-id-cy";
+process.env.FINISHED_TRADING_LA_TEMPLATE_ID_CY = "finished-trading-la-template-id-cy";
+process.env.STILL_TRADING_LA_TEMPLATE_ID_CY = "still-trading-la-template-id-cy";
+
+// Define array to track sent emails for testing
+const sentEmails = [];
+
+// Mock the notify connector module
+jest.mock("../../src/connectors/notify/notify.connector", () => ({
+  sendSingleEmail: jest
+    .fn()
+    .mockImplementation(
+      (templateId, recipientEmail, emailReplyToId, data, pdfFile, fsaId, type) => {
+        // Store info about emails sent in the sentEmails array
+        sentEmails.push({
+          templateId,
+          recipientEmail,
+          data,
+          fsaId: fsaId || "n/a",
+          type: type || "n/a"
+        });
+
+        // Return a successful response
+        return Promise.resolve({
+          id: "mock-notification-id",
+          content: { body: "Mock email body" },
+          reference: "Mock reference"
+        });
+      }
+    )
+}));
+
 const moment = require("moment");
 const { MongoClient } = require("mongodb");
 const { closeCosmosConnection } = require("../../src/connectors/cosmos.client");
 const { logEmitter } = require("../../src/services/logging.service");
+const notifyConnector = require("../../src/connectors/notify/notify.connector");
 const {
   processTradingStatusChecksDue,
   processTradingStatusChecksForId
@@ -13,14 +58,6 @@ const {
 const MONGODB_TEST_URL = process.env.MONGODB_TEST_URL || "mongodb://localhost:27017";
 const REGISTRATION_DB_NAME = "registrations";
 const CONFIG_DB_NAME = "config";
-
-// Setup environment variables required for the tests
-process.env.COSMOSDB_URL = MONGODB_TEST_URL;
-process.env.NOTIFY_TEMPLATE_ID_STATUS_CHECK = "test-template-id";
-process.env.NOTIFY_TEMPLATE_ID_STATUS_CHECK_WELSH = "test-template-id-welsh";
-process.env.NOTIFY_TEMPLATE_ID_STATUS_CHECK_CHASE = "test-template-id-chase";
-process.env.NOTIFY_TEMPLATE_ID_STATUS_CHECK_CHASE_WELSH = "test-template-id-chase-welsh";
-process.env.DATA_RETENTION_PERIOD = "7";
 
 // Test data
 const testRegistration = {
@@ -44,6 +81,7 @@ const testCouncilConfig = {
     chase: true,
     confirmed_trading_notifications: true
   },
+  local_council_email_reply_to_ID: "test-council-reply-ID",
   local_council_notify_emails: ["council@example.com"]
 };
 
@@ -141,6 +179,20 @@ describe("Trading Status Checks Integration Tests", () => {
         testRegistration.establishment.operator.operator_email
       );
       expect(updatedRegistration.status.trading_status_checks[0].sent).toBeTruthy();
+
+      // Directly check if the sendSingleEmail function was called
+      expect(notifyConnector.sendSingleEmail).toHaveBeenCalled();
+      const callArgs = notifyConnector.sendSingleEmail.mock.calls[0];
+      expect(callArgs[0]).toBe("initial-check-template-id");
+      expect(callArgs[1]).toBe("test@example.com");
+      expect(callArgs[2]).toBe("test-council-reply-ID");
+      const data = callArgs[3];
+      expect(data).toBeDefined();
+      expect(data.fsaRegistrationNumber).toBe("TEST-FSA-ID");
+      expect(Object.keys(data).length).toBe(1);
+      expect(callArgs[4]).toBeNull(); // No PDF file
+      expect(callArgs[5]).toBe("TEST-FSA-ID");
+      expect(callArgs[6]).toBe("INITIAL_CHECK");
     });
 
     it("should respect the throttle parameter", async () => {
