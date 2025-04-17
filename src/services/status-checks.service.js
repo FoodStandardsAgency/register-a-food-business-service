@@ -1,6 +1,7 @@
 "use strict";
 
 const moment = require("moment");
+const i18n = require("../utils/i18n/i18n");
 const { INFO, logEmitter } = require("./logging.service");
 const {
   getNextActionAndDate,
@@ -73,7 +74,7 @@ const processTradingStatus = async (registration, laConfig) => {
         case FINISHED_TRADING_LA:
         case STILL_TRADING_LA:
           const emailsToSend = generateStatusEmailToSend(registration, action.type, laConfig);
-          await sendTradingStatusEmails(registration, emailsToSend);
+          await sendTradingStatusEmails(registration, laConfig, emailsToSend);
           result = { fsaId: registration["fsa-rn"], message: `${action.type} emails sent` };
           break;
         case INITIAL_REGISTRATION:
@@ -88,7 +89,7 @@ const processTradingStatus = async (registration, laConfig) => {
       // Schedule the next action
       await updateNextStatusDate(registration["fsa-rn"], nextAction.time);
 
-      result.message += `, ${nextAction.type} scheduled for ${nextAction.time.toISOString()}`;
+      result.message += `, ${nextAction.type} scheduled for ${nextAction.time.format("YYYY-MM-DD HH:mm:ss")}`;
       return result;
     } else {
       await updateNextStatusDate(registration["fsa-rn"], action.time);
@@ -115,23 +116,35 @@ const getTradingStatusAction = (tradingStatusDates, laConfig) => {
   return nextAction;
 };
 
+const transformDataForNotify = (registration, laConfig, i18nUtil) => {
+  let data = {
+    registration_number: registration["fsa-rn"],
+    la_name: i18nUtil.tLa(laConfig.local_council),
+    reg_submission_date: moment(registration.reg_submission_date).format("DD MMM YYYY"),
+    trading_name: registration.establishment.establishment_details.establishment_trading_name,
+    operator_name: `${registration.establishment.operator.operator_first_name} ${registration.establishment.operator.operator_last_name}`,
+    trading_yes_link: "TBD",
+    trading_no_link: "TBD"
+  };
+  return data;
+};
+
 /**
  * Sends emails for trading status updates and notifications to appropriate recipients.
  *
  * @returns {Promise<boolean>} Promise that resolves to true if all emails were sent successfully, false otherwise.
  */
-const sendTradingStatusEmails = async (registration, emailsToSend) => {
+const sendTradingStatusEmails = async (registration, laConfig, emailsToSend) => {
   logEmitter.emit("functionCall", "status-checks.service", "sendTradingStatusEmails");
-  logEmitter.emit(INFO, `Started sendTradingStatusEmails for FSAid: ${registration.fsa_rn}`);
+  logEmitter.emit(INFO, `Started sendTradingStatusEmails for FSA id: ${registration["fsa-rn"]}`);
 
-  const data = {
-    fsaRegistrationNumber: registration["fsa-rn"]
-  };
+  const i18nUtil = new i18n(registration.submission_language || "en");
+  const data = transformDataForNotify(registration, laConfig, i18nUtil);
   let success = true;
 
   for (const emailToSend of emailsToSend) {
     const { address, templateId, type, emailReplyToId } = emailToSend;
-    try {
+    if (
       await sendSingleEmail(
         templateId,
         address,
@@ -140,9 +153,10 @@ const sendTradingStatusEmails = async (registration, emailsToSend) => {
         null,
         registration["fsa-rn"],
         type
-      );
+      )
+    ) {
       logEmitter.emit(INFO, `Sent ${type} email to ${address}`);
-    } catch (error) {
+    } else {
       success = false;
       logEmitter.emit(ERROR, `Failed to send ${type} email to ${address}: ${error.message}`);
     }

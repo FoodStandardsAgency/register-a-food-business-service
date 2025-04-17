@@ -109,4 +109,4 @@ const sendSingleEmail = async (
   }
 };
 
-module.exports = { sendSingleEmail, sendStatusEmail };
+module.exports = { sendSingleEmail };
