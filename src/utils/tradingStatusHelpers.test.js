@@ -52,7 +52,7 @@ describe("getNextActionAndDate", () => {
       const mockRecentCheck = createMockRecentCheck(FINISHED_TRADING_LA);
       const expectedTime = mockRecentCheck.time
         .clone()
-        .add(tradingStatusConfig.data_retention_period, "years");
+        .add("years", tradingStatusConfig.data_retention_period);
 
       const result = getNextActionAndDate(mockRecentCheck, tradingStatusConfig);
 
@@ -77,7 +77,7 @@ describe("getNextActionAndDate", () => {
       const mockRecentCheck = createMockRecentCheck(INITIAL_REGISTRATION);
       const expectedTime = mockRecentCheck.time
         .clone()
-        .add(tradingStatusConfig.initial_check, "months");
+        .add("months", tradingStatusConfig.initial_check);
 
       const result = getNextActionAndDate(mockRecentCheck, tradingStatusConfig);
 
@@ -90,7 +90,7 @@ describe("getNextActionAndDate", () => {
       const configWithoutInitial = { ...tradingStatusConfig, initial_check: null };
       const expectedTime = mockRecentCheck.time
         .clone()
-        .add(configWithoutInitial.regular_check, "months");
+        .add("months", configWithoutInitial.regular_check);
 
       const result = getNextActionAndDate(mockRecentCheck, configWithoutInitial);
 
@@ -102,7 +102,7 @@ describe("getNextActionAndDate", () => {
   describe("Chase notification cases", () => {
     test("should schedule INITIAL_CHECK_CHASE when most recent is INITIAL_CHECK and chase is enabled", () => {
       const mockRecentCheck = createMockRecentCheck(INITIAL_CHECK, moment().subtract(3, "weeks"));
-      const expectedTime = mockRecentCheck.time.clone().add(2, "weeks");
+      const expectedTime = mockRecentCheck.time.clone().add("weeks", 2);
 
       const result = getNextActionAndDate(mockRecentCheck, tradingStatusConfig);
 
@@ -115,7 +115,7 @@ describe("getNextActionAndDate", () => {
       const configWithoutChase = { ...tradingStatusConfig, chase: false };
       const expectedTime = mockRecentCheck.time
         .clone()
-        .add(configWithoutChase.regular_check, "months");
+        .add("months", configWithoutChase.regular_check);
 
       const result = getNextActionAndDate(mockRecentCheck, configWithoutChase);
 
@@ -125,7 +125,7 @@ describe("getNextActionAndDate", () => {
 
     test("should schedule REGULAR_CHECK_CHASE when most recent is REGULAR_CHECK and chase is enabled", () => {
       const mockRecentCheck = createMockRecentCheck(REGULAR_CHECK, moment().subtract(3, "weeks"));
-      const expectedTime = mockRecentCheck.time.clone().add(2, "weeks");
+      const expectedTime = mockRecentCheck.time.clone().add("weeks", 2);
 
       const result = getNextActionAndDate(mockRecentCheck, tradingStatusConfig);
 
@@ -140,7 +140,7 @@ describe("getNextActionAndDate", () => {
       );
       const expectedTime = mockRecentCheck.time
         .clone()
-        .add(tradingStatusConfig.regular_check, "months");
+        .add("months", tradingStatusConfig.regular_check);
 
       const result = getNextActionAndDate(mockRecentCheck, tradingStatusConfig);
 
@@ -155,7 +155,7 @@ describe("getNextActionAndDate", () => {
       tradingStatusConfig.confirmed_trading_notifications = false;
       const expectedTime = mockRecentCheck.time
         .clone()
-        .add(tradingStatusConfig.regular_check, "months");
+        .add("months", tradingStatusConfig.regular_check);
 
       const result = getNextActionAndDate(mockRecentCheck, tradingStatusConfig);
 
@@ -167,7 +167,7 @@ describe("getNextActionAndDate", () => {
       const mockRecentCheck = createMockRecentCheck(STILL_TRADING_LA);
       const expectedTime = mockRecentCheck.time
         .clone()
-        .add(tradingStatusConfig.regular_check, "months");
+        .add("months", tradingStatusConfig.regular_check);
 
       const result = getNextActionAndDate(mockRecentCheck, tradingStatusConfig);
 
@@ -179,7 +179,7 @@ describe("getNextActionAndDate", () => {
       const mockRecentCheck = createMockRecentCheck(INITIAL_CHECK_CHASE);
       const expectedTime = mockRecentCheck.time
         .clone()
-        .add(tradingStatusConfig.regular_check, "months");
+        .add("months", tradingStatusConfig.regular_check);
 
       const result = getNextActionAndDate(mockRecentCheck, tradingStatusConfig);
 
@@ -191,7 +191,7 @@ describe("getNextActionAndDate", () => {
       const mockRecentCheck = createMockRecentCheck(REGULAR_CHECK_CHASE);
       const expectedTime = mockRecentCheck.time
         .clone()
-        .add(tradingStatusConfig.regular_check, "months");
+        .add("months", tradingStatusConfig.regular_check);
 
       const result = getNextActionAndDate(mockRecentCheck, tradingStatusConfig);
 

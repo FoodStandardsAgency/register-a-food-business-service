@@ -164,8 +164,8 @@ const getNextActionAndDate = (mostRecentCheck, tradingStatusConfig) => {
   if (mostRecentCheck.type === FINISHED_TRADING_LA) {
     // LA notification sent, but not yet deleted
     const deleteTime = moment(mostRecentCheck.time).add(
-      tradingStatusConfig.data_retention_period,
-      "years"
+      "years",
+      tradingStatusConfig.data_retention_period
     );
 
     return { type: DELETE_REGISTRATION, time: deleteTime };
@@ -176,8 +176,8 @@ const getNextActionAndDate = (mostRecentCheck, tradingStatusConfig) => {
   if (mostRecentCheck.type === STILL_TRADING_LA) {
     if (tradingStatusConfig.regular_check) {
       const nextActionTime = mostRecentCheckTime.add(
-        tradingStatusConfig.regular_check,
-        TRADING_STATUS_CHECK_TIME_INTERVAL
+        TRADING_STATUS_CHECK_TIME_INTERVAL,
+        tradingStatusConfig.regular_check
       );
 
       return { type: REGULAR_CHECK, time: nextActionTime };
@@ -191,8 +191,8 @@ const getNextActionAndDate = (mostRecentCheck, tradingStatusConfig) => {
 
     if (tradingStatusConfig.regular_check) {
       const nextActionTime = mostRecentCheckTime.add(
-        tradingStatusConfig.regular_check,
-        TRADING_STATUS_CHECK_TIME_INTERVAL
+        TRADING_STATUS_CHECK_TIME_INTERVAL,
+        tradingStatusConfig.regular_check
       );
 
       return { type: REGULAR_CHECK, time: nextActionTime };
@@ -202,15 +202,15 @@ const getNextActionAndDate = (mostRecentCheck, tradingStatusConfig) => {
   if (mostRecentCheck.type === INITIAL_REGISTRATION) {
     if (tradingStatusConfig.initial_check) {
       const nextActionTime = mostRecentCheckTime.add(
-        tradingStatusConfig.initial_check,
-        TRADING_STATUS_CHECK_TIME_INTERVAL
+        TRADING_STATUS_CHECK_TIME_INTERVAL,
+        tradingStatusConfig.initial_check
       );
 
       return { type: INITIAL_CHECK, time: nextActionTime };
     } else if (tradingStatusConfig.regular_check) {
       const nextActionTime = mostRecentCheckTime.add(
-        tradingStatusConfig.regular_check,
-        TRADING_STATUS_CHECK_TIME_INTERVAL
+        TRADING_STATUS_CHECK_TIME_INTERVAL,
+        tradingStatusConfig.regular_check
       );
 
       return { type: REGULAR_CHECK, time: nextActionTime };
@@ -219,7 +219,7 @@ const getNextActionAndDate = (mostRecentCheck, tradingStatusConfig) => {
 
   if (mostRecentCheck.type === INITIAL_CHECK) {
     if (tradingStatusConfig.initial_check && tradingStatusConfig.chase) {
-      const nextActionTime = mostRecentCheckTime.clone().add(2, TRADING_STATUS_CHASE_TIME_INTERVAL);
+      const nextActionTime = mostRecentCheckTime.clone().add(TRADING_STATUS_CHASE_TIME_INTERVAL, 2);
 
       // Sanity check to ensure old initial check is not chased e.g. due to config change
       if (nextActionTime.clone().add(2, TRADING_STATUS_CHASE_TIME_INTERVAL).isAfter(moment())) {
@@ -229,8 +229,8 @@ const getNextActionAndDate = (mostRecentCheck, tradingStatusConfig) => {
 
     if (tradingStatusConfig.regular_check) {
       const nextActionTime = mostRecentCheckTime.add(
-        tradingStatusConfig.regular_check,
-        TRADING_STATUS_CHECK_TIME_INTERVAL
+        TRADING_STATUS_CHECK_TIME_INTERVAL,
+        tradingStatusConfig.regular_check
       );
 
       return { type: REGULAR_CHECK, time: nextActionTime };
@@ -239,7 +239,7 @@ const getNextActionAndDate = (mostRecentCheck, tradingStatusConfig) => {
 
   if (mostRecentCheck.type === REGULAR_CHECK) {
     if (tradingStatusConfig.regular_check && tradingStatusConfig.chase) {
-      const nextActionTime = mostRecentCheckTime.clone().add(2, TRADING_STATUS_CHASE_TIME_INTERVAL);
+      const nextActionTime = mostRecentCheckTime.clone().add(TRADING_STATUS_CHASE_TIME_INTERVAL, 2);
 
       // Sanity check to ensure old regular check is not chased e.g. due to config change
       if (nextActionTime.clone().add(2, TRADING_STATUS_CHASE_TIME_INTERVAL).isAfter(moment())) {
@@ -249,8 +249,8 @@ const getNextActionAndDate = (mostRecentCheck, tradingStatusConfig) => {
 
     if (tradingStatusConfig.regular_check) {
       const nextActionTime = mostRecentCheckTime.add(
-        tradingStatusConfig.regular_check,
-        TRADING_STATUS_CHECK_TIME_INTERVAL
+        TRADING_STATUS_CHECK_TIME_INTERVAL,
+        tradingStatusConfig.regular_check
       );
 
       return { type: REGULAR_CHECK, time: nextActionTime };
@@ -263,8 +263,8 @@ const getNextActionAndDate = (mostRecentCheck, tradingStatusConfig) => {
   ) {
     if (tradingStatusConfig.regular_check) {
       const nextActionTime = mostRecentCheckTime.add(
-        tradingStatusConfig.regular_check,
-        TRADING_STATUS_CHECK_TIME_INTERVAL
+        TRADING_STATUS_CHECK_TIME_INTERVAL,
+        tradingStatusConfig.regular_check
       );
 
       return { type: REGULAR_CHECK, time: nextActionTime };
