@@ -6,7 +6,9 @@ const { logEmitter } = require("../../services/logging.service");
 
 const {
   processTradingStatusChecksDue,
-  processTradingStatusChecksForId
+  processTradingStatusChecksForId,
+  processFboConfirmedTrading,
+  processFboStoppedTrading
 } = require("./trading-status-checks.controller");
 
 const tradingStatusRouter = () => {
@@ -73,6 +75,46 @@ const tradingStatusRouter = () => {
       "trading-status-checks.router",
       "trading-status-checks/:fsaId"
     );
+  });
+
+  /**
+   * POST /stopped-trading/:fsaId
+   *
+   * Updates the registration to indicate business stopped trading.
+   */
+  router.post("/stopped-trading/:fsaId", async (req, res) => {
+    logEmitter.emit("functionCall", "trading-status-checks.router", "stopped-trading/:fsaId");
+    const { fsaId = null } = req.params;
+    try {
+      await processFboStoppedTrading(fsaId, req, res);
+      await success(res, {
+        message: `Marked business as no longer trading: ${fsaId}`
+      });
+    } catch (e) {
+      logEmitter.emit("functionFail", "trading-status-checks.router", "stopped-trading/:fsaId");
+      await fail(500, res, e.message);
+    }
+    logEmitter.emit("functionSuccess", "trading-status-checks.router", "stopped-trading/:fsaId");
+  });
+
+  /**
+   * POST /confirmed-trading/:fsaId
+   *
+   * Updates the registration to indicate business confirmed still trading.
+   */
+  router.post("/confirmed-trading/:fsaId", async (req, res) => {
+    logEmitter.emit("functionCall", "trading-status-checks.router", "confirmed-trading/:fsaId");
+    const { fsaId = null } = req.params;
+    try {
+      await processFboConfirmedTrading(fsaId, req, res);
+      await success(res, {
+        message: `Marked business as confirmed still trading: ${fsaId}`
+      });
+    } catch (e) {
+      logEmitter.emit("functionFail", "trading-status-checks.router", "confirmed-trading/:fsaId");
+      await fail(500, res, e.message);
+    }
+    logEmitter.emit("functionSuccess", "trading-status-checks.router", "confirmed-trading/:fsaId");
   });
 
   return router;

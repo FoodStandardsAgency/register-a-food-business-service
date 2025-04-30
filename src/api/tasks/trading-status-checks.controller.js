@@ -7,7 +7,8 @@ const { isEmpty } = require("lodash");
 
 const {
   findRegistrationByFsaId,
-  findActionableRegistrations
+  findActionableRegistrations,
+  updateRegistrationTradingStatus
 } = require("../../connectors/statusChecksDb/status-checks.connector");
 const { getAllLocalCouncilConfig } = require("../../connectors/configDb/configDb.connector");
 
@@ -110,8 +111,6 @@ const processTradingStatusChecks = async (registrations, laConfig) => {
     }
   }
 
-  return results;
-
   logEmitter.emit(
     "functionSuccess",
     "trading-status-checks.controller",
@@ -121,7 +120,47 @@ const processTradingStatusChecks = async (registrations, laConfig) => {
   return results;
 };
 
+/**
+ * Updates the registration to indicate business confirmed still trading.
+ *
+ * @param {string} fsaId - The registration ID.
+ */
+const processFboConfirmedTrading = async (fsaId) => {
+  logEmitter.emit("functionCall", "trading-status-checks.controller", "processFboConfirmedTrading");
+
+  const result = updateRegistrationTradingStatus(fsaId, false);
+
+  logEmitter.emit(
+    "functionSuccess",
+    "trading-status-checks.controller",
+    "processFboConfirmedTrading"
+  );
+
+  return result;
+};
+
+/**
+ * Updates the registration to indicate business stopped trading.
+ *
+ * @param {string} fsaId - The registration ID.
+ */
+const processFboStoppedTrading = async (fsaId) => {
+  logEmitter.emit("functionCall", "trading-status-checks.controller", "processFboStoppedTrading");
+
+  const result = updateRegistrationTradingStatus(fsaId, true);
+
+  logEmitter.emit(
+    "functionSuccess",
+    "trading-status-checks.controller",
+    "processFboStoppedTrading"
+  );
+
+  return result;
+};
+
 module.exports = {
   processTradingStatusChecksDue,
-  processTradingStatusChecksForId
+  processTradingStatusChecksForId,
+  processFboConfirmedTrading,
+  processFboStoppedTrading
 };

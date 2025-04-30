@@ -124,9 +124,70 @@ const updateNextStatusDate = async (fsa_rn, nextStatusDate) => {
   }
 };
 
+/**
+ * Updates regsitration with the given fsa_rn to indicate either FBO stopped trading or confirmed still trading.
+ *
+ * @param {string} fsa_rn - The FSA registration number of the registration to update.
+ * @param {string} stoppedTrading - FBO confirmed stopped trading?
+ * @returns {Promise<void>}
+ * @throws Will throw an error if registration is not found or update fails.
+ */
+const updateRegistrationTradingStatus = async (fsa_rn, stoppedTrading) => {
+  logEmitter.emit("functionCall", "status-checks.connector", "updateRegistrationTradingStatus");
+  const registrations = await establishConnectionToCosmos("registrations", "registrations");
+
+  try {
+    // Get the existing document to check if it exists
+    const registration = await registrations.findOne({ "fsa-rn": fsa_rn });
+
+    if (!registration) {
+      throw new Error(`Registration with ID ${fsa_rn} not found`);
+    }
+
+    if (stoppedTrading) {
+      await registrations.updateOne(
+        { "fsa-rn": fsa_rn },
+        {
+          $set: {
+            confirmed_not_trading: new Date().toISOString(),
+            next_status_check: new Date().toISOString(), // Will be processed overnight to set next action based on LA config
+            last_confirmed_trading: null
+          }
+        }
+      );
+    } else {
+      await registrations.updateOne(
+        { "fsa-rn": fsa_rn },
+        {
+          $set: {
+            last_confirmed_trading: new Date().toISOString(),
+            next_status_check: new Date().toISOString(), // Will be processed overnight to set next action based on LA config
+            confirmed_not_trading: null
+          }
+        }
+      );
+    }
+
+    logEmitter.emit(
+      "functionSuccess",
+      "status-checks.connector",
+      "updateRegistrationTradingStatus"
+    );
+  } catch (err) {
+    logEmitter.emit(
+      "functionFail",
+      "status-checks.connector",
+      "updateRegistrationTradingStatus",
+      err
+    );
+    throw err;
+  }
+};
+
 module.exports = {
   findRegistrationByFsaId,
   findActionableRegistrations,
   updateTradingStatusCheck,
-  updateNextStatusDate
+  updateNextStatusDate,
+  updateRegistrationTradingStatus
 };

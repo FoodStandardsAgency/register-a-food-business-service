@@ -7,7 +7,9 @@ jest.mock("express", () => ({
 // Mock the controller methods
 jest.mock("./trading-status-checks.controller", () => ({
   processTradingStatusChecksDue: jest.fn(),
-  processTradingStatusChecksForId: jest.fn()
+  processTradingStatusChecksForId: jest.fn(),
+  processFboStoppedTrading: jest.fn(),
+  processFboConfirmedTrading: jest.fn()
 }));
 
 const { fail } = require("../../utils/express/response");
@@ -15,7 +17,9 @@ const { fail } = require("../../utils/express/response");
 const { tradingStatusRouter } = require("./trading-status-checks.router");
 const {
   processTradingStatusChecksDue,
-  processTradingStatusChecksForId
+  processTradingStatusChecksForId,
+  processFboStoppedTrading,
+  processFboConfirmedTrading
 } = require("./trading-status-checks.controller");
 
 describe("/api/trading-status-checks route: ", () => {
@@ -99,6 +103,94 @@ describe("/api/trading-status-checks route: ", () => {
         throw new Error(errorMessage);
       });
       handler = router.post.mock.calls[1][1];
+      req = { params: { fsaId } };
+      res = {
+        status: jest.fn(() => res),
+        send: jest.fn()
+      };
+    });
+
+    it("should return error 500 response with a message on error", async () => {
+      await handler(req, res);
+      expect(res.status).toHaveBeenCalledWith(500);
+      expect(res.send).toHaveBeenCalledWith({ error: errorMessage });
+    });
+  });
+
+  describe("POST to /stopped-trading/:fsaId", () => {
+    const fsaId = "test";
+
+    beforeEach(() => {
+      router = tradingStatusRouter();
+      processFboStoppedTrading.mockImplementation(() => {});
+      handler = router.post.mock.calls[2][1];
+      req = { params: { fsaId } };
+      res = {
+        status: jest.fn(() => res),
+        send: jest.fn()
+      };
+    });
+
+    it("Should call processFboStoppedTrading", async () => {
+      await handler(req, res);
+      expect(processFboStoppedTrading).toHaveBeenLastCalledWith(fsaId, req, res);
+    });
+  });
+
+  describe("POST /stopped-trading/:fsaId error handling", () => {
+    const fsaId = "test";
+    const errorMessage = "stopped trading error";
+
+    beforeEach(() => {
+      router = tradingStatusRouter();
+      processFboStoppedTrading.mockImplementation(() => {
+        throw new Error(errorMessage);
+      });
+      handler = router.post.mock.calls[2][1];
+      req = { params: { fsaId } };
+      res = {
+        status: jest.fn(() => res),
+        send: jest.fn()
+      };
+    });
+
+    it("should return error 500 response with a message on error", async () => {
+      await handler(req, res);
+      expect(res.status).toHaveBeenCalledWith(500);
+      expect(res.send).toHaveBeenCalledWith({ error: errorMessage });
+    });
+  });
+
+  describe("POST to /confirmed-trading/:fsaId", () => {
+    const fsaId = "test";
+
+    beforeEach(() => {
+      router = tradingStatusRouter();
+      processFboConfirmedTrading.mockImplementation(() => {});
+      handler = router.post.mock.calls[3][1];
+      req = { params: { fsaId } };
+      res = {
+        status: jest.fn(() => res),
+        send: jest.fn()
+      };
+    });
+
+    it("Should call processFboConfirmedTrading", async () => {
+      await handler(req, res);
+      expect(processFboConfirmedTrading).toHaveBeenLastCalledWith(fsaId, req, res);
+    });
+  });
+
+  describe("POST /confirmed-trading/:fsaId error handling", () => {
+    const fsaId = "test";
+    const errorMessage = "confirmed trading error";
+
+    beforeEach(() => {
+      router = tradingStatusRouter();
+      processFboConfirmedTrading.mockImplementation(() => {
+        throw new Error(errorMessage);
+      });
+      handler = router.post.mock.calls[3][1];
       req = { params: { fsaId } };
       res = {
         status: jest.fn(() => res),

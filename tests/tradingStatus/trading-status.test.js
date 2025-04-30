@@ -134,9 +134,6 @@ describe("Trading Status Checks: Registration Processing Integration Tests", () 
       await registrationsCollection.deleteMany({
         "fsa-rn": { $in: testRegistrations }
       });
-      await LOC.deleteMany({
-        "fsa-rn": { $in: testRegistrations }
-      });
     }
 
     // Reset the test registrations array before each test

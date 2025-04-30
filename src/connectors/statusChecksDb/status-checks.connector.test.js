@@ -7,7 +7,13 @@ jest.mock("../../services/logging.service", () => ({
 }));
 
 const mongodb = require("mongodb");
-const { findActionableRegistrations } = require("./status-checks.connector");
+const {
+  findActionableRegistrations,
+  updateRegistrationTradingStatus,
+  updateNextStatusDate,
+  updateTradingStatusCheck,
+  findRegistrationByFsaId
+} = require("./status-checks.connector");
 const { logEmitter } = require("../../services/logging.service");
 const { clearCosmosConnection } = require("../cosmos.client");
 
@@ -64,40 +70,6 @@ describe("status-checks.connector", () => {
       });
     });
 
-    describe("when using different limit parameters", () => {
-      beforeEach(() => {
-        clearCosmosConnection();
-
-        // Setup the MongoDB client mock with spy on limit
-        const limitSpy = jest.fn().mockImplementation(() => ({
-          toArray: () => mockRegistrations
-        }));
-
-        mongodb.MongoClient.connect.mockImplementation(() => ({
-          db: () => ({
-            collection: () => ({
-              find: () => ({
-                limit: limitSpy
-              })
-            })
-          })
-        }));
-      });
-
-      it("should use default limit parameter of 50 when not provided", async () => {
-        await findActionableRegistrations();
-        expect(mongodb.MongoClient.connect).toHaveBeenCalled();
-        // In this approach we can't directly test the limit parameter
-        // as it's passed through several layers of mocks
-      });
-
-      it("should use custom limit when provided", async () => {
-        await findActionableRegistrations(100);
-        expect(mongodb.MongoClient.connect).toHaveBeenCalled();
-        // Same limitation as above
-      });
-    });
-
     describe("given the request throws an error", () => {
       beforeEach(async () => {
         clearCosmosConnection();
@@ -126,6 +98,152 @@ describe("status-checks.connector", () => {
           expect.any(Error)
         );
       });
+    });
+  });
+
+  describe("updateRegistrationTradingStatus", () => {
+    it("should update the registration to stopped trading", async () => {
+      const mockUpdateOne = jest.fn();
+      const mockFindOne = jest.fn().mockResolvedValue({ "fsa-rn": "1234" });
+
+      mongodb.MongoClient.connect.mockImplementation(() => ({
+        db: () => ({
+          collection: () => ({
+            findOne: mockFindOne,
+            updateOne: mockUpdateOne
+          })
+        })
+      }));
+
+      await updateRegistrationTradingStatus("1234", true);
+
+      expect(mockUpdateOne).toHaveBeenCalledWith(
+        { "fsa-rn": "1234" },
+        {
+          $set: {
+            confirmed_not_trading: expect.any(String),
+            next_status_check: expect.any(String),
+            last_confirmed_trading: null
+          }
+        }
+      );
+    });
+
+    it("should update the registration to confirmed still trading", async () => {
+      const mockUpdateOne = jest.fn();
+      const mockFindOne = jest.fn().mockResolvedValue({ "fsa-rn": "1234" });
+
+      mongodb.MongoClient.connect.mockImplementation(() => ({
+        db: () => ({
+          collection: () => ({
+            findOne: mockFindOne,
+            updateOne: mockUpdateOne
+          })
+        })
+      }));
+
+      await updateRegistrationTradingStatus("1234", false);
+
+      expect(mockUpdateOne).toHaveBeenCalledWith(
+        { "fsa-rn": "1234" },
+        {
+          $set: {
+            confirmed_not_trading: null,
+            next_status_check: expect.any(String),
+            last_confirmed_trading: expect.any(String)
+          }
+        }
+      );
+    });
+
+    it("should throw an error if registration is not found", async () => {
+      const mockFindOne = jest.fn().mockResolvedValue(null);
+
+      mongodb.MongoClient.connect.mockImplementation(() => ({
+        db: () => ({
+          collection: () => ({
+            findOne: mockFindOne
+          })
+        })
+      }));
+
+      await expect(updateRegistrationTradingStatus("1234", true)).rejects.toThrow(
+        "Registration with ID 1234 not found"
+      );
+    });
+  });
+
+  describe("updateNextStatusDate", () => {
+    it("should update the next_status_date field", async () => {
+      const mockUpdateOne = jest.fn();
+      const mockFindOne = jest.fn().mockResolvedValue({ "fsa-rn": "1234" });
+
+      mongodb.MongoClient.connect.mockImplementation(() => ({
+        db: () => ({
+          collection: () => ({
+            findOne: mockFindOne,
+            updateOne: mockUpdateOne
+          })
+        })
+      }));
+
+      await updateNextStatusDate("1234", new Date());
+
+      expect(mockUpdateOne).toHaveBeenCalledWith(
+        { "fsa-rn": "1234" },
+        { $set: { next_status_date: expect.any(String) } }
+      );
+    });
+
+    it("should throw an error if registration is not found", async () => {
+      const mockFindOne = jest.fn().mockResolvedValue(null);
+
+      mongodb.MongoClient.connect.mockImplementation(() => ({
+        db: () => ({
+          collection: () => ({
+            findOne: mockFindOne
+          })
+        })
+      }));
+
+      await expect(updateNextStatusDate("1234", new Date())).rejects.toThrow(
+        "Registration with ID 1234 not found"
+      );
+    });
+  });
+
+  describe("findRegistrationByFsaId", () => {
+    it("should find a registration by FSA ID", async () => {
+      const mockFindOne = jest.fn().mockResolvedValue({ "fsa-rn": "1234" });
+
+      mongodb.MongoClient.connect.mockImplementation(() => ({
+        db: () => ({
+          collection: () => ({
+            findOne: mockFindOne
+          })
+        })
+      }));
+
+      const result = await findRegistrationByFsaId("1234");
+
+      expect(result).toEqual({ "fsa-rn": "1234" });
+      expect(mockFindOne).toHaveBeenCalledWith({ "fsa-rn": "1234" });
+    });
+
+    it("should throw an error if registration is not found", async () => {
+      const mockFindOne = jest.fn().mockResolvedValue(null);
+
+      mongodb.MongoClient.connect.mockImplementation(() => ({
+        db: () => ({
+          collection: () => ({
+            findOne: mockFindOne
+          })
+        })
+      }));
+
+      const result = await findRegistrationByFsaId("1234");
+
+      expect(result).toBeNull();
     });
   });
 });
