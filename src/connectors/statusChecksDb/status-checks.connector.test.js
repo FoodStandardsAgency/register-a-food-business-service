@@ -121,9 +121,8 @@ describe("status-checks.connector", () => {
         { "fsa-rn": "1234" },
         {
           $set: {
-            confirmed_not_trading: expect.any(String),
-            next_status_check: expect.any(String),
-            last_confirmed_trading: null
+            confirmed_not_trading: expect.any(Date),
+            next_status_check: expect.any(Date)
           }
         }
       );
@@ -149,8 +148,8 @@ describe("status-checks.connector", () => {
         {
           $set: {
             confirmed_not_trading: null,
-            next_status_check: expect.any(String),
-            last_confirmed_trading: expect.any(String)
+            next_status_check: expect.any(Date),
+            last_confirmed_trading: expect.any(Date)
           }
         }
       );
@@ -191,7 +190,7 @@ describe("status-checks.connector", () => {
 
       expect(mockUpdateOne).toHaveBeenCalledWith(
         { "fsa-rn": "1234" },
-        { $set: { next_status_date: expect.any(String) } }
+        { $set: { next_status_date: expect.any(Date) } }
       );
     });
 

@@ -33,7 +33,7 @@ const findActionableRegistrations = async (limit = 50) => {
   try {
     const registrations = await establishConnectionToCosmos("registrations", "registrations");
     const actionableRegistrations = await registrations
-      .find({ next_status_date: { $lte: new Date().toISOString() } })
+      .find({ next_status_date: { $lte: new Date() } })
       .limit(limit)
       .toArray();
     logEmitter.emit("functionSuccess", "status-checks.connector", "findActionableRegistrations");
@@ -113,7 +113,7 @@ const updateNextStatusDate = async (fsa_rn, nextStatusDate) => {
     // Update only the next_status_date field
     await registrations.updateOne(
       { "fsa-rn": fsa_rn },
-      { $set: { next_status_date: nextStatusDate.toISOString() } }
+      { $set: { next_status_date: nextStatusDate } }
     );
 
     logEmitter.emit("functionSuccess", "status-checks.connector", "updateNextStatusDate");
@@ -149,9 +149,8 @@ const updateRegistrationTradingStatus = async (fsa_rn, stoppedTrading) => {
         { "fsa-rn": fsa_rn },
         {
           $set: {
-            confirmed_not_trading: new Date().toISOString(),
-            next_status_check: new Date().toISOString(), // Will be processed overnight to set next action based on LA config
-            last_confirmed_trading: null
+            confirmed_not_trading: new Date(),
+            next_status_check: new Date() // Will be processed overnight to set next action based on LA config
           }
         }
       );
@@ -160,8 +159,8 @@ const updateRegistrationTradingStatus = async (fsa_rn, stoppedTrading) => {
         { "fsa-rn": fsa_rn },
         {
           $set: {
-            last_confirmed_trading: new Date().toISOString(),
-            next_status_check: new Date().toISOString(), // Will be processed overnight to set next action based on LA config
+            last_confirmed_trading: new Date(),
+            next_status_check: new Date(), // Will be processed overnight to set next action based on LA config
             confirmed_not_trading: null
           }
         }

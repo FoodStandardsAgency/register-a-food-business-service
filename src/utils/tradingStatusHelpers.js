@@ -48,7 +48,6 @@ const getVerifiedRegistrationDates = (registration) => {
   // Submission date should always be supplied and valid
   const submission_date = registration?.reg_submission_date;
   if (submission_date && moment(submission_date).isValid()) {
-    result.submission_date = moment(submission_date).clone();
     result.trading_status_checks.push({
       type: INITIAL_REGISTRATION,
       time: moment(submission_date).clone()
@@ -62,7 +61,6 @@ const getVerifiedRegistrationDates = (registration) => {
   const last_confirmed_trading = registration?.last_confirmed_trading;
   if (last_confirmed_trading) {
     if (moment(last_confirmed_trading).isValid()) {
-      result.last_confirmed_trading = moment(last_confirmed_trading).clone();
       result.trading_status_checks.push({
         type: CONFIRMED_TRADING,
         time: moment(last_confirmed_trading).clone()
@@ -77,8 +75,7 @@ const getVerifiedRegistrationDates = (registration) => {
   const confirmed_not_trading = registration?.confirmed_not_trading;
   if (confirmed_not_trading) {
     if (moment(confirmed_not_trading).isValid()) {
-      result.confirmed_not_trading = moment(confirmed_not_trading).clone();
-      result.confirmed_not_trading.push({
+      result.trading_status_checks.push({
         type: "CONFIRMED_NOT_TRADING",
         time: moment(confirmed_not_trading).clone()
       });
@@ -88,11 +85,19 @@ const getVerifiedRegistrationDates = (registration) => {
     }
   }
 
+  // Check that don't have last confirmed trading date after finished trading dates
+  if (last_confirmed_trading && confirmed_not_trading) {
+    if (moment(last_confirmed_trading).isAfter(moment(confirmed_not_trading))) {
+      result.valid = false;
+      result.error = `Last confirmed trading date is after finished trading date for registration ${registration["fsa-rn"]}`;
+    }
+  }
+
   // Check if trading status checks are valid, if present
   const tradingStatus = registration.status?.trading_status_checks;
   if (Array.isArray(tradingStatus) && tradingStatus.length > 0) {
     tradingStatus.forEach((check) => {
-      if (check.time && check.time && moment(check.time).isValid()) {
+      if (check.time && moment(check.time).isValid()) {
         result.trading_status_checks.push({
           type: check.type,
           time: moment(check.time).clone(),

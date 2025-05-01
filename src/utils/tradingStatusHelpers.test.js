@@ -1,5 +1,5 @@
 const moment = require("moment");
-const { getNextActionAndDate } = require("./tradingStatusHelpers");
+const { getNextActionAndDate, getVerifiedRegistrationDates } = require("./tradingStatusHelpers");
 const {
   INITIAL_REGISTRATION,
   INITIAL_CHECK,
@@ -218,5 +218,131 @@ describe("getNextActionAndDate", () => {
 
       expect(result).toBeNull();
     });
+  });
+});
+
+describe("getVerifiedRegistrationDates", () => {
+  test("should return valid dates for a complete and valid registration object", () => {
+    const registration = {
+      reg_submission_date: new Date("2023-01-01T00:00:00.000Z"),
+      last_confirmed_trading: new Date("2023-06-01T00:00:00.000Z"),
+      status: {
+        trading_status_checks: [
+          { type: "REGULAR_CHECK", time: new Date("2023-05-01T00:00:00.000Z"), success: true },
+          { type: "INITIAL_CHECK", time: new Date("2023-02-01T00:00:00.000Z"), success: false }
+        ]
+      }
+    };
+
+    const result = getVerifiedRegistrationDates(registration);
+
+    expect(result.valid).toBe(true);
+    expect(
+      result.trading_status_checks.find((x) => x.type == INITIAL_REGISTRATION).time.toISOString()
+    ).toBe("2023-01-01T00:00:00.000Z");
+    expect(
+      result.trading_status_checks.find((x) => x.type == CONFIRMED_TRADING).time.toISOString()
+    ).toBe("2023-06-01T00:00:00.000Z");
+    expect(
+      result.trading_status_checks.find((x) => x.type == REGULAR_CHECK).time.toISOString()
+    ).toBe("2023-05-01T00:00:00.000Z");
+    expect(
+      result.trading_status_checks.find((x) => x.type == INITIAL_CHECK).time.toISOString()
+    ).toBe("2023-02-01T00:00:00.000Z");
+    expect(result.trading_status_checks).toHaveLength(4);
+  });
+
+  test("should return invalid when reg_submission_date is missing or invalid", () => {
+    const registration = {
+      "fsa-rn": "123456789",
+      reg_submission_date: new Date("invalid-date"),
+      last_confirmed_trading: new Date("2023-06-01T00:00:00.000Z")
+    };
+
+    const result = getVerifiedRegistrationDates(registration);
+
+    expect(result.valid).toBe(false);
+    expect(result.error).toBe("Invalid registration submission date for registration 123456789");
+  });
+
+  test("should return invalid when last_confirmed_trading is invalid", () => {
+    const registration = {
+      "fsa-rn": "123456789",
+      reg_submission_date: new Date("2023-01-01T00:00:00.000Z"),
+      last_confirmed_trading: new Date("invalid-date")
+    };
+
+    const result = getVerifiedRegistrationDates(registration);
+
+    expect(result.valid).toBe(false);
+    expect(result.error).toBe("Invalid last confirmed trading date for registration 123456789");
+  });
+
+  test("should return invalid when confirmed_not_trading is invalid", () => {
+    const registration = {
+      "fsa-rn": "123456789",
+      reg_submission_date: new Date("2023-01-01T00:00:00.000Z"),
+      confirmed_not_trading: new Date("invalid-date")
+    };
+
+    const result = getVerifiedRegistrationDates(registration);
+
+    expect(result.valid).toBe(false);
+    expect(result.error).toBe("Invalid finished trading date for registration 123456789");
+  });
+
+  test("should return invalid when last_confirmed_trading is after confirmed_not_trading", () => {
+    const registration = {
+      "fsa-rn": "123456789",
+      reg_submission_date: new Date("2023-01-01T00:00:00.000Z"),
+      last_confirmed_trading: new Date("2023-01-02T00:00:00.000Z"),
+      confirmed_not_trading: new Date("2023-01-01T00:00:00.000Z")
+    };
+
+    const result = getVerifiedRegistrationDates(registration);
+
+    expect(result.valid).toBe(false);
+    expect(result.error).toBe(
+      "Last confirmed trading date is after finished trading date for registration 123456789"
+    );
+  });
+
+  test("should handle missing trading_status_checks gracefully", () => {
+    const registration = {
+      reg_submission_date: new Date("2023-01-01T00:00:00.000Z")
+    };
+
+    const result = getVerifiedRegistrationDates(registration);
+
+    expect(result.valid).toBe(true);
+    expect(result.trading_status_checks).toHaveLength(1); // Only INITIAL_REGISTRATION
+  });
+
+  test("should return invalid when a trading_status_check has an invalid date", () => {
+    const registration = {
+      "fsa-rn": "123456789",
+      reg_submission_date: new Date("2023-01-01T00:00:00.000Z"),
+      status: {
+        trading_status_checks: [
+          { type: "REGULAR_CHECK", time: new Date("invalid-date"), success: true }
+        ]
+      }
+    };
+
+    const result = getVerifiedRegistrationDates(registration);
+
+    expect(result.valid).toBe(false);
+    expect(result.error).toBe(
+      "Invalid trading status check date for REGULAR_CHECK for registration 123456789"
+    );
+  });
+
+  test("should handle empty registration object gracefully", () => {
+    const registration = {};
+
+    const result = getVerifiedRegistrationDates(registration);
+
+    expect(result.valid).toBe(false);
+    expect(result.error).toBe("Invalid registration submission date for registration undefined");
   });
 });

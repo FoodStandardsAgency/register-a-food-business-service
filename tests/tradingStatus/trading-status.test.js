@@ -37,7 +37,7 @@ const {
 const MONGODB_TEST_URL = process.env.MONGODB_TEST_URL || "mongodb://localhost:27017";
 const REGISTRATION_DB_NAME = "registrations";
 const CONFIG_DB_NAME = "config";
-
+const ENSURE_DELETED_TEST_PREFIX = "ENSURE_DELETED_RECORD-";
 const testCouncilConfig = {
   local_council: "Test Council",
   local_council_url: "trading_status_test_council",
@@ -60,17 +60,12 @@ const mockRes = {
 };
 
 const getTestRegistration = (fsaRn, council, submissionDate, nextStatusDate, language) => {
-  // Store the FSA-RN in our test registrations array for cleanup
-  if (!testRegistrations.includes(fsaRn)) {
-    testRegistrations.push(fsaRn);
-  }
-
   return {
-    "fsa-rn": fsaRn,
+    "fsa-rn": ENSURE_DELETED_TEST_PREFIX + fsaRn,
     local_council_url: council.local_council_url,
     reg_submission_date:
-      submissionDate || moment().subtract(3, "months").subtract(1, "days").toISOString(),
-    next_status_date: nextStatusDate || moment().subtract(1, "days").toISOString(),
+      submissionDate || moment().subtract(3, "months").subtract(1, "days").toDate(),
+    next_status_date: nextStatusDate || moment().subtract(1, "days").toDate(),
     submission_language: language || "en",
     establishment: {
       establishment_details: {
@@ -84,9 +79,6 @@ const getTestRegistration = (fsaRn, council, submissionDate, nextStatusDate, lan
     }
   };
 };
-
-// Test data collections
-let testRegistrations = [];
 
 describe("Trading Status Checks: Registration Processing Integration Tests", () => {
   let connection;
@@ -129,27 +121,17 @@ describe("Trading Status Checks: Registration Processing Integration Tests", () 
   });
 
   beforeEach(async () => {
-    // Clean up test registrations before eac`h test
-    if (testRegistrations.length > 0) {
-      await registrationsCollection.deleteMany({
-        "fsa-rn": { $in: testRegistrations }
-      });
-    }
-
-    // Reset the test registrations array before each test
-    testRegistrations = [];
+    // Clean up test registrations before each test
+    await registrationsCollection.deleteMany({
+      "fsa-rn": { $regex: ENSURE_DELETED_TEST_PREFIX }
+    });
   });
 
   afterEach(async () => {
-    // Clean up test registrations after each test
-    if (testRegistrations.length > 0) {
-      await registrationsCollection.deleteMany({
-        "fsa-rn": { $in: testRegistrations }
-      });
-    }
-
-    // Reset test registrations array
-    testRegistrations = [];
+    // Clean up test registrations before each test
+    await registrationsCollection.deleteMany({
+      "fsa-rn": { $regex: ENSURE_DELETED_TEST_PREFIX }
+    });
 
     // Reset mocks
     jest.clearAllMocks();
@@ -158,7 +140,7 @@ describe("Trading Status Checks: Registration Processing Integration Tests", () 
   describe("processTradingStatusChecksDue", () => {
     it("should process a single registration successfully", async () => {
       // Arrange
-      const registration = getTestRegistration("TEST-FSA-ID", testCouncilConfig);
+      const registration = getTestRegistration("1", testCouncilConfig);
       await registrationsCollection.insertOne(registration);
 
       // Act
@@ -167,7 +149,7 @@ describe("Trading Status Checks: Registration Processing Integration Tests", () 
       // Assert: Verify the response from the controller
       expect(results).toBeDefined();
       expect(results.length).toBe(1);
-      expect(results[0].fsaId).toBe("TEST-FSA-ID");
+      expect(results[0].fsaId).toBe(`${ENSURE_DELETED_TEST_PREFIX}1`);
       const initialCheckDate = moment(registration.reg_submission_date).clone().add(3, "months");
       const initialCheckDateChase = initialCheckDate.clone().add(2, "weeks");
       expect(results[0].message).toBe(
@@ -176,11 +158,11 @@ describe("Trading Status Checks: Registration Processing Integration Tests", () 
 
       // Assert: Verify database was updated
       const updatedRegistration = await registrationsCollection.findOne({
-        "fsa-rn": "TEST-FSA-ID"
+        "fsa-rn": `${ENSURE_DELETED_TEST_PREFIX}1`
       });
       expect(updatedRegistration).toBeDefined();
-      expect(moment(updatedRegistration.next_status_date).format("YYYY-MM-DD HH:mm:ss")).toBe(
-        initialCheckDateChase.format("YYYY-MM-DD HH:mm:ss")
+      expect(moment(updatedRegistration.next_status_date).toISOString()).toBe(
+        initialCheckDateChase.toISOString()
       );
       expect(updatedRegistration.status.trading_status_checks).toBeDefined();
       expect(updatedRegistration.status.trading_status_checks.length).toBe(1);
@@ -198,29 +180,27 @@ describe("Trading Status Checks: Registration Processing Integration Tests", () 
       expect(callArgs[2]).toBe("test-council-reply-ID");
       const data = callArgs[3];
       expect(data).toBeDefined();
-      expect(data.registration_number).toBe("TEST-FSA-ID");
+      expect(data.registration_number).toBe(`${ENSURE_DELETED_TEST_PREFIX}1`);
       expect(data.la_name).toBe("Test Council");
       expect(data.reg_submission_date).toBe(
         moment(registration.reg_submission_date).clone().format("DD MMM YYYY")
       );
       expect(Object.keys(data).length).toBe(7);
       expect(callArgs[4]).toBeNull(); // No PDF file
-      expect(callArgs[5]).toBe("TEST-FSA-ID");
+      expect(callArgs[5]).toBe(`${ENSURE_DELETED_TEST_PREFIX}1`);
       expect(callArgs[6]).toBe("INITIAL_CHECK");
     });
   });
 
   describe("processTradingStatusChecksForId", () => {
     it("should process trading status check for a specific registration", async () => {
-      await registrationsCollection.insertOne(
-        getTestRegistration("TEST-FSA-ID", testCouncilConfig)
-      );
+      await registrationsCollection.insertOne(getTestRegistration(1, testCouncilConfig));
 
-      await processTradingStatusChecksForId("TEST-FSA-ID", mockReq, mockRes);
+      await processTradingStatusChecksForId(`${ENSURE_DELETED_TEST_PREFIX}1`, mockReq, mockRes);
 
       // Verify the registration was processed in the database
       const updatedRegistration = await registrationsCollection.findOne({
-        "fsa-rn": "TEST-FSA-ID"
+        "fsa-rn": `${ENSURE_DELETED_TEST_PREFIX}1`
       });
       expect(updatedRegistration).toBeDefined();
     });
@@ -237,26 +217,26 @@ describe("Trading Status Checks: Registration Processing Integration Tests", () 
     beforeEach(async () => {
       // Insert additional test registrations for bulk testing
       await registrationsCollection.insertMany([
-        getTestRegistration("TEST-FSA-ID", testCouncilConfig),
+        getTestRegistration(`1`, testCouncilConfig),
         getTestRegistration(
-          "TEST-FSA-ID-2",
+          `2`,
           testCouncilConfig,
-          moment().subtract(2, "years").toISOString(),
-          moment().subtract(3, "years").toISOString()
+          moment().subtract(2, "years"),
+          moment().subtract(3, "years")
         ),
         getTestRegistration(
-          "TEST-FSA-ID-3",
+          `3`,
           testCouncilConfig,
-          moment().subtract(2, "years").toISOString(),
-          moment().subtract(3, "days").toISOString()
+          moment().subtract(2, "years"),
+          moment().subtract(3, "days")
         )
       ]);
     });
 
     afterEach(async () => {
-      // Clean up test registrations after each test in this block
+      // Clean up test registrations before each test
       await registrationsCollection.deleteMany({
-        "fsa-rn": { $in: testRegistrations }
+        "fsa-rn": { $regex: ENSURE_DELETED_TEST_PREFIX }
       });
     });
 
@@ -270,7 +250,13 @@ describe("Trading Status Checks: Registration Processing Integration Tests", () 
       // Verify all registrations were processed
       const processedRegistrations = await registrationsCollection
         .find({
-          "fsa-rn": { $in: ["TEST-FSA-ID", "TEST-FSA-ID-2", "TEST-FSA-ID-3"] }
+          "fsa-rn": {
+            $in: [
+              `${ENSURE_DELETED_TEST_PREFIX}1`,
+              `${ENSURE_DELETED_TEST_PREFIX}2`,
+              `${ENSURE_DELETED_TEST_PREFIX}3`
+            ]
+          }
         })
         .toArray();
 
