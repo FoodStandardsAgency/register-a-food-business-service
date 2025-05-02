@@ -26,10 +26,10 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
 
-      - name: Use Node.js 18.16
+      - name: Use Node.js 22.14
         uses: actions/setup-node@v3
         with:
-          node-version: 18.16
+          node-version: 22.14
 
       - name: Create .npmrc
         run: echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" > .npmrc
@@ -55,7 +55,7 @@ jobs:
         with:
           junit_files: ./reports/TEST-unit.xml
           check_name: "Unit Test Results"
-          
+
       - name: Generate Coverage Summary
         uses: irongut/CodeCoverageSummary@v1.3.0
         with:
