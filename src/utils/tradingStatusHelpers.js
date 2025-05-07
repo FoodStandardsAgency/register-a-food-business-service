@@ -38,9 +38,6 @@ const {
  */
 const getVerifiedRegistrationDates = (registration) => {
   const result = {
-    submission_date: null,
-    last_confirmed_trading: null,
-    confirmed_not_trading: null,
     trading_status_checks: [],
     valid: true
   };
@@ -102,7 +99,7 @@ const getVerifiedRegistrationDates = (registration) => {
           type: check.type,
           time: moment(check.time).clone(),
           address: check.address,
-          success: check.success || false
+          sent: check.sent || false
         });
       } else {
         result.valid = false;

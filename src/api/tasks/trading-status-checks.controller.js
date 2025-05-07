@@ -67,14 +67,15 @@ const processTradingStatusChecksForId = async (fsaId, req, res) => {
   }
   logEmitter.emit(INFO, `Found registration with ID ${fsaId}`);
 
-  await processTradingStatusChecks([registration], allLaConfigData);
+  const result = await processTradingStatusChecks([registration], allLaConfigData);
 
-  logEmitter.emit(INFO, `Send notifications for ${fsaId}`);
   logEmitter.emit(
     "functionSuccess",
     "trading-status-checks.controller",
     "processTradingStatusChecksForId"
   );
+
+  return result.length && result[0];
 };
 
 /**

@@ -138,7 +138,7 @@ describe("Trading Status Checks: Registration Processing Integration Tests", () 
   });
 
   describe("processTradingStatusChecksDue", () => {
-    it("should process a single registration successfully", async () => {
+    it("should process a single registration successfully resulting in an INITIAL_CHECK", async () => {
       // Arrange
       const registration = getTestRegistration("1", testCouncilConfig);
       await registrationsCollection.insertOne(registration);
@@ -190,19 +190,139 @@ describe("Trading Status Checks: Registration Processing Integration Tests", () 
       expect(callArgs[5]).toBe(`${ENSURE_DELETED_TEST_PREFIX}1`);
       expect(callArgs[6]).toBe("INITIAL_CHECK");
     });
-  });
 
-  describe("processTradingStatusChecksForId", () => {
-    it("should process trading status check for a specific registration", async () => {
-      await registrationsCollection.insertOne(getTestRegistration(1, testCouncilConfig));
+    it("should process a single registration successfully resulting in an INITIAL_CHECK_CHASE", async () => {
+      // Arrange
+      const registration = getTestRegistration("1", testCouncilConfig);
+      const previousStatusDate = moment().subtract(15, "days").toDate();
+      registration.next_status_date = moment().subtract(1, "days").toDate();
+      registration.status = {
+        trading_status_checks: [
+          {
+            type: "INITIAL_CHECK",
+            email: registration.establishment.operator.operator_email,
+            time: previousStatusDate,
+            sent: true
+          }
+        ]
+      };
+      await registrationsCollection.insertOne(registration);
 
-      await processTradingStatusChecksForId(`${ENSURE_DELETED_TEST_PREFIX}1`, mockReq, mockRes);
+      // Act
+      const results = await processTradingStatusChecksDue(mockReq, mockRes, 50);
 
-      // Verify the registration was processed in the database
+      // Assert: Verify the response from the controller
+      expect(results).toBeDefined();
+      expect(results.length).toBe(1);
+      expect(results[0].fsaId).toBe(`${ENSURE_DELETED_TEST_PREFIX}1`);
+      const regularCheckDate = moment(registration.next_status_date).clone().add(6, "months");
+      expect(results[0].message).toBe(
+        `INITIAL_CHECK_CHASE emails sent, REGULAR_CHECK scheduled for ${regularCheckDate.format("YYYY-MM-DD HH:mm:ss")}`
+      );
+
+      // Assert: Verify database was updated
       const updatedRegistration = await registrationsCollection.findOne({
         "fsa-rn": `${ENSURE_DELETED_TEST_PREFIX}1`
       });
       expect(updatedRegistration).toBeDefined();
+      expect(moment(updatedRegistration.next_status_date).toISOString()).toBe(
+        regularCheckDate.toISOString()
+      );
+      expect(updatedRegistration.status.trading_status_checks).toBeDefined();
+      expect(updatedRegistration.status.trading_status_checks.length).toBe(2);
+      expect(updatedRegistration.status.trading_status_checks[1].type).toBe("INITIAL_CHECK_CHASE");
+      expect(updatedRegistration.status.trading_status_checks[1].email).toBe(
+        registration.establishment.operator.operator_email
+      );
+      expect(updatedRegistration.status.trading_status_checks[1].sent).toBeTruthy();
+
+      // Assert: Verify if the notify connector sendSingleEmail function was called correctly
+      expect(notifyConnector.sendSingleEmail).toHaveBeenCalled();
+      const callArgs = notifyConnector.sendSingleEmail.mock.calls[0];
+      expect(callArgs[0]).toBe("initial-check-chase-template-id");
+      expect(callArgs[1]).toBe("test@example.com");
+      expect(callArgs[2]).toBe("test-council-reply-ID");
+      const data = callArgs[3];
+      expect(data).toBeDefined();
+      expect(data.registration_number).toBe(`${ENSURE_DELETED_TEST_PREFIX}1`);
+      expect(data.la_name).toBe("Test Council");
+      expect(data.reg_submission_date).toBe(
+        moment(registration.reg_submission_date).clone().format("DD MMM YYYY")
+      );
+      expect(Object.keys(data).length).toBe(7);
+      expect(callArgs[4]).toBeNull(); // No PDF file
+      expect(callArgs[5]).toBe(`${ENSURE_DELETED_TEST_PREFIX}1`);
+      expect(callArgs[6]).toBe("INITIAL_CHECK_CHASE");
+    });
+  });
+
+  describe("processTradingStatusChecksForId", () => {
+    it("should process trading status check for a specific registration", async () => {
+      const registrationToRemainUnprocessed = getTestRegistration("1", testCouncilConfig);
+      const registrationToUpdate = getTestRegistration("2", testCouncilConfig);
+      await registrationsCollection.insertOne(registrationToRemainUnprocessed);
+      await registrationsCollection.insertOne(registrationToUpdate);
+
+      const result = await processTradingStatusChecksForId(
+        `${ENSURE_DELETED_TEST_PREFIX}2`,
+        mockReq,
+        mockRes
+      );
+
+      // Assert: Verify the response from the controller
+      expect(result).toBeDefined();
+      expect(result.fsaId).toBe(`${ENSURE_DELETED_TEST_PREFIX}2`);
+      const initialCheckDate = moment(registrationToUpdate.reg_submission_date)
+        .clone()
+        .add(3, "months");
+      const initialCheckDateChase = initialCheckDate.clone().add(2, "weeks");
+      expect(result.message).toBe(
+        `INITIAL_CHECK emails sent, INITIAL_CHECK_CHASE scheduled for ${initialCheckDateChase.format("YYYY-MM-DD HH:mm:ss")}`
+      );
+
+      // Assert: Verify registration 1 was NOT updated in database
+      const unprocessedRegistration = await registrationsCollection.findOne({
+        "fsa-rn": `${ENSURE_DELETED_TEST_PREFIX}1`
+      });
+      expect(unprocessedRegistration).toBeDefined();
+      expect(moment(unprocessedRegistration.next_status_date).toISOString()).toBe(
+        registrationToRemainUnprocessed.next_status_date.toISOString()
+      );
+      expect(unprocessedRegistration.status).toBeUndefined();
+
+      // Assert: Verify registration 2 was updated in database
+      const updatedRegistration = await registrationsCollection.findOne({
+        "fsa-rn": `${ENSURE_DELETED_TEST_PREFIX}2`
+      });
+      expect(updatedRegistration).toBeDefined();
+      expect(moment(updatedRegistration.next_status_date).toISOString()).toBe(
+        initialCheckDateChase.toISOString()
+      );
+      expect(updatedRegistration.status.trading_status_checks).toBeDefined();
+      expect(updatedRegistration.status.trading_status_checks.length).toBe(1);
+      expect(updatedRegistration.status.trading_status_checks[0].type).toBe("INITIAL_CHECK");
+      expect(updatedRegistration.status.trading_status_checks[0].email).toBe(
+        registrationToUpdate.establishment.operator.operator_email
+      );
+      expect(updatedRegistration.status.trading_status_checks[0].sent).toBeTruthy();
+
+      // Assert: Verify if the notify connector sendSingleEmail function was called once and correctly
+      expect(notifyConnector.sendSingleEmail).toHaveBeenCalledTimes(1);
+      const callArgs = notifyConnector.sendSingleEmail.mock.calls[0];
+      expect(callArgs[0]).toBe("initial-check-template-id");
+      expect(callArgs[1]).toBe("test@example.com");
+      expect(callArgs[2]).toBe("test-council-reply-ID");
+      const data = callArgs[3];
+      expect(data).toBeDefined();
+      expect(data.registration_number).toBe(`${ENSURE_DELETED_TEST_PREFIX}2`);
+      expect(data.la_name).toBe("Test Council");
+      expect(data.reg_submission_date).toBe(
+        moment(registrationToUpdate.reg_submission_date).clone().format("DD MMM YYYY")
+      );
+      expect(Object.keys(data).length).toBe(7);
+      expect(callArgs[4]).toBeNull(); // No PDF file
+      expect(callArgs[5]).toBe(`${ENSURE_DELETED_TEST_PREFIX}2`);
+      expect(callArgs[6]).toBe("INITIAL_CHECK");
     });
 
     it("should throw an error if the registration is not found", async () => {
