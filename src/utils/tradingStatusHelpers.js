@@ -208,12 +208,28 @@ const getNextActionAndDate = (mostRecentCheck, tradingStatusConfig) => {
         tradingStatusConfig.initial_check
       );
 
+      // If the initial check is more than a week overdue, set it in the future
+      if (nextActionTime.clone().add(1, TRADING_STATUS_CHASE_TIME_INTERVAL).isBefore(moment())) {
+        const today = moment();
+        while (nextActionTime.isSameOrBefore(today, "day")) {
+          nextActionTime.add(1, "year");
+        }
+      }
+
       return { type: INITIAL_CHECK, time: nextActionTime };
     } else if (tradingStatusConfig.regular_check) {
       const nextActionTime = mostRecentCheckTime.add(
         TRADING_STATUS_CHECK_TIME_INTERVAL,
         tradingStatusConfig.regular_check
       );
+
+      // If the regular check is more than a week overdue, set it in the future
+      if (nextActionTime.clone().add(1, TRADING_STATUS_CHASE_TIME_INTERVAL).isBefore(moment())) {
+        const today = moment();
+        while (nextActionTime.isSameOrBefore(today, "day")) {
+          nextActionTime.add(1, "year");
+        }
+      }
 
       return { type: REGULAR_CHECK, time: nextActionTime };
     }

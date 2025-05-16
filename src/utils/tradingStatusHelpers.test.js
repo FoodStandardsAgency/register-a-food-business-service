@@ -85,12 +85,45 @@ describe("getNextActionAndDate", () => {
       expect(compareDateEquality(result.time, expectedTime)).toBeTruthy();
     });
 
+    test("should schedule overdue INITIAL_CHECK in the future", () => {
+      const mockRecentCheck = createMockRecentCheck(
+        INITIAL_REGISTRATION,
+        moment().subtract(2, "years")
+      );
+      const expectedTime = mockRecentCheck.time
+        .clone()
+        .add("months", tradingStatusConfig.initial_check)
+        .add(2, "years");
+
+      const result = getNextActionAndDate(mockRecentCheck, tradingStatusConfig);
+
+      expect(result.type).toEqual(INITIAL_CHECK);
+      expect(compareDateEquality(result.time, expectedTime)).toBeTruthy();
+    });
+
     test("should schedule REGULAR_CHECK when most recent is INITIAL_REGISTRATION but initial_check is not configured", () => {
       const mockRecentCheck = createMockRecentCheck(INITIAL_REGISTRATION);
       const configWithoutInitial = { ...tradingStatusConfig, initial_check: null };
       const expectedTime = mockRecentCheck.time
         .clone()
         .add("months", configWithoutInitial.regular_check);
+
+      const result = getNextActionAndDate(mockRecentCheck, configWithoutInitial);
+
+      expect(result.type).toEqual(REGULAR_CHECK);
+      expect(compareDateEquality(result.time, expectedTime)).toBeTruthy();
+    });
+
+    test("should schedule overdue REGULAR_CHECK in the future", () => {
+      const mockRecentCheck = createMockRecentCheck(
+        INITIAL_REGISTRATION,
+        moment().subtract(3, "years")
+      );
+      const configWithoutInitial = { ...tradingStatusConfig, initial_check: null };
+      const expectedTime = mockRecentCheck.time
+        .clone()
+        .add("months", configWithoutInitial.regular_check)
+        .add(3, "years");
 
       const result = getNextActionAndDate(mockRecentCheck, configWithoutInitial);
 

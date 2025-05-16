@@ -61,7 +61,7 @@ const processTradingStatus = async (registration, laConfig) => {
     // No unsuccessful checks, proceed with the next action
     const action = getTradingStatusAction(tradingStatusDates, laConfig);
     let result;
-    if (action.time.isBefore(moment())) {
+    if (action && action.time.isBefore(moment())) {
       // Perform the action based on the trading status
       switch (action.type) {
         case DELETE_REGISTRATION:
@@ -86,13 +86,14 @@ const processTradingStatus = async (registration, laConfig) => {
       }
       const nextAction = getNextActionAndDate(action, laConfig.trading_status);
 
-      // Schedule the next action
-      await updateNextStatusDate(registration["fsa-rn"], nextAction.time);
+      // Schedule the next action (or clear the next status date if no action is needed)
+      await updateNextStatusDate(registration["fsa-rn"], nextAction?.time);
 
       result.message += `, ${nextAction.type} scheduled for ${nextAction.time.format("YYYY-MM-DD HH:mm:ss")}`;
       return result;
     } else {
-      await updateNextStatusDate(registration["fsa-rn"], action.time);
+      // Schedule the next action (or clear the next status date if no action is needed)
+      await updateNextStatusDate(registration["fsa-rn"], action?.time);
 
       return {
         fsaId: registration.fsa_rn,
