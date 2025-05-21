@@ -149,17 +149,17 @@ describe("trading-status-checks.controller", () => {
 
   describe("processFboConfirmedTrading", () => {
     it("should update the registration status to confirmed trading", async () => {
-      await processFboConfirmedTrading("TEST-123");
+      await processFboConfirmedTrading("TEST-123", "testId");
 
-      expect(updateRegistrationTradingStatus).toHaveBeenCalledWith("TEST-123", false);
+      expect(updateRegistrationTradingStatus).toHaveBeenCalledWith("TEST-123", "testId", false);
     });
   });
 
   describe("processFboStoppedTrading", () => {
     it("should update the registration status to stopped trading", async () => {
-      await processFboStoppedTrading("TEST-123");
+      await processFboStoppedTrading("TEST-123", "testId");
 
-      expect(updateRegistrationTradingStatus).toHaveBeenCalledWith("TEST-123", true);
+      expect(updateRegistrationTradingStatus).toHaveBeenCalledWith("TEST-123", "testId", true);
     });
   });
 

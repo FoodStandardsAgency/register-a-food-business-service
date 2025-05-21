@@ -16,6 +16,7 @@ const {
   updateTradingStatusCheck,
   updateNextStatusDate
 } = require("../connectors/statusChecksDb/status-checks.connector");
+const { encryptId } = require("../utils/crypto");
 const {
   INITIAL_REGISTRATION,
   INITIAL_CHECK,
@@ -26,7 +27,8 @@ const {
   CONFIRMED_NOT_TRADING,
   FINISHED_TRADING_LA,
   STILL_TRADING_LA,
-  DELETE_REGISTRATION
+  DELETE_REGISTRATION,
+  FRONT_END_URL
 } = require("../config");
 
 /**
@@ -118,14 +120,15 @@ const getTradingStatusAction = (tradingStatusDates, laConfig) => {
 };
 
 const transformDataForNotify = (registration, laConfig, i18nUtil) => {
+  const encryptedId = encryptId(registration._id);
   let data = {
     registration_number: registration["fsa-rn"],
     la_name: i18nUtil.tLa(laConfig.local_council),
     reg_submission_date: moment(registration.reg_submission_date).format("DD MMM YYYY"),
     trading_name: registration.establishment.establishment_details.establishment_trading_name,
     operator_name: `${registration.establishment.operator.operator_first_name} ${registration.establishment.operator.operator_last_name}`,
-    trading_yes_link: "TBD",
-    trading_no_link: "TBD"
+    trading_yes_link: `${FRONT_END_URL}trading-status/stilltrading/${registration["fsa-rn"]}?id=${encryptedId}`,
+    trading_no_link: `${FRONT_END_URL}trading-status/nolongertrading/${registration["fsa-rn"]}?id=${encryptedId}`
   };
   return data;
 };

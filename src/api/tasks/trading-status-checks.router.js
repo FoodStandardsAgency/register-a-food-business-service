@@ -84,9 +84,11 @@ const tradingStatusRouter = () => {
    */
   router.post("/stopped-trading/:fsaId", async (req, res) => {
     logEmitter.emit("functionCall", "trading-status-checks.router", "stopped-trading/:fsaId");
-    const { fsaId = null } = req.params;
     try {
-      await processFboStoppedTrading(fsaId, req, res);
+      const { fsaId = null } = req.params;
+      const { id = null } = req.query;
+
+      await processFboStoppedTrading(fsaId, id);
       await success(res, {
         message: `Marked business as no longer trading: ${fsaId}`
       });
@@ -104,9 +106,11 @@ const tradingStatusRouter = () => {
    */
   router.post("/confirmed-trading/:fsaId", async (req, res) => {
     logEmitter.emit("functionCall", "trading-status-checks.router", "confirmed-trading/:fsaId");
-    const { fsaId = null } = req.params;
     try {
-      await processFboConfirmedTrading(fsaId, req, res);
+      const { fsaId = null } = req.params;
+      const { id = null } = req.query;
+
+      await processFboConfirmedTrading(fsaId, id);
       await success(res, {
         message: `Marked business as confirmed still trading: ${fsaId}`
       });

@@ -2,6 +2,7 @@
 
 const { logEmitter, ERROR } = require("../../services/logging.service");
 const { establishConnectionToCosmos } = require("../cosmos.client");
+const { decryptId } = require("../../utils/crypto");
 
 const findRegistrationByFsaId = async (fsa_rn) => {
   logEmitter.emit("functionCall", "status-checks.connector", "findOneById");
@@ -125,14 +126,15 @@ const updateNextStatusDate = async (fsa_rn, nextStatusDate) => {
 };
 
 /**
- * Updates regsitration with the given fsa_rn to indicate either FBO stopped trading or confirmed still trading.
+ * Updates registration with the given fsa_rn to indicate either FBO stopped trading or confirmed still trading.
  *
  * @param {string} fsa_rn - The FSA registration number of the registration to update.
+ * @param {string} encryptedId - The encrypted record ID of the registration.
  * @param {string} stoppedTrading - FBO confirmed stopped trading?
  * @returns {Promise<void>}
  * @throws Will throw an error if registration is not found or update fails.
  */
-const updateRegistrationTradingStatus = async (fsa_rn, stoppedTrading) => {
+const updateRegistrationTradingStatus = async (fsa_rn, encryptedId, stoppedTrading) => {
   logEmitter.emit("functionCall", "status-checks.connector", "updateRegistrationTradingStatus");
   const registrations = await establishConnectionToCosmos("registrations", "registrations");
 
@@ -142,6 +144,11 @@ const updateRegistrationTradingStatus = async (fsa_rn, stoppedTrading) => {
 
     if (!registration) {
       throw new Error(`Registration with ID ${fsa_rn} not found`);
+    }
+
+    const id = decryptId(encryptedId);
+    if (!id || id !== registration._id) {
+      throw new Error(`Invalid encrypted ID: ${encryptedId}`);
     }
 
     if (stoppedTrading) {

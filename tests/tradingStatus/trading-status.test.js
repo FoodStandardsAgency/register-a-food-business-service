@@ -1,4 +1,5 @@
 "use strict";
+const crypto = require("crypto");
 
 // Set up environment variables required for the tests BEFORE any imports
 process.env.COSMOSDB_URL = process.env.MONGODB_TEST_URL || "mongodb://localhost:27017";
@@ -15,6 +16,7 @@ process.env.REGULAR_CHECK_TEMPLATE_ID_CY = "regular-check-template-id-cy";
 process.env.REGULAR_CHECK_CHASE_TEMPLATE_ID_CY = "regular-check-chase-template-id-cy";
 process.env.FINISHED_TRADING_LA_TEMPLATE_ID_CY = "finished-trading-la-template-id-cy";
 process.env.STILL_TRADING_LA_TEMPLATE_ID_CY = "still-trading-la-template-id-cy";
+process.env.ENCRYPTION_KEY = crypto.randomBytes(32).toString("hex");
 
 // Mock the notify connector module BEFORE importing the module that uses it
 jest.mock("../../src/connectors/notify/notify.connector", () => ({
@@ -61,6 +63,7 @@ const mockRes = {
 
 const getTestRegistration = (fsaRn, council, submissionDate, nextStatusDate, language) => {
   return {
+    _id: fsaRn + Math.random().toString(36).slice(2),
     "fsa-rn": ENSURE_DELETED_TEST_PREFIX + fsaRn,
     local_council_url: council.local_council_url,
     reg_submission_date:

@@ -119,12 +119,13 @@ describe("/api/trading-status-checks route: ", () => {
 
   describe("POST to /stopped-trading/:fsaId", () => {
     const fsaId = "test";
+    const id = "encryptedId";
 
     beforeEach(() => {
       router = tradingStatusRouter();
       processFboStoppedTrading.mockImplementation(() => {});
       handler = router.post.mock.calls[2][1];
-      req = { params: { fsaId } };
+      req = { params: { fsaId }, query: { id } };
       res = {
         status: jest.fn(() => res),
         send: jest.fn()
@@ -133,7 +134,7 @@ describe("/api/trading-status-checks route: ", () => {
 
     it("Should call processFboStoppedTrading", async () => {
       await handler(req, res);
-      expect(processFboStoppedTrading).toHaveBeenLastCalledWith(fsaId, req, res);
+      expect(processFboStoppedTrading).toHaveBeenLastCalledWith(fsaId, id);
     });
   });
 
@@ -147,7 +148,7 @@ describe("/api/trading-status-checks route: ", () => {
         throw new Error(errorMessage);
       });
       handler = router.post.mock.calls[2][1];
-      req = { params: { fsaId } };
+      req = { params: { fsaId }, query: { id: "encrypted:Id" } };
       res = {
         status: jest.fn(() => res),
         send: jest.fn()
@@ -163,12 +164,13 @@ describe("/api/trading-status-checks route: ", () => {
 
   describe("POST to /confirmed-trading/:fsaId", () => {
     const fsaId = "test";
+    const id = "encryptedId";
 
     beforeEach(() => {
       router = tradingStatusRouter();
       processFboConfirmedTrading.mockImplementation(() => {});
       handler = router.post.mock.calls[3][1];
-      req = { params: { fsaId } };
+      req = { params: { fsaId }, query: { id } };
       res = {
         status: jest.fn(() => res),
         send: jest.fn()
@@ -177,7 +179,7 @@ describe("/api/trading-status-checks route: ", () => {
 
     it("Should call processFboConfirmedTrading", async () => {
       await handler(req, res);
-      expect(processFboConfirmedTrading).toHaveBeenLastCalledWith(fsaId, req, res);
+      expect(processFboConfirmedTrading).toHaveBeenLastCalledWith(fsaId, id);
     });
   });
 
@@ -191,7 +193,7 @@ describe("/api/trading-status-checks route: ", () => {
         throw new Error(errorMessage);
       });
       handler = router.post.mock.calls[3][1];
-      req = { params: { fsaId } };
+      req = { params: { fsaId }, query: { token: "encryptedId" } };
       res = {
         status: jest.fn(() => res),
         send: jest.fn()

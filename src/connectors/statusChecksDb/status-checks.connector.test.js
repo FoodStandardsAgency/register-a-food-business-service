@@ -5,6 +5,9 @@ jest.mock("../../services/logging.service", () => ({
   },
   ERROR: "error"
 }));
+jest.mock("../../utils/crypto", () => ({
+  decryptId: jest.fn((id) => id)
+}));
 
 const mongodb = require("mongodb");
 const {
@@ -104,7 +107,7 @@ describe("status-checks.connector", () => {
   describe("updateRegistrationTradingStatus", () => {
     it("should update the registration to stopped trading", async () => {
       const mockUpdateOne = jest.fn();
-      const mockFindOne = jest.fn().mockResolvedValue({ "fsa-rn": "1234" });
+      const mockFindOne = jest.fn().mockResolvedValue({ "fsa-rn": "1234", _id: "test:Id" });
 
       mongodb.MongoClient.connect.mockImplementation(() => ({
         db: () => ({
@@ -115,7 +118,7 @@ describe("status-checks.connector", () => {
         })
       }));
 
-      await updateRegistrationTradingStatus("1234", true);
+      await updateRegistrationTradingStatus("1234", "test:Id", true);
 
       expect(mockUpdateOne).toHaveBeenCalledWith(
         { "fsa-rn": "1234" },
@@ -130,7 +133,7 @@ describe("status-checks.connector", () => {
 
     it("should update the registration to confirmed still trading", async () => {
       const mockUpdateOne = jest.fn();
-      const mockFindOne = jest.fn().mockResolvedValue({ "fsa-rn": "1234" });
+      const mockFindOne = jest.fn().mockResolvedValue({ "fsa-rn": "1234", _id: "test:Id" });
 
       mongodb.MongoClient.connect.mockImplementation(() => ({
         db: () => ({
@@ -141,7 +144,7 @@ describe("status-checks.connector", () => {
         })
       }));
 
-      await updateRegistrationTradingStatus("1234", false);
+      await updateRegistrationTradingStatus("1234", "test:Id", false);
 
       expect(mockUpdateOne).toHaveBeenCalledWith(
         { "fsa-rn": "1234" },
@@ -166,8 +169,24 @@ describe("status-checks.connector", () => {
         })
       }));
 
-      await expect(updateRegistrationTradingStatus("1234", true)).rejects.toThrow(
+      await expect(updateRegistrationTradingStatus("1234", "test:Id", true)).rejects.toThrow(
         "Registration with ID 1234 not found"
+      );
+    });
+
+    it("should throw an error if token does not match ID", async () => {
+      const mockFindOne = jest.fn().mockResolvedValue({ "fsa-rn": "1234", _id: "test:Id" });
+
+      mongodb.MongoClient.connect.mockImplementation(() => ({
+        db: () => ({
+          collection: () => ({
+            findOne: mockFindOne
+          })
+        })
+      }));
+
+      await expect(updateRegistrationTradingStatus("1234", "nomatch", true)).rejects.toThrow(
+        "Invalid encrypted ID: nomatch"
       );
     });
   });
@@ -175,7 +194,7 @@ describe("status-checks.connector", () => {
   describe("updateNextStatusDate", () => {
     it("should update the next_status_date field", async () => {
       const mockUpdateOne = jest.fn();
-      const mockFindOne = jest.fn().mockResolvedValue({ "fsa-rn": "1234" });
+      const mockFindOne = jest.fn().mockResolvedValue({ "fsa-rn": "1234", _id: "test:Id" });
 
       mongodb.MongoClient.connect.mockImplementation(() => ({
         db: () => ({
@@ -213,7 +232,7 @@ describe("status-checks.connector", () => {
 
   describe("findRegistrationByFsaId", () => {
     it("should find a registration by FSA ID", async () => {
-      const mockFindOne = jest.fn().mockResolvedValue({ "fsa-rn": "1234" });
+      const mockFindOne = jest.fn().mockResolvedValue({ "fsa-rn": "1234", _id: "test:Id" });
 
       mongodb.MongoClient.connect.mockImplementation(() => ({
         db: () => ({
@@ -225,7 +244,7 @@ describe("status-checks.connector", () => {
 
       const result = await findRegistrationByFsaId("1234");
 
-      expect(result).toEqual({ "fsa-rn": "1234" });
+      expect(result).toEqual({ "fsa-rn": "1234", _id: "test:Id" });
       expect(mockFindOne).toHaveBeenCalledWith({ "fsa-rn": "1234" });
     });
 

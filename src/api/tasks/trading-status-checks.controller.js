@@ -125,11 +125,12 @@ const processTradingStatusChecks = async (registrations, laConfig) => {
  * Updates the registration to indicate business confirmed still trading.
  *
  * @param {string} fsaId - The registration ID.
+ * @param {string} encryptedId - The encrypted record ID of the registration.
  */
-const processFboConfirmedTrading = async (fsaId) => {
+const processFboConfirmedTrading = async (fsaId, encryptedId) => {
   logEmitter.emit("functionCall", "trading-status-checks.controller", "processFboConfirmedTrading");
 
-  const result = updateRegistrationTradingStatus(fsaId, false);
+  const result = updateRegistrationTradingStatus(fsaId, encryptedId, false);
 
   logEmitter.emit(
     "functionSuccess",
@@ -144,11 +145,12 @@ const processFboConfirmedTrading = async (fsaId) => {
  * Updates the registration to indicate business stopped trading.
  *
  * @param {string} fsaId - The registration ID.
+ * @param {string} encryptedId - The encrypted record ID of the registration.
  */
-const processFboStoppedTrading = async (fsaId) => {
+const processFboStoppedTrading = async (fsaId, encryptedId) => {
   logEmitter.emit("functionCall", "trading-status-checks.controller", "processFboStoppedTrading");
 
-  const result = updateRegistrationTradingStatus(fsaId, true);
+  const result = updateRegistrationTradingStatus(fsaId, encryptedId, true);
 
   logEmitter.emit(
     "functionSuccess",

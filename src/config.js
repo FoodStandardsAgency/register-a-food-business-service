@@ -21,6 +21,8 @@ module.exports = {
   }/address`,
   ADDRESS_API_URL_QUERY_STANDARD: "format=json&lines=3",
   RNG_API_URL: process.env.RNG_API_URL || "https://rng.food.gov.uk",
+  ENCRYPTION_KEY: process.env.ENCRYPTION_KEY,
+  FRONT_END_URL: process.env.FRONT_END_URL || "http://localhost:3000/",
 
   TRADING_STATUS_CHECK_TIME_INTERVAL: process.env.TRADING_STATUS_CHECK_TIME_INTERVAL || "months",
   TRADING_STATUS_CHASE_TIME_INTERVAL: process.env.TRADING_STATUS_CHASE_TIME_INTERVAL || "weeks",
