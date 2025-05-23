@@ -95,7 +95,7 @@ const updateTradingStatusCheck = async (fsa_rn, newStatus) => {
  * Updates the next_status_date for a registration with the given fsa_rn.
  *
  * @param {string} fsa_rn - The FSA registration number of the registration to update.
- * @param {string} nextStatusDate - The new next_status_date value (ISO format string).
+ * @param {string} nextStatusDate - The new next_status_date value (moment object).
  * @returns {Promise<void>}
  * @throws Will throw an error if registration is not found or update fails.
  */
@@ -114,7 +114,7 @@ const updateNextStatusDate = async (fsa_rn, nextStatusDate) => {
     // Update only the next_status_date field
     await registrations.updateOne(
       { "fsa-rn": fsa_rn },
-      { $set: { next_status_date: nextStatusDate.toISOString() } }
+      { $set: { next_status_date: nextStatusDate.toDate() } }
     );
 
     logEmitter.emit("functionSuccess", "status-checks.connector", "updateNextStatusDate");

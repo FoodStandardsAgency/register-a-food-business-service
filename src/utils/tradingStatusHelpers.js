@@ -44,7 +44,7 @@ const getVerifiedRegistrationDates = (registration) => {
   };
 
   // Submission date should always be supplied and valid
-  const submission_date = registration?.reg_submission_date?.$date;
+  const submission_date = registration?.reg_submission_date;
   if (submission_date && moment(submission_date).isValid()) {
     result.trading_status_checks.push({
       type: INITIAL_REGISTRATION,
@@ -56,7 +56,7 @@ const getVerifiedRegistrationDates = (registration) => {
   }
 
   // Last confirmed trading date should be valid if present
-  const last_confirmed_trading = registration?.last_confirmed_trading?.$date;
+  const last_confirmed_trading = registration?.last_confirmed_trading;
   if (last_confirmed_trading) {
     if (moment(last_confirmed_trading).isValid()) {
       result.trading_status_checks.push({
@@ -70,7 +70,7 @@ const getVerifiedRegistrationDates = (registration) => {
   }
 
   // Finished trading date should be valid if present
-  const confirmed_not_trading = registration?.confirmed_not_trading?.$date;
+  const confirmed_not_trading = registration?.confirmed_not_trading;
   if (confirmed_not_trading) {
     if (moment(confirmed_not_trading).isValid()) {
       result.trading_status_checks.push({
@@ -95,7 +95,7 @@ const getVerifiedRegistrationDates = (registration) => {
   const tradingStatus = registration.status?.trading_status_checks;
   if (Array.isArray(tradingStatus) && tradingStatus.length > 0) {
     tradingStatus.forEach((check) => {
-      const date = check?.time?.$date;
+      const date = check?.time;
       if (date && moment(date).isValid()) {
         result.trading_status_checks.push({
           type: check.type,
@@ -161,107 +161,99 @@ const getMostRecentCheck = (tradingStatusChecks, type) => {
  */
 const getNextActionAndDate = (mostRecentCheck, tradingStatusConfig) => {
   const mostRecentCheckTime = moment(mostRecentCheck.time).clone();
+  let result = null;
 
-  if (mostRecentCheck.type === CONFIRMED_NOT_TRADING) {
-    // LA notification not sent yet
-    return { type: FINISHED_TRADING_LA, time: mostRecentCheckTime };
+  // Early return if no mostRecentCheck
+  if (!mostRecentCheck || !mostRecentCheck.type) {
+    return result;
   }
 
-  if (mostRecentCheck.type === FINISHED_TRADING_LA) {
-    // LA notification sent, but not yet deleted
+  // Handle CONFIRMED_NOT_TRADING
+  if (mostRecentCheck.type === CONFIRMED_NOT_TRADING) {
+    result = { type: FINISHED_TRADING_LA, time: mostRecentCheckTime };
+  }
+  // Handle FINISHED_TRADING_LA
+  else if (mostRecentCheck.type === FINISHED_TRADING_LA) {
     const deleteTime = mostRecentCheckTime.add(
       tradingStatusConfig.data_retention_period,
       YEARS_TIME_INTERVAL
     );
-
-    return { type: DELETE_REGISTRATION, time: deleteTime };
+    result = { type: DELETE_REGISTRATION, time: deleteTime };
   }
-
-  if (mostRecentCheck.type === STILL_TRADING_LA) {
+  // Handle STILL_TRADING_LA
+  else if (mostRecentCheck.type === STILL_TRADING_LA) {
     if (tradingStatusConfig.regular_check) {
       const nextActionTime = mostRecentCheckTime.add(
         tradingStatusConfig.regular_check,
         MONTHS_TIME_INTERVAL
       );
-
-      return { type: REGULAR_CHECK, time: nextActionTime };
+      result = { type: REGULAR_CHECK, time: nextActionTime };
     }
   }
-
-  if (mostRecentCheck.type === CONFIRMED_TRADING) {
+  // Handle CONFIRMED_TRADING
+  else if (mostRecentCheck.type === CONFIRMED_TRADING) {
     if (tradingStatusConfig.confirmed_trading_notifications) {
-      return { type: STILL_TRADING_LA, time: mostRecentCheckTime };
-    }
-
-    if (tradingStatusConfig.regular_check) {
-      const nextActionTime = mostRecentCheckTime.add(
-        tradingStatusConfig.regular_check,
-        MONTHS_TIME_INTERVAL
-      );
-
-      return { type: REGULAR_CHECK, time: nextActionTime };
-    }
-  }
-
-  if (mostRecentCheck.type === INITIAL_REGISTRATION) {
-    if (tradingStatusConfig.initial_check) {
-      let nextActionTime = mostRecentCheckTime.add(
-        tradingStatusConfig.initial_check,
-        MONTHS_TIME_INTERVAL
-      );
-
-      return { type: INITIAL_CHECK, time: nextActionTime };
+      result = { type: STILL_TRADING_LA, time: mostRecentCheckTime };
     } else if (tradingStatusConfig.regular_check) {
       const nextActionTime = mostRecentCheckTime.add(
         tradingStatusConfig.regular_check,
         MONTHS_TIME_INTERVAL
       );
-
-      return { type: REGULAR_CHECK, time: nextActionTime };
+      result = { type: REGULAR_CHECK, time: nextActionTime };
     }
   }
-
-  if (mostRecentCheck.type === INITIAL_CHECK) {
+  // Handle INITIAL_REGISTRATION
+  else if (mostRecentCheck.type === INITIAL_REGISTRATION) {
+    if (tradingStatusConfig.initial_check) {
+      const nextActionTime = mostRecentCheckTime.add(
+        tradingStatusConfig.initial_check,
+        MONTHS_TIME_INTERVAL
+      );
+      result = { type: INITIAL_CHECK, time: nextActionTime };
+    } else if (tradingStatusConfig.regular_check) {
+      const nextActionTime = mostRecentCheckTime.add(
+        tradingStatusConfig.regular_check,
+        MONTHS_TIME_INTERVAL
+      );
+      result = { type: REGULAR_CHECK, time: nextActionTime };
+    }
+  }
+  // Handle INITIAL_CHECK
+  else if (mostRecentCheck.type === INITIAL_CHECK) {
     if (tradingStatusConfig.initial_check && tradingStatusConfig.chase) {
       const nextActionTime = mostRecentCheckTime.clone().add(2, WEEKS_TIME_INTERVAL);
-
       // Sanity check to ensure old initial check is not chased e.g. due to config change
       if (nextActionTime.clone().add(2, WEEKS_TIME_INTERVAL).isAfter(moment())) {
-        return { type: INITIAL_CHECK_CHASE, time: nextActionTime };
+        result = { type: INITIAL_CHECK_CHASE, time: nextActionTime };
       }
     }
-
-    if (tradingStatusConfig.regular_check) {
+    if (!result && tradingStatusConfig.regular_check) {
       const nextActionTime = mostRecentCheckTime.add(
         tradingStatusConfig.regular_check,
         MONTHS_TIME_INTERVAL
       );
-
-      return { type: REGULAR_CHECK, time: nextActionTime };
+      result = { type: REGULAR_CHECK, time: nextActionTime };
     }
   }
-
-  if (mostRecentCheck.type === REGULAR_CHECK) {
+  // Handle REGULAR_CHECK
+  else if (mostRecentCheck.type === REGULAR_CHECK) {
     if (tradingStatusConfig.regular_check && tradingStatusConfig.chase) {
       const nextActionTime = mostRecentCheckTime.clone().add(2, WEEKS_TIME_INTERVAL);
-
       // Sanity check to ensure old regular check is not chased e.g. due to config change
       if (nextActionTime.clone().add(2, WEEKS_TIME_INTERVAL).isAfter(moment())) {
-        return { type: REGULAR_CHECK_CHASE, time: nextActionTime };
+        result = { type: REGULAR_CHECK_CHASE, time: nextActionTime };
       }
     }
-
-    if (tradingStatusConfig.regular_check) {
+    if (!result && tradingStatusConfig.regular_check) {
       const nextActionTime = mostRecentCheckTime.add(
         tradingStatusConfig.regular_check,
         MONTHS_TIME_INTERVAL
       );
-
-      return { type: REGULAR_CHECK, time: nextActionTime };
+      result = { type: REGULAR_CHECK, time: nextActionTime };
     }
   }
-
-  if (
+  // Handle CHASE types
+  else if (
     mostRecentCheck.type === INITIAL_CHECK_CHASE ||
     mostRecentCheck.type === REGULAR_CHECK_CHASE
   ) {
@@ -270,12 +262,14 @@ const getNextActionAndDate = (mostRecentCheck, tradingStatusConfig) => {
         tradingStatusConfig.regular_check,
         MONTHS_TIME_INTERVAL
       );
-
-      return { type: REGULAR_CHECK, time: nextActionTime };
+      result = { type: REGULAR_CHECK, time: nextActionTime };
     }
   }
 
-  return null;
+  if (result && (result.type === INITIAL_CHECK || result.type === REGULAR_CHECK)) {
+    result.time = staggerOldDates(result.time);
+  }
+  return result;
 };
 
 const getTemplateIdFromEmailType = (emailType, cy) => {
@@ -358,36 +352,38 @@ const generateStatusEmailToSend = (registration, emailType, lcContactConfig) => 
 };
 
 /**
- * Adds an interval to a date based on the unit, making sure it's in the future.
- * @param {Date} date - The base date.
- * @param {number} intervalValue - The amount to add.
- * @param {'years'|'minutes'|'hours'} intervalUnit - The unit of the interval.
- * @returns {Date} - The new date.
+ * Recent dates (in the last 2 weeks) can be left alone but older dates will be staggered.
+ * This is to ensure that the emails are not sent all at once.
+ * The date is staggered by updating the year while leaving the date and month alone.
+ * @param {Date} date - The original calculated date of the next check.
+ * @returns {Date} - The new date, staggered if required.
  */
-function addInterval(date, intervalValue, intervalUnit) {
-    const now = new Date();
-    const newDate = new Date(date);
-    switch (intervalUnit) {
-        case 'years':
-            newDate.setFullYear(now.getFullYear() + intervalValue);
-            break;
-        case 'minutes':
-            newDate.setFullYear(now.getFullYear());
-            newDate.setMonth(now.getMonth());
-            newDate.setDate(now.getDate());
-            newDate.setHours(now.getHours());
-            newDate.setMinutes(now.getMinutes() + intervalValue);
-            break;
-        case 'hours':
-            newDate.setFullYear(now.getFullYear());
-            newDate.setMonth(now.getMonth());
-            newDate.setDate(now.getDate());
-            newDate.setHours(now.getHours() + intervalValue);
-            break;
-        default:
-            throw new Error(`Unsupported interval unit: ${intervalUnit}`);
+function staggerOldDates(date) {
+  const now = new Date();
+  let newDate = date.toDate();
+
+  // If more than two weeks ago, staggering is required
+  if (date.clone().add(2, WEEKS_TIME_INTERVAL).isBefore(moment())) {
+
+    // If the date is in the past but falls on today's date, set it to the current year
+    if (newDate.getMonth() === now.getMonth() && newDate.getDate() === now.getDate()) {
+      // Set the time to midnight to ensure processed 
+      newDate = new Date(now.getFullYear(), newDate.getMonth(), newDate.getDate());
     }
-    return newDate;
+    
+    // If the date is in the past but falls later in the year, set it to the current year
+    // This will ensure that the date is in the future
+    else if (newDate.getMonth() > now.getMonth() || (newDate.getMonth() === now.getMonth() && newDate.getDate() > now.getDate())) {
+      // When recalculating on that day it will fall into the matching case above and process immediately
+      newDate.setFullYear(now.getFullYear());
+    } else {
+      // Dates earlier in the year will be set to next year
+      // When recalculating on that day it will fall into the matching case above and process immediately
+      newDate.setFullYear(now.getFullYear() + 1);
+    }
+  }
+
+  return moment(newDate);
 }
 
 module.exports = {

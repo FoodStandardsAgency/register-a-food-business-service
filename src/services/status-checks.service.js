@@ -86,6 +86,7 @@ const processTradingStatus = async (registration, laConfig) => {
         default:
           throw new Error(`Unknown action type: ${action.type}`);
       }
+      action.time = moment();
       const nextAction = getNextActionAndDate(action, laConfig.trading_status);
 
       // Schedule the next action (or clear the next status date if no action is needed)

@@ -9,6 +9,7 @@ jest.mock("../../utils/crypto", () => ({
   decryptId: jest.fn((id) => id)
 }));
 
+const moment = require("moment");
 const mongodb = require("mongodb");
 const {
   findActionableRegistrations,
@@ -205,7 +206,7 @@ describe("status-checks.connector", () => {
         })
       }));
 
-      await updateNextStatusDate("1234", new Date());
+      await updateNextStatusDate("1234", moment());
 
       expect(mockUpdateOne).toHaveBeenCalledWith(
         { "fsa-rn": "1234" },

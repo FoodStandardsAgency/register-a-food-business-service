@@ -45,14 +45,14 @@ describe("getNextActionAndDate", () => {
       const result = getNextActionAndDate(mockRecentCheck, tradingStatusConfig);
 
       expect(result.type).toEqual(FINISHED_TRADING_LA);
-      expect(result.time).toBe(mockRecentCheck.time);
+      expect(compareDateEquality(result.time, mockRecentCheck.time)).toBeTruthy();
     });
 
     test("should return DELETE_REGISTRATION when most recent check is FINISHED_TRADING_LA", () => {
       const mockRecentCheck = createMockRecentCheck(FINISHED_TRADING_LA);
       const expectedTime = mockRecentCheck.time
         .clone()
-        .add("years", tradingStatusConfig.data_retention_period);
+        .add(tradingStatusConfig.data_retention_period, "years");
 
       const result = getNextActionAndDate(mockRecentCheck, tradingStatusConfig);
 
@@ -114,16 +114,28 @@ describe("getNextActionAndDate", () => {
       expect(compareDateEquality(result.time, expectedTime)).toBeTruthy();
     });
 
-    test("should schedule overdue REGULAR_CHECK in the future", () => {
+    test("should schedule overdue REGULAR_CHECK today if day and month match today's date", () => {
       const mockRecentCheck = createMockRecentCheck(
         INITIAL_REGISTRATION,
         moment().subtract(3, "years")
       );
       const configWithoutInitial = { ...tradingStatusConfig, initial_check: null };
-      const expectedTime = mockRecentCheck.time
-        .clone()
-        .add("months", configWithoutInitial.regular_check)
-        .add(3, "years");
+      const expectedTime = moment().startOf('day');
+
+      const result = getNextActionAndDate(mockRecentCheck, configWithoutInitial);
+
+      expect(result.type).toEqual(REGULAR_CHECK);
+      expect(compareDateEquality(result.time, expectedTime)).toBeTruthy();
+    });
+
+     test("should schedule unmatching overdue REGULAR_CHECK in the future", () => {
+      const mockRecentCheck = createMockRecentCheck(
+        INITIAL_REGISTRATION,
+        moment().subtract(3, "years").subtract(3, "months")
+      );
+      const configWithoutInitial = { ...tradingStatusConfig, initial_check: null };
+      const expectedTime = moment()
+        .add(9, "months"); // 3 months is 9 ahead when in future
 
       const result = getNextActionAndDate(mockRecentCheck, configWithoutInitial);
 

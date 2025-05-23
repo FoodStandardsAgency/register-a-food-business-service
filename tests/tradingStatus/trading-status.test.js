@@ -16,6 +16,9 @@ process.env.REGULAR_CHECK_TEMPLATE_ID_CY = "regular-check-template-id-cy";
 process.env.REGULAR_CHECK_CHASE_TEMPLATE_ID_CY = "regular-check-chase-template-id-cy";
 process.env.FINISHED_TRADING_LA_TEMPLATE_ID_CY = "finished-trading-la-template-id-cy";
 process.env.STILL_TRADING_LA_TEMPLATE_ID_CY = "still-trading-la-template-id-cy";
+process.env.YEARS_TIME_INTERVAL = "years";
+process.env.MONTHS_TIME_INTERVAL = "months";
+process.env.WEEKS_TIME_INTERVAL = "weeks";
 process.env.ENCRYPTION_KEY = crypto.randomBytes(32).toString("hex");
 
 // Mock the notify connector module BEFORE importing the module that uses it
@@ -143,7 +146,7 @@ describe("Trading Status Checks: Registration Processing Integration Tests", () 
   describe("processTradingStatusChecksDue", () => {
     it("should process a single registration successfully resulting in an INITIAL_CHECK", async () => {
       // Arrange
-      const registration = getTestRegistration("1", testCouncilConfig);
+      let registration = getTestRegistration("1", testCouncilConfig);
       await registrationsCollection.insertOne(registration);
 
       // Act
@@ -153,10 +156,9 @@ describe("Trading Status Checks: Registration Processing Integration Tests", () 
       expect(results).toBeDefined();
       expect(results.length).toBe(1);
       expect(results[0].fsaId).toBe(`${ENSURE_DELETED_TEST_PREFIX}1`);
-      const initialCheckDate = moment(registration.reg_submission_date).clone().add(3, "months");
-      const initialCheckDateChase = initialCheckDate.clone().add(2, "weeks");
-      expect(results[0].message).toBe(
-        `INITIAL_CHECK emails sent, INITIAL_CHECK_CHASE scheduled for ${initialCheckDateChase.format("YYYY-MM-DD HH:mm:ss")}`
+      const initialCheckDateChase = moment().add(2, "weeks");
+      expect(results[0].message).toMatch(
+        new RegExp(`^INITIAL_CHECK emails sent, INITIAL_CHECK_CHASE scheduled for ${initialCheckDateChase.format("YYYY-MM-DD HH:mm")}:\\d{2}$`)
       );
 
       // Assert: Verify database was updated
@@ -164,8 +166,8 @@ describe("Trading Status Checks: Registration Processing Integration Tests", () 
         "fsa-rn": `${ENSURE_DELETED_TEST_PREFIX}1`
       });
       expect(updatedRegistration).toBeDefined();
-      expect(moment(updatedRegistration.next_status_date).toISOString()).toBe(
-        initialCheckDateChase.toISOString()
+      expect(moment(updatedRegistration.next_status_date).toISOString()).toMatch(
+        new RegExp(`^${initialCheckDateChase.toISOString().substring(0, 19)}`)
       );
       expect(updatedRegistration.status.trading_status_checks).toBeDefined();
       expect(updatedRegistration.status.trading_status_checks.length).toBe(1);
@@ -218,9 +220,10 @@ describe("Trading Status Checks: Registration Processing Integration Tests", () 
       expect(results).toBeDefined();
       expect(results.length).toBe(1);
       expect(results[0].fsaId).toBe(`${ENSURE_DELETED_TEST_PREFIX}1`);
-      const regularCheckDate = moment(registration.next_status_date).clone().add(6, "months");
-      expect(results[0].message).toBe(
-        `INITIAL_CHECK_CHASE emails sent, REGULAR_CHECK scheduled for ${regularCheckDate.format("YYYY-MM-DD HH:mm:ss")}`
+      const regularCheckDate = moment().clone().add(6, "months");
+      expect(results[0].message)
+      .toMatch(
+        new RegExp(`^INITIAL_CHECK_CHASE emails sent, REGULAR_CHECK scheduled for ${regularCheckDate.format("YYYY-MM-DD HH:mm")}:\\d{2}$`)
       );
 
       // Assert: Verify database was updated
@@ -228,8 +231,8 @@ describe("Trading Status Checks: Registration Processing Integration Tests", () 
         "fsa-rn": `${ENSURE_DELETED_TEST_PREFIX}1`
       });
       expect(updatedRegistration).toBeDefined();
-      expect(moment(updatedRegistration.next_status_date).toISOString()).toBe(
-        regularCheckDate.toISOString()
+      expect(moment(updatedRegistration.next_status_date).toISOString()).toMatch(
+        new RegExp(`^${regularCheckDate.toISOString().substring(0, 19)}`)
       );
       expect(updatedRegistration.status.trading_status_checks).toBeDefined();
       expect(updatedRegistration.status.trading_status_checks.length).toBe(2);
@@ -278,7 +281,7 @@ describe("Trading Status Checks: Registration Processing Integration Tests", () 
       const initialCheckDate = moment(registrationToUpdate.reg_submission_date)
         .clone()
         .add(3, "months");
-      const initialCheckDateChase = initialCheckDate.clone().add(2, "weeks");
+      const initialCheckDateChase = moment().add(2, "weeks");
       expect(result.message).toBe(
         `INITIAL_CHECK emails sent, INITIAL_CHECK_CHASE scheduled for ${initialCheckDateChase.format("YYYY-MM-DD HH:mm:ss")}`
       );
@@ -298,8 +301,8 @@ describe("Trading Status Checks: Registration Processing Integration Tests", () 
         "fsa-rn": `${ENSURE_DELETED_TEST_PREFIX}2`
       });
       expect(updatedRegistration).toBeDefined();
-      expect(moment(updatedRegistration.next_status_date).toISOString()).toBe(
-        initialCheckDateChase.toISOString()
+      expect(moment(updatedRegistration.next_status_date).toISOString()).toMatch(
+        new RegExp(`^${initialCheckDateChase.toISOString().substring(0, 19)}`)
       );
       expect(updatedRegistration.status.trading_status_checks).toBeDefined();
       expect(updatedRegistration.status.trading_status_checks.length).toBe(1);
