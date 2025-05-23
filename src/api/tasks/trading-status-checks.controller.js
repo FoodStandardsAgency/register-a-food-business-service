@@ -100,15 +100,15 @@ const processTradingStatusChecks = async (registrations, laConfig) => {
 
       logEmitter.emit(
         INFO,
-        `Processing registration ${registration.fsa_rn} for council ${localCouncil.local_council_url}`
+        `Processing registration ${registration["fsa_rn"]} for council ${localCouncil.local_council_url}`
       );
 
       const result = await processTradingStatus(registration, localCouncil);
       results.push(result);
     } catch (error) {
-      let message = `Processing registration ${registration.fsa_rn} for council failed: ${error.message}`;
+      let message = `Processing registration ${registration["fsa_rn"]} for council failed: ${error.message}`;
       logEmitter.emit(ERROR, message);
-      results.push({ fsaId: registration.fsa_rn, error: message });
+      results.push({ fsaId: registration["fsa_rn"], error: message });
     }
   }
 

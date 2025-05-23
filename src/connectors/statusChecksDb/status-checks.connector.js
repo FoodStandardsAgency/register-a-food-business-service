@@ -114,7 +114,7 @@ const updateNextStatusDate = async (fsa_rn, nextStatusDate) => {
     // Update only the next_status_date field
     await registrations.updateOne(
       { "fsa-rn": fsa_rn },
-      { $set: { next_status_date: nextStatusDate } }
+      { $set: { next_status_date: nextStatusDate.toISOString() } }
     );
 
     logEmitter.emit("functionSuccess", "status-checks.connector", "updateNextStatusDate");

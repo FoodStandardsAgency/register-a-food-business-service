@@ -2,8 +2,9 @@
 
 const moment = require("moment");
 const {
-  TRADING_STATUS_CHECK_TIME_INTERVAL,
-  TRADING_STATUS_CHASE_TIME_INTERVAL,
+  YEARS_TIME_INTERVAL,
+  MONTHS_TIME_INTERVAL,
+  WEEKS_TIME_INTERVAL,
   INITIAL_REGISTRATION,
   INITIAL_CHECK,
   INITIAL_CHECK_CHASE,
@@ -43,7 +44,7 @@ const getVerifiedRegistrationDates = (registration) => {
   };
 
   // Submission date should always be supplied and valid
-  const submission_date = registration?.reg_submission_date;
+  const submission_date = registration?.reg_submission_date?.$date;
   if (submission_date && moment(submission_date).isValid()) {
     result.trading_status_checks.push({
       type: INITIAL_REGISTRATION,
@@ -55,7 +56,7 @@ const getVerifiedRegistrationDates = (registration) => {
   }
 
   // Last confirmed trading date should be valid if present
-  const last_confirmed_trading = registration?.last_confirmed_trading;
+  const last_confirmed_trading = registration?.last_confirmed_trading?.$date;
   if (last_confirmed_trading) {
     if (moment(last_confirmed_trading).isValid()) {
       result.trading_status_checks.push({
@@ -69,7 +70,7 @@ const getVerifiedRegistrationDates = (registration) => {
   }
 
   // Finished trading date should be valid if present
-  const confirmed_not_trading = registration?.confirmed_not_trading;
+  const confirmed_not_trading = registration?.confirmed_not_trading?.$date;
   if (confirmed_not_trading) {
     if (moment(confirmed_not_trading).isValid()) {
       result.trading_status_checks.push({
@@ -94,10 +95,11 @@ const getVerifiedRegistrationDates = (registration) => {
   const tradingStatus = registration.status?.trading_status_checks;
   if (Array.isArray(tradingStatus) && tradingStatus.length > 0) {
     tradingStatus.forEach((check) => {
-      if (check.time && moment(check.time).isValid()) {
+      const date = check?.time?.$date;
+      if (date && moment(date).isValid()) {
         result.trading_status_checks.push({
           type: check.type,
-          time: moment(check.time).clone(),
+          time: moment(date).clone(),
           address: check.address,
           sent: check.sent || false
         });
@@ -158,28 +160,28 @@ const getMostRecentCheck = (tradingStatusChecks, type) => {
  * @returns {Object|null} Object containing the type and time of the next action, or null if no action needed.
  */
 const getNextActionAndDate = (mostRecentCheck, tradingStatusConfig) => {
+  const mostRecentCheckTime = moment(mostRecentCheck.time).clone();
+
   if (mostRecentCheck.type === CONFIRMED_NOT_TRADING) {
     // LA notification not sent yet
-    return { type: FINISHED_TRADING_LA, time: mostRecentCheck.time };
+    return { type: FINISHED_TRADING_LA, time: mostRecentCheckTime };
   }
 
   if (mostRecentCheck.type === FINISHED_TRADING_LA) {
     // LA notification sent, but not yet deleted
-    const deleteTime = moment(mostRecentCheck.time).add(
-      "years",
-      tradingStatusConfig.data_retention_period
+    const deleteTime = mostRecentCheckTime.add(
+      tradingStatusConfig.data_retention_period,
+      YEARS_TIME_INTERVAL
     );
 
     return { type: DELETE_REGISTRATION, time: deleteTime };
   }
 
-  const mostRecentCheckTime = moment(mostRecentCheck.time).clone();
-
   if (mostRecentCheck.type === STILL_TRADING_LA) {
     if (tradingStatusConfig.regular_check) {
       const nextActionTime = mostRecentCheckTime.add(
-        TRADING_STATUS_CHECK_TIME_INTERVAL,
-        tradingStatusConfig.regular_check
+        tradingStatusConfig.regular_check,
+        MONTHS_TIME_INTERVAL
       );
 
       return { type: REGULAR_CHECK, time: nextActionTime };
@@ -193,8 +195,8 @@ const getNextActionAndDate = (mostRecentCheck, tradingStatusConfig) => {
 
     if (tradingStatusConfig.regular_check) {
       const nextActionTime = mostRecentCheckTime.add(
-        TRADING_STATUS_CHECK_TIME_INTERVAL,
-        tradingStatusConfig.regular_check
+        tradingStatusConfig.regular_check,
+        MONTHS_TIME_INTERVAL
       );
 
       return { type: REGULAR_CHECK, time: nextActionTime };
@@ -203,33 +205,17 @@ const getNextActionAndDate = (mostRecentCheck, tradingStatusConfig) => {
 
   if (mostRecentCheck.type === INITIAL_REGISTRATION) {
     if (tradingStatusConfig.initial_check) {
-      const nextActionTime = mostRecentCheckTime.add(
-        TRADING_STATUS_CHECK_TIME_INTERVAL,
-        tradingStatusConfig.initial_check
+      let nextActionTime = mostRecentCheckTime.add(
+        tradingStatusConfig.initial_check,
+        MONTHS_TIME_INTERVAL
       );
-
-      // If the initial check is more than a week overdue, set it in the future
-      if (nextActionTime.clone().add(1, TRADING_STATUS_CHASE_TIME_INTERVAL).isBefore(moment())) {
-        const today = moment();
-        while (nextActionTime.isSameOrBefore(today, "day")) {
-          nextActionTime.add(1, "year");
-        }
-      }
 
       return { type: INITIAL_CHECK, time: nextActionTime };
     } else if (tradingStatusConfig.regular_check) {
       const nextActionTime = mostRecentCheckTime.add(
-        TRADING_STATUS_CHECK_TIME_INTERVAL,
-        tradingStatusConfig.regular_check
+        tradingStatusConfig.regular_check,
+        MONTHS_TIME_INTERVAL
       );
-
-      // If the regular check is more than a week overdue, set it in the future
-      if (nextActionTime.clone().add(1, TRADING_STATUS_CHASE_TIME_INTERVAL).isBefore(moment())) {
-        const today = moment();
-        while (nextActionTime.isSameOrBefore(today, "day")) {
-          nextActionTime.add(1, "year");
-        }
-      }
 
       return { type: REGULAR_CHECK, time: nextActionTime };
     }
@@ -237,18 +223,18 @@ const getNextActionAndDate = (mostRecentCheck, tradingStatusConfig) => {
 
   if (mostRecentCheck.type === INITIAL_CHECK) {
     if (tradingStatusConfig.initial_check && tradingStatusConfig.chase) {
-      const nextActionTime = mostRecentCheckTime.clone().add(TRADING_STATUS_CHASE_TIME_INTERVAL, 2);
+      const nextActionTime = mostRecentCheckTime.clone().add(2, WEEKS_TIME_INTERVAL);
 
       // Sanity check to ensure old initial check is not chased e.g. due to config change
-      if (nextActionTime.clone().add(2, TRADING_STATUS_CHASE_TIME_INTERVAL).isAfter(moment())) {
+      if (nextActionTime.clone().add(2, WEEKS_TIME_INTERVAL).isAfter(moment())) {
         return { type: INITIAL_CHECK_CHASE, time: nextActionTime };
       }
     }
 
     if (tradingStatusConfig.regular_check) {
       const nextActionTime = mostRecentCheckTime.add(
-        TRADING_STATUS_CHECK_TIME_INTERVAL,
-        tradingStatusConfig.regular_check
+        tradingStatusConfig.regular_check,
+        MONTHS_TIME_INTERVAL
       );
 
       return { type: REGULAR_CHECK, time: nextActionTime };
@@ -257,18 +243,18 @@ const getNextActionAndDate = (mostRecentCheck, tradingStatusConfig) => {
 
   if (mostRecentCheck.type === REGULAR_CHECK) {
     if (tradingStatusConfig.regular_check && tradingStatusConfig.chase) {
-      const nextActionTime = mostRecentCheckTime.clone().add(TRADING_STATUS_CHASE_TIME_INTERVAL, 2);
+      const nextActionTime = mostRecentCheckTime.clone().add(2, WEEKS_TIME_INTERVAL);
 
       // Sanity check to ensure old regular check is not chased e.g. due to config change
-      if (nextActionTime.clone().add(2, TRADING_STATUS_CHASE_TIME_INTERVAL).isAfter(moment())) {
+      if (nextActionTime.clone().add(2, WEEKS_TIME_INTERVAL).isAfter(moment())) {
         return { type: REGULAR_CHECK_CHASE, time: nextActionTime };
       }
     }
 
     if (tradingStatusConfig.regular_check) {
       const nextActionTime = mostRecentCheckTime.add(
-        TRADING_STATUS_CHECK_TIME_INTERVAL,
-        tradingStatusConfig.regular_check
+        tradingStatusConfig.regular_check,
+        MONTHS_TIME_INTERVAL
       );
 
       return { type: REGULAR_CHECK, time: nextActionTime };
@@ -281,8 +267,8 @@ const getNextActionAndDate = (mostRecentCheck, tradingStatusConfig) => {
   ) {
     if (tradingStatusConfig.regular_check) {
       const nextActionTime = mostRecentCheckTime.add(
-        TRADING_STATUS_CHECK_TIME_INTERVAL,
-        tradingStatusConfig.regular_check
+        tradingStatusConfig.regular_check,
+        MONTHS_TIME_INTERVAL
       );
 
       return { type: REGULAR_CHECK, time: nextActionTime };
@@ -370,6 +356,39 @@ const generateStatusEmailToSend = (registration, emailType, lcContactConfig) => 
 
   return emailsToSend;
 };
+
+/**
+ * Adds an interval to a date based on the unit, making sure it's in the future.
+ * @param {Date} date - The base date.
+ * @param {number} intervalValue - The amount to add.
+ * @param {'years'|'minutes'|'hours'} intervalUnit - The unit of the interval.
+ * @returns {Date} - The new date.
+ */
+function addInterval(date, intervalValue, intervalUnit) {
+    const now = new Date();
+    const newDate = new Date(date);
+    switch (intervalUnit) {
+        case 'years':
+            newDate.setFullYear(now.getFullYear() + intervalValue);
+            break;
+        case 'minutes':
+            newDate.setFullYear(now.getFullYear());
+            newDate.setMonth(now.getMonth());
+            newDate.setDate(now.getDate());
+            newDate.setHours(now.getHours());
+            newDate.setMinutes(now.getMinutes() + intervalValue);
+            break;
+        case 'hours':
+            newDate.setFullYear(now.getFullYear());
+            newDate.setMonth(now.getMonth());
+            newDate.setDate(now.getDate());
+            newDate.setHours(now.getHours() + intervalValue);
+            break;
+        default:
+            throw new Error(`Unsupported interval unit: ${intervalUnit}`);
+    }
+    return newDate;
+}
 
 module.exports = {
   getUnsuccessfulChecks,
