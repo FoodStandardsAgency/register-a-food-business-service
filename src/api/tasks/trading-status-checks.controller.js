@@ -30,7 +30,7 @@ const processTradingStatusChecksDue = async (req, res, throttle) => {
   let registrationsCollection = await findActionableRegistrations(throttle);
   let allLaConfigData = await getAllLocalCouncilConfig();
 
-  const result = processTradingStatusChecks(registrationsCollection, allLaConfigData);
+  const result = await processTradingStatusChecks(registrationsCollection, allLaConfigData);
 
   logEmitter.emit(
     "functionSuccess",
@@ -130,7 +130,7 @@ const processTradingStatusChecks = async (registrations, laConfig) => {
 const processFboConfirmedTrading = async (fsaId, encryptedId) => {
   logEmitter.emit("functionCall", "trading-status-checks.controller", "processFboConfirmedTrading");
 
-  const result = updateRegistrationTradingStatus(fsaId, encryptedId, false);
+  const result = await updateRegistrationTradingStatus(fsaId, encryptedId, false);
 
   logEmitter.emit(
     "functionSuccess",
@@ -150,7 +150,7 @@ const processFboConfirmedTrading = async (fsaId, encryptedId) => {
 const processFboStoppedTrading = async (fsaId, encryptedId) => {
   logEmitter.emit("functionCall", "trading-status-checks.controller", "processFboStoppedTrading");
 
-  const result = updateRegistrationTradingStatus(fsaId, encryptedId, true);
+  const result = await updateRegistrationTradingStatus(fsaId, encryptedId, true);
 
   logEmitter.emit(
     "functionSuccess",

@@ -2,7 +2,7 @@
 
 const moment = require("moment");
 const i18n = require("../utils/i18n/i18n");
-const { INFO, logEmitter } = require("./logging.service");
+const { INFO, ERROR, logEmitter } = require("./logging.service");
 const {
   getNextActionAndDate,
   getUnsuccessfulChecks,
@@ -99,7 +99,7 @@ const processTradingStatus = async (registration, laConfig) => {
       await updateNextStatusDate(registration["fsa-rn"], action?.time);
 
       return {
-        fsaId: registration.fsa_rn,
+        fsaId: registration["fsa-rn"],
         message: `${action.type} rescheduled for ${action.time.format("YYYY-MM-DD HH:mm:ss")}`
       };
     }
@@ -150,7 +150,7 @@ const sendTradingStatusEmails = async (registration, laConfig, emailsToSend) => 
   for (const emailToSend of emailsToSend) {
     const { address, templateId, type, emailReplyToId } = emailToSend;
     if (
-      await sendSingleEmail(
+      (await sendSingleEmail(
         templateId,
         address,
         emailReplyToId,
@@ -158,17 +158,17 @@ const sendTradingStatusEmails = async (registration, laConfig, emailsToSend) => 
         null,
         registration["fsa-rn"],
         type
-      )
+      )) !== null // Undefined or true indicates success but null indicates failure (consider amending in connector)
     ) {
       logEmitter.emit(INFO, `Sent ${type} email to ${address}`);
     } else {
       success = false;
-      logEmitter.emit(ERROR, `Failed to send ${type} email to ${address}: ${error.message}`);
+      logEmitter.emit(ERROR, `Failed to send ${type} email to ${address}`);
     }
 
     await updateTradingStatusCheck(registration["fsa-rn"], {
       type,
-      time: moment().toISOString(),
+      time: moment().toDate(),
       email: address,
       sent: success
     });

@@ -21,7 +21,10 @@ module.exports = {
   }/address`,
   ADDRESS_API_URL_QUERY_STANDARD: "format=json&lines=3",
   RNG_API_URL: process.env.RNG_API_URL || "https://rng.food.gov.uk",
-  ENCRYPTION_KEY: process.env.ENCRYPTION_KEY,
+  ENCRYPTION_KEY:
+    process.env.NODE_ENV !== "production"
+      ? "c2bb541a9c75b2cd1dadec0fc7c1bf96f4081683a121a45c448736bf309f4efc" // Example key for development
+      : process.env.ENCRYPTION_KEY, // Must be set through env variable in prod so remains secret
   FRONT_END_URL: process.env.FRONT_END_URL || "http://localhost:3000/",
 
   YEARS_TIME_INTERVAL: process.env.YEARS_TIME_INTERVAL || "years",
@@ -38,7 +41,8 @@ module.exports = {
   STILL_TRADING_LA: "STILL_TRADING_LA",
   DELETE_REGISTRATION: "DELETE_REGISTRATION",
 
-  INITIAL_CHECK_TEMPLATE_ID: process.env.INITIAL_CHECK_TEMPLATE_ID || "TBD",
+  INITIAL_CHECK_TEMPLATE_ID:
+    process.env.INITIAL_CHECK_TEMPLATE_ID || "3409aedd-49e1-4f32-af2f-fd13ebf2321f",
   INITIAL_CHECK_CHASE_TEMPLATE_ID: process.env.INITIAL_CHECK_CHASE_TEMPLATE_ID || "TBD",
   REGULAR_CHECK_TEMPLATE_ID: process.env.REGULAR_CHECK_TEMPLATE_ID || "TBD",
   REGULAR_CHECK_CHASE_TEMPLATE_ID: process.env.REGULAR_CHECK_CHASE_TEMPLATE_ID || "TBD",
