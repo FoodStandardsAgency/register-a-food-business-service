@@ -34,7 +34,7 @@ const findActionableRegistrations = async (limit = 50) => {
   try {
     const registrations = await establishConnectionToCosmos("registrations", "registrations");
     const actionableRegistrations = await registrations
-      .find({ next_status_date: { $lte: new Date() } })
+      .find({ next_status_check: { $lte: new Date() } })
       .limit(limit)
       .toArray();
     logEmitter.emit("functionSuccess", "status-checks.connector", "findActionableRegistrations");
@@ -92,10 +92,10 @@ const updateTradingStatusCheck = async (fsa_rn, newStatus) => {
 };
 
 /**
- * Updates the next_status_date for a registration with the given fsa_rn.
+ * Updates the next_status_check for a registration with the given fsa_rn.
  *
  * @param {string} fsa_rn - The FSA registration number of the registration to update.
- * @param {string} nextStatusDate - The new next_status_date value (moment object).
+ * @param {string} nextStatusDate - The new next_status_check value (moment object).
  * @returns {Promise<void>}
  * @throws Will throw an error if registration is not found or update fails.
  */
@@ -111,15 +111,15 @@ const updateNextStatusDate = async (fsa_rn, nextStatusDate) => {
       throw new Error(`Registration with ID ${fsa_rn} not found`);
     }
 
-    // Update only the next_status_date field
+    // Update only the next_status_check field
     await registrations.updateOne(
       { "fsa-rn": fsa_rn },
-      { $set: { next_status_date: nextStatusDate.toDate() } }
+      { $set: { next_status_check: nextStatusDate.toDate() } }
     );
 
     logEmitter.emit("functionSuccess", "status-checks.connector", "updateNextStatusDate");
   } catch (err) {
-    logEmitter.emit(ERROR, "Failed to update next_status_date");
+    logEmitter.emit(ERROR, "Failed to update next_status_check");
     logEmitter.emit("functionFail", "status-checks.connector", "updateNextStatusDate", err);
     throw err;
   }
@@ -147,7 +147,7 @@ const updateRegistrationTradingStatus = async (fsa_rn, encryptedId, stoppedTradi
     }
 
     const id = decryptId(encryptedId);
-    if (!id || id !== registration._id) {
+    if (!id || id !== registration._id.toString()) {
       throw new Error(`Invalid encrypted ID: ${encryptedId}`);
     }
 

@@ -96,7 +96,7 @@ const processTradingStatusChecks = async (registrations, laConfig) => {
         laConfig
       );
 
-      localCouncil.data_retention_period = process.env.DATA_RETENTION_PERIOD || 7;
+      localCouncil.trading_status.data_retention_period = process.env.DATA_RETENTION_PERIOD || 7;
 
       logEmitter.emit(
         INFO,

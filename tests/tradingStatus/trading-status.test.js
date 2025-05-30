@@ -71,7 +71,7 @@ const getTestRegistration = (fsaRn, council, submissionDate, nextStatusDate, lan
     local_council_url: council.local_council_url,
     reg_submission_date:
       submissionDate || moment().subtract(3, "months").subtract(1, "days").toDate(),
-    next_status_date: nextStatusDate || moment().subtract(1, "days").toDate(),
+    next_status_check: nextStatusDate || moment().subtract(1, "days").toDate(),
     submission_language: language || "en",
     establishment: {
       establishment_details: {
@@ -158,7 +158,9 @@ describe("Trading Status Checks: Registration Processing Integration Tests", () 
       expect(results[0].fsaId).toBe(`${ENSURE_DELETED_TEST_PREFIX}1`);
       const initialCheckDateChase = moment().add(2, "weeks");
       expect(results[0].message).toMatch(
-        new RegExp(`^INITIAL_CHECK emails sent, INITIAL_CHECK_CHASE scheduled for ${initialCheckDateChase.format("YYYY-MM-DD HH:mm")}:\\d{2}$`)
+        new RegExp(
+          `^INITIAL_CHECK emails sent, INITIAL_CHECK_CHASE scheduled for ${initialCheckDateChase.format("YYYY-MM-DD HH:mm")}:\\d{2}$`
+        )
       );
 
       // Assert: Verify database was updated
@@ -166,13 +168,13 @@ describe("Trading Status Checks: Registration Processing Integration Tests", () 
         "fsa-rn": `${ENSURE_DELETED_TEST_PREFIX}1`
       });
       expect(updatedRegistration).toBeDefined();
-      expect(moment(updatedRegistration.next_status_date).toISOString()).toMatch(
+      expect(moment(updatedRegistration.next_status_check).toISOString()).toMatch(
         new RegExp(`^${initialCheckDateChase.toISOString().substring(0, 19)}`)
       );
       expect(updatedRegistration.status.trading_status_checks).toBeDefined();
       expect(updatedRegistration.status.trading_status_checks.length).toBe(1);
       expect(updatedRegistration.status.trading_status_checks[0].type).toBe("INITIAL_CHECK");
-      expect(updatedRegistration.status.trading_status_checks[0].email).toBe(
+      expect(updatedRegistration.status.trading_status_checks[0].address).toBe(
         registration.establishment.operator.operator_email
       );
       expect(updatedRegistration.status.trading_status_checks[0].sent).toBeTruthy();
@@ -190,7 +192,7 @@ describe("Trading Status Checks: Registration Processing Integration Tests", () 
       expect(data.reg_submission_date).toBe(
         moment(registration.reg_submission_date).clone().format("DD MMM YYYY")
       );
-      expect(Object.keys(data).length).toBe(7);
+      expect(Object.keys(data).length).toBe(8);
       expect(callArgs[4]).toBeNull(); // No PDF file
       expect(callArgs[5]).toBe(`${ENSURE_DELETED_TEST_PREFIX}1`);
       expect(callArgs[6]).toBe("INITIAL_CHECK");
@@ -200,7 +202,7 @@ describe("Trading Status Checks: Registration Processing Integration Tests", () 
       // Arrange
       const registration = getTestRegistration("1", testCouncilConfig);
       const previousStatusDate = moment().subtract(15, "days").toDate();
-      registration.next_status_date = moment().subtract(1, "days").toDate();
+      registration.next_status_check = moment().subtract(1, "days").toDate();
       registration.status = {
         trading_status_checks: [
           {
@@ -221,9 +223,10 @@ describe("Trading Status Checks: Registration Processing Integration Tests", () 
       expect(results.length).toBe(1);
       expect(results[0].fsaId).toBe(`${ENSURE_DELETED_TEST_PREFIX}1`);
       const regularCheckDate = moment().clone().add(6, "months");
-      expect(results[0].message)
-      .toMatch(
-        new RegExp(`^INITIAL_CHECK_CHASE emails sent, REGULAR_CHECK scheduled for ${regularCheckDate.format("YYYY-MM-DD HH:mm")}:\\d{2}$`)
+      expect(results[0].message).toMatch(
+        new RegExp(
+          `^INITIAL_CHECK_CHASE emails sent, REGULAR_CHECK scheduled for ${regularCheckDate.format("YYYY-MM-DD HH:mm")}:\\d{2}$`
+        )
       );
 
       // Assert: Verify database was updated
@@ -231,13 +234,13 @@ describe("Trading Status Checks: Registration Processing Integration Tests", () 
         "fsa-rn": `${ENSURE_DELETED_TEST_PREFIX}1`
       });
       expect(updatedRegistration).toBeDefined();
-      expect(moment(updatedRegistration.next_status_date).toISOString()).toMatch(
+      expect(moment(updatedRegistration.next_status_check).toISOString()).toMatch(
         new RegExp(`^${regularCheckDate.toISOString().substring(0, 19)}`)
       );
       expect(updatedRegistration.status.trading_status_checks).toBeDefined();
       expect(updatedRegistration.status.trading_status_checks.length).toBe(2);
       expect(updatedRegistration.status.trading_status_checks[1].type).toBe("INITIAL_CHECK_CHASE");
-      expect(updatedRegistration.status.trading_status_checks[1].email).toBe(
+      expect(updatedRegistration.status.trading_status_checks[1].address).toBe(
         registration.establishment.operator.operator_email
       );
       expect(updatedRegistration.status.trading_status_checks[1].sent).toBeTruthy();
@@ -255,7 +258,7 @@ describe("Trading Status Checks: Registration Processing Integration Tests", () 
       expect(data.reg_submission_date).toBe(
         moment(registration.reg_submission_date).clone().format("DD MMM YYYY")
       );
-      expect(Object.keys(data).length).toBe(7);
+      expect(Object.keys(data).length).toBe(8);
       expect(callArgs[4]).toBeNull(); // No PDF file
       expect(callArgs[5]).toBe(`${ENSURE_DELETED_TEST_PREFIX}1`);
       expect(callArgs[6]).toBe("INITIAL_CHECK_CHASE");
@@ -291,8 +294,8 @@ describe("Trading Status Checks: Registration Processing Integration Tests", () 
         "fsa-rn": `${ENSURE_DELETED_TEST_PREFIX}1`
       });
       expect(unprocessedRegistration).toBeDefined();
-      expect(moment(unprocessedRegistration.next_status_date).toISOString()).toBe(
-        registrationToRemainUnprocessed.next_status_date.toISOString()
+      expect(moment(unprocessedRegistration.next_status_check).toISOString()).toBe(
+        registrationToRemainUnprocessed.next_status_check.toISOString()
       );
       expect(unprocessedRegistration.status).toBeUndefined();
 
@@ -301,13 +304,13 @@ describe("Trading Status Checks: Registration Processing Integration Tests", () 
         "fsa-rn": `${ENSURE_DELETED_TEST_PREFIX}2`
       });
       expect(updatedRegistration).toBeDefined();
-      expect(moment(updatedRegistration.next_status_date).toISOString()).toMatch(
+      expect(moment(updatedRegistration.next_status_check).toISOString()).toMatch(
         new RegExp(`^${initialCheckDateChase.toISOString().substring(0, 19)}`)
       );
       expect(updatedRegistration.status.trading_status_checks).toBeDefined();
       expect(updatedRegistration.status.trading_status_checks.length).toBe(1);
       expect(updatedRegistration.status.trading_status_checks[0].type).toBe("INITIAL_CHECK");
-      expect(updatedRegistration.status.trading_status_checks[0].email).toBe(
+      expect(updatedRegistration.status.trading_status_checks[0].address).toBe(
         registrationToUpdate.establishment.operator.operator_email
       );
       expect(updatedRegistration.status.trading_status_checks[0].sent).toBeTruthy();
@@ -322,10 +325,16 @@ describe("Trading Status Checks: Registration Processing Integration Tests", () 
       expect(data).toBeDefined();
       expect(data.registration_number).toBe(`${ENSURE_DELETED_TEST_PREFIX}2`);
       expect(data.la_name).toBe("Test Council");
+      expect(data.trading_no_link).toMatch(
+        new RegExp(`http://localhost:3000/tradingstatus/nolongertrading/ENSURE_DELETED_RECORD-2?`)
+      );
+      expect(data.trading_yes_link).toMatch(
+        new RegExp(`http://localhost:3000/tradingstatus/stilltrading/ENSURE_DELETED_RECORD-2?`)
+      );
       expect(data.reg_submission_date).toBe(
         moment(registrationToUpdate.reg_submission_date).clone().format("DD MMM YYYY")
       );
-      expect(Object.keys(data).length).toBe(7);
+      expect(Object.keys(data).length).toBe(8);
       expect(callArgs[4]).toBeNull(); // No PDF file
       expect(callArgs[5]).toBe(`${ENSURE_DELETED_TEST_PREFIX}2`);
       expect(callArgs[6]).toBe("INITIAL_CHECK");

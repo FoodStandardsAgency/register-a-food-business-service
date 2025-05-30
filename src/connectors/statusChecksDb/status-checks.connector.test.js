@@ -30,8 +30,8 @@ describe("status-checks.connector", () => {
 
     // Create mock data
     mockRegistrations = [
-      { "fsa-rn": "1234", next_status_date: new Date(), trading_status: "active" },
-      { "fsa-rn": "5678", next_status_date: new Date(), trading_status: "active" }
+      { "fsa-rn": "1234", next_status_check: new Date(), trading_status: "active" },
+      { "fsa-rn": "5678", next_status_check: new Date(), trading_status: "active" }
     ];
   });
 
@@ -193,7 +193,7 @@ describe("status-checks.connector", () => {
   });
 
   describe("updateNextStatusDate", () => {
-    it("should update the next_status_date field", async () => {
+    it("should update the next_status_check field", async () => {
       const mockUpdateOne = jest.fn();
       const mockFindOne = jest.fn().mockResolvedValue({ "fsa-rn": "1234", _id: "test:Id" });
 
@@ -210,7 +210,7 @@ describe("status-checks.connector", () => {
 
       expect(mockUpdateOne).toHaveBeenCalledWith(
         { "fsa-rn": "1234" },
-        { $set: { next_status_date: expect.any(Date) } }
+        { $set: { next_status_check: expect.any(Date) } }
       );
     });
 

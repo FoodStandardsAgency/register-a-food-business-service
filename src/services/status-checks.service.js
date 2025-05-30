@@ -2,7 +2,7 @@
 
 const moment = require("moment");
 const i18n = require("../utils/i18n/i18n");
-const { INFO, ERROR, logEmitter } = require("./logging.service");
+const { INFO, WARN, ERROR, logEmitter } = require("./logging.service");
 const {
   getNextActionAndDate,
   getUnsuccessfulChecks,
@@ -76,7 +76,7 @@ const processTradingStatus = async (registration, laConfig) => {
         case FINISHED_TRADING_LA:
         case STILL_TRADING_LA:
           const emailsToSend = generateStatusEmailToSend(registration, action.type, laConfig);
-          await sendTradingStatusEmails(registration, laConfig, emailsToSend);
+          await sendTradingStatusEmails(registration, laConfig, action.type, emailsToSend);
           result = { fsaId: registration["fsa-rn"], message: `${action.type} emails sent` };
           break;
         case INITIAL_REGISTRATION:
@@ -120,16 +120,34 @@ const getTradingStatusAction = (tradingStatusDates, laConfig) => {
   return nextAction;
 };
 
-const transformDataForNotify = (registration, laConfig, i18nUtil) => {
+const transformDataForNotify = (registration, laConfig, actionType, i18nUtil) => {
   const encryptedId = encryptId(registration._id);
+  let status;
+  switch (actionType) {
+    case STILL_TRADING_LA:
+      status = "still trading";
+      break;
+    case FINISHED_TRADING_LA:
+      status = "no longer trading";
+      break;
+    case INITIAL_CHECK_CHASE:
+      status = " - reminder";
+      break;
+    case REGULAR_CHECK_CHASE:
+      status = " - reminder";
+      break;
+    default:
+    // No additional text needed for other action types
+  }
   let data = {
     registration_number: registration["fsa-rn"],
+    additional_text: status,
     la_name: i18nUtil.tLa(laConfig.local_council),
     reg_submission_date: moment(registration.reg_submission_date).format("DD MMM YYYY"),
     trading_name: registration.establishment.establishment_details.establishment_trading_name,
     operator_name: `${registration.establishment.operator.operator_first_name} ${registration.establishment.operator.operator_last_name}`,
-    trading_yes_link: `${FRONT_END_URL}trading-status/stilltrading/${registration["fsa-rn"]}?id=${encryptedId}`,
-    trading_no_link: `${FRONT_END_URL}trading-status/nolongertrading/${registration["fsa-rn"]}?id=${encryptedId}`
+    trading_yes_link: `${FRONT_END_URL}tradingstatus/stilltrading/${registration["fsa-rn"]}?token=${encryptedId}`,
+    trading_no_link: `${FRONT_END_URL}tradingstatus/nolongertrading/${registration["fsa-rn"]}?token=${encryptedId}`
   };
   return data;
 };
@@ -139,12 +157,12 @@ const transformDataForNotify = (registration, laConfig, i18nUtil) => {
  *
  * @returns {Promise<boolean>} Promise that resolves to true if all emails were sent successfully, false otherwise.
  */
-const sendTradingStatusEmails = async (registration, laConfig, emailsToSend) => {
+const sendTradingStatusEmails = async (registration, laConfig, actionType, emailsToSend) => {
   logEmitter.emit("functionCall", "status-checks.service", "sendTradingStatusEmails");
   logEmitter.emit(INFO, `Started sendTradingStatusEmails for FSA id: ${registration["fsa-rn"]}`);
 
   const i18nUtil = new i18n(registration.submission_language || "en");
-  const data = transformDataForNotify(registration, laConfig, i18nUtil);
+  const data = transformDataForNotify(registration, laConfig, actionType, i18nUtil);
   let success = true;
 
   for (const emailToSend of emailsToSend) {
@@ -169,7 +187,7 @@ const sendTradingStatusEmails = async (registration, laConfig, emailsToSend) => 
     await updateTradingStatusCheck(registration["fsa-rn"], {
       type,
       time: moment().toDate(),
-      email: address,
+      address,
       sent: success
     });
   }

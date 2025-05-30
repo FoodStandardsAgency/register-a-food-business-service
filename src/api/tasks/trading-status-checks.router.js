@@ -37,7 +37,12 @@ const tradingStatusRouter = () => {
         throttle
       });
     } catch (e) {
-      logEmitter.emit("functionFail", "trading-status-checks.router", "bulk/trading-status-checks");
+      logEmitter.emit(
+        "functionFail",
+        "trading-status-checks.router",
+        "bulk/trading-status-checks",
+        e.message
+      );
       await fail(500, res, e.message);
     }
     logEmitter.emit(
@@ -66,7 +71,8 @@ const tradingStatusRouter = () => {
       logEmitter.emit(
         "functionFail",
         "trading-status-checks.router",
-        "trading-status-checks/:fsaId"
+        "trading-status-checks/:fsaId",
+        e.message
       );
       await fail(500, res, e.message);
     }
@@ -93,7 +99,12 @@ const tradingStatusRouter = () => {
         message: `Marked business as no longer trading: ${fsaId}`
       });
     } catch (e) {
-      logEmitter.emit("functionFail", "trading-status-checks.router", "stopped-trading/:fsaId");
+      logEmitter.emit(
+        "functionFail",
+        "trading-status-checks.router",
+        "stopped-trading/:fsaId",
+        e.message
+      );
       await fail(500, res, e.message);
     }
     logEmitter.emit("functionSuccess", "trading-status-checks.router", "stopped-trading/:fsaId");
@@ -115,7 +126,12 @@ const tradingStatusRouter = () => {
         message: `Marked business as confirmed still trading: ${fsaId}`
       });
     } catch (e) {
-      logEmitter.emit("functionFail", "trading-status-checks.router", "confirmed-trading/:fsaId");
+      logEmitter.emit(
+        "functionFail",
+        "trading-status-checks.router",
+        "confirmed-trading/:fsaId",
+        e.message
+      );
       await fail(500, res, e.message);
     }
     logEmitter.emit("functionSuccess", "trading-status-checks.router", "confirmed-trading/:fsaId");

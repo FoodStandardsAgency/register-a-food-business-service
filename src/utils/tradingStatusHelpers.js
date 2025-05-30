@@ -123,7 +123,7 @@ const getVerifiedRegistrationDates = (registration) => {
  */
 const getUnsuccessfulChecks = (tradingStatusChecks, type) => {
   const filteredChecks = tradingStatusChecks.filter((check) => !type || check.type === type);
-  return filteredChecks.filter((check) => check.success === false);
+  return filteredChecks.filter((check) => check.sent === false);
 };
 
 /**
@@ -266,7 +266,11 @@ const getNextActionAndDate = (mostRecentCheck, tradingStatusConfig) => {
     }
   }
 
-  if (result && (result.type === INITIAL_CHECK || result.type === REGULAR_CHECK)) {
+  if (
+    result &&
+    WEEKS_TIME_INTERVAL === "weeks" && // Do not stagger if not running in real-time
+    (result.type === INITIAL_CHECK || result.type === REGULAR_CHECK)
+  ) {
     result.time = staggerOldDates(result.time);
   }
   return result;
@@ -328,7 +332,7 @@ const generateStatusEmailToSend = (registration, emailType, lcContactConfig) => 
     emailsToSend.push(emailToSend);
   } else {
     // Send email to local authority addresses
-    for (let recipientEmailAddress in lcContactConfig.tradingStatusLaEmailAddresses) {
+    for (let recipientEmailAddress of lcContactConfig.tradingStatusLaEmailAddresses) {
       emailsToSend.push({
         type: emailType,
         address: recipientEmailAddress,
@@ -338,7 +342,8 @@ const generateStatusEmailToSend = (registration, emailType, lcContactConfig) => 
 
     // Only send finished trading email to standards authority addresses
     if (emailType === FINISHED_TRADING_LA) {
-      for (let recipientEmailAddress in lcContactConfig.tradingStatusStandardsEmailAddresses) {
+      for (let recipientEmailAddress of lcContactConfig.tradingStatusStandardsEmailAddresses ||
+        []) {
         emailsToSend.push({
           type: emailType,
           address: recipientEmailAddress,
@@ -352,7 +357,7 @@ const generateStatusEmailToSend = (registration, emailType, lcContactConfig) => 
 };
 
 /**
- * Recent dates (in the last 2 weeks) can be left alone but older dates will be staggered.
+ * Recent dates (in the last 3 months) can be left alone but older dates will be staggered.
  * This is to ensure that the emails are not sent all at once.
  * The date is staggered by updating the year while leaving the date and month alone.
  * @param {Date} date - The original calculated date of the next check.
@@ -362,18 +367,20 @@ function staggerOldDates(date) {
   const now = new Date();
   let newDate = date.toDate();
 
-  // If more than two weeks ago, staggering is required
-  if (date.clone().add(2, WEEKS_TIME_INTERVAL).isBefore(moment())) {
-
+  // If more than three months ago, staggering is required
+  if (date.clone().add(3, MONTHS_TIME_INTERVAL).isBefore(moment())) {
     // If the date is in the past but falls on today's date, set it to the current year
     if (newDate.getMonth() === now.getMonth() && newDate.getDate() === now.getDate()) {
-      // Set the time to midnight to ensure processed 
+      // Set the time to midnight to ensure processed
       newDate = new Date(now.getFullYear(), newDate.getMonth(), newDate.getDate());
     }
-    
+
     // If the date is in the past but falls later in the year, set it to the current year
     // This will ensure that the date is in the future
-    else if (newDate.getMonth() > now.getMonth() || (newDate.getMonth() === now.getMonth() && newDate.getDate() > now.getDate())) {
+    else if (
+      newDate.getMonth() > now.getMonth() ||
+      (newDate.getMonth() === now.getMonth() && newDate.getDate() > now.getDate())
+    ) {
       // When recalculating on that day it will fall into the matching case above and process immediately
       newDate.setFullYear(now.getFullYear());
     } else {
