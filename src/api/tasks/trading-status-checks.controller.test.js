@@ -75,14 +75,15 @@ describe("trading-status-checks.controller", () => {
     ];
 
     mockLaConfig = [
-      { local_council_url: "test-council", name: "Test Council" },
-      { local_council_url: "test-council-2", name: "Test Council 2" }
+      { local_council_url: "test-council", name: "Test Council", trading_status: {} },
+      { local_council_url: "test-council-2", name: "Test Council 2", trading_status: {} }
     ];
 
     mockLaConfigWithNotify = {
       local_council_url: "test-council",
       name: "Test Council",
-      email: "test@example.com"
+      email: "test@example.com",
+      trading_status: {}
     };
 
     // Set up mock implementations

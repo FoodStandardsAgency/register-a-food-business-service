@@ -96,6 +96,11 @@ const processTradingStatusChecks = async (registrations, laConfig) => {
         laConfig
       );
 
+      if (!localCouncil.trading_status) {
+        throw new Error(
+          `No local council trading status configuration found for ${registration.local_council_url}`
+        );
+      }
       localCouncil.trading_status.data_retention_period = process.env.DATA_RETENTION_PERIOD || 7;
 
       logEmitter.emit(
