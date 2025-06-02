@@ -120,7 +120,7 @@ describe("getNextActionAndDate", () => {
         moment().subtract(3, "years")
       );
       const configWithoutInitial = { ...tradingStatusConfig, initial_check: null };
-      const expectedTime = moment().startOf('day');
+      const expectedTime = moment().startOf("day");
 
       const result = getNextActionAndDate(mockRecentCheck, configWithoutInitial);
 
@@ -128,14 +128,13 @@ describe("getNextActionAndDate", () => {
       expect(compareDateEquality(result.time, expectedTime)).toBeTruthy();
     });
 
-     test("should schedule unmatching overdue REGULAR_CHECK in the future", () => {
+    test("should schedule unmatching overdue REGULAR_CHECK in the future", () => {
       const mockRecentCheck = createMockRecentCheck(
         INITIAL_REGISTRATION,
         moment().subtract(3, "years").subtract(3, "months")
       );
       const configWithoutInitial = { ...tradingStatusConfig, initial_check: null };
-      const expectedTime = moment()
-        .add(9, "months"); // 3 months is 9 ahead when in future
+      const expectedTime = moment().add(9, "months"); // 3 months is 9 ahead when in future
 
       const result = getNextActionAndDate(mockRecentCheck, configWithoutInitial);
 
