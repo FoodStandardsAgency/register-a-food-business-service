@@ -190,10 +190,40 @@ const updateRegistrationTradingStatus = async (fsa_rn, encryptedId, stoppedTradi
   }
 };
 
+/**
+ * Deletes a registration with the given fsa_rn.
+ *
+ * @param {string} fsa_rn - The FSA registration number of the registration to delete.
+ * @returns {Promise<void>}
+ * @throws Will throw an error if registration is not found or delete fails.
+ */
+const deleteRegistration = async (fsa_rn) => {
+  logEmitter.emit("functionCall", "status-checks.connector", "deleteRegistration");
+  const registrations = await establishConnectionToCosmos("registrations", "registrations");
+
+  try {
+    // Get the existing document to check if it exists
+    const registration = await registrations.findOne({ "fsa-rn": fsa_rn });
+
+    if (!registration) {
+      throw new Error(`Registration with ID ${fsa_rn} not found`);
+    }
+
+    // Actually delete the registration
+    await registrations.deleteOne({ "fsa-rn": fsa_rn });
+
+    logEmitter.emit("functionSuccess", "status-checks.connector", "deleteRegistration");
+  } catch (err) {
+    logEmitter.emit("functionFail", "status-checks.connector", "deleteRegistration", err);
+    throw err;
+  }
+};
+
 module.exports = {
   findRegistrationByFsaId,
   findActionableRegistrations,
   updateTradingStatusCheck,
   updateNextStatusDate,
-  updateRegistrationTradingStatus
+  updateRegistrationTradingStatus,
+  deleteRegistration
 };

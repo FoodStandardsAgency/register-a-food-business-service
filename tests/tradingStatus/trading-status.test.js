@@ -265,6 +265,360 @@ describe("Trading Status Checks: Registration Processing Integration Tests", () 
     });
   });
 
+  it("should process a single registration successfully resulting in a REGULAR_CHECK", async () => {
+    // Arrange
+    const registration = getTestRegistration(
+      "1",
+      testCouncilConfig,
+      moment().subtract(3, "years").toDate()
+    );
+    const previousStatusDate = moment().subtract(6, "months").toDate();
+    registration.next_status_check = moment().subtract(1, "days").toDate();
+    registration.status = {
+      trading_status_checks: [
+        {
+          type: "INITIAL_CHECK",
+          email: registration.establishment.operator.operator_email,
+          time: moment().subtract(6, "months").subtract(2, "weeks").toDate(),
+          sent: true
+        },
+        {
+          type: "INITIAL_CHECK_CHASE",
+          email: registration.establishment.operator.operator_email,
+          time: previousStatusDate,
+          sent: true
+        }
+      ]
+    };
+    await registrationsCollection.insertOne(registration);
+
+    // Act
+    const results = await processTradingStatusChecksDue(mockReq, mockRes, 50);
+
+    // Assert: Verify the response from the controller
+    expect(results).toBeDefined();
+    expect(results.length).toBe(1);
+    expect(results[0].fsaId).toBe(`${ENSURE_DELETED_TEST_PREFIX}1`);
+    const regularCheckChaseDate = moment().clone().add(2, "weeks");
+    expect(results[0].message).toMatch(
+      new RegExp(
+        `^REGULAR_CHECK emails sent, REGULAR_CHECK_CHASE scheduled for ${regularCheckChaseDate.format("YYYY-MM-DD HH:mm")}:\\d{2}$`
+      )
+    );
+
+    // Assert: Verify database was updated
+    const updatedRegistration = await registrationsCollection.findOne({
+      "fsa-rn": `${ENSURE_DELETED_TEST_PREFIX}1`
+    });
+    expect(updatedRegistration).toBeDefined();
+    expect(moment(updatedRegistration.next_status_check).toISOString()).toMatch(
+      new RegExp(`^${regularCheckChaseDate.toISOString().substring(0, 19)}`)
+    );
+    expect(updatedRegistration.status.trading_status_checks).toBeDefined();
+    expect(updatedRegistration.status.trading_status_checks.length).toBe(3);
+    expect(updatedRegistration.status.trading_status_checks[2].type).toBe("REGULAR_CHECK");
+    expect(updatedRegistration.status.trading_status_checks[2].address).toBe(
+      registration.establishment.operator.operator_email
+    );
+    expect(updatedRegistration.status.trading_status_checks[2].sent).toBeTruthy();
+
+    // Assert: Verify if the notify connector sendSingleEmail function was called correctly
+    expect(notifyConnector.sendSingleEmail).toHaveBeenCalled();
+    const callArgs = notifyConnector.sendSingleEmail.mock.calls[0];
+    expect(callArgs[0]).toBe("regular-check-template-id");
+    expect(callArgs[1]).toBe("test@example.com");
+    expect(callArgs[2]).toBe("test-council-reply-ID");
+    const data = callArgs[3];
+    expect(data).toBeDefined();
+    expect(data.registration_number).toBe(`${ENSURE_DELETED_TEST_PREFIX}1`);
+    expect(data.la_name).toBe("Test Council");
+    expect(data.reg_submission_date).toBe(
+      moment(registration.reg_submission_date).clone().format("DD MMM YYYY")
+    );
+    expect(Object.keys(data).length).toBe(8);
+    expect(callArgs[4]).toBeNull(); // No PDF file
+    expect(callArgs[5]).toBe(`${ENSURE_DELETED_TEST_PREFIX}1`);
+    expect(callArgs[6]).toBe("REGULAR_CHECK");
+  });
+
+  it("should process a single registration successfully resulting in an REGULAR_CHECK_CHASE", async () => {
+    // Arrange
+    const registration = getTestRegistration("1", testCouncilConfig);
+    const previousStatusDate = moment().subtract(15, "days").toDate();
+    registration.next_status_check = moment().subtract(1, "days").toDate();
+    registration.status = {
+      trading_status_checks: [
+        {
+          type: "REGULAR_CHECK",
+          email: registration.establishment.operator.operator_email,
+          time: previousStatusDate,
+          sent: true
+        }
+      ]
+    };
+    await registrationsCollection.insertOne(registration);
+
+    // Act
+    const results = await processTradingStatusChecksDue(mockReq, mockRes, 50);
+
+    // Assert: Verify the response from the controller
+    expect(results).toBeDefined();
+    expect(results.length).toBe(1);
+    expect(results[0].fsaId).toBe(`${ENSURE_DELETED_TEST_PREFIX}1`);
+    const regularCheckDate = moment().clone().add(6, "months");
+    expect(results[0].message).toMatch(
+      new RegExp(
+        `^REGULAR_CHECK_CHASE emails sent, REGULAR_CHECK scheduled for ${regularCheckDate.format("YYYY-MM-DD HH:mm")}:\\d{2}$`
+      )
+    );
+
+    // Assert: Verify database was updated
+    const updatedRegistration = await registrationsCollection.findOne({
+      "fsa-rn": `${ENSURE_DELETED_TEST_PREFIX}1`
+    });
+    expect(updatedRegistration).toBeDefined();
+    expect(moment(updatedRegistration.next_status_check).toISOString()).toMatch(
+      new RegExp(`^${regularCheckDate.toISOString().substring(0, 19)}`)
+    );
+    expect(updatedRegistration.status.trading_status_checks).toBeDefined();
+    expect(updatedRegistration.status.trading_status_checks.length).toBe(2);
+    expect(updatedRegistration.status.trading_status_checks[1].type).toBe("REGULAR_CHECK_CHASE");
+    expect(updatedRegistration.status.trading_status_checks[1].address).toBe(
+      registration.establishment.operator.operator_email
+    );
+    expect(updatedRegistration.status.trading_status_checks[1].sent).toBeTruthy();
+
+    // Assert: Verify if the notify connector sendSingleEmail function was called correctly
+    expect(notifyConnector.sendSingleEmail).toHaveBeenCalled();
+    const callArgs = notifyConnector.sendSingleEmail.mock.calls[0];
+    expect(callArgs[0]).toBe("regular-check-chase-template-id");
+    expect(callArgs[1]).toBe("test@example.com");
+    expect(callArgs[2]).toBe("test-council-reply-ID");
+    const data = callArgs[3];
+    expect(data).toBeDefined();
+    expect(data.registration_number).toBe(`${ENSURE_DELETED_TEST_PREFIX}1`);
+    expect(data.la_name).toBe("Test Council");
+    expect(data.reg_submission_date).toBe(
+      moment(registration.reg_submission_date).clone().format("DD MMM YYYY")
+    );
+    expect(Object.keys(data).length).toBe(8);
+    expect(callArgs[4]).toBeNull(); // No PDF file
+    expect(callArgs[5]).toBe(`${ENSURE_DELETED_TEST_PREFIX}1`);
+    expect(callArgs[6]).toBe("REGULAR_CHECK_CHASE");
+  });
+
+  it("should process a single registration successfully resulting in a STILL_TRADING_LA", async () => {
+    // Arrange
+    const registration = getTestRegistration("1", testCouncilConfig);
+    const previousStatusDate = moment().subtract(15, "days").toDate();
+    registration.next_status_check = moment().subtract(1, "days").toDate();
+    registration.last_confirmed_trading = moment().subtract(1, "days").toDate();
+    registration.status = {
+      trading_status_checks: [
+        {
+          type: "REGULAR_CHECK",
+          email: registration.establishment.operator.operator_email,
+          time: previousStatusDate,
+          sent: true
+        }
+      ]
+    };
+    await registrationsCollection.insertOne(registration);
+
+    // Act
+    const results = await processTradingStatusChecksDue(mockReq, mockRes, 50);
+
+    // Assert: Verify the response from the controller
+    expect(results).toBeDefined();
+    expect(results.length).toBe(1);
+    expect(results[0].fsaId).toBe(`${ENSURE_DELETED_TEST_PREFIX}1`);
+    const regularCheckDate = moment().clone().add(6, "months");
+    expect(results[0].message).toMatch(
+      new RegExp(
+        `^STILL_TRADING_LA emails sent, REGULAR_CHECK scheduled for ${regularCheckDate.format("YYYY-MM-DD HH:mm")}:\\d{2}$`
+      )
+    );
+
+    // Assert: Verify database was updated
+    const updatedRegistration = await registrationsCollection.findOne({
+      "fsa-rn": `${ENSURE_DELETED_TEST_PREFIX}1`
+    });
+    expect(updatedRegistration).toBeDefined();
+    expect(moment(updatedRegistration.next_status_check).toISOString()).toMatch(
+      new RegExp(`^${regularCheckDate.toISOString().substring(0, 19)}`)
+    );
+    expect(updatedRegistration.status.trading_status_checks).toBeDefined();
+    expect(updatedRegistration.status.trading_status_checks.length).toBe(2);
+    expect(updatedRegistration.status.trading_status_checks[1].type).toBe("STILL_TRADING_LA");
+    expect(updatedRegistration.status.trading_status_checks[1].address).toBe(
+      testCouncilConfig.local_council_notify_emails[0]
+    );
+    expect(updatedRegistration.status.trading_status_checks[1].sent).toBeTruthy();
+
+    // Assert: Verify if the notify connector sendSingleEmail function was called correctly
+    expect(notifyConnector.sendSingleEmail).toHaveBeenCalled();
+    const callArgs = notifyConnector.sendSingleEmail.mock.calls[0];
+    expect(callArgs[0]).toBe("still-trading-la-template-id");
+    expect(callArgs[1]).toBe("council@example.com");
+    expect(callArgs[2]).toBeUndefined(); // No reply-to ID for LA emails
+    const data = callArgs[3];
+    expect(data).toBeDefined();
+    expect(data.registration_number).toBe(`${ENSURE_DELETED_TEST_PREFIX}1`);
+    expect(data.la_name).toBe("Test Council");
+    expect(data.reg_submission_date).toBe(
+      moment(registration.reg_submission_date).clone().format("DD MMM YYYY")
+    );
+    expect(Object.keys(data).length).toBe(8);
+    expect(callArgs[4]).toBeNull(); // No PDF file
+    expect(callArgs[5]).toBe(`${ENSURE_DELETED_TEST_PREFIX}1`);
+    expect(callArgs[6]).toBe("STILL_TRADING_LA");
+  });
+
+  it("should process a single registration successfully resulting in a FINISHED_TRADING_LA", async () => {
+    // Arrange
+    const registration = getTestRegistration("1", testCouncilConfig);
+    const previousStatusDate = moment().subtract(15, "days").toDate();
+    registration.next_status_check = moment().subtract(1, "days").toDate();
+    registration.confirmed_not_trading = moment().subtract(1, "days").toDate();
+    registration.status = {
+      trading_status_checks: [
+        {
+          type: "REGULAR_CHECK",
+          email: registration.establishment.operator.operator_email,
+          time: previousStatusDate,
+          sent: true
+        }
+      ]
+    };
+    await registrationsCollection.insertOne(registration);
+
+    // Act
+    const results = await processTradingStatusChecksDue(mockReq, mockRes, 50);
+
+    // Assert: Verify the response from the controller
+    expect(results).toBeDefined();
+    expect(results.length).toBe(1);
+    expect(results[0].fsaId).toBe(`${ENSURE_DELETED_TEST_PREFIX}1`);
+    const deleteDate = moment().clone().add(7, "years");
+    expect(results[0].message).toMatch(
+      new RegExp(
+        `^FINISHED_TRADING_LA emails sent, DELETE_REGISTRATION scheduled for ${deleteDate.format("YYYY-MM-DD HH:mm")}:\\d{2}$`
+      )
+    );
+
+    // Assert: Verify database was updated
+    const updatedRegistration = await registrationsCollection.findOne({
+      "fsa-rn": `${ENSURE_DELETED_TEST_PREFIX}1`
+    });
+    expect(updatedRegistration).toBeDefined();
+    expect(moment(updatedRegistration.next_status_check).toISOString()).toMatch(
+      new RegExp(`^${deleteDate.toISOString().substring(0, 19)}`)
+    );
+    expect(updatedRegistration.status.trading_status_checks).toBeDefined();
+    expect(updatedRegistration.status.trading_status_checks.length).toBe(2);
+    expect(updatedRegistration.status.trading_status_checks[1].type).toBe("FINISHED_TRADING_LA");
+    expect(updatedRegistration.status.trading_status_checks[1].address).toBe(
+      testCouncilConfig.local_council_notify_emails[0]
+    );
+    expect(updatedRegistration.status.trading_status_checks[1].sent).toBeTruthy();
+
+    // Assert: Verify if the notify connector sendSingleEmail function was called correctly
+    expect(notifyConnector.sendSingleEmail).toHaveBeenCalled();
+    const callArgs = notifyConnector.sendSingleEmail.mock.calls[0];
+    expect(callArgs[0]).toBe("finished-trading-la-template-id");
+    expect(callArgs[1]).toBe("council@example.com");
+    expect(callArgs[2]).toBeUndefined(); // No reply-to ID for LA emails
+    const data = callArgs[3];
+    expect(data).toBeDefined();
+    expect(data.registration_number).toBe(`${ENSURE_DELETED_TEST_PREFIX}1`);
+    expect(data.la_name).toBe("Test Council");
+    expect(data.reg_submission_date).toBe(
+      moment(registration.reg_submission_date).clone().format("DD MMM YYYY")
+    );
+    expect(Object.keys(data).length).toBe(8);
+    expect(callArgs[4]).toBeNull(); // No PDF file
+    expect(callArgs[5]).toBe(`${ENSURE_DELETED_TEST_PREFIX}1`);
+    expect(callArgs[6]).toBe("FINISHED_TRADING_LA");
+  });
+
+  it("should process a single registration successfully resulting in a DELETE_REGISTRATION", async () => {
+    // Arrange
+    const registration = getTestRegistration(
+      "1",
+      testCouncilConfig,
+      moment().subtract(10, "years").toDate()
+    );
+    const previousStatusDate = moment().subtract(7, "years").toDate();
+    registration.next_status_check = moment().subtract(1, "days").toDate();
+    registration.confirmed_not_trading = moment().subtract(7, "years").subtract(1, "days").toDate();
+    registration.status = {
+      trading_status_checks: [
+        {
+          type: "FINISHED_TRADING_LA",
+          email: testCouncilConfig.local_council_notify_emails[0],
+          time: previousStatusDate,
+          sent: true
+        }
+      ]
+    };
+
+    await registrationsCollection.insertOne(registration);
+
+    const unProcessedRegistration = getTestRegistration(
+      "2",
+      testCouncilConfig,
+      moment().subtract(10, "years").toDate()
+    );
+    unProcessedRegistration.confirmed_not_trading = moment()
+      .subtract(7, "years")
+      .add(1, "days")
+      .toDate();
+    const previousStatusDate2 = moment().subtract(7, "years").add(2, "days");
+    unProcessedRegistration.status = {
+      trading_status_checks: [
+        {
+          type: "FINISHED_TRADING_LA",
+          email: testCouncilConfig.local_council_notify_emails[0],
+          time: previousStatusDate2.toDate(),
+          sent: true
+        }
+      ]
+    };
+
+    await registrationsCollection.insertOne(unProcessedRegistration);
+
+    // Act
+    const results = await processTradingStatusChecksDue(mockReq, mockRes, 50);
+
+    // Assert: Verify the response from the controller
+    const deleteDate = previousStatusDate2.clone().add(7, "years");
+    expect(results).toBeDefined();
+    expect(results.length).toBe(2);
+    expect(results[0].fsaId).toBe(`${ENSURE_DELETED_TEST_PREFIX}1`);
+    expect(results[0].message).toMatch(new RegExp(`^Registration deleted`));
+    expect(results[1].fsaId).toBe(`${ENSURE_DELETED_TEST_PREFIX}2`);
+    expect(results[1].message).toMatch(
+      new RegExp(
+        `^DELETE_REGISTRATION rescheduled for ${deleteDate.format("YYYY-MM-DD HH:mm")}:\\d{2}$`
+      )
+    );
+
+    // Assert: Verify database was updated
+    const deletedRegistration = await registrationsCollection.findOne({
+      "fsa-rn": `${ENSURE_DELETED_TEST_PREFIX}1`
+    });
+    expect(deletedRegistration).toBeNull();
+    const updatedRegistration = await registrationsCollection.findOne({
+      "fsa-rn": `${ENSURE_DELETED_TEST_PREFIX}2`
+    });
+    expect(updatedRegistration).toBeDefined();
+    expect(moment(updatedRegistration.next_status_check).toISOString()).toMatch(
+      new RegExp(`^${deleteDate.toISOString().substring(0, 19)}`)
+    );
+
+    expect(notifyConnector.sendSingleEmail).not.toHaveBeenCalled();
+  });
+
   describe("processTradingStatusChecksForId", () => {
     it("should process trading status check for a specific registration", async () => {
       const registrationToRemainUnprocessed = getTestRegistration("1", testCouncilConfig);

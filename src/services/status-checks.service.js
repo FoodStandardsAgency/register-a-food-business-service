@@ -14,7 +14,8 @@ const {
 const { sendSingleEmail } = require("../connectors/notify/notify.connector");
 const {
   updateTradingStatusCheck,
-  updateNextStatusDate
+  updateNextStatusDate,
+  deleteRegistration
 } = require("../connectors/statusChecksDb/status-checks.connector");
 const { encryptId } = require("../utils/crypto");
 const {
@@ -68,6 +69,8 @@ const processTradingStatus = async (registration, laConfig) => {
       switch (action.type) {
         case DELETE_REGISTRATION:
           // Delete registration after retention period
+          await deleteRegistration(registration["fsa-rn"]);
+          return { fsaId: registration["fsa-rn"], message: `Registration deleted` };
           break;
         case REGULAR_CHECK:
         case INITIAL_CHECK:
