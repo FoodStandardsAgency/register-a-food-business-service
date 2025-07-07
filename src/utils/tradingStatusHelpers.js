@@ -168,6 +168,11 @@ const getNextActionAndDate = (mostRecentCheck, tradingStatusConfig) => {
     return result;
   }
 
+  // Early return if no checks configured
+  if (!tradingStatusConfig.regular_check && !tradingStatusConfig.initial_check) {
+    return result;
+  }
+
   // Handle CONFIRMED_NOT_TRADING
   if (mostRecentCheck.type === CONFIRMED_NOT_TRADING) {
     result = { type: FINISHED_TRADING_LA, time: mostRecentCheckTime };

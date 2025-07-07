@@ -55,6 +55,16 @@ const testCouncilConfig = {
   local_council_email_reply_to_ID: "test-council-reply-ID",
   local_council_notify_emails: ["council@example.com"]
 };
+const noLongerOnboardedCouncilConfig = {
+  local_council: "Other Council",
+  local_council_url: "other_status_test_council",
+  trading_status: {
+    chase: true,
+    confirmed_trading_notifications: true
+  },
+  local_council_email_reply_to_ID: "other-council-reply-ID",
+  local_council_notify_emails: ["othercouncil@example.com"]
+};
 
 // Create mock req and res objects for the controller
 const mockReq = {};
@@ -107,6 +117,7 @@ describe("Trading Status Checks: Registration Processing Integration Tests", () 
 
     // Set up test data
     await configCollection.insertOne(testCouncilConfig);
+    await configCollection.insertOne(noLongerOnboardedCouncilConfig);
   });
 
   // Clean up after all tests
@@ -114,6 +125,9 @@ describe("Trading Status Checks: Registration Processing Integration Tests", () 
     // Clean up test data
     await configCollection.deleteMany({
       local_council_url: testCouncilConfig.local_council_url
+    });
+    await configCollection.deleteMany({
+      local_council_url: noLongerOnboardedCouncilConfig.local_council_url
     });
 
     // Close application and test connections
@@ -616,6 +630,46 @@ describe("Trading Status Checks: Registration Processing Integration Tests", () 
       new RegExp(`^${deleteDate.toISOString().substring(0, 19)}`)
     );
 
+    expect(notifyConnector.sendSingleEmail).not.toHaveBeenCalled();
+  });
+
+  it("should process a single registration successfully resulting in an undefined next_status_date", async () => {
+    // Arrange
+    const registration = getTestRegistration("1", noLongerOnboardedCouncilConfig);
+    const previousStatusDate = moment().subtract(15, "days").toDate();
+    registration.next_status_check = moment().subtract(1, "days").toDate();
+    registration.confirmed_not_trading = moment().subtract(1, "days").toDate();
+    registration.status = {
+      trading_status_checks: [
+        {
+          type: "REGULAR_CHECK",
+          email: registration.establishment.operator.operator_email,
+          time: previousStatusDate,
+          sent: true
+        }
+      ]
+    };
+    await registrationsCollection.insertOne(registration);
+
+    // Act
+    const results = await processTradingStatusChecksDue(mockReq, mockRes, 50);
+
+    // Assert: Verify the response from the controller
+    expect(results).toBeDefined();
+    expect(results.length).toBe(1);
+    expect(results[0].fsaId).toBe(`${ENSURE_DELETED_TEST_PREFIX}1`);
+    expect(results[0].message).toMatch(new RegExp(`^No action needed, next status date cleared`));
+
+    // Assert: Verify database was updated
+    const updatedRegistration = await registrationsCollection.findOne({
+      "fsa-rn": `${ENSURE_DELETED_TEST_PREFIX}1`
+    });
+    expect(updatedRegistration).toBeDefined();
+    expect(updatedRegistration.next_status_check).not.toBeDefined();
+    expect(updatedRegistration.status.trading_status_checks).toBeDefined();
+    expect(updatedRegistration.status.trading_status_checks.length).toBe(1);
+
+    // Assert: Verify if the notify connector sendSingleEmail function was called correctly
     expect(notifyConnector.sendSingleEmail).not.toHaveBeenCalled();
   });
 

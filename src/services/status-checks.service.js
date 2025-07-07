@@ -100,10 +100,12 @@ const processTradingStatus = async (registration, laConfig) => {
     } else {
       // Schedule the next action (or clear the next status date if no action is needed)
       await updateNextStatusDate(registration["fsa-rn"], action?.time);
-
+      const message = action
+        ? `${action.type} rescheduled for ${action.time.format("YYYY-MM-DD HH:mm:ss")}`
+        : "No action needed, next status date cleared";
       return {
         fsaId: registration["fsa-rn"],
-        message: `${action.type} rescheduled for ${action.time.format("YYYY-MM-DD HH:mm:ss")}`
+        message
       };
     }
   }

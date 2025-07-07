@@ -112,10 +112,22 @@ const updateNextStatusDate = async (fsa_rn, nextStatusDate) => {
     }
 
     // Update only the next_status_check field
-    await registrations.updateOne(
-      { "fsa-rn": fsa_rn },
-      { $set: { next_status_check: nextStatusDate.toDate() } }
-    );
+    if (!nextStatusDate) {
+      const result = await registrations.updateOne(
+        { "fsa-rn": fsa_rn },
+        { $unset: { next_status_check: "" } }
+      );
+      if (result.matchedCount === 0) {
+        throw new Error(`No document matched for fsa-rn: ${fsa_rn}`);
+      } else if (result.modifiedCount === 0) {
+        throw new Error(`Document found but field not modified for fsa-rn: ${fsa_rn}`);
+      }
+    } else {
+      await registrations.updateOne(
+        { "fsa-rn": fsa_rn },
+        { $set: { next_status_check: nextStatusDate.toDate() } }
+      );
+    }
 
     logEmitter.emit("functionSuccess", "status-checks.connector", "updateNextStatusDate");
   } catch (err) {
