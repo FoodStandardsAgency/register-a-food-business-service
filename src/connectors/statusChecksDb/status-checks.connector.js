@@ -5,18 +5,18 @@ const { establishConnectionToCosmos } = require("../cosmos.client");
 const { decryptId } = require("../../utils/crypto");
 
 const findRegistrationByFsaId = async (fsa_rn) => {
-  logEmitter.emit("functionCall", "status-checks.connector", "findOneById");
+  logEmitter.emit("functionCall", "status-checks.connector", "findRegistrationByFsaId");
 
   try {
     const registrations = await establishConnectionToCosmos("registrations", "registrations");
     const registration = await registrations.findOne({
       "fsa-rn": fsa_rn
     });
-    logEmitter.emit("functionSuccess", "status-checks.connector", "findOneById");
+    logEmitter.emit("functionSuccess", "status-checks.connector", "findRegistrationByFsaId");
     return registration;
   } catch (err) {
     logEmitter.emit(ERROR, "Single registration data lookup failure");
-    logEmitter.emit("functionFail", "status-checks.connector", "findOneById", err);
+    logEmitter.emit("functionFail", "status-checks.connector", "findRegistrationByFsaId", err);
     throw err;
   }
 };
@@ -47,7 +47,7 @@ const findActionableRegistrations = async (limit = 50) => {
 };
 
 const updateTradingStatusCheck = async (fsa_rn, newStatus) => {
-  logEmitter.emit("functionCall", "status-checks.connector", "updateStatus");
+  logEmitter.emit("functionCall", "status-checks.connector", "updateTradingStatusCheck");
   const registrations = await establishConnectionToCosmos("registrations", "registrations");
   try {
     // Get the existing document to check trading_status
@@ -85,9 +85,10 @@ const updateTradingStatusCheck = async (fsa_rn, newStatus) => {
       }
     }
 
-    logEmitter.emit("functionSuccess", "status-checks.connector", "updateStatus");
+    logEmitter.emit("functionSuccess", "status-checks.connector", "updateTradingStatusCheck");
   } catch (err) {
-    logEmitter.emit("functionFail", "status-checks.connector", "updateStatus", err);
+    logEmitter.emit("functionFail", "status-checks.connector", "updateTradingStatusCheck", err);
+    throw err;
   }
 };
 
