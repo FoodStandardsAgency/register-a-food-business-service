@@ -22,7 +22,7 @@
     "test:collections:component": "jest ./tests/collections/component/*.js --runInBand",
     "test:collections:component:ci": "export TEST_TYPE=component && jest ./tests/collections/component/*.js --runInBand",
     "test:collections:api:e2e": "jest ./tests/collections/e2e/*.js --runInBand",
-    "test:submissions:api:e2e": "jest ./tests/submissions/e2e/*.js --runInBand",
+    "test:tradingstatus:integration": "jest ./tests/tradingStatus/*.js --runInBand --debug",
     "test:securityall": "snyk wizard",
     "test:security": "snyk wizard --severity-threshold=medium",
     "lint": "eslint .",
