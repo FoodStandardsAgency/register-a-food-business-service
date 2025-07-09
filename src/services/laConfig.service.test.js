@@ -40,32 +40,54 @@ describe("LA Config Service", () => {
 
     it("should return LA config with tradingStatusLaEmailAddresses when LA exists without separate standards", async () => {
       const result = await getLaConfigWithAllNotifyAddresses("council1-url", mockAllLaConfigData);
-      
+
       expect(result._id).toBe("council1");
       expect(result.tradingStatusLaEmailAddresses).toEqual(["council1@example.com"]);
       expect(result.tradingStatusStandardsEmailAddresses).toBeUndefined();
-      expect(logEmitter.emit).toHaveBeenCalledWith("functionCall", "laConfig.service", "getLaNotifyAddresses");
-      expect(logEmitter.emit).toHaveBeenCalledWith("functionSuccess", "laConfig.service", "getLaNotifyAddresses");
+      expect(logEmitter.emit).toHaveBeenCalledWith(
+        "functionCall",
+        "laConfig.service",
+        "getLaNotifyAddresses"
+      );
+      expect(logEmitter.emit).toHaveBeenCalledWith(
+        "functionSuccess",
+        "laConfig.service",
+        "getLaNotifyAddresses"
+      );
     });
 
     it("should return LA config with both LA and standards email addresses when LA has separate standards", async () => {
       const result = await getLaConfigWithAllNotifyAddresses("council2-url", mockAllLaConfigData);
-      
+
       expect(result._id).toBe("council2");
       expect(result.tradingStatusLaEmailAddresses).toEqual(["council2@example.com"]);
       expect(result.tradingStatusStandardsEmailAddresses).toEqual(["standards@example.com"]);
-      expect(logEmitter.emit).toHaveBeenCalledWith("functionCall", "laConfig.service", "getLaNotifyAddresses");
-      expect(logEmitter.emit).toHaveBeenCalledWith("functionSuccess", "laConfig.service", "getLaNotifyAddresses");
+      expect(logEmitter.emit).toHaveBeenCalledWith(
+        "functionCall",
+        "laConfig.service",
+        "getLaNotifyAddresses"
+      );
+      expect(logEmitter.emit).toHaveBeenCalledWith(
+        "functionSuccess",
+        "laConfig.service",
+        "getLaNotifyAddresses"
+      );
     });
 
     it("should throw an error when LA config is not found", async () => {
-      await expect(getLaConfigWithAllNotifyAddresses("non-existent-url", mockAllLaConfigData)).rejects.toThrow();
-      
-      expect(logEmitter.emit).toHaveBeenCalledWith("functionCall", "laConfig.service", "getLaNotifyAddresses");
+      await expect(
+        getLaConfigWithAllNotifyAddresses("non-existent-url", mockAllLaConfigData)
+      ).rejects.toThrow();
+
       expect(logEmitter.emit).toHaveBeenCalledWith(
-        "functionFail", 
-        "laConfig.service", 
-        "getLaNotifyAddresses", 
+        "functionCall",
+        "laConfig.service",
+        "getLaNotifyAddresses"
+      );
+      expect(logEmitter.emit).toHaveBeenCalledWith(
+        "functionFail",
+        "laConfig.service",
+        "getLaNotifyAddresses",
         expect.objectContaining({
           name: "localCouncilNotFound",
           message: 'Config for "non-existent-url" not found'
@@ -77,14 +99,20 @@ describe("LA Config Service", () => {
       // Modify the mock data to have an invalid standards council reference
       const invalidMockData = [...mockAllLaConfigData];
       invalidMockData[1].separate_standards_council = "non-existent-council";
-      
-      await expect(getLaConfigWithAllNotifyAddresses("council2-url", invalidMockData)).rejects.toThrow();
-      
-      expect(logEmitter.emit).toHaveBeenCalledWith("functionCall", "laConfig.service", "getLaNotifyAddresses");
+
+      await expect(
+        getLaConfigWithAllNotifyAddresses("council2-url", invalidMockData)
+      ).rejects.toThrow();
+
       expect(logEmitter.emit).toHaveBeenCalledWith(
-        "functionFail", 
-        "laConfig.service", 
-        "getLaNotifyAddresses", 
+        "functionCall",
+        "laConfig.service",
+        "getLaNotifyAddresses"
+      );
+      expect(logEmitter.emit).toHaveBeenCalledWith(
+        "functionFail",
+        "laConfig.service",
+        "getLaNotifyAddresses",
         expect.objectContaining({
           name: "localCouncilNotFound",
           message: expect.stringContaining("non-existent-council")
@@ -94,12 +122,16 @@ describe("LA Config Service", () => {
 
     it("should work with empty allLaConfigData array", async () => {
       await expect(getLaConfigWithAllNotifyAddresses("any-url", [])).rejects.toThrow();
-      
-      expect(logEmitter.emit).toHaveBeenCalledWith("functionCall", "laConfig.service", "getLaNotifyAddresses");
+
       expect(logEmitter.emit).toHaveBeenCalledWith(
-        "functionFail", 
-        "laConfig.service", 
-        "getLaNotifyAddresses", 
+        "functionCall",
+        "laConfig.service",
+        "getLaNotifyAddresses"
+      );
+      expect(logEmitter.emit).toHaveBeenCalledWith(
+        "functionFail",
+        "laConfig.service",
+        "getLaNotifyAddresses",
         expect.objectContaining({
           name: "localCouncilNotFound",
           message: 'Config for "any-url" not found'

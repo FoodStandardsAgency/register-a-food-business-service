@@ -1,5 +1,9 @@
 const moment = require("moment");
-const { getNextActionAndDate, getVerifiedRegistrationDates, getTemplateIdFromEmailType } = require("./tradingStatusHelpers");
+const {
+  getNextActionAndDate,
+  getVerifiedRegistrationDates,
+  getTemplateIdFromEmailType
+} = require("./tradingStatusHelpers");
 const {
   INITIAL_REGISTRATION,
   INITIAL_CHECK,

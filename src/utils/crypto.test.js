@@ -31,7 +31,7 @@ describe("crypto utility", () => {
       const [iv, encryptedData] = encrypted.split(":");
 
       // IV should be 16 bytes (32 hex chars)
-      expect(iv.length).toBe(32);
+      expect(iv).toHaveLength(32);
       // Encrypted data should exist
       expect(encryptedData).toBeTruthy();
 
