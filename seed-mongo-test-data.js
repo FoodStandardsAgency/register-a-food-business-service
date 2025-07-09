@@ -7,19 +7,6 @@ async function seed() {
 
     // CONFIG DB
     const configDb = client.db("config");
-    // Create user (ignore if already exists)
-    try {
-      await client
-        .db("admin")
-        .addUser("test-user", "test-password", { roles: [{ role: "root", db: "admin" }] });
-      console.log("User created in config");
-    } catch (e) {
-      if (e.codeName === "DuplicateKey") {
-        console.log("User already exists in config");
-      } else {
-        throw e;
-      }
-    }
 
     // Seed localAuthorities
     await configDb.collection("localAuthorities").deleteMany({});
