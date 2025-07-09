@@ -58,6 +58,9 @@ jobs:
             sleep 1
           done
 
+      - name: Install MongoDB Shell
+        run: sudo apt-get update && sudo apt-get install -y mongodb-clients
+
       - name: Seed test data
         run: mongo localhost:27017/test /home/ernest/Source/register-a-food-business-environment/register-a-food-business-service/mongo-init.js
 
