@@ -1,5 +1,5 @@
 const moment = require("moment");
-const { getNextActionAndDate, getVerifiedRegistrationDates } = require("./tradingStatusHelpers");
+const { getNextActionAndDate, getVerifiedRegistrationDates, getTemplateIdFromEmailType } = require("./tradingStatusHelpers");
 const {
   INITIAL_REGISTRATION,
   INITIAL_CHECK,
@@ -10,7 +10,19 @@ const {
   CONFIRMED_NOT_TRADING,
   FINISHED_TRADING_LA,
   STILL_TRADING_LA,
-  DELETE_REGISTRATION
+  DELETE_REGISTRATION,
+  INITIAL_CHECK_TEMPLATE_ID,
+  INITIAL_CHECK_CHASE_TEMPLATE_ID,
+  REGULAR_CHECK_TEMPLATE_ID,
+  REGULAR_CHECK_CHASE_TEMPLATE_ID,
+  FINISHED_TRADING_LA_TEMPLATE_ID,
+  STILL_TRADING_LA_TEMPLATE_ID,
+  INITIAL_CHECK_TEMPLATE_ID_CY,
+  INITIAL_CHECK_CHASE_TEMPLATE_ID_CY,
+  REGULAR_CHECK_TEMPLATE_ID_CY,
+  REGULAR_CHECK_CHASE_TEMPLATE_ID_CY,
+  FINISHED_TRADING_LA_TEMPLATE_ID_CY,
+  STILL_TRADING_LA_TEMPLATE_ID_CY
 } = require("../config");
 
 describe("getNextActionAndDate", () => {
@@ -388,5 +400,73 @@ describe("getVerifiedRegistrationDates", () => {
 
     expect(result.valid).toBe(false);
     expect(result.error).toBe("Invalid registration submission date for registration undefined");
+  });
+});
+
+describe("getTemplateIdFromEmailType", () => {
+  test("should return correct English template ID for INITIAL_CHECK", () => {
+    const templateId = getTemplateIdFromEmailType(INITIAL_CHECK, false);
+    expect(templateId).toBe(INITIAL_CHECK_TEMPLATE_ID);
+  });
+
+  test("should return correct Welsh template ID for INITIAL_CHECK", () => {
+    const templateId = getTemplateIdFromEmailType(INITIAL_CHECK, true);
+    expect(templateId).toBe(INITIAL_CHECK_TEMPLATE_ID_CY);
+  });
+
+  test("should return correct English template ID for INITIAL_CHECK_CHASE", () => {
+    const templateId = getTemplateIdFromEmailType(INITIAL_CHECK_CHASE, false);
+    expect(templateId).toBe(INITIAL_CHECK_CHASE_TEMPLATE_ID);
+  });
+
+  test("should return correct Welsh template ID for INITIAL_CHECK_CHASE", () => {
+    const templateId = getTemplateIdFromEmailType(INITIAL_CHECK_CHASE, true);
+    expect(templateId).toBe(INITIAL_CHECK_CHASE_TEMPLATE_ID_CY);
+  });
+
+  test("should return correct English template ID for REGULAR_CHECK", () => {
+    const templateId = getTemplateIdFromEmailType(REGULAR_CHECK, false);
+    expect(templateId).toBe(REGULAR_CHECK_TEMPLATE_ID);
+  });
+
+  test("should return correct Welsh template ID for REGULAR_CHECK", () => {
+    const templateId = getTemplateIdFromEmailType(REGULAR_CHECK, true);
+    expect(templateId).toBe(REGULAR_CHECK_TEMPLATE_ID_CY);
+  });
+
+  test("should return correct English template ID for REGULAR_CHECK_CHASE", () => {
+    const templateId = getTemplateIdFromEmailType(REGULAR_CHECK_CHASE, false);
+    expect(templateId).toBe(REGULAR_CHECK_CHASE_TEMPLATE_ID);
+  });
+
+  test("should return correct Welsh template ID for REGULAR_CHECK_CHASE", () => {
+    const templateId = getTemplateIdFromEmailType(REGULAR_CHECK_CHASE, true);
+    expect(templateId).toBe(REGULAR_CHECK_CHASE_TEMPLATE_ID_CY);
+  });
+
+  test("should return correct English template ID for FINISHED_TRADING_LA", () => {
+    const templateId = getTemplateIdFromEmailType(FINISHED_TRADING_LA, false);
+    expect(templateId).toBe(FINISHED_TRADING_LA_TEMPLATE_ID);
+  });
+
+  test("should return correct Welsh template ID for FINISHED_TRADING_LA", () => {
+    const templateId = getTemplateIdFromEmailType(FINISHED_TRADING_LA, true);
+    expect(templateId).toBe(FINISHED_TRADING_LA_TEMPLATE_ID_CY);
+  });
+
+  test("should return correct English template ID for STILL_TRADING_LA", () => {
+    const templateId = getTemplateIdFromEmailType(STILL_TRADING_LA, false);
+    expect(templateId).toBe(STILL_TRADING_LA_TEMPLATE_ID);
+  });
+
+  test("should return correct Welsh template ID for STILL_TRADING_LA", () => {
+    const templateId = getTemplateIdFromEmailType(STILL_TRADING_LA, true);
+    expect(templateId).toBe(STILL_TRADING_LA_TEMPLATE_ID_CY);
+  });
+
+  test("should throw error for unknown email type", () => {
+    expect(() => {
+      getTemplateIdFromEmailType("UNKNOWN_TYPE", false);
+    }).toThrow("Unknown email type: UNKNOWN_TYPE");
   });
 });

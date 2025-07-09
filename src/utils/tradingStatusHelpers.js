@@ -309,6 +309,23 @@ const getTemplateIdFromEmailType = (emailType, cy) => {
 };
 
 /**
+ * Checks if the given action type requires sending email notifications.
+ *
+ * @param {string} actionType - The action type to check.
+ * @returns {boolean} True if the action type requires email notifications.
+ */
+const isEmailNotificationAction = (actionType) => {
+  return [
+    REGULAR_CHECK,
+    INITIAL_CHECK,
+    INITIAL_CHECK_CHASE,
+    REGULAR_CHECK_CHASE,
+    FINISHED_TRADING_LA,
+    STILL_TRADING_LA
+  ].includes(actionType);
+};
+
+/**
  * Generates the appropriate status email content to send based on the registration status.
  *
  * @returns {Object} Email content and metadata.
@@ -404,5 +421,6 @@ module.exports = {
   getMostRecentCheck,
   getVerifiedRegistrationDates,
   getTemplateIdFromEmailType,
-  generateStatusEmailToSend
+  generateStatusEmailToSend,
+  isEmailNotificationAction
 };

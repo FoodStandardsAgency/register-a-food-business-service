@@ -14,7 +14,8 @@ const {
   getMostRecentCheck,
   getVerifiedRegistrationDates,
   getTemplateIdFromEmailType,
-  generateStatusEmailToSend
+  generateStatusEmailToSend,
+  isEmailNotificationAction
 } = require("../utils/tradingStatusHelpers.js");
 const { sendSingleEmail } = require("../connectors/notify/notify.connector");
 const {
@@ -161,23 +162,6 @@ const executeAction = async (registration, laConfig, action) => {
 
   // Handle invalid action types
   throw new Error(`Action type not processable: ${action.type}`);
-};
-
-/**
- * Checks if the given action type requires sending email notifications.
- *
- * @param {string} actionType - The action type to check.
- * @returns {boolean} True if the action type requires email notifications.
- */
-const isEmailNotificationAction = (actionType) => {
-  return [
-    REGULAR_CHECK,
-    INITIAL_CHECK,
-    INITIAL_CHECK_CHASE,
-    REGULAR_CHECK_CHASE,
-    FINISHED_TRADING_LA,
-    STILL_TRADING_LA
-  ].includes(actionType);
 };
 
 /**
@@ -347,9 +331,9 @@ const logFinalEmailStatus = (success) => {
   }
 };
 
-// Only export public interface functions
 module.exports = {
   processTradingStatus,
   getTradingStatusAction,
-  sendTradingStatusEmails
+  sendTradingStatusEmails,
+  executeAction
 };
