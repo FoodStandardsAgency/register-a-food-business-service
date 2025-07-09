@@ -1058,7 +1058,6 @@ async function seed() {
         }
       },
       {
-        _id: ObjectId("5dca72519315020042c8e345"),
         "fsa-rn": "K9ZLSA-78MVM6-W4LPF1",
         collected: true,
         collected_at: new Date("2021-01-01"),
@@ -1169,7 +1168,6 @@ async function seed() {
         registration_data_version: "2.2.0"
       },
       {
-        _id: ObjectId("5dca867622ebd10042c84caa"),
         "fsa-rn": "A1D3X4-6FCTGC-5WEJQQ",
         collected: true,
         collected_at: new Date("2021-01-01"),
@@ -1282,7 +1280,6 @@ async function seed() {
         registration_data_version: "2.2.0"
       },
       {
-        _id: ObjectId("5dcaa65fa24e940041d684bd"),
         "fsa-rn": "E9S2RC-ED2PJ2-BXY9BA",
         collected: false,
         collected_at: null,
@@ -1394,7 +1391,6 @@ async function seed() {
         registration_data_version: "2.2.0"
       },
       {
-        _id: ObjectId("5dcaa787a24e940041d684be"),
         "fsa-rn": "CTA4VV-BR5N6H-SS73C2",
         collected: false,
         collected_at: null,
@@ -1505,7 +1501,6 @@ async function seed() {
         registration_data_version: "2.2.0"
       },
       {
-        _id: ObjectId("5dcaa838a24e940041d684bf"),
         "fsa-rn": "PT07JA-VTZ577-ZDMAVZ",
         collected: true,
         collected_at: new Date("2021-01-01"),
