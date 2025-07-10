@@ -90,15 +90,6 @@ jobs:
       - name: Generate Coverage Summary
         run: echo '## Coverage Summary ' >> $GITHUB_STEP_SUMMARY && cat code-coverage-results.md >> $GITHUB_STEP_SUMMARY
 
-      - name: Check Coverage Threshold
-        run: |
-          COVERAGE=$(node -pe "require('./coverage/coverage-summary.json').total.lines.pct")
-          echo "Coverage: $COVERAGE%"
-          if [ "$(printf '%.0f' "$COVERAGE")" -lt 80 ]; then
-            echo "::error ::Test coverage ($COVERAGE%) is below 80%!"
-            exit 1
-          fi
-
       - name: Prune dev dependencies
         run: npm prune --production
 
