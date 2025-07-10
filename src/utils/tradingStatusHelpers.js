@@ -422,5 +422,6 @@ module.exports = {
   getVerifiedRegistrationDates,
   getTemplateIdFromEmailType,
   generateStatusEmailToSend,
-  isEmailNotificationAction
+  isEmailNotificationAction,
+  staggerOldDates
 };

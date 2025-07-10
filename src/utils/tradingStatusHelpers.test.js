@@ -2,7 +2,8 @@ const moment = require("moment");
 const {
   getNextActionAndDate,
   getVerifiedRegistrationDates,
-  getTemplateIdFromEmailType
+  getTemplateIdFromEmailType,
+  staggerOldDates
 } = require("./tradingStatusHelpers");
 const {
   INITIAL_REGISTRATION,
@@ -472,5 +473,38 @@ describe("getTemplateIdFromEmailType", () => {
     expect(() => {
       getTemplateIdFromEmailType("UNKNOWN_TYPE", false);
     }).toThrow("Unknown email type: UNKNOWN_TYPE");
+  });
+});
+
+describe("staggerOldDates", () => {
+  test("should not modify recent dates (less than 3 months old)", () => {
+    // Create a date 2 months ago
+    const twoMonthsAgo = moment().subtract(2, "months");
+    const result = staggerOldDates(twoMonthsAgo);
+
+    // The result should be the same as the input
+    expect(result.format("YYYY-MM-DD")).toBe(twoMonthsAgo.format("YYYY-MM-DD"));
+  });
+
+  test("should adjust old dates that fall later in year to current year", () => {
+    // Create a date that's old but falls later in current year (e.g. December)
+    const oldDateLaterInYear = moment(new Date(2020, 11, 25)); // December 25, 2020
+    const result = staggerOldDates(oldDateLaterInYear);
+
+    // The result should have the current year
+    expect(result.year()).toBe(2025);
+    expect(result.month()).toBe(11); // December is 11 (0-indexed)
+    expect(result.date()).toBe(25);
+  });
+
+  test("should adjust old dates that fall earlier in year to next year", () => {
+    // Create a date that's old and falls earlier in year (e.g. January)
+    const oldDateEarlierInYear = moment(new Date(2020, 0, 15)); // January 15, 2020
+    const result = staggerOldDates(oldDateEarlierInYear);
+
+    // The result should have the next year (current year + 1)
+    expect(result.year()).toBe(2026);
+    expect(result.month()).toBe(0); // January is 0 (0-indexed)
+    expect(result.date()).toBe(15);
   });
 });
