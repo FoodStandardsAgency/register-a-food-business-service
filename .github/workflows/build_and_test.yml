@@ -78,7 +78,7 @@ jobs:
         uses: EnricoMi/publish-unit-test-result-action@v2
         if: always()
         with:
-          junit_files: ./reports/TEST-tradingstatus-integration.xml
+          junit_files: ./reports/TEST-tradingstatus.xml
           check_name: "Trading Status Integration Test Results"
 
       - name: Generate Coverage Summary
@@ -89,6 +89,16 @@ jobs:
           output: both
       - name: Generate Coverage Summary
         run: echo '## Coverage Summary ' >> $GITHUB_STEP_SUMMARY && cat code-coverage-results.md >> $GITHUB_STEP_SUMMARY
+
+      - name: Check coverage threshold
+        run: |
+          COV=$(grep -oP 'line-rate="\K[0-9.]+' coverage/cobertura-coverage.xml | head -1)
+          PERCENT=$(awk "BEGIN {print $COV * 100}")
+          echo "Total coverage: $PERCENT%"
+          if (( $(echo "$PERCENT < 80" | bc -l) )); then
+            echo "Coverage is below 80%!"
+            exit 1
+          fi
 
       - name: Prune dev dependencies
         run: npm prune --production
