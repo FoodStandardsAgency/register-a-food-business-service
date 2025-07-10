@@ -17,7 +17,6 @@ const getLaConfigWithAllNotifyAddresses = async (localCouncilUrl, allLaConfigDat
 
   if (laConfig) {
     laConfig.tradingStatusLaEmailAddresses = [...laConfig.local_council_notify_emails];
-    laConfig.trading_status = laConfig.trading_status;
 
     if (laConfig.separate_standards_council) {
       const standardsLcConfig = allLaConfigData.find(
