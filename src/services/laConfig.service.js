@@ -9,7 +9,7 @@ const { logEmitter } = require("./logging.service");
  * @returns {object} LA config object.
  */
 const getLaConfigWithAllNotifyAddresses = async (localCouncilUrl, allLaConfigData = []) => {
-  logEmitter.emit("functionCall", "laConfig.service", "getLaNotifyAddresses");
+  logEmitter.emit("functionCall", "laConfig.service", "getLaConfigWithAllNotifyAddresses");
 
   const laConfig = allLaConfigData.find(
     (localCouncil) => localCouncil.local_council_url === localCouncilUrl
@@ -31,7 +31,12 @@ const getLaConfigWithAllNotifyAddresses = async (localCouncilUrl, allLaConfigDat
         const newError = new Error();
         newError.name = "localCouncilNotFound";
         newError.message = `A separate standards council config with the code "${laConfig.separate_standards_council}" was expected for "${localCouncilUrl}" but does not exist`;
-        logEmitter.emit("functionFail", "laConfig.service", "getLaNotifyAddresses", newError);
+        logEmitter.emit(
+          "functionFail",
+          "laConfig.service",
+          "getLaConfigWithAllNotifyAddresses",
+          newError
+        );
         throw newError;
       }
     }
@@ -39,11 +44,16 @@ const getLaConfigWithAllNotifyAddresses = async (localCouncilUrl, allLaConfigDat
     const newError = new Error();
     newError.name = "localCouncilNotFound";
     newError.message = `Config for "${localCouncilUrl}" not found`;
-    logEmitter.emit("functionFail", "laConfig.service", "getLaNotifyAddresses", newError);
+    logEmitter.emit(
+      "functionFail",
+      "laConfig.service",
+      "getLaConfigWithAllNotifyAddresses",
+      newError
+    );
     throw newError;
   }
 
-  logEmitter.emit("functionSuccess", "laConfig.service", "getLaNotifyAddresses");
+  logEmitter.emit("functionSuccess", "laConfig.service", "getLaConfigWithAllNotifyAddresses");
   return laConfig;
 };
 

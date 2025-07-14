@@ -47,12 +47,12 @@ describe("LA Config Service", () => {
       expect(logEmitter.emit).toHaveBeenCalledWith(
         "functionCall",
         "laConfig.service",
-        "getLaNotifyAddresses"
+        "getLaConfigWithAllNotifyAddresses"
       );
       expect(logEmitter.emit).toHaveBeenCalledWith(
         "functionSuccess",
         "laConfig.service",
-        "getLaNotifyAddresses"
+        "getLaConfigWithAllNotifyAddresses"
       );
     });
 
@@ -65,12 +65,12 @@ describe("LA Config Service", () => {
       expect(logEmitter.emit).toHaveBeenCalledWith(
         "functionCall",
         "laConfig.service",
-        "getLaNotifyAddresses"
+        "getLaConfigWithAllNotifyAddresses"
       );
       expect(logEmitter.emit).toHaveBeenCalledWith(
         "functionSuccess",
         "laConfig.service",
-        "getLaNotifyAddresses"
+        "getLaConfigWithAllNotifyAddresses"
       );
     });
 
@@ -82,12 +82,12 @@ describe("LA Config Service", () => {
       expect(logEmitter.emit).toHaveBeenCalledWith(
         "functionCall",
         "laConfig.service",
-        "getLaNotifyAddresses"
+        "getLaConfigWithAllNotifyAddresses"
       );
       expect(logEmitter.emit).toHaveBeenCalledWith(
         "functionFail",
         "laConfig.service",
-        "getLaNotifyAddresses",
+        "getLaConfigWithAllNotifyAddresses",
         expect.objectContaining({
           name: "localCouncilNotFound",
           message: 'Config for "non-existent-url" not found'
@@ -107,12 +107,12 @@ describe("LA Config Service", () => {
       expect(logEmitter.emit).toHaveBeenCalledWith(
         "functionCall",
         "laConfig.service",
-        "getLaNotifyAddresses"
+        "getLaConfigWithAllNotifyAddresses"
       );
       expect(logEmitter.emit).toHaveBeenCalledWith(
         "functionFail",
         "laConfig.service",
-        "getLaNotifyAddresses",
+        "getLaConfigWithAllNotifyAddresses",
         expect.objectContaining({
           name: "localCouncilNotFound",
           message: expect.stringContaining("non-existent-council")
@@ -126,12 +126,12 @@ describe("LA Config Service", () => {
       expect(logEmitter.emit).toHaveBeenCalledWith(
         "functionCall",
         "laConfig.service",
-        "getLaNotifyAddresses"
+        "getLaConfigWithAllNotifyAddresses"
       );
       expect(logEmitter.emit).toHaveBeenCalledWith(
         "functionFail",
         "laConfig.service",
-        "getLaNotifyAddresses",
+        "getLaConfigWithAllNotifyAddresses",
         expect.objectContaining({
           name: "localCouncilNotFound",
           message: 'Config for "any-url" not found'

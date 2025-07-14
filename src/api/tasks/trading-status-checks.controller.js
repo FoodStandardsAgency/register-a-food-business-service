@@ -15,20 +15,18 @@ const { getAllLocalCouncilConfig } = require("../../connectors/configDb/configDb
 /**
  * Processes all due trading status checks for actionable registrations.
  *
- * @param {Object} req - Express request object.
- * @param {Object} res - Express response object.
  * @param {number} throttle - Throttle value for processing.
  * @returns {Promise<Array>} Array of results from processing trading status checks.
  */
-const processTradingStatusChecksDue = async (req, res, throttle) => {
+const processTradingStatusChecksDue = async (throttle) => {
   logEmitter.emit(
     "functionCall",
     "trading-status-checks.controller",
     "processTradingStatusChecksDue"
   );
 
-  let registrationsCollection = await findActionableRegistrations(throttle);
-  let allLaConfigData = await getAllLocalCouncilConfig();
+  const registrationsCollection = await findActionableRegistrations(throttle);
+  const allLaConfigData = await getAllLocalCouncilConfig();
 
   const result = await processTradingStatusChecks(registrationsCollection, allLaConfigData);
 
@@ -45,20 +43,18 @@ const processTradingStatusChecksDue = async (req, res, throttle) => {
  * Processes trading status checks for a single registration identified by fsaId.
  *
  * @param {string} fsaId - The registration ID.
- * @param {Object} req - Express request object.
- * @param {Object} res - Express response object.
  * @throws Will throw an error if the registration is not found.
  */
-const processTradingStatusChecksForId = async (fsaId, req, res) => {
+const processTradingStatusChecksForId = async (fsaId) => {
   logEmitter.emit(
     "functionCall",
     "trading-status-checks.controller",
     "processTradingStatusChecksForId"
   );
-  let allLaConfigData = await getAllLocalCouncilConfig();
+  const allLaConfigData = await getAllLocalCouncilConfig();
 
   // Get registration for the fsaId
-  let registration = await findRegistrationByFsaId(fsaId);
+  const registration = await findRegistrationByFsaId(fsaId);
 
   if (isEmpty(registration)) {
     let message = `Could not find registration with ID ${fsaId}`;

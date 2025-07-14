@@ -27,7 +27,7 @@ const tradingStatusRouter = () => {
    */
   router.post("/bulk/trading-status-checks", async (req, res) => {
     logEmitter.emit("functionCall", "trading-status-checks.router", "bulk/trading-status-checks");
-    let throttle = req.query && req.query.throttle ? req.query.throttle : 50;
+    let throttle = req.query && req.query.throttle ? parseInt(req.query.throttle, 10) : 50;
 
     try {
       const results = await processTradingStatusChecksDue(req, res, throttle);

@@ -40,8 +40,6 @@ const {
 } = require("./trading-status-checks.controller");
 
 describe("trading-status-checks.controller", () => {
-  let mockReq;
-  let mockRes;
   let mockRegistrations;
   let mockLaConfig;
   let mockLaConfigWithNotify;
@@ -54,13 +52,6 @@ describe("trading-status-checks.controller", () => {
 
     // Reset mock implementations
     jest.clearAllMocks();
-
-    // Set up mock request and response objects
-    mockReq = {};
-    mockRes = {
-      json: jest.fn(),
-      status: jest.fn(() => mockRes)
-    };
 
     // Mock data
     mockRegistrations = [
@@ -107,7 +98,7 @@ describe("trading-status-checks.controller", () => {
 
   describe("processTradingStatusChecksDue", () => {
     it("should process trading status checks for all actionable registrations", async () => {
-      const result = await processTradingStatusChecksDue(mockReq, mockRes, 10);
+      const result = await processTradingStatusChecksDue(10);
 
       expect(findActionableRegistrations).toHaveBeenCalledWith(10);
       expect(getAllLocalCouncilConfig).toHaveBeenCalled();
@@ -120,7 +111,7 @@ describe("trading-status-checks.controller", () => {
       // Make the process throw an error
       getLaConfigWithAllNotifyAddresses.mockRejectedValueOnce(new Error("Test error"));
 
-      const result = await processTradingStatusChecksDue(mockReq, mockRes, 10);
+      const result = await processTradingStatusChecksDue(10);
 
       expect(result).toEqual(
         expect.arrayContaining([expect.objectContaining({ error: expect.any(String) })])
@@ -130,7 +121,7 @@ describe("trading-status-checks.controller", () => {
 
   describe("processTradingStatusChecksForId", () => {
     it("should process trading status check for a specific registration", async () => {
-      await processTradingStatusChecksForId("TEST-123", mockReq, mockRes);
+      await processTradingStatusChecksForId("TEST-123");
 
       expect(findRegistrationByFsaId).toHaveBeenCalledWith("TEST-123");
       expect(getAllLocalCouncilConfig).toHaveBeenCalled();
@@ -142,9 +133,9 @@ describe("trading-status-checks.controller", () => {
     });
 
     it("should throw an error if the registration is not found", async () => {
-      await expect(
-        processTradingStatusChecksForId("NONEXISTENT", mockReq, mockRes)
-      ).rejects.toThrow(/Could not find registration/);
+      await expect(processTradingStatusChecksForId("NONEXISTENT")).rejects.toThrow(
+        /Could not find registration/
+      );
     });
   });
 
@@ -168,7 +159,7 @@ describe("trading-status-checks.controller", () => {
     it("should use default data retention period if environment variable is not set", async () => {
       delete process.env.DATA_RETENTION_PERIOD;
 
-      await processTradingStatusChecksDue(mockReq, mockRes, 5);
+      await processTradingStatusChecksDue(5);
 
       expect(getLaConfigWithAllNotifyAddresses).toHaveBeenCalled();
       // TBD: Catch more cases and test more conditions in these tests
@@ -176,7 +167,7 @@ describe("trading-status-checks.controller", () => {
     });
 
     it("should handle multiple registrations", async () => {
-      const result = await processTradingStatusChecksDue(mockReq, mockRes, 10);
+      const result = await processTradingStatusChecksDue(10);
 
       expect(result.length).toBeGreaterThanOrEqual(mockRegistrations.length);
     });
