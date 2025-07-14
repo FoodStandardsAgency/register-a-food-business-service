@@ -42,6 +42,7 @@ module.exports = {
     "!**/src/config.js",
     "!**/tests/*",
     "!**/src/connectors/configDb/configDb-seed/**",
+    "!**/seed-mongo*.js",
     "!**/src/**/*.router.js"
   ]
 };

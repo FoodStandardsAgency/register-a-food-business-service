@@ -178,7 +178,7 @@ const transformDataForNotify = (registration, lcContactConfig, i18n) => {
  */
 
 const sendEmails = async (emailsToSend, registration, fsaId, lcContactConfig) => {
-  logEmitter.emit("functionCall", "registration.service", "sendEmails");
+  logEmitter.emit("functionCall", "notifications.service", "sendEmails");
   logEmitter.emit(INFO, `Started sendEmails for FSAid: ${fsaId}`);
 
   let success = true;

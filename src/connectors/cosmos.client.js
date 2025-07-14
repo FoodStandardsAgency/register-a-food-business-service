@@ -1,6 +1,6 @@
 const mongodb = require("mongodb");
 const { COSMOSDB_URL } = require("../config");
-const { logEmitter } = require("../services/logging.service");
+const { INFO, logEmitter } = require("../services/logging.service");
 
 let client = undefined;
 let DB;
@@ -10,14 +10,13 @@ const establishConnectionToCosmos = async (dbName, collectionName) => {
 
   // If no connection or connection is not valid after downtime
   if (!client || !client.topology || !client.topology.isConnected()) {
+    console.log("Connecting to Cosmos DB..."); // This will help catch any unhandled promise rejections since fails when run in test cleanup
+    logEmitter.emit(INFO, `Connecting to Cosmos DB`);
     try {
       if (client && client.topology !== undefined) {
         client.close();
       }
-      client = await mongodb.MongoClient.connect(COSMOSDB_URL, {
-        useNewUrlParser: true,
-        useUnifiedTopology: true
-      });
+      client = await mongodb.MongoClient.connect(COSMOSDB_URL);
     } catch (err) {
       logEmitter.emit("functionFail", "cosmos.client.js", "establishConnectionToCosmos", err);
       throw err;

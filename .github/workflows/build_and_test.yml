@@ -46,6 +46,21 @@ jobs:
       - name: Lint
         run: npm run lint
 
+      - name: Start MongoDB
+        uses: supercharge/mongodb-github-action@v1.10.0
+        with:
+          mongodb-version: "6.0"
+
+      - name: Wait for MongoDB
+        run: |
+          for i in {1..30}; do
+            node -e "const {MongoClient} = require('mongodb'); const client = new MongoClient('mongodb://localhost:27017'); client.connect().then(() => client.db('admin').admin().ping()).then(() => {console.log('MongoDB ready'); process.exit(0);}).catch(() => process.exit(1));" && break
+            sleep 1
+          done
+
+      - name: Seed test data
+        run: node seed-mongo-test-data.js
+
       - name: Unit tests
         run: npm run test:unit:ci
 
@@ -56,6 +71,16 @@ jobs:
           junit_files: ./reports/TEST-unit.xml
           check_name: "Unit Test Results"
 
+      - name: Trading Status Integration Tests
+        run: npm run test:tradingstatus:integration
+
+      - name: Publish Trading Status Integration Test Results
+        uses: EnricoMi/publish-unit-test-result-action@v2
+        if: always()
+        with:
+          junit_files: ./reports/TEST-tradingstatus.xml
+          check_name: "Trading Status Integration Test Results"
+
       - name: Generate Coverage Summary
         uses: irongut/CodeCoverageSummary@v1.3.0
         with:
@@ -64,6 +89,16 @@ jobs:
           output: both
       - name: Generate Coverage Summary
         run: echo '## Coverage Summary ' >> $GITHUB_STEP_SUMMARY && cat code-coverage-results.md >> $GITHUB_STEP_SUMMARY
+
+      - name: Check coverage threshold
+        run: |
+          COV=$(grep -oP 'line-rate="\K[0-9.]+' coverage/cobertura-coverage.xml | head -1)
+          PERCENT=$(awk "BEGIN {print $COV * 100}")
+          echo "Total coverage: $PERCENT%"
+          if (( $(echo "$PERCENT < 80" | bc -l) )); then
+            echo "Coverage is below 80%!"
+            exit 1
+          fi
 
       - name: Prune dev dependencies
         run: npm prune --production
