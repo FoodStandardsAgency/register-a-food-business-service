@@ -66,14 +66,6 @@ const noLongerOnboardedCouncilConfig = {
   local_council_notify_emails: ["othercouncil@example.com"]
 };
 
-// Create mock req and res objects for the controller
-const mockReq = {};
-const mockRes = {
-  status: jest.fn().mockReturnThis(),
-  send: jest.fn().mockReturnThis(),
-  json: jest.fn().mockReturnThis()
-};
-
 const getTestRegistration = (fsaRn, council, submissionDate, nextStatusDate, language) => {
   return {
     _id: fsaRn + Math.random().toString(36).slice(2),
@@ -164,7 +156,7 @@ describe("Trading Status Checks: Registration Processing Integration Tests", () 
       await registrationsCollection.insertOne(registration);
 
       // Act
-      const results = await processTradingStatusChecksDue(mockReq, mockRes, 50);
+      const results = await processTradingStatusChecksDue(50);
 
       // Assert: Verify the response from the controller
       expect(results).toBeDefined();
@@ -230,7 +222,7 @@ describe("Trading Status Checks: Registration Processing Integration Tests", () 
       await registrationsCollection.insertOne(registration);
 
       // Act
-      const results = await processTradingStatusChecksDue(mockReq, mockRes, 50);
+      const results = await processTradingStatusChecksDue(50);
 
       // Assert: Verify the response from the controller
       expect(results).toBeDefined();
@@ -307,7 +299,7 @@ describe("Trading Status Checks: Registration Processing Integration Tests", () 
     await registrationsCollection.insertOne(registration);
 
     // Act
-    const results = await processTradingStatusChecksDue(mockReq, mockRes, 50);
+    const results = await processTradingStatusChecksDue(50);
 
     // Assert: Verify the response from the controller
     expect(results).toBeDefined();
@@ -373,7 +365,7 @@ describe("Trading Status Checks: Registration Processing Integration Tests", () 
     await registrationsCollection.insertOne(registration);
 
     // Act
-    const results = await processTradingStatusChecksDue(mockReq, mockRes, 50);
+    const results = await processTradingStatusChecksDue(50);
 
     // Assert: Verify the response from the controller
     expect(results).toBeDefined();
@@ -440,7 +432,7 @@ describe("Trading Status Checks: Registration Processing Integration Tests", () 
     await registrationsCollection.insertOne(registration);
 
     // Act
-    const results = await processTradingStatusChecksDue(mockReq, mockRes, 50);
+    const results = await processTradingStatusChecksDue(50);
 
     // Assert: Verify the response from the controller
     expect(results).toBeDefined();
@@ -507,7 +499,7 @@ describe("Trading Status Checks: Registration Processing Integration Tests", () 
     await registrationsCollection.insertOne(registration);
 
     // Act
-    const results = await processTradingStatusChecksDue(mockReq, mockRes, 50);
+    const results = await processTradingStatusChecksDue(50);
 
     // Assert: Verify the response from the controller
     expect(results).toBeDefined();
@@ -602,7 +594,7 @@ describe("Trading Status Checks: Registration Processing Integration Tests", () 
     await registrationsCollection.insertOne(unProcessedRegistration);
 
     // Act
-    const results = await processTradingStatusChecksDue(mockReq, mockRes, 50);
+    const results = await processTradingStatusChecksDue(50);
 
     // Assert: Verify the response from the controller
     const deleteDate = previousStatusDate2.clone().add(7, "years");
@@ -652,7 +644,7 @@ describe("Trading Status Checks: Registration Processing Integration Tests", () 
     await registrationsCollection.insertOne(registration);
 
     // Act
-    const results = await processTradingStatusChecksDue(mockReq, mockRes, 50);
+    const results = await processTradingStatusChecksDue(10);
 
     // Assert: Verify the response from the controller
     expect(results).toBeDefined();
@@ -680,11 +672,7 @@ describe("Trading Status Checks: Registration Processing Integration Tests", () 
       await registrationsCollection.insertOne(registrationToRemainUnprocessed);
       await registrationsCollection.insertOne(registrationToUpdate);
 
-      const result = await processTradingStatusChecksForId(
-        `${ENSURE_DELETED_TEST_PREFIX}2`,
-        mockReq,
-        mockRes
-      );
+      const result = await processTradingStatusChecksForId(`${ENSURE_DELETED_TEST_PREFIX}2`);
 
       // Assert: Verify the response from the controller
       expect(result).toBeDefined();
@@ -750,9 +738,9 @@ describe("Trading Status Checks: Registration Processing Integration Tests", () 
 
     it("should throw an error if the registration is not found", async () => {
       // Expect the controller to throw an error for a non-existent ID
-      await expect(
-        processTradingStatusChecksForId("NONEXISTENT-ID", mockReq, mockRes)
-      ).rejects.toThrow(/Could not find registration with ID/);
+      await expect(processTradingStatusChecksForId("NONEXISTENT-ID")).rejects.toThrow(
+        /Could not find registration with ID/
+      );
     });
   });
 
@@ -785,7 +773,7 @@ describe("Trading Status Checks: Registration Processing Integration Tests", () 
 
     it("should process multiple registrations in bulk", async () => {
       // Process bulk trading status checks
-      const results = await processTradingStatusChecksDue(mockReq, mockRes, 50);
+      const results = await processTradingStatusChecksDue(50);
 
       // Verify results were returned
       expect(results).toBeDefined();
