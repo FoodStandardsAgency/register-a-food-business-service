@@ -40,13 +40,13 @@ describe("/api/trading-status-checks route: ", () => {
 
     it("Should call processTradingStatusChecks", async () => {
       await handler(req, res);
-      expect(processTradingStatusChecksDue).toHaveBeenLastCalledWith(req, res, 50);
+      expect(processTradingStatusChecksDue).toHaveBeenLastCalledWith(50);
     });
 
     it("Should call processTradingStatusChecks with throttle set to 10", async () => {
       req = { query: { throttle: 10 } };
       await handler(req, res);
-      expect(processTradingStatusChecksDue).toHaveBeenLastCalledWith(req, res, 10);
+      expect(processTradingStatusChecksDue).toHaveBeenLastCalledWith(10);
     });
   });
 
@@ -89,7 +89,7 @@ describe("/api/trading-status-checks route: ", () => {
 
     it("Should call processTradingStatusChecksForId", async () => {
       await handler(req, res);
-      expect(processTradingStatusChecksForId).toHaveBeenLastCalledWith(fsaId, req, res);
+      expect(processTradingStatusChecksForId).toHaveBeenLastCalledWith(fsaId);
     });
   });
 

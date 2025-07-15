@@ -30,7 +30,7 @@ const tradingStatusRouter = () => {
     let throttle = req.query && req.query.throttle ? parseInt(req.query.throttle, 10) : 50;
 
     try {
-      const results = await processTradingStatusChecksDue(req, res, throttle);
+      const results = await processTradingStatusChecksDue(throttle);
       await success(res, {
         message: `Processed trading status checks`,
         attempted: results,
@@ -63,7 +63,7 @@ const tradingStatusRouter = () => {
     logEmitter.emit("functionCall", "trading-status-checks.router", "trading-status-checks/:fsaId");
     const { fsaId = null } = req.params;
     try {
-      await processTradingStatusChecksForId(fsaId, req, res);
+      await processTradingStatusChecksForId(fsaId);
       await success(res, {
         message: `Processed trading status checks for ${fsaId}`
       });
