@@ -200,6 +200,7 @@ const transformDataForNotify = (registration, laConfig, actionType, i18nUtil) =>
 
   // Format submission date
   const formattedSubmissionDate = moment(registration.reg_submission_date).format("DD MMM YYYY");
+  const lang = registration.submission_language ?? "en";
 
   // Create data object for Notify template
   return {
@@ -209,8 +210,8 @@ const transformDataForNotify = (registration, laConfig, actionType, i18nUtil) =>
     reg_submission_date: formattedSubmissionDate,
     trading_name: registration.establishment.establishment_details.establishment_trading_name,
     operator_name: operatorName,
-    trading_yes_link: `${FRONT_END_URL}tradingstatus/stilltrading/${fsaId}?token=${encryptedId}`,
-    trading_no_link: `${FRONT_END_URL}tradingstatus/nolongertrading/${fsaId}?token=${encryptedId}`
+    trading_yes_link: `${FRONT_END_URL}tradingstatus/stilltrading/${fsaId}?token=${encryptedId}&lang=${lang}`,
+    trading_no_link: `${FRONT_END_URL}tradingstatus/nolongertrading/${fsaId}?token=${encryptedId}&lang=${lang}`
   };
 };
 
