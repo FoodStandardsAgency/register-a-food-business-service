@@ -72,8 +72,8 @@ const getTestRegistration = (fsaRn, council, submissionDate, nextStatusDate, lan
     "fsa-rn": ENSURE_DELETED_TEST_PREFIX + fsaRn,
     local_council_url: council.local_council_url,
     reg_submission_date:
-      submissionDate || moment().subtract(3, "months").subtract(1, "days").toDate(),
-    next_status_check: nextStatusDate || moment().subtract(1, "days").toDate(),
+      submissionDate?.toDate() || moment().subtract(3, "months").subtract(1, "days").toDate(),
+    next_status_check: nextStatusDate?.toDate() || moment().subtract(1, "days").toDate(),
     submission_language: language || "en",
     establishment: {
       establishment_details: {
@@ -273,11 +273,7 @@ describe("Trading Status Checks: Registration Processing Integration Tests", () 
 
   it("should process a single registration successfully resulting in a REGULAR_CHECK", async () => {
     // Arrange
-    const registration = getTestRegistration(
-      "1",
-      testCouncilConfig,
-      moment().subtract(3, "years").toDate()
-    );
+    const registration = getTestRegistration("1", testCouncilConfig, moment().subtract(3, "years"));
     const previousStatusDate = moment().subtract(6, "months").toDate();
     registration.next_status_check = moment().subtract(1, "days").toDate();
     registration.status = {
@@ -552,7 +548,7 @@ describe("Trading Status Checks: Registration Processing Integration Tests", () 
     const registration = getTestRegistration(
       "1",
       testCouncilConfig,
-      moment().subtract(10, "years").toDate()
+      moment().subtract(10, "years")
     );
     const previousStatusDate = moment().subtract(7, "years").toDate();
     registration.next_status_check = moment().subtract(1, "days").toDate();
@@ -573,7 +569,7 @@ describe("Trading Status Checks: Registration Processing Integration Tests", () 
     const unProcessedRegistration = getTestRegistration(
       "2",
       testCouncilConfig,
-      moment().subtract(10, "years").toDate()
+      moment().subtract(10, "years")
     );
     unProcessedRegistration.confirmed_not_trading = moment()
       .subtract(7, "years")
