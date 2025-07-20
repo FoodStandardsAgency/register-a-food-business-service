@@ -213,7 +213,7 @@ describe("Trading Status Checks: Registration Processing Integration Tests", () 
         trading_status_checks: [
           {
             type: "INITIAL_CHECK",
-            email: registration.establishment.operator.operator_email,
+            address: registration.establishment.operator.operator_email,
             time: previousStatusDate,
             sent: true
           }
@@ -280,13 +280,13 @@ describe("Trading Status Checks: Registration Processing Integration Tests", () 
       trading_status_checks: [
         {
           type: "INITIAL_CHECK",
-          email: registration.establishment.operator.operator_email,
+          address: registration.establishment.operator.operator_email,
           time: moment().subtract(6, "months").subtract(2, "weeks").toDate(),
           sent: true
         },
         {
           type: "INITIAL_CHECK_CHASE",
-          email: registration.establishment.operator.operator_email,
+          address: registration.establishment.operator.operator_email,
           time: previousStatusDate,
           sent: true
         }
@@ -352,7 +352,7 @@ describe("Trading Status Checks: Registration Processing Integration Tests", () 
       trading_status_checks: [
         {
           type: "REGULAR_CHECK",
-          email: registration.establishment.operator.operator_email,
+          address: registration.establishment.operator.operator_email,
           time: previousStatusDate,
           sent: true
         }
@@ -419,7 +419,7 @@ describe("Trading Status Checks: Registration Processing Integration Tests", () 
       trading_status_checks: [
         {
           type: "REGULAR_CHECK",
-          email: registration.establishment.operator.operator_email,
+          address: registration.establishment.operator.operator_email,
           time: previousStatusDate,
           sent: true
         }
@@ -486,7 +486,7 @@ describe("Trading Status Checks: Registration Processing Integration Tests", () 
       trading_status_checks: [
         {
           type: "REGULAR_CHECK",
-          email: registration.establishment.operator.operator_email,
+          address: registration.establishment.operator.operator_email,
           time: previousStatusDate,
           sent: true
         }
@@ -557,7 +557,7 @@ describe("Trading Status Checks: Registration Processing Integration Tests", () 
       trading_status_checks: [
         {
           type: "FINISHED_TRADING_LA",
-          email: testCouncilConfig.local_council_notify_emails[0],
+          address: testCouncilConfig.local_council_notify_emails[0],
           time: previousStatusDate,
           sent: true
         }
@@ -580,7 +580,7 @@ describe("Trading Status Checks: Registration Processing Integration Tests", () 
       trading_status_checks: [
         {
           type: "FINISHED_TRADING_LA",
-          email: testCouncilConfig.local_council_notify_emails[0],
+          address: testCouncilConfig.local_council_notify_emails[0],
           time: previousStatusDate2.toDate(),
           sent: true
         }
@@ -631,7 +631,7 @@ describe("Trading Status Checks: Registration Processing Integration Tests", () 
       trading_status_checks: [
         {
           type: "REGULAR_CHECK",
-          email: registration.establishment.operator.operator_email,
+          address: registration.establishment.operator.operator_email,
           time: previousStatusDate,
           sent: true
         }

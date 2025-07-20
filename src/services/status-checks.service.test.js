@@ -143,7 +143,7 @@ describe("Status Checks Service", () => {
           trading_status_checks: [
             {
               type: INITIAL_CHECK,
-              email: "test@example.com",
+              address: "test@example.com",
               time: new Date("2025-07-01"),
               sent: false
             }
@@ -191,13 +191,13 @@ describe("Status Checks Service", () => {
           trading_status_checks: [
             {
               type: INITIAL_CHECK,
-              email: "test@example.com",
+              address: "test@example.com",
               time: new Date("2025-07-01"),
               sent: false
             },
             {
               type: INITIAL_CHECK,
-              email: "test@example.com",
+              address: "test@example.com",
               time: new Date("2025-07-01"),
               sent: false
             }
@@ -222,7 +222,7 @@ describe("Status Checks Service", () => {
       // Assert
       expect(result.fsaId).toBe("FSA-123456");
       expect(result.error).toBe(
-        "At least one previously unsuccessful email failed again and was rescheduled to be sent again"
+        "At least one previously unsuccessful email failed again and will be retried at a later date"
       );
       expect(sendSingleEmail).toHaveBeenCalled();
       expect(updateNextStatusDate).toHaveBeenCalledWith(
@@ -254,7 +254,7 @@ describe("Status Checks Service", () => {
           trading_status_checks: [
             {
               type: INITIAL_CHECK,
-              email: "test@example.com",
+              address: "test@example.com",
               time: new Date(),
               sent: true
             }
@@ -328,10 +328,17 @@ describe("Status Checks Service", () => {
       const result = await sendTradingStatusEmails(mockRegistration, mockLaConfig, emailsToSend);
 
       // Assert
-      expect(result).toBe(true);
+      expect(result.every((email) => email.success)).toBe(true);
       expect(sendSingleEmail).toHaveBeenCalledTimes(2);
       expect(updateTradingStatusCheck).toHaveBeenCalledTimes(2);
-      expect(logEmitter.emit).toHaveBeenCalledWith(INFO, "Email notification success");
+      expect(logEmitter.emit).toHaveBeenCalledWith(
+        INFO,
+        "Sent INITIAL_CHECK email to test1@example.com for FSA id: FSA-123456"
+      );
+      expect(logEmitter.emit).toHaveBeenCalledWith(
+        INFO,
+        "Started sendTradingStatusEmails for FSA id: FSA-123456"
+      );
       expect(logEmitter.emit).toHaveBeenCalledWith(
         "functionSuccess",
         "status-checks.service",
@@ -346,14 +353,21 @@ describe("Status Checks Service", () => {
       const result = await sendTradingStatusEmails(mockRegistration, mockLaConfig, emailsToSend);
 
       // Assert
-      expect(result).toBe(false);
+      expect(result.every((email) => email.success)).toBe(false);
       expect(sendSingleEmail).toHaveBeenCalledTimes(2);
       expect(updateTradingStatusCheck).toHaveBeenCalledTimes(2);
-      expect(logEmitter.emit).toHaveBeenCalledWith(WARN, "Email notification failure");
       expect(logEmitter.emit).toHaveBeenCalledWith(
-        "functionFail",
+        "functionCall",
         "status-checks.service",
         "sendTradingStatusEmails"
+      );
+      expect(logEmitter.emit).toHaveBeenCalledWith(
+        ERROR,
+        "Failed to send INITIAL_CHECK email to test1@example.com for FSA id: FSA-123456"
+      );
+      expect(logEmitter.emit).toHaveBeenCalledWith(
+        INFO,
+        "Started sendTradingStatusEmails for FSA id: FSA-123456"
       );
     });
     test("should handle mixed success and failure", async () => {
@@ -367,20 +381,20 @@ describe("Status Checks Service", () => {
       const result = await sendTradingStatusEmails(mockRegistration, mockLaConfig, emailsToSend);
 
       // Assert
-      expect(result).toBe(false);
+      expect(result.some((email) => email.success)).toBe(true);
+      expect(result.some((email) => !email.success)).toBe(true);
       expect(sendSingleEmail).toHaveBeenCalledTimes(2);
       expect(updateTradingStatusCheck).toHaveBeenCalledTimes(2);
 
       // Should log for both success and failure, but overall result is failure
       expect(logEmitter.emit).toHaveBeenCalledWith(
         INFO,
-        "Sent INITIAL_CHECK email to test1@example.com"
+        "Sent INITIAL_CHECK email to test1@example.com for FSA id: FSA-123456"
       );
       expect(logEmitter.emit).toHaveBeenCalledWith(
         ERROR,
-        "Failed to send INITIAL_CHECK email to test2@example.com"
+        "Failed to send INITIAL_CHECK email to test2@example.com for FSA id: FSA-123456"
       );
-      expect(logEmitter.emit).toHaveBeenCalledWith(WARN, "Email notification failure");
     });
     test("should use correct language for i18n", async () => {
       // Arrange
