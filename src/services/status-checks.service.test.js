@@ -167,8 +167,71 @@ describe("Status Checks Service", () => {
 
       // Assert
       expect(result.fsaId).toBe("FSA-123456");
-      expect(result.message).toBe("Previously unsuccessful emails sent");
+      expect(result.message).toBe("Previously unsuccessful emails sent successfully");
       expect(sendSingleEmail).toHaveBeenCalled();
+    });
+
+    test("should reschedule unsuccessful checks when they fail again", async () => {
+      // Arrange
+      const mockRegistration = {
+        _id: "reg123",
+        "fsa-rn": "FSA-123456",
+        submission_language: "en",
+        reg_submission_date: "2025-06-01",
+        establishment: {
+          operator: {
+            operator_first_name: "John",
+            operator_last_name: "Doe"
+          },
+          establishment_details: {
+            establishment_trading_name: "Test Food Business"
+          }
+        },
+        status: {
+          trading_status_checks: [
+            {
+              type: INITIAL_CHECK,
+              email: "test@example.com",
+              time: new Date("2025-07-01"),
+              sent: false
+            },
+            {
+              type: INITIAL_CHECK,
+              email: "test@example.com",
+              time: new Date("2025-07-01"),
+              sent: false
+            }
+          ]
+        }
+      };
+
+      const mockLaConfig = {
+        local_council: "Test Council",
+        emailReplyToId: "reply-123",
+        trading_status: {
+          initial_check: 30,
+          regular_check: 180
+        }
+      };
+
+      sendSingleEmail.mockResolvedValue(null);
+
+      // Act
+      const result = await processTradingStatus(mockRegistration, mockLaConfig);
+
+      // Assert
+      expect(result.fsaId).toBe("FSA-123456");
+      expect(result.error).toBe(
+        "At least one previously unsuccessful email failed again and was rescheduled to be sent again"
+      );
+      expect(sendSingleEmail).toHaveBeenCalled();
+      expect(updateNextStatusDate).toHaveBeenCalledWith(
+        "FSA-123456",
+        expect.objectContaining({
+          _isAMomentObject: true,
+          _isValid: true
+        })
+      );
     });
 
     test("should reschedule action when action time is in the future", async () => {
@@ -216,25 +279,6 @@ describe("Status Checks Service", () => {
       expect(result.message).toContain("rescheduled for");
       expect(updateNextStatusDate).toHaveBeenCalledWith("FSA-123456", expect.anything());
     });
-  });
-
-  describe("getTradingStatusAction", () => {
-    const tradingStatusDates = {
-      valid: true,
-      trading_status_checks: [
-        {
-          type: INITIAL_REGISTRATION,
-          time: new Date("2025-06-01")
-        }
-      ]
-    };
-
-    const laConfig = {
-      trading_status: {
-        initial_check: 30,
-        regular_check: 180
-      }
-    };
   });
 
   describe("sendTradingStatusEmails", () => {

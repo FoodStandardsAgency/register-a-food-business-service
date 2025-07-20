@@ -35,7 +35,8 @@ const {
   FINISHED_TRADING_LA,
   STILL_TRADING_LA,
   DELETE_REGISTRATION,
-  FRONT_END_URL
+  FRONT_END_URL,
+  WEEKS_TIME_INTERVAL
 } = require("../config");
 
 /**
@@ -83,10 +84,21 @@ const handleUnsuccessfulChecks = async (registration, laConfig, unsuccessfulChec
   }));
 
   const success = await sendTradingStatusEmails(registration, laConfig, emailsToSend);
-
-  return success
-    ? { fsaId, message: "Previously unsuccessful emails sent" }
-    : { fsaId, error: "At least one previously unsuccessful email failed again" };
+  if (success) {
+    return { fsaId, message: "Previously unsuccessful emails sent successfully" };
+  } else {
+    await updateNextStatusDate(
+      fsaId,
+      moment()
+        .add(Math.floor(Math.random() * 5) + 1, WEEKS_TIME_INTERVAL)
+        .add(Math.floor(Math.random() * 5) + 1, "days")
+    );
+    return {
+      fsaId,
+      error:
+        "At least one previously unsuccessful email failed again and was rescheduled to be sent again"
+    };
+  }
 };
 
 /**
