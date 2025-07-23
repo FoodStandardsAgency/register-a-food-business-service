@@ -251,7 +251,7 @@ const getStatusTextForActionType = (actionType, i18nUtil) => {
     case STILL_TRADING_LA:
       return i18nUtil.tLa("Still trading");
     case FINISHED_TRADING_LA:
-      return i18nUtil.tLa("NO LONGER TRADING");
+      return i18nUtil.tLa("No longer trading");
     case INITIAL_CHECK_CHASE:
     case REGULAR_CHECK_CHASE:
       return i18nUtil.tLa(" - reminder");
