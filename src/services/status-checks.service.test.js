@@ -1,5 +1,7 @@
 "use strict";
 
+const i18n = require("../utils/i18n/i18n");
+
 const {
   INITIAL_REGISTRATION,
   INITIAL_CHECK,
@@ -74,6 +76,7 @@ const {
 // Import the service to test
 const {
   processTradingStatus,
+  getStatusTextForActionType,
   getTradingStatusAction,
   sendTradingStatusEmails
 } = require("./status-checks.service");
@@ -453,6 +456,30 @@ describe("Status Checks Service", () => {
         "FSA-123456",
         INITIAL_CHECK
       );
+    });
+  });
+
+  describe("getStatusTextForActionType", () => {
+    test("should return english text", async () => {
+      // Arrange
+      const i18nUtil = new i18n("en");
+
+      // Act
+      const text = await getStatusTextForActionType(STILL_TRADING_LA, i18nUtil);
+
+      // Assert
+      expect(text).toBe("Still trading");
+    });
+
+    test("should return welsh text", async () => {
+      // Arrange
+      const i18nUtil = new i18n("cy");
+
+      // Act
+      const text = await getStatusTextForActionType(STILL_TRADING_LA, i18nUtil);
+
+      // Assert
+      expect(text).toBe("Yn dal i fasnachu");
     });
   });
 });

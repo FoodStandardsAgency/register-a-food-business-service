@@ -223,8 +223,9 @@ const transformDataForNotify = (registration, laConfig, actionType, i18nUtil) =>
   const operatorName = `${operatorFirstName} ${operatorLastName}`;
 
   // Format submission date
-  const formattedSubmissionDate = moment(registration.reg_submission_date).format("DD MMM YYYY");
   const lang = registration.submission_language ?? "en";
+  moment.locale(lang);
+  const formattedSubmissionDate = moment(registration.reg_submission_date).format("DD MMM YYYY");
 
   // Create data object for Notify template
   return {
@@ -249,9 +250,9 @@ const transformDataForNotify = (registration, laConfig, actionType, i18nUtil) =>
 const getStatusTextForActionType = (actionType, i18nUtil) => {
   switch (actionType) {
     case STILL_TRADING_LA:
-      return i18nUtil.tLa("Still trading");
+      return i18nUtil.t("Still trading");
     case FINISHED_TRADING_LA:
-      return i18nUtil.tLa("No longer trading");
+      return i18nUtil.t("No longer trading");
     case INITIAL_CHECK_CHASE:
     case REGULAR_CHECK_CHASE:
       return i18nUtil.tLa(" - reminder");
@@ -346,6 +347,7 @@ const sendEmailAndRecordStatus = async (registration, laConfig, emailToSend, i18
 
 module.exports = {
   processTradingStatus,
+  getStatusTextForActionType,
   getTradingStatusAction,
   sendTradingStatusEmails,
   executeAction
