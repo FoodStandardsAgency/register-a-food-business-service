@@ -224,12 +224,12 @@ const transformDataForNotify = (registration, laConfig, actionType, i18nUtil) =>
 const getStatusTextForActionType = (actionType) => {
   switch (actionType) {
     case STILL_TRADING_LA:
-      return "still trading";
+      return "Still Trading";
     case FINISHED_TRADING_LA:
-      return "no longer trading";
+      return "No Longer Trading";
     case INITIAL_CHECK_CHASE:
     case REGULAR_CHECK_CHASE:
-      return " - reminder";
+      return " - Reminder";
     default:
       return undefined; // No additional text needed for other action types
   }
