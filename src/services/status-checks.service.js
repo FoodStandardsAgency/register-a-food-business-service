@@ -215,7 +215,7 @@ const transformDataForNotify = (registration, laConfig, actionType, i18nUtil) =>
   const fsaId = registration["fsa-rn"];
 
   // Determine status text based on action type
-  const status = getStatusTextForActionType(actionType, i18nUtil);
+  const status = i18nUtil.t(getStatusTextForActionType(actionType));
 
   // Build operator name from first and last name
   const operatorFirstName = registration.establishment.operator.operator_first_name;
@@ -247,15 +247,15 @@ const transformDataForNotify = (registration, laConfig, actionType, i18nUtil) =>
  * @param {Object} i18nUtil - The internationalization utility.
  * @returns {string} The status text to use in notifications.
  */
-const getStatusTextForActionType = (actionType, i18nUtil) => {
+const getStatusTextForActionType = (actionType) => {
   switch (actionType) {
     case STILL_TRADING_LA:
-      return i18nUtil.t("Still trading");
+      return "Still Trading";
     case FINISHED_TRADING_LA:
-      return i18nUtil.t("No longer trading");
+      return "No Longer Trading";
     case INITIAL_CHECK_CHASE:
     case REGULAR_CHECK_CHASE:
-      return i18nUtil.tLa(" - reminder");
+      return " - Reminder";
     default:
       return undefined; // No additional text needed for other action types
   }

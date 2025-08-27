@@ -51,6 +51,7 @@ jest.mock("../utils/crypto", () => ({
 
 // Mock for i18n class
 const mockTLa = jest.fn((text) => `${text} (mock translated)`);
+const mockT = jest.fn((text) => `${text} (mock translated)`);
 let lastLanguage = null;
 
 jest.mock("../utils/i18n/i18n", () => {
@@ -60,6 +61,7 @@ jest.mock("../utils/i18n/i18n", () => {
       lastLanguage = language || "en";
       this.language = language || "en";
       this.tLa = mockTLa;
+      this.t = mockTLa;
     }
   };
 });
@@ -465,10 +467,10 @@ describe("Status Checks Service", () => {
       const i18nUtil = new i18n("en");
 
       // Act
-      const text = await getStatusTextForActionType(STILL_TRADING_LA, i18nUtil);
+      const text = i18nUtil.t(getStatusTextForActionType(STILL_TRADING_LA));
 
       // Assert
-      expect(text).toBe("Still trading");
+      expect(text).toBe("Still Trading");
     });
 
     test("should return welsh text", async () => {
@@ -476,10 +478,10 @@ describe("Status Checks Service", () => {
       const i18nUtil = new i18n("cy");
 
       // Act
-      const text = await getStatusTextForActionType(STILL_TRADING_LA, i18nUtil);
+      const text = i18nUtil.t(getStatusTextForActionType(STILL_TRADING_LA));
 
       // Assert
-      expect(text).toBe("Yn dal i fasnachu");
+      expect(text).toBe("Yn Dal i Fasnachu");
     });
   });
 });
