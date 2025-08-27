@@ -191,7 +191,7 @@ const transformDataForNotify = (registration, laConfig, actionType, i18nUtil) =>
   const fsaId = registration["fsa-rn"];
 
   // Determine status text based on action type
-  const status = getStatusTextForActionType(actionType);
+  const status = i18nUtil.t(getStatusTextForActionType(actionType));
 
   // Build operator name from first and last name
   const operatorFirstName = registration.establishment.operator.operator_first_name;

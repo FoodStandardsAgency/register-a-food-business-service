@@ -49,6 +49,7 @@ jest.mock("../utils/crypto", () => ({
 
 // Mock for i18n class
 const mockTLa = jest.fn((text) => `${text} (mock translated)`);
+const mockT = jest.fn((text) => `${text} (mock translated)`);
 let lastLanguage = null;
 
 jest.mock("../utils/i18n/i18n", () => {
@@ -58,6 +59,7 @@ jest.mock("../utils/i18n/i18n", () => {
       lastLanguage = language || "en";
       this.language = language || "en";
       this.tLa = mockTLa;
+      this.t = mockTLa;
     }
   };
 });
