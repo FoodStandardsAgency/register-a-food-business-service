@@ -1,5 +1,7 @@
 "use strict";
 
+const i18n = require("../utils/i18n/i18n");
+
 const {
   INITIAL_REGISTRATION,
   INITIAL_CHECK,
@@ -76,6 +78,7 @@ const {
 // Import the service to test
 const {
   processTradingStatus,
+  getStatusTextForActionType,
   getTradingStatusAction,
   sendTradingStatusEmails
 } = require("./status-checks.service");
@@ -145,7 +148,7 @@ describe("Status Checks Service", () => {
           trading_status_checks: [
             {
               type: INITIAL_CHECK,
-              email: "test@example.com",
+              address: "test@example.com",
               time: new Date("2025-07-01"),
               sent: false
             }
@@ -169,8 +172,71 @@ describe("Status Checks Service", () => {
 
       // Assert
       expect(result.fsaId).toBe("FSA-123456");
-      expect(result.message).toBe("Previously unsuccessful emails sent");
+      expect(result.message).toBe("Previously unsuccessful emails sent successfully");
       expect(sendSingleEmail).toHaveBeenCalled();
+    });
+
+    test("should reschedule unsuccessful checks when they fail again", async () => {
+      // Arrange
+      const mockRegistration = {
+        _id: "reg123",
+        "fsa-rn": "FSA-123456",
+        submission_language: "en",
+        reg_submission_date: "2025-06-01",
+        establishment: {
+          operator: {
+            operator_first_name: "John",
+            operator_last_name: "Doe"
+          },
+          establishment_details: {
+            establishment_trading_name: "Test Food Business"
+          }
+        },
+        status: {
+          trading_status_checks: [
+            {
+              type: INITIAL_CHECK,
+              address: "test@example.com",
+              time: new Date("2025-07-01"),
+              sent: false
+            },
+            {
+              type: INITIAL_CHECK,
+              address: "test@example.com",
+              time: new Date("2025-07-01"),
+              sent: false
+            }
+          ]
+        }
+      };
+
+      const mockLaConfig = {
+        local_council: "Test Council",
+        emailReplyToId: "reply-123",
+        trading_status: {
+          initial_check: 30,
+          regular_check: 180
+        }
+      };
+
+      sendSingleEmail.mockResolvedValue(null);
+
+      // Act
+      const result = await processTradingStatus(mockRegistration, mockLaConfig);
+
+      // Assert
+      expect(result.fsaId).toBe("FSA-123456");
+      expect(result.error).toBe(
+        "At least one previously unsuccessful email failed again and will be retried at a later date"
+      );
+      expect(sendSingleEmail).toHaveBeenCalled();
+      expect(updateNextStatusDate).toHaveBeenCalledWith(
+        "FSA-123456",
+        expect.objectContaining({
+          _isAMomentObject: true,
+          _isValid: true
+        })
+      );
     });
 
     test("should reschedule action when action time is in the future", async () => {
@@ -193,7 +259,7 @@ describe("Status Checks Service", () => {
           trading_status_checks: [
             {
               type: INITIAL_CHECK,
-              email: "test@example.com",
+              address: "test@example.com",
               time: new Date(),
               sent: true
             }
@@ -218,25 +284,6 @@ describe("Status Checks Service", () => {
       expect(result.message).toContain("rescheduled for");
       expect(updateNextStatusDate).toHaveBeenCalledWith("FSA-123456", expect.anything());
     });
-  });
-
-  describe("getTradingStatusAction", () => {
-    const tradingStatusDates = {
-      valid: true,
-      trading_status_checks: [
-        {
-          type: INITIAL_REGISTRATION,
-          time: new Date("2025-06-01")
-        }
-      ]
-    };
-
-    const laConfig = {
-      trading_status: {
-        initial_check: 30,
-        regular_check: 180
-      }
-    };
   });
 
   describe("sendTradingStatusEmails", () => {
@@ -286,10 +333,17 @@ describe("Status Checks Service", () => {
       const result = await sendTradingStatusEmails(mockRegistration, mockLaConfig, emailsToSend);
 
       // Assert
-      expect(result).toBe(true);
+      expect(result.every((email) => email.success)).toBe(true);
       expect(sendSingleEmail).toHaveBeenCalledTimes(2);
       expect(updateTradingStatusCheck).toHaveBeenCalledTimes(2);
-      expect(logEmitter.emit).toHaveBeenCalledWith(INFO, "Email notification success");
+      expect(logEmitter.emit).toHaveBeenCalledWith(
+        INFO,
+        "Sent INITIAL_CHECK email to test1@example.com for FSA id: FSA-123456"
+      );
+      expect(logEmitter.emit).toHaveBeenCalledWith(
+        INFO,
+        "Started sendTradingStatusEmails for FSA id: FSA-123456"
+      );
       expect(logEmitter.emit).toHaveBeenCalledWith(
         "functionSuccess",
         "status-checks.service",
@@ -304,14 +358,21 @@ describe("Status Checks Service", () => {
       const result = await sendTradingStatusEmails(mockRegistration, mockLaConfig, emailsToSend);
 
       // Assert
-      expect(result).toBe(false);
+      expect(result.every((email) => email.success)).toBe(false);
       expect(sendSingleEmail).toHaveBeenCalledTimes(2);
       expect(updateTradingStatusCheck).toHaveBeenCalledTimes(2);
-      expect(logEmitter.emit).toHaveBeenCalledWith(WARN, "Email notification failure");
       expect(logEmitter.emit).toHaveBeenCalledWith(
-        "functionFail",
+        "functionCall",
         "status-checks.service",
         "sendTradingStatusEmails"
+      );
+      expect(logEmitter.emit).toHaveBeenCalledWith(
+        ERROR,
+        "Failed to send INITIAL_CHECK email to test1@example.com for FSA id: FSA-123456"
+      );
+      expect(logEmitter.emit).toHaveBeenCalledWith(
+        INFO,
+        "Started sendTradingStatusEmails for FSA id: FSA-123456"
       );
     });
     test("should handle mixed success and failure", async () => {
@@ -325,20 +386,20 @@ describe("Status Checks Service", () => {
       const result = await sendTradingStatusEmails(mockRegistration, mockLaConfig, emailsToSend);
 
       // Assert
-      expect(result).toBe(false);
+      expect(result.some((email) => email.success)).toBe(true);
+      expect(result.some((email) => !email.success)).toBe(true);
       expect(sendSingleEmail).toHaveBeenCalledTimes(2);
       expect(updateTradingStatusCheck).toHaveBeenCalledTimes(2);
 
       // Should log for both success and failure, but overall result is failure
       expect(logEmitter.emit).toHaveBeenCalledWith(
         INFO,
-        "Sent INITIAL_CHECK email to test1@example.com"
+        "Sent INITIAL_CHECK email to test1@example.com for FSA id: FSA-123456"
       );
       expect(logEmitter.emit).toHaveBeenCalledWith(
         ERROR,
-        "Failed to send INITIAL_CHECK email to test2@example.com"
+        "Failed to send INITIAL_CHECK email to test2@example.com for FSA id: FSA-123456"
       );
-      expect(logEmitter.emit).toHaveBeenCalledWith(WARN, "Email notification failure");
     });
     test("should use correct language for i18n", async () => {
       // Arrange
@@ -397,6 +458,30 @@ describe("Status Checks Service", () => {
         "FSA-123456",
         INITIAL_CHECK
       );
+    });
+  });
+
+  describe("getStatusTextForActionType", () => {
+    test("should return english text", async () => {
+      // Arrange
+      const i18nUtil = new i18n("en");
+
+      // Act
+      const text = await getStatusTextForActionType(STILL_TRADING_LA, i18nUtil);
+
+      // Assert
+      expect(text).toBe("Still trading");
+    });
+
+    test("should return welsh text", async () => {
+      // Arrange
+      const i18nUtil = new i18n("cy");
+
+      // Act
+      const text = await getStatusTextForActionType(STILL_TRADING_LA, i18nUtil);
+
+      // Assert
+      expect(text).toBe("Yn dal i fasnachu");
     });
   });
 });

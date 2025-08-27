@@ -35,7 +35,8 @@ const {
   FINISHED_TRADING_LA,
   STILL_TRADING_LA,
   DELETE_REGISTRATION,
-  FRONT_END_URL
+  FRONT_END_URL,
+  WEEKS_TIME_INTERVAL
 } = require("../config");
 
 /**
@@ -77,16 +78,33 @@ const handleUnsuccessfulChecks = async (registration, laConfig, unsuccessfulChec
   const fsaId = registration["fsa-rn"];
   const emailsToSend = unsuccessfulChecks.map((check) => ({
     type: check.type,
-    email: check.email,
+    address: check.address,
     emailReplyToId: laConfig.emailReplyToId,
     templateId: getTemplateIdFromEmailType(check.type, registration.submission_language === "cy")
   }));
 
-  const success = await sendTradingStatusEmails(registration, laConfig, emailsToSend);
+  const emailResults = await sendTradingStatusEmails(registration, laConfig, emailsToSend);
+  const allSuccessful = emailResults.every((email) => email.success);
 
-  return success
-    ? { fsaId, message: "Previously unsuccessful emails sent" }
-    : { fsaId, error: "At least one previously unsuccessful email failed again" };
+  if (allSuccessful) {
+    return { fsaId, message: "Previously unsuccessful emails sent successfully" };
+  } else {
+    const retryInterval = Math.floor(Math.random() * 30) + 1; // Random retry interval between 1 and 30 days
+    await updateNextStatusDate(fsaId, moment().add(retryInterval, "days"));
+    for (const email of emailResults) {
+      if (!email.success) {
+        logEmitter.emit(
+          ERROR,
+          `Failed again to send ${email.type} email to ${email.address} for FSA id: ${fsaId} - will be retried in ${retryInterval} days`
+        );
+      }
+    }
+    return {
+      fsaId,
+      error:
+        "At least one previously unsuccessful email failed again and will be retried at a later date"
+    };
+  }
 };
 
 /**
@@ -147,17 +165,23 @@ const executeAction = async (registration, laConfig, action) => {
   // Handle action types that require email notifications
   if (isEmailNotificationAction(action.type)) {
     const emailsToSend = generateStatusEmailToSend(registration, action.type, laConfig);
-    await sendTradingStatusEmails(registration, laConfig, emailsToSend);
+    const emailResults = await sendTradingStatusEmails(registration, laConfig, emailsToSend);
+    if (emailResults.every((email) => email.success)) {
+      // Update action time to now and schedule next action
+      action.time = moment();
+      const nextAction = getNextActionAndDate(action, laConfig.trading_status);
+      await updateNextStatusDate(fsaId, nextAction?.time);
 
-    // Update action time to now and schedule next action
-    action.time = moment();
-    const nextAction = getNextActionAndDate(action, laConfig.trading_status);
-    await updateNextStatusDate(fsaId, nextAction?.time);
-
-    return {
-      fsaId,
-      message: `${action.type} emails sent, ${nextAction.type} scheduled for ${nextAction.time.format("YYYY-MM-DD HH:mm:ss")}`
-    };
+      return {
+        fsaId,
+        message: `${action.type} emails sent, ${nextAction.type} scheduled for ${nextAction.time.format("YYYY-MM-DD HH:mm:ss")}`
+      };
+    } else {
+      return {
+        fsaId,
+        error: `At least one ${action.type} email failed and will be retried next time`
+      };
+    }
   }
 
   // Handle invalid action types
@@ -199,8 +223,9 @@ const transformDataForNotify = (registration, laConfig, actionType, i18nUtil) =>
   const operatorName = `${operatorFirstName} ${operatorLastName}`;
 
   // Format submission date
-  const formattedSubmissionDate = moment(registration.reg_submission_date).format("DD MMM YYYY");
   const lang = registration.submission_language ?? "en";
+  moment.locale(lang);
+  const formattedSubmissionDate = moment(registration.reg_submission_date).format("DD MMM YYYY");
 
   // Create data object for Notify template
   return {
@@ -219,9 +244,10 @@ const transformDataForNotify = (registration, laConfig, actionType, i18nUtil) =>
  * Gets the appropriate status text for a given action type.
  *
  * @param {string} actionType - The action type.
+ * @param {Object} i18nUtil - The internationalization utility.
  * @returns {string} The status text to use in notifications.
  */
-const getStatusTextForActionType = (actionType) => {
+const getStatusTextForActionType = (actionType, i18nUtil) => {
   switch (actionType) {
     case STILL_TRADING_LA:
       return "Still Trading";
@@ -253,20 +279,22 @@ const sendTradingStatusEmails = async (registration, laConfig, emailsToSend) => 
   const language = registration.submission_language || "en";
   const i18nUtil = new i18n(language);
 
-  let allEmailsSentSuccessfully = true;
+  const emailResults = [];
 
   // Send each email in sequence
   for (const emailToSend of emailsToSend) {
     const emailSent = await sendEmailAndRecordStatus(registration, laConfig, emailToSend, i18nUtil);
-    if (!emailSent) {
-      allEmailsSentSuccessfully = false;
-    }
+
+    // Add the result to our array
+    emailResults.push({
+      ...emailToSend,
+      success: emailSent
+    });
   }
 
-  // Log final result for monitoring/alerts
-  logFinalEmailStatus(allEmailsSentSuccessfully);
+  logEmitter.emit("functionSuccess", "status-checks.service", "sendTradingStatusEmails");
 
-  return allEmailsSentSuccessfully;
+  return emailResults;
 };
 
 /**
@@ -301,9 +329,9 @@ const sendEmailAndRecordStatus = async (registration, laConfig, emailToSend, i18
 
   // Log result
   if (emailSent) {
-    logEmitter.emit(INFO, `Sent ${type} email to ${address}`);
+    logEmitter.emit(INFO, `Sent ${type} email to ${address} for FSA id: ${fsaId}`);
   } else {
-    logEmitter.emit(ERROR, `Failed to send ${type} email to ${address}`);
+    logEmitter.emit(ERROR, `Failed to send ${type} email to ${address} for FSA id: ${fsaId}`);
   }
 
   // Record email status in database
@@ -317,23 +345,9 @@ const sendEmailAndRecordStatus = async (registration, laConfig, emailToSend, i18
   return emailSent;
 };
 
-/**
- * Logs the final status of the email sending process.
- *
- * @param {boolean} success - Whether all emails were sent successfully.
- */
-const logFinalEmailStatus = (success) => {
-  if (success) {
-    logEmitter.emit(INFO, "Email notification success"); // Used for Azure alerts
-    logEmitter.emit("functionSuccess", "status-checks.service", "sendTradingStatusEmails");
-  } else {
-    logEmitter.emit(WARN, "Email notification failure"); // Used for Azure alerts
-    logEmitter.emit("functionFail", "status-checks.service", "sendTradingStatusEmails");
-  }
-};
-
 module.exports = {
   processTradingStatus,
+  getStatusTextForActionType,
   getTradingStatusAction,
   sendTradingStatusEmails,
   executeAction

@@ -74,7 +74,7 @@ const getVerifiedRegistrationDates = (registration) => {
   if (confirmed_not_trading) {
     if (moment(confirmed_not_trading).isValid()) {
       result.trading_status_checks.push({
-        type: "CONFIRMED_NOT_TRADING",
+        type: CONFIRMED_NOT_TRADING,
         time: moment(confirmed_not_trading).clone()
       });
     } else {

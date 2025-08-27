@@ -88,6 +88,10 @@ const createNewRegistration = async (
     postRegistrationMetadata
   );
 
+  if (sourceCouncil.trading_status) {
+    completeCacheRecord.next_status_check = new Date();
+  }
+
   await saveRegistration(completeCacheRecord);
 
   const combinedResponse = Object.assign({}, postRegistrationMetadata, {
@@ -231,6 +235,10 @@ const createNewDirectRegistration = async (registration, options) => {
     },
     supplierDetails
   );
+
+  if (sourceCouncil.trading_status) {
+    completeCacheRecord.next_status_check = new Date();
+  }
 
   await saveRegistration(completeCacheRecord);
 

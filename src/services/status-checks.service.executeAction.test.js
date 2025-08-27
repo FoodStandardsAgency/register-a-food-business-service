@@ -135,7 +135,7 @@ describe("Status Checks Service", () => {
           trading_status_checks: [
             {
               type: INITIAL_CHECK,
-              email: "test@example.com",
+              address: "test@example.com",
               time: "2025-06-01",
               sent: true
             }
@@ -186,7 +186,7 @@ describe("Status Checks Service", () => {
           trading_status_checks: [
             {
               type: INITIAL_CHECK,
-              email: "test@example.com",
+              address: "test@example.com",
               time: "2025-06-01",
               sent: true
             }
