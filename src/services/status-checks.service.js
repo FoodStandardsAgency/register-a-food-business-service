@@ -247,7 +247,7 @@ const transformDataForNotify = (registration, laConfig, actionType, i18nUtil) =>
  * @param {Object} i18nUtil - The internationalization utility.
  * @returns {string} The status text to use in notifications.
  */
-const getStatusTextForActionType = (actionType, i18nUtil) => {
+const getStatusTextForActionType = (actionType) => {
   switch (actionType) {
     case STILL_TRADING_LA:
       return "Still Trading";
