@@ -89,7 +89,7 @@ describe("Retrieve all registrations through API", () => {
 
     it("Should return subscription key not found error", () => {
       expect(response.statusCode).toBe(401);
-      expect(response.message).toContain("Access denied due to missing subscription key.");
+      expect(response.message).toContain("Access denied due to a missing application credentials or subscription key. Make sure to include an application token or a subscription key when making requests to the API.");
     });
   });
 
