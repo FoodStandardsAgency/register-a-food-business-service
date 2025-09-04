@@ -23,7 +23,7 @@ const {
   getStatus,
   updateStatus,
   updateNotificationOnSent
-} = require("../connectors/cacheDb/cacheDb.connector");
+} = require("../connectors/notificationsDb/notificationsDb.connector");
 const { has, isArrayLikeObject } = require("lodash");
 const { transformEnumsForService } = require("./transformEnums.service");
 const i18n = require("../utils/i18n/i18n");
@@ -178,7 +178,7 @@ const transformDataForNotify = (registration, lcContactConfig, i18n) => {
  */
 
 const sendEmails = async (emailsToSend, registration, fsaId, lcContactConfig) => {
-  logEmitter.emit("functionCall", "registration.service", "sendEmails");
+  logEmitter.emit("functionCall", "notifications.service", "sendEmails");
   logEmitter.emit(INFO, `Started sendEmails for FSAid: ${fsaId}`);
 
   let success = true;

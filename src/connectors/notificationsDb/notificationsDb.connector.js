@@ -1,26 +1,6 @@
 const { logEmitter } = require("../../services/logging.service");
 const { establishConnectionToCosmos } = require("../cosmos.client");
 
-const cacheRegistration = async (registration) => {
-  logEmitter.emit("functionCall", "cacheDb.connector", "cacheRegistration");
-  try {
-    const cachedRegistrations = await establishConnectionToCosmos("registrations", "registrations");
-    const response = await cachedRegistrations.insertOne(registration);
-
-    logEmitter.emit("functionSuccess", "cacheDb.connector", "cacheRegistration");
-
-    return response;
-  } catch (err) {
-    logEmitter.emit("functionFail", "cacheDb.connector", "cacheRegistration", err);
-
-    const newError = new Error();
-    newError.name = "mongoConnectionError";
-    newError.message = err.message;
-
-    throw newError;
-  }
-};
-
 const findAllFailedNotificationsRegistrations = async (cachedRegistrations, limit = 100) => {
   return await cachedRegistrations
     .find({
@@ -31,24 +11,6 @@ const findAllFailedNotificationsRegistrations = async (cachedRegistrations, limi
             $elemMatch: { sent: { $ne: true } }
           }
         },
-        {
-          $or: [
-            { direct_submission: { $exists: false } },
-            { direct_submission: null },
-            { direct_submission: false }
-          ]
-        }
-      ]
-    })
-    .sort({ reg_submission_date: 1 })
-    .limit(limit);
-};
-
-const findAllTmpRegistrations = async (cachedRegistrations, limit = 100) => {
-  return await cachedRegistrations
-    .find({
-      $and: [
-        { "fsa-rn": { $regex: /^tmp_/ } },
         {
           $or: [
             { direct_submission: { $exists: false } },
@@ -83,13 +45,6 @@ const findAllBlankRegistrations = async (cachedRegistrations, limit = 100) => {
     .limit(limit);
 };
 
-const findOneById = async (cachedRegistrations, fsa_rn) => {
-  const cachedRegistration = await cachedRegistrations.findOne({
-    "fsa-rn": fsa_rn
-  });
-  return Object.assign({}, cachedRegistration);
-};
-
 const getStatus = async (cachedRegistrations, fsa_rn) => {
   const cachedRegistration = await cachedRegistrations.findOne({
     "fsa-rn": fsa_rn
@@ -98,7 +53,7 @@ const getStatus = async (cachedRegistrations, fsa_rn) => {
 };
 
 const updateStatus = async (cachedRegistrations, fsa_rn, newStatus) => {
-  logEmitter.emit("functionCall", "cacheDb.connector", "updateStatus");
+  logEmitter.emit("functionCall", "notificationsDb.connector", "updateStatus");
   try {
     await cachedRegistrations.updateOne(
       { "fsa-rn": fsa_rn },
@@ -106,9 +61,9 @@ const updateStatus = async (cachedRegistrations, fsa_rn, newStatus) => {
         $set: { status: newStatus }
       }
     );
-    logEmitter.emit("functionSuccess", "cacheDb.connector", "updateStatus");
+    logEmitter.emit("functionSuccess", "notificationsDb.connector", "updateStatus");
   } catch (err) {
-    logEmitter.emit("functionFail", "cacheDb.connector", "updateStatus", err);
+    logEmitter.emit("functionFail", "notificationsDb.connector", "updateStatus", err);
   }
 };
 
@@ -122,26 +77,22 @@ const updateStatus = async (cachedRegistrations, fsa_rn, newStatus) => {
  * @param date
  */
 const updateNotificationOnSent = (status, fsa_rn, emailsToSend, index, sent, date = null) => {
-  logEmitter.emit("functionCall", "cacheDb.connector", "updateNotificationOnSent");
+  logEmitter.emit("functionCall", "notificationsDb.connector", "updateNotificationOnSent");
   let { type, address } = emailsToSend[index];
-  date = date === null ? new Date() : date;
   status.notifications[index].address = address;
   status.notifications[index].type = type;
-  status.notifications[index].time = date;
+  status.notifications[index].time = date || new Date();
   status.notifications[index].sent = sent;
 
-  logEmitter.emit("functionSuccess", "cacheDb.connector", "updateNotificationOnSent");
+  logEmitter.emit("functionSuccess", "notificationsDb.connector", "updateNotificationOnSent");
 
   return status;
 };
 
 module.exports = {
   findAllFailedNotificationsRegistrations,
-  findAllTmpRegistrations,
   findAllBlankRegistrations,
-  cacheRegistration,
   updateNotificationOnSent,
-  findOneById,
   getStatus,
   updateStatus
 };

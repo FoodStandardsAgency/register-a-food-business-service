@@ -1,5 +1,5 @@
 "use strict";
-jest.mock("../connectors/cacheDb/cacheDb.connector.js");
+jest.mock("../connectors/notificationsDb/notificationsDb.connector.js");
 jest.mock("../connectors/notify/notify.connector", () => ({
   sendSingleEmail: jest.fn()
 }));

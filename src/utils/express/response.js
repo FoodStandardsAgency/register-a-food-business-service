@@ -8,7 +8,7 @@ const success = async (res, payload = {}) => {
 
 const fail = async (code, res, message = null) => {
   logEmitter.emit(ERROR, message);
-  res.status(406).send({
+  res.status(code || 500).send({
     error: message
   });
 
