@@ -8,6 +8,7 @@ const { isEmpty } = require("lodash");
 const {
   findRegistrationByFsaId,
   findActionableRegistrations,
+  updateNextStatusDate,
   updateRegistrationTradingStatus
 } = require("../../connectors/statusChecksDb/status-checks.connector");
 const { getAllLocalCouncilConfig } = require("../../connectors/configDb/configDb.connector");
@@ -93,8 +94,13 @@ const processTradingStatusChecks = async (registrations, laConfig) => {
       );
 
       if (!localCouncil.trading_status) {
+        logEmitter.emit(
+          INFO,
+          `No trading status configuration found for ${registration.local_council_url}`
+        );
+        updateNextStatusDate(registration["fsa-rn"], null);
         throw new Error(
-          `No local council trading status configuration found for ${registration.local_council_url}`
+          `No local council trading status configuration found for ${registration.local_council_url}, next_status_check set cleared`
         );
       }
       localCouncil.trading_status.data_retention_period = process.env.DATA_RETENTION_PERIOD || 7;
@@ -107,7 +113,7 @@ const processTradingStatusChecks = async (registrations, laConfig) => {
       const result = await processTradingStatus(registration, localCouncil);
       results.push(result);
     } catch (error) {
-      let message = `Processing registration ${registration["fsa-rn"]} for council failed: ${error.message}`;
+      let message = `Processing registration ${registration["fsa-rn"]} for council failed: ${error.message} - Stack trace: ${error.stack}`;
       logEmitter.emit(ERROR, message);
       results.push({ fsaId: registration["fsa-rn"], error: message });
     }

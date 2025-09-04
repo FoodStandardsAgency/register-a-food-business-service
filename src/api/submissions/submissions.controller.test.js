@@ -63,6 +63,26 @@ const exampleCouncil = {
 const exampleSupplierCouncils = ["cardiff", "west-dorset"];
 
 describe("registration controller", () => {
+  const realDate = Date;
+  const mockDate = new Date("2023-01-01T12:00:00Z");
+
+  beforeEach(() => {
+    jest.clearAllMocks();
+    findCouncilByUrl.mockImplementation(() => exampleCouncil);
+
+    // Mock the Date constructor
+    global.Date = class extends Date {
+      constructor() {
+        return mockDate;
+      }
+    };
+  });
+
+  afterEach(() => {
+    // Restore original Date
+    global.Date = realDate;
+  });
+
   let result;
   const exampleLcConfig = {
     hygieneAndStandards: {
@@ -78,7 +98,8 @@ describe("registration controller", () => {
       code: 5678,
       local_council: "Example council name",
       local_council_notify_emails: ["example@example.com"],
-      local_council_email: "example@example.com"
+      local_council_email: "example@example.com",
+      trading_status: {}
     },
     standards: {
       code: 2345,

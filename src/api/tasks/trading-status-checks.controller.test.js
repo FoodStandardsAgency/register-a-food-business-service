@@ -9,7 +9,8 @@ jest.mock("../../connectors/statusChecksDb/status-checks.connector", () => {
     ...originalModule,
     findRegistrationByFsaId: jest.fn(),
     findActionableRegistrations: jest.fn(() => Promise.resolve([])), // Ensure mockResolvedValue is defined
-    updateRegistrationTradingStatus: jest.fn()
+    updateRegistrationTradingStatus: jest.fn(),
+    updateNextStatusDate: jest.fn()
   };
 });
 jest.mock("../../connectors/configDb/configDb.connector");
@@ -26,7 +27,8 @@ const { getLaConfigWithAllNotifyAddresses } = require("../../services/laConfig.s
 const {
   findRegistrationByFsaId,
   findActionableRegistrations,
-  updateRegistrationTradingStatus
+  updateRegistrationTradingStatus,
+  updateNextStatusDate
 } = require("../../connectors/statusChecksDb/status-checks.connector");
 const { getAllLocalCouncilConfig } = require("../../connectors/configDb/configDb.connector");
 const { logEmitter } = require("../../services/logging.service");
@@ -73,7 +75,7 @@ describe("trading-status-checks.controller", () => {
     mockLaConfigWithNotify = {
       local_council_url: "test-council",
       name: "Test Council",
-      email: "test@example.com",
+      address: "test@example.com",
       trading_status: {}
     };
 
@@ -117,6 +119,37 @@ describe("trading-status-checks.controller", () => {
         expect.arrayContaining([expect.objectContaining({ error: expect.any(String) })])
       );
     });
+
+    it("should handle registration with local council that has no trading status configuration", async () => {
+      // Create a registration with a council that will have no trading_status
+      const mockRegistrationNoTrading = {
+        "fsa-rn": "TEST-NO-TRADING",
+        local_council_url: "council-without-trading-status"
+      };
+
+      // Mock the findActionableRegistrations to return our test registration
+      findActionableRegistrations.mockResolvedValueOnce([mockRegistrationNoTrading]);
+
+      // Mock getLaConfigWithAllNotifyAddresses to return a council without trading_status
+      getLaConfigWithAllNotifyAddresses.mockResolvedValueOnce({
+        local_council_url: "council-without-trading-status",
+        name: "Council Without Trading Status"
+        // No trading_status property
+      });
+
+      const result = await processTradingStatusChecksDue(5);
+
+      // Verify updateNextStatusDate was called with null
+      expect(updateNextStatusDate).toHaveBeenCalledWith("TEST-NO-TRADING", null);
+
+      // Check result has the expected error
+      expect(result).toEqual([
+        expect.objectContaining({
+          fsaId: "TEST-NO-TRADING",
+          error: expect.stringContaining("No local council trading status configuration found for")
+        })
+      ]);
+    });
   });
 
   describe("processTradingStatusChecksForId", () => {
@@ -135,6 +168,37 @@ describe("trading-status-checks.controller", () => {
     it("should throw an error if the registration is not found", async () => {
       await expect(processTradingStatusChecksForId("NONEXISTENT")).rejects.toThrow(
         /Could not find registration/
+      );
+    });
+
+    it("should handle registration with local council that has no trading status configuration", async () => {
+      // Create a mock registration with a specific ID
+      const mockRegistrationNoTrading = {
+        "fsa-rn": "TEST-NO-CONFIG",
+        local_council_url: "council-no-config"
+      };
+
+      // Update the mock implementation for this test
+      findRegistrationByFsaId.mockResolvedValueOnce(mockRegistrationNoTrading);
+
+      // Mock LA config without trading_status
+      getLaConfigWithAllNotifyAddresses.mockResolvedValueOnce({
+        local_council_url: "council-no-config",
+        name: "Council Without Config"
+        // No trading_status property
+      });
+
+      const result = await processTradingStatusChecksForId("TEST-NO-CONFIG");
+
+      // Check that updateNextStatusDate was called with null
+      expect(updateNextStatusDate).toHaveBeenCalledWith("TEST-NO-CONFIG", null);
+
+      // Check the result
+      expect(result).toEqual(
+        expect.objectContaining({
+          fsaId: "TEST-NO-CONFIG",
+          error: expect.stringContaining("No local council trading status configuration found for")
+        })
       );
     });
   });
