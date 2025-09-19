@@ -55,7 +55,7 @@ describe("logEmitter", () => {
 
       await logEmitter.emit(message, moduleMessage, funcMessage);
 
-      await expect(logger.info).toBeCalledWith(expected, noSession);
+      await expect(logger.info).toHaveBeenCalledWith(expected, noSession);
     });
   });
 
@@ -74,7 +74,7 @@ describe("logEmitter", () => {
 
       await logEmitter.emit(message, moduleMessage, funcMessage, someData);
 
-      await expect(logger.info).toBeCalledWith(expected, noSession);
+      await expect(logger.info).toHaveBeenCalledWith(expected, noSession);
     });
   });
 
@@ -90,7 +90,7 @@ describe("logEmitter", () => {
 
       await logEmitter.emit(message, moduleMessage, funcMessage);
 
-      await expect(logger.info).toBeCalledWith(expected, noSession);
+      await expect(logger.info).toHaveBeenCalledWith(expected, noSession);
     });
   });
 
@@ -106,7 +106,7 @@ describe("logEmitter", () => {
       });
       await logEmitter.emit(message, moduleMessage, funcMessage, someData);
 
-      await expect(logger.info).toBeCalledWith(expected, noSession);
+      await expect(logger.info).toHaveBeenCalledWith(expected, noSession);
     });
   });
 
@@ -123,7 +123,7 @@ describe("logEmitter", () => {
 
       await logEmitter.emit(message, moduleMessage, funcMessage, err);
 
-      await expect(logger.error).toBeCalledWith(expected, noSession);
+      await expect(logger.error).toHaveBeenCalledWith(expected, noSession);
     });
   });
 
@@ -141,7 +141,7 @@ describe("logEmitter", () => {
 
       await logEmitter.emit(message, moduleMessage, funcMessage, someData);
 
-      await expect(logger.info).toBeCalledWith(expected1, noSession);
+      await expect(logger.info).toHaveBeenCalledWith(expected1, noSession);
     });
   });
 
@@ -155,7 +155,7 @@ describe("logEmitter", () => {
 
       await logEmitter.emit(message, expected);
 
-      await expect(logger.info).toBeCalledWith(expected, noSession);
+      await expect(logger.info).toHaveBeenCalledWith(expected, noSession);
     });
 
     it("should call winston error", async () => {
@@ -167,7 +167,7 @@ describe("logEmitter", () => {
 
       await logEmitter.emit(message, expected);
 
-      await expect(logger.error).toBeCalledWith(expected, noSession);
+      await expect(logger.error).toHaveBeenCalledWith(expected, noSession);
     });
 
     it("should call winston debug", async () => {
@@ -179,7 +179,7 @@ describe("logEmitter", () => {
 
       await logEmitter.emit(message, expected);
 
-      await expect(logger.debug).toBeCalledWith(expected, noSession);
+      await expect(logger.debug).toHaveBeenCalledWith(expected, noSession);
     });
 
     it("should call winston warn", async () => {
@@ -191,7 +191,7 @@ describe("logEmitter", () => {
 
       await logEmitter.emit(message, expected);
 
-      await expect(logger.warn).toBeCalledWith(expected, noSession);
+      await expect(logger.warn).toHaveBeenCalledWith(expected, noSession);
     });
   });
 });
