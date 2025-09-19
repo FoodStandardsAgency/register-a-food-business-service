@@ -69,9 +69,7 @@
     "validator": "^13.12.0",
     "winston": "^3.17.0",
     "winston-azure-application-insights": "^4.0.0",
-    "winston-elasticsearch": "^0.11.0",
-    "yargs": "^18.0.0",
-    "yargs-parser": "^22.0.0"
+    "winston-elasticsearch": "^0.11.0"
   },
   "devDependencies": {
     "cucumber": "^6.0.7",
