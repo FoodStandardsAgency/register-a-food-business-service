@@ -19,7 +19,7 @@ describe("Function: getUprn", () => {
       });
 
       it("should call getAddressesByPostcode", () => {
-        expect(getAddressesByPostcode).toBeCalled();
+        expect(getAddressesByPostcode).toHaveBeenCalled();
       });
 
       it("should return matched UPRN", () => {
@@ -33,7 +33,7 @@ describe("Function: getUprn", () => {
       });
 
       it("should call getAddressesByPostcode", () => {
-        expect(getAddressesByPostcode).toBeCalled();
+        expect(getAddressesByPostcode).toHaveBeenCalled();
       });
 
       it("should return matched UPRN", () => {
@@ -47,7 +47,7 @@ describe("Function: getUprn", () => {
       });
 
       it("should call getAddressesByPostcode", () => {
-        expect(getAddressesByPostcode).toBeCalled();
+        expect(getAddressesByPostcode).toHaveBeenCalled();
       });
 
       it("should return matched UPRN", () => {
@@ -61,7 +61,7 @@ describe("Function: getUprn", () => {
       });
 
       it("should call getAddressesByPostcode", () => {
-        expect(getAddressesByPostcode).toBeCalled();
+        expect(getAddressesByPostcode).toHaveBeenCalled();
       });
 
       it("should return matched UPRN", () => {
@@ -75,7 +75,7 @@ describe("Function: getUprn", () => {
       });
 
       it("should call getAddressesByPostcode", () => {
-        expect(getAddressesByPostcode).toBeCalled();
+        expect(getAddressesByPostcode).toHaveBeenCalled();
       });
 
       it("should return matched UPRN", () => {
@@ -89,7 +89,7 @@ describe("Function: getUprn", () => {
       });
 
       it("should call getAddressesByPostcode", () => {
-        expect(getAddressesByPostcode).toBeCalled();
+        expect(getAddressesByPostcode).toHaveBeenCalled();
       });
 
       it("should return matched UPRN", () => {
@@ -103,7 +103,7 @@ describe("Function: getUprn", () => {
       });
 
       it("should call getAddressesByPostcode", () => {
-        expect(getAddressesByPostcode).toBeCalled();
+        expect(getAddressesByPostcode).toHaveBeenCalled();
       });
 
       it("should return null", () => {
@@ -117,7 +117,7 @@ describe("Function: getUprn", () => {
       });
 
       it("should call getAddressesByPostcode", () => {
-        expect(getAddressesByPostcode).toBeCalled();
+        expect(getAddressesByPostcode).toHaveBeenCalled();
       });
 
       it("should return null", () => {
@@ -131,7 +131,7 @@ describe("Function: getUprn", () => {
       });
 
       it("should call getAddressesByPostcode", () => {
-        expect(getAddressesByPostcode).toBeCalled();
+        expect(getAddressesByPostcode).toHaveBeenCalled();
       });
 
       it("should return null", () => {
@@ -150,7 +150,7 @@ describe("Function: getUprn", () => {
     });
 
     it("should call getAddressesByPostcode", () => {
-      expect(getAddressesByPostcode).toBeCalled();
+      expect(getAddressesByPostcode).toHaveBeenCalled();
     });
 
     it("should return null", () => {

@@ -256,7 +256,7 @@ describe("registration controller", () => {
 
     describe("when given undefined", () => {
       it("Should throw an error", async () => {
-        await expect(createNewRegistration(undefined)).rejects.toThrowError(
+        await expect(createNewRegistration(undefined)).rejects.toThrow(
           new Error("registration is undefined")
         );
       });

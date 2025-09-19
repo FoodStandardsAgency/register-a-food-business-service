@@ -23,7 +23,7 @@ describe("Middleware: createRegistrationAuth", () => {
 
     it("Should call the next() function", () => {
       createRegistrationAuth(req, res, next);
-      expect(next).toBeCalled();
+      expect(next).toHaveBeenCalled();
     });
   });
 
