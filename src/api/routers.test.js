@@ -49,7 +49,7 @@ describe("Function: routers", () => {
   });
 
   it("Should call router.use", () => {
-    expect(result.use).toBeCalled();
+    expect(result.use).toHaveBeenCalled();
     expect(result.use.mock.calls[0][0]).toBe("/api/trading-status-checks");
     expect(result.use.mock.calls[1][0]).toBe("/api/tasks");
     expect(result.use.mock.calls[2][0]).toBe("/api/submissions");
