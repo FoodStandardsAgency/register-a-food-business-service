@@ -26,8 +26,48 @@ const {
   REGULAR_CHECK_TEMPLATE_ID_CY,
   REGULAR_CHECK_CHASE_TEMPLATE_ID_CY,
   FINISHED_TRADING_LA_TEMPLATE_ID_CY,
-  STILL_TRADING_LA_TEMPLATE_ID_CY
+  STILL_TRADING_LA_TEMPLATE_ID_CY,
+  HISTORICAL_REGISTRATION
 } = require("../config");
+
+const CHECK_EMAIL_ACTION_TYPES = [
+  INITIAL_CHECK,
+  INITIAL_CHECK_CHASE,
+  REGULAR_CHECK,
+  REGULAR_CHECK_CHASE
+];
+
+const FAR_FUTURE_YEARS = 100;
+
+/**
+ * Determines whether a registration should be treated as "historic" for the purpose of
+ * skipping check emails. A registration is historic if its submission date is more than
+ * 3 months before the opt-out was enabled.
+ *
+ * @param {Date|String|Object} registrationSubmittedAt - Submission date (Date, ISO string, or moment).
+ * @param {Object} tradingStatusConfig - LA trading status config.
+ * @returns {boolean}
+ */
+const isHistoricRegistrationOptOut = (registrationSubmittedAt, tradingStatusConfig) => {
+  if (!tradingStatusConfig?.ignore_historic_registrations) {
+    return false;
+  }
+
+  const enabledAtRaw = tradingStatusConfig?.ignore_historic_registrations_enabled_at;
+  if (!enabledAtRaw) {
+    return false;
+  }
+
+  const enabledAt = moment(enabledAtRaw);
+  const submittedAt = registrationSubmittedAt ? moment(registrationSubmittedAt) : null;
+
+  if (!enabledAt.isValid() || !submittedAt || !submittedAt.isValid()) {
+    return false;
+  }
+
+  const cutoff = enabledAt.clone().subtract(3, MONTHS_TIME_INTERVAL);
+  return submittedAt.isBefore(cutoff);
+};
 
 /**
  * Validates the date fields in a registration object to ensure they are properly formatted and
@@ -159,7 +199,7 @@ const getMostRecentCheck = (tradingStatusChecks, type) => {
  * @param {Object} tradingStatusConfig - Configuration for trading status checks.
  * @returns {Object|null} Object containing the type and time of the next action, or null if no action needed.
  */
-const getNextActionAndDate = (mostRecentCheck, tradingStatusConfig) => {
+const getNextActionAndDate = (mostRecentCheck, tradingStatusConfig, registrationSubmittedAt) => {
   const mostRecentCheckTime = moment(mostRecentCheck.time).clone();
   let result = null;
 
@@ -278,6 +318,16 @@ const getNextActionAndDate = (mostRecentCheck, tradingStatusConfig) => {
   ) {
     result.time = staggerOldDates(result.time);
   }
+
+  // If LA has opted out, ensure we never schedule check emails for historic registrations.
+  if (
+    result &&
+    CHECK_EMAIL_ACTION_TYPES.includes(result.type) &&
+    isHistoricRegistrationOptOut(registrationSubmittedAt, tradingStatusConfig)
+  ) {
+    return { type: HISTORICAL_REGISTRATION, time: moment().add(FAR_FUTURE_YEARS, "years") };
+  }
+
   return result;
 };
 

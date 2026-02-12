@@ -35,9 +35,17 @@ const {
   FINISHED_TRADING_LA,
   STILL_TRADING_LA,
   DELETE_REGISTRATION,
+  HISTORICAL_REGISTRATION,
   FRONT_END_URL,
   WEEKS_TIME_INTERVAL
 } = require("../config");
+
+const CHECK_EMAIL_ACTION_TYPES = [
+  INITIAL_CHECK,
+  INITIAL_CHECK_CHASE,
+  REGULAR_CHECK,
+  REGULAR_CHECK_CHASE
+];
 
 /**
  * Processes the trading status of a registration and updates the local authority configuration accordingly.
@@ -59,6 +67,30 @@ const processTradingStatus = async (registration, laConfig) => {
   // First, handle any previously unsuccessful email checks
   const unsuccessfulChecks = getUnsuccessfulChecks(tradingStatusDates.trading_status_checks);
   if (unsuccessfulChecks.length > 0) {
+    // If LA has opted out, do not resend check emails to historic registrations.
+    const enabledAt = laConfig?.trading_status?.ignore_historic_registrations_enabled_at;
+    const ignoreHistoric = !!laConfig?.trading_status?.ignore_historic_registrations;
+    const submittedAt = tradingStatusDates.trading_status_checks.find(
+      (c) => c.type === INITIAL_REGISTRATION
+    )?.time;
+
+    if (
+      ignoreHistoric &&
+      enabledAt &&
+      submittedAt &&
+      moment(submittedAt).isValid() &&
+      moment(enabledAt).isValid() &&
+      moment(submittedAt).isBefore(moment(enabledAt).subtract(3, "months")) &&
+      unsuccessfulChecks.every((c) => CHECK_EMAIL_ACTION_TYPES.includes(c.type))
+    ) {
+      const fsaId = registration["fsa-rn"];
+      await updateNextStatusDate(fsaId, moment().add(100, "years"));
+      return {
+        fsaId,
+        message: `${HISTORICAL_REGISTRATION} rescheduled far in the future (historic registration opt-out enabled)`
+      };
+    }
+
     return await handleUnsuccessfulChecks(registration, laConfig, unsuccessfulChecks);
   }
 
@@ -169,7 +201,11 @@ const executeAction = async (registration, laConfig, action) => {
     if (emailResults.every((email) => email.success)) {
       // Update action time to now and schedule next action
       action.time = moment();
-      const nextAction = getNextActionAndDate(action, laConfig.trading_status);
+      const nextAction = getNextActionAndDate(
+        action,
+        laConfig.trading_status,
+        registration.reg_submission_date
+      );
       await updateNextStatusDate(fsaId, nextAction?.time);
 
       return {
@@ -198,7 +234,15 @@ const executeAction = async (registration, laConfig, action) => {
  */
 const getTradingStatusAction = (tradingStatusDates, laConfig) => {
   const mostRecentCheck = getMostRecentCheck(tradingStatusDates.trading_status_checks);
-  return getNextActionAndDate(mostRecentCheck, laConfig.trading_status);
+  const initialRegistrationCheck = getMostRecentCheck(
+    tradingStatusDates.trading_status_checks,
+    INITIAL_REGISTRATION
+  );
+  return getNextActionAndDate(
+    mostRecentCheck,
+    laConfig.trading_status,
+    initialRegistrationCheck?.time
+  );
 };
 
 /**
