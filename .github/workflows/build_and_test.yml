@@ -49,7 +49,7 @@ jobs:
       - name: Start MongoDB
         uses: supercharge/mongodb-github-action@1.12.1
         with:
-          mongodb-version: "7.1"
+          mongodb-version: "7.0"
 
       - name: Wait for MongoDB
         run: |
