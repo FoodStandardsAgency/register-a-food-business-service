@@ -102,7 +102,11 @@ describe("getNextActionAndDate", () => {
       };
 
       const mockRecentCheck = createMockRecentCheck(INITIAL_REGISTRATION, registrationSubmittedAt);
-      const result = getNextActionAndDate(mockRecentCheck, configWithOptOut, registrationSubmittedAt);
+      const result = getNextActionAndDate(
+        mockRecentCheck,
+        configWithOptOut,
+        registrationSubmittedAt
+      );
 
       expect(result.type).toEqual(HISTORICAL_REGISTRATION);
       expect(result.time.isAfter(moment().add(90, "years"))).toBeTruthy();
@@ -118,8 +122,15 @@ describe("getNextActionAndDate", () => {
         ignore_historic_registrations_enabled_at: enabledAt.toDate()
       };
 
-      const mockRecentCheck = createMockRecentCheck(CONFIRMED_NOT_TRADING, moment().subtract(1, "days"));
-      const result = getNextActionAndDate(mockRecentCheck, configWithOptOut, registrationSubmittedAt);
+      const mockRecentCheck = createMockRecentCheck(
+        CONFIRMED_NOT_TRADING,
+        moment().subtract(1, "days")
+      );
+      const result = getNextActionAndDate(
+        mockRecentCheck,
+        configWithOptOut,
+        registrationSubmittedAt
+      );
 
       expect(result.type).toEqual(FINISHED_TRADING_LA);
     });
