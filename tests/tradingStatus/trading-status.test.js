@@ -52,6 +52,7 @@ const testCouncilConfig = {
     chase: true,
     confirmed_trading_notifications: true
   },
+  separate_standards_council: "standards-council",
   local_council_email_reply_to_ID: "test-council-reply-ID",
   local_council_notify_emails: ["council@example.com"]
 };
@@ -64,6 +65,12 @@ const noLongerOnboardedCouncilConfig = {
   },
   local_council_email_reply_to_ID: "other-council-reply-ID",
   local_council_notify_emails: ["othercouncil@example.com"]
+};
+const standardsCouncilConfig = {
+  _id: "standards-council",
+  local_council: "Standards Council",
+  local_council_url: "standards_test_council",
+  local_council_notify_emails: ["standardscouncil@example.com"]
 };
 
 const getTestRegistration = (fsaRn, council, submissionDate, nextStatusDate, language) => {
@@ -110,6 +117,7 @@ describe("Trading Status Checks: Registration Processing Integration Tests", () 
     // Set up test data
     await configCollection.insertOne(testCouncilConfig);
     await configCollection.insertOne(noLongerOnboardedCouncilConfig);
+    await configCollection.insertOne(standardsCouncilConfig);
   });
 
   // Clean up after all tests
@@ -120,6 +128,9 @@ describe("Trading Status Checks: Registration Processing Integration Tests", () 
     });
     await configCollection.deleteMany({
       local_council_url: noLongerOnboardedCouncilConfig.local_council_url
+    });
+    await configCollection.deleteMany({
+      local_council_url: standardsCouncilConfig.local_council_url
     });
 
     // Close application and test connections
@@ -521,30 +532,51 @@ describe("Trading Status Checks: Registration Processing Integration Tests", () 
       new RegExp(`^${deleteDate.toISOString().substring(0, 19)}`)
     );
     expect(updatedRegistration.status.trading_status_checks).toBeDefined();
-    expect(updatedRegistration.status.trading_status_checks.length).toBe(2);
+    expect(updatedRegistration.status.trading_status_checks.length).toBe(3);
     expect(updatedRegistration.status.trading_status_checks[1].type).toBe("FINISHED_TRADING_LA");
     expect(updatedRegistration.status.trading_status_checks[1].address).toBe(
       testCouncilConfig.local_council_notify_emails[0]
     );
     expect(updatedRegistration.status.trading_status_checks[1].sent).toBeTruthy();
+    expect(updatedRegistration.status.trading_status_checks[2].type).toBe("FINISHED_TRADING_LA");
+    expect(updatedRegistration.status.trading_status_checks[2].address).toBe(
+      standardsCouncilConfig.local_council_notify_emails[0]
+    );
+    expect(updatedRegistration.status.trading_status_checks[2].sent).toBeTruthy();
 
     // Assert: Verify if the notify connector sendSingleEmail function was called correctly
     expect(notifyConnector.sendSingleEmail).toHaveBeenCalled();
-    const callArgs = notifyConnector.sendSingleEmail.mock.calls[0];
-    expect(callArgs[0]).toBe("finished-trading-la-template-id");
-    expect(callArgs[1]).toBe("council@example.com");
-    expect(callArgs[2]).toBeUndefined(); // No reply-to ID for LA emails
-    const data = callArgs[3];
-    expect(data).toBeDefined();
-    expect(data.registration_number).toBe(`${ENSURE_DELETED_TEST_PREFIX}1`);
-    expect(data.la_name).toBe("Test Council");
-    expect(data.reg_submission_date).toBe(
+    const callArgs0 = notifyConnector.sendSingleEmail.mock.calls[0];
+    expect(callArgs0[0]).toBe("finished-trading-la-template-id");
+    expect(callArgs0[1]).toBe("council@example.com");
+    expect(callArgs0[2]).toBeUndefined(); // No reply-to ID for LA emails
+    const data0 = callArgs0[3];
+    expect(data0).toBeDefined();
+    expect(data0.registration_number).toBe(`${ENSURE_DELETED_TEST_PREFIX}1`);
+    expect(data0.la_name).toBe("Test Council");
+    expect(data0.reg_submission_date).toBe(
       moment(registration.reg_submission_date).clone().format("DD MMM YYYY")
     );
-    expect(Object.keys(data).length).toBe(8);
-    expect(callArgs[4]).toBeNull(); // No PDF file
-    expect(callArgs[5]).toBe(`${ENSURE_DELETED_TEST_PREFIX}1`);
-    expect(callArgs[6]).toBe("FINISHED_TRADING_LA");
+    expect(Object.keys(data0).length).toBe(8);
+    expect(callArgs0[4]).toBeNull(); // No PDF file
+    expect(callArgs0[5]).toBe(`${ENSURE_DELETED_TEST_PREFIX}1`);
+    expect(callArgs0[6]).toBe("FINISHED_TRADING_LA");
+
+    const callArgs1 = notifyConnector.sendSingleEmail.mock.calls[0];
+    expect(callArgs1[0]).toBe("finished-trading-la-template-id");
+    expect(callArgs1[1]).toBe("council@example.com");
+    expect(callArgs1[2]).toBeUndefined(); // No reply-to ID for LA emails
+    const data1 = callArgs1[3];
+    expect(data1).toBeDefined();
+    expect(data1.registration_number).toBe(`${ENSURE_DELETED_TEST_PREFIX}1`);
+    expect(data1.la_name).toBe("Test Council");
+    expect(data1.reg_submission_date).toBe(
+      moment(registration.reg_submission_date).clone().format("DD MMM YYYY")
+    );
+    expect(Object.keys(data1).length).toBe(8);
+    expect(callArgs1[4]).toBeNull(); // No PDF file
+    expect(callArgs1[5]).toBe(`${ENSURE_DELETED_TEST_PREFIX}1`);
+    expect(callArgs1[6]).toBe("FINISHED_TRADING_LA");
   });
 
   it("should process a single registration successfully resulting in a DELETE_REGISTRATION", async () => {
