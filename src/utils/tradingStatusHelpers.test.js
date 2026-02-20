@@ -492,7 +492,7 @@ describe("staggerOldDates", () => {
     const result = staggerOldDates(oldDateLaterInYear);
 
     // The result should have the current year
-    expect(result.year()).toBe(2025);
+    expect(result.year()).toBe(moment().year());
     expect(result.month()).toBe(11); // December is 11 (0-indexed)
     expect(result.date()).toBe(25);
   });
@@ -503,7 +503,7 @@ describe("staggerOldDates", () => {
     const result = staggerOldDates(oldDateEarlierInYear);
 
     // The result should have the next year (current year + 1)
-    expect(result.year()).toBe(2026);
+    expect(result.year()).toBe(moment().year() + 1);
     expect(result.month()).toBe(0); // January is 0 (0-indexed)
     expect(result.date()).toBe(15);
   });

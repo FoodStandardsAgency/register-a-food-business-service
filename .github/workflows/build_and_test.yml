@@ -47,9 +47,9 @@ jobs:
         run: npm run lint
 
       - name: Start MongoDB
-        uses: supercharge/mongodb-github-action@v1.10.0
+        uses: supercharge/mongodb-github-action@1.12.1
         with:
-          mongodb-version: "6.0"
+          mongodb-version: "7.0"
 
       - name: Wait for MongoDB
         run: |
