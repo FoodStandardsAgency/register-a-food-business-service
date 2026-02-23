@@ -51,11 +51,11 @@ describe("submissions router", () => {
       });
 
       it("should call createNewRegistration", () => {
-        expect(submissionsController.createNewDirectRegistration).toBeCalled();
+        expect(submissionsController.createNewDirectRegistration).toHaveBeenCalled();
       });
 
       it("should call res.send", () => {
-        expect(send).toBeCalled();
+        expect(send).toHaveBeenCalled();
       });
     });
 
@@ -86,7 +86,7 @@ describe("submissions router", () => {
       });
 
       it("should call next with error", () => {
-        expect(next).toBeCalledWith(new Error("reg error"));
+        expect(next).toHaveBeenCalledWith(new Error("reg error"));
       });
     });
   });

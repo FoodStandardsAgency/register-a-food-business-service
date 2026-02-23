@@ -50,7 +50,7 @@ jobs:
         run: unzip build.zip
 
       - name: Install
-        run: npm install
+        run: npm ci
 
       - name: Component Tests
         run: npm run test:submissions:component:ci
@@ -130,7 +130,7 @@ jobs:
         run: unzip build.zip
 
       - name: Install
-        run: npm install
+        run: npm ci
 
       - name: Log into Azure CLI with service principal
         uses: azure/login@v1

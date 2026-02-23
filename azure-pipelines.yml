@@ -17,7 +17,7 @@ steps:
   - script: npm -v
     displayName: "Npm version"
 
-  - script: npm install
+  - script: npm ci
     displayName: "Install"
 
   - script: npm run format:verify

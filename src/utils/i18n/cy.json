@@ -83,5 +83,8 @@
   "The operator understands they are legally responsible for the safety and authenticity of the food being produced or served at this establishment.": "Mae'r gweithredwr yn deall ei fod yn gyfrifol yn gyfreithiol am ddiogelwch a dilysrwydd y bwyd sy'n cael ei gynhyrchu neu ei weini yn y sefydliad hwn.",
   "Business scale": "Graddfa'r Busnes",
   "Food type": "Math o fwyd",
-  "Processing activities": "Gweithgareddau prosesu"
+  "Processing activities": "Gweithgareddau prosesu",
+  "No Longer Trading": "Ddim yn Masnachu Mwyach",
+  "Still Trading": "Yn Dal i Fasnachu",
+  "Reminder": "Nodyn atgoffa"
 }
