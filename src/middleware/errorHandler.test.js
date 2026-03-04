@@ -24,7 +24,7 @@ describe("Middleware: errorHandler", () => {
         name: "optionsValidationError"
       };
       errorHandler(error, "request", res);
-      expect(res.status).toBeCalledWith(400);
+      expect(res.status).toHaveBeenCalledWith(400);
       expect(res.send.mock.calls[0][0].errorCode).toBe("3");
     });
     it("should handle not finding error in errorDetails", () => {
@@ -32,7 +32,7 @@ describe("Middleware: errorHandler", () => {
         name: "randomUnknownError"
       };
       errorHandler(error, "request", res);
-      expect(res.status).toBeCalledWith(500);
+      expect(res.status).toHaveBeenCalledWith(500);
       expect(res.send.mock.calls[0][0].errorCode).toBe("Unknown");
     });
   });
@@ -49,7 +49,7 @@ describe("Middleware: errorHandler", () => {
         ]
       };
       errorHandler(error, "request", res);
-      expect(res.status).toBeCalledWith(400);
+      expect(res.status).toHaveBeenCalledWith(400);
       expect(res.send.mock.calls[0][0].userMessages).toEqual([
         {
           property: "email",
@@ -66,7 +66,7 @@ describe("Middleware: errorHandler", () => {
         message: "raw error message"
       };
       errorHandler(error, "request", res);
-      expect(res.status).toBeCalledWith(500);
+      expect(res.status).toHaveBeenCalledWith(500);
       expect(res.send.mock.calls[0][0].developerMessage).toEqual(
         "Notify template ID is not valid, check credentials provided to app. Raw error: raw error message"
       );
@@ -80,7 +80,7 @@ describe("Middleware: errorHandler", () => {
         message: "raw error message"
       };
       errorHandler(error, "request", res);
-      expect(res.status).toBeCalledWith(500);
+      expect(res.status).toHaveBeenCalledWith(500);
       expect(res.send.mock.calls[0][0].developerMessage).toEqual(
         "MongoDB (Azure CosmosDB) connection failed, check credentials provided to app and status of database. Raw error: raw error message"
       );
@@ -94,7 +94,7 @@ describe("Middleware: errorHandler", () => {
         message: "unable to verify the first certificate"
       };
       errorHandler(error, "request", res);
-      expect(res.status).toBeCalledWith(500);
+      expect(res.status).toHaveBeenCalledWith(500);
       expect(res.send.mock.calls[0][0].developerMessage).toEqual(
         "Fetch to the FSA-RN generator service failed, check status of service and authentication. Raw error: unable to verify the first certificate"
       );
@@ -108,7 +108,7 @@ describe("Middleware: errorHandler", () => {
         message: "some-invalid-local-council"
       };
       errorHandler(error, "request", res);
-      expect(res.status).toBeCalledWith(400);
+      expect(res.status).toHaveBeenCalledWith(400);
       expect(res.send.mock.calls[0][0].developerMessage).toEqual(
         "The local council has not matched any records in the config database. Raw error: some-invalid-local-council"
       );
@@ -122,7 +122,7 @@ describe("Middleware: errorHandler", () => {
         message: "missing registration-data-version header"
       };
       errorHandler(error, "request", res);
-      expect(res.status).toBeCalledWith(400);
+      expect(res.status).toHaveBeenCalledWith(400);
       expect(res.send.mock.calls[0][0].developerMessage).toEqual(
         "Required header missing in request. Please add and re-try request. Raw error: missing registration-data-version header"
       );
@@ -136,7 +136,7 @@ describe("Middleware: errorHandler", () => {
         message: "Double Mode Failure"
       };
       errorHandler(error, "request", res);
-      expect(res.status).toBeCalledWith(400);
+      expect(res.status).toHaveBeenCalledWith(400);
       expect(res.send.mock.calls[0][0].developerMessage).toEqual(
         "Double Mode Error. Raw error: Double Mode Failure"
       );
@@ -149,7 +149,7 @@ describe("Middleware: errorHandler", () => {
         message: "Unknown error"
       };
       errorHandler(error, "request", res);
-      expect(res.status).toBeCalledWith(500);
+      expect(res.status).toHaveBeenCalledWith(500);
     });
   });
 });
