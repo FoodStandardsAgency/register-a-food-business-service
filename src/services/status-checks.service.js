@@ -67,30 +67,6 @@ const processTradingStatus = async (registration, laConfig) => {
   // First, handle any previously unsuccessful email checks
   const unsuccessfulChecks = getUnsuccessfulChecks(tradingStatusDates.trading_status_checks);
   if (unsuccessfulChecks.length > 0) {
-    // If LA has opted out, do not resend check emails to historic registrations.
-    const enabledAt = laConfig?.trading_status?.ignore_historic_registrations_enabled_at;
-    const ignoreHistoric = !!laConfig?.trading_status?.ignore_historic_registrations;
-    const submittedAt = tradingStatusDates.trading_status_checks.find(
-      (c) => c.type === INITIAL_REGISTRATION
-    )?.time;
-
-    if (
-      ignoreHistoric &&
-      enabledAt &&
-      submittedAt &&
-      moment(submittedAt).isValid() &&
-      moment(enabledAt).isValid() &&
-      moment(submittedAt).isBefore(moment(enabledAt).subtract(3, "months")) &&
-      unsuccessfulChecks.every((c) => CHECK_EMAIL_ACTION_TYPES.includes(c.type))
-    ) {
-      const fsaId = registration["fsa-rn"];
-      await updateNextStatusDate(fsaId, moment().add(100, "years"));
-      return {
-        fsaId,
-        message: `${HISTORICAL_REGISTRATION} rescheduled far in the future (historic registration opt-out enabled)`
-      };
-    }
-
     return await handleUnsuccessfulChecks(registration, laConfig, unsuccessfulChecks);
   }
 
