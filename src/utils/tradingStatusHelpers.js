@@ -30,13 +30,6 @@ const {
   HISTORICAL_REGISTRATION
 } = require("../config");
 
-const CHECK_EMAIL_ACTION_TYPES = [
-  INITIAL_CHECK,
-  INITIAL_CHECK_CHASE,
-  REGULAR_CHECK,
-  REGULAR_CHECK_CHASE
-];
-
 const FAR_FUTURE_YEARS = 100;
 
 /**
@@ -199,7 +192,7 @@ const getMostRecentCheck = (tradingStatusChecks, type) => {
  * @param {Object} tradingStatusConfig - Configuration for trading status checks.
  * @returns {Object|null} Object containing the type and time of the next action, or null if no action needed.
  */
-const getNextActionAndDate = (mostRecentCheck, tradingStatusConfig, registrationSubmittedAt) => {
+const getNextActionAndDate = (mostRecentCheck, tradingStatusConfig) => {
   const mostRecentCheckTime = moment(mostRecentCheck.time).clone();
   let result = null;
 
@@ -249,6 +242,10 @@ const getNextActionAndDate = (mostRecentCheck, tradingStatusConfig, registration
   }
   // Handle INITIAL_REGISTRATION
   else if (mostRecentCheck.type === INITIAL_REGISTRATION) {
+    // If LA has opted out, do not schedule check emails for historic registrations.
+    if (isHistoricRegistrationOptOut(mostRecentCheck.time, tradingStatusConfig)) {
+      return { type: HISTORICAL_REGISTRATION, time: moment().add(FAR_FUTURE_YEARS, "years") };
+    }
     if (tradingStatusConfig.initial_check) {
       const nextActionTime = mostRecentCheckTime.add(
         tradingStatusConfig.initial_check,
@@ -317,15 +314,6 @@ const getNextActionAndDate = (mostRecentCheck, tradingStatusConfig, registration
     (result.type === INITIAL_CHECK || result.type === REGULAR_CHECK)
   ) {
     result.time = staggerOldDates(result.time);
-  }
-
-  // If LA has opted out, ensure we never schedule check emails for historic registrations.
-  if (
-    result &&
-    CHECK_EMAIL_ACTION_TYPES.includes(result.type) &&
-    isHistoricRegistrationOptOut(registrationSubmittedAt, tradingStatusConfig)
-  ) {
-    return { type: HISTORICAL_REGISTRATION, time: moment().add(FAR_FUTURE_YEARS, "years") };
   }
 
   return result;

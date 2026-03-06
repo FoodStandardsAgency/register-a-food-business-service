@@ -35,17 +35,9 @@ const {
   FINISHED_TRADING_LA,
   STILL_TRADING_LA,
   DELETE_REGISTRATION,
-  HISTORICAL_REGISTRATION,
   FRONT_END_URL,
   WEEKS_TIME_INTERVAL
 } = require("../config");
-
-const CHECK_EMAIL_ACTION_TYPES = [
-  INITIAL_CHECK,
-  INITIAL_CHECK_CHASE,
-  REGULAR_CHECK,
-  REGULAR_CHECK_CHASE
-];
 
 /**
  * Processes the trading status of a registration and updates the local authority configuration accordingly.
@@ -177,11 +169,7 @@ const executeAction = async (registration, laConfig, action) => {
     if (emailResults.every((email) => email.success)) {
       // Update action time to now and schedule next action
       action.time = moment();
-      const nextAction = getNextActionAndDate(
-        action,
-        laConfig.trading_status,
-        registration.reg_submission_date
-      );
+      const nextAction = getNextActionAndDate(action, laConfig.trading_status);
       await updateNextStatusDate(fsaId, nextAction?.time);
 
       return {
@@ -210,15 +198,7 @@ const executeAction = async (registration, laConfig, action) => {
  */
 const getTradingStatusAction = (tradingStatusDates, laConfig) => {
   const mostRecentCheck = getMostRecentCheck(tradingStatusDates.trading_status_checks);
-  const initialRegistrationCheck = getMostRecentCheck(
-    tradingStatusDates.trading_status_checks,
-    INITIAL_REGISTRATION
-  );
-  return getNextActionAndDate(
-    mostRecentCheck,
-    laConfig.trading_status,
-    initialRegistrationCheck?.time
-  );
+  return getNextActionAndDate(mostRecentCheck, laConfig.trading_status);
 };
 
 /**
