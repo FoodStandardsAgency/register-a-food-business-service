@@ -42,24 +42,18 @@ const FAR_FUTURE_YEARS = 100;
  * @returns {boolean}
  */
 const isHistoricRegistrationOptOut = (registrationSubmittedAt, tradingStatusConfig) => {
-  if (!tradingStatusConfig?.ignore_historic_registrations) {
-    return false;
-  }
-
   const enabledAtRaw = tradingStatusConfig?.ignore_historic_registrations_enabled_at;
-  if (!enabledAtRaw) {
-    return false;
-  }
+
+  if (!tradingStatusConfig?.ignore_historic_registrations || !enabledAtRaw) return false;
 
   const enabledAt = moment(enabledAtRaw);
-  const submittedAt = registrationSubmittedAt ? moment(registrationSubmittedAt) : null;
+  const submittedAt = moment(registrationSubmittedAt);
 
-  if (!enabledAt.isValid() || !submittedAt || !submittedAt.isValid()) {
-    return false;
-  }
-
-  const cutoff = enabledAt.clone().subtract(3, MONTHS_TIME_INTERVAL);
-  return submittedAt.isBefore(cutoff);
+  return (
+    enabledAt.isValid() &&
+    submittedAt.isValid() &&
+    submittedAt.isBefore(enabledAt.clone().subtract(3, MONTHS_TIME_INTERVAL))
+  );
 };
 
 /**
