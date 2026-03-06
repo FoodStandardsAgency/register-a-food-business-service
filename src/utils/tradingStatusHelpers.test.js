@@ -108,9 +108,8 @@ describe("getNextActionAndDate", () => {
       expect(result.time.isAfter(moment().add(90, "years"))).toBeTruthy();
     });
 
-    test("should not affect non-check-email actions (e.g. CONFIRMED_NOT_TRADING -> FINISHED_TRADING_LA)", () => {
+    test("should not affect non-INITIAL_REGISTRATION actions (e.g. CONFIRMED_NOT_TRADING -> FINISHED_TRADING_LA)", () => {
       const enabledAt = moment();
-      const registrationSubmittedAt = enabledAt.clone().subtract(12, "months");
 
       const configWithOptOut = {
         ...tradingStatusConfig,
@@ -125,6 +124,22 @@ describe("getNextActionAndDate", () => {
       const result = getNextActionAndDate(mockRecentCheck, configWithOptOut);
 
       expect(result.type).toEqual(FINISHED_TRADING_LA);
+    });
+
+    test("should not affect recent INITIAL_REGISTRATION that is not historic", () => {
+      const enabledAt = moment();
+      const registrationSubmittedAt = enabledAt.clone().subtract(1, "months");
+
+      const configWithOptOut = {
+        ...tradingStatusConfig,
+        ignore_historic_registrations: true,
+        ignore_historic_registrations_enabled_at: enabledAt.toDate()
+      };
+
+      const mockRecentCheck = createMockRecentCheck(INITIAL_REGISTRATION, registrationSubmittedAt);
+      const result = getNextActionAndDate(mockRecentCheck, configWithOptOut);
+
+      expect(result.type).toEqual(INITIAL_CHECK);
     });
   });
 
