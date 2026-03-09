@@ -1,6 +1,6 @@
 {
   "name": "register-a-food-business-service",
-  "version": "18.0.0",
+  "version": "18.0.1",
   "description": "",
   "main": "src/app.js",
   "engines": {
@@ -18,7 +18,7 @@
     "test:watch": "export TEST_TYPE=unit && jest ./src --watch",
     "test:submissions:component": "cucumber-js",
     "test:submissions:component:local": "export $(grep -v '^#' .env | xargs -d '\n') && cucumber-js",
-    "test:submissions:component:ci": "mkdir -p reports && cucumber-js --format=json | cucumber-junit > reports/TEST-component.xml",
+    "test:submissions:component:ci": "mkdir -p reports && cucumber-js --format json:reports/cucumber.json && cucumber-junit reports/cucumber.json > reports/TEST-component.xml",
     "test:collections:component": "jest ./tests/collections/component/*.js --runInBand",
     "test:collections:component:ci": "export TEST_TYPE=component && jest ./tests/collections/component/*.js --runInBand",
     "test:collections:api:e2e": "jest ./tests/collections/e2e/*.js --runInBand",

@@ -68,7 +68,7 @@ jobs:
         uses: EnricoMi/publish-unit-test-result-action@v2
         if: always()
         with:
-          junit_files: ./reports/TEST-unit.xml
+          files: ./reports/TEST-unit.xml
           check_name: "Unit Test Results"
 
       - name: Trading Status Integration Tests
@@ -78,7 +78,7 @@ jobs:
         uses: EnricoMi/publish-unit-test-result-action@v2
         if: always()
         with:
-          junit_files: ./reports/TEST-tradingstatus.xml
+          files: ./reports/TEST-tradingstatus.xml
           check_name: "Trading Status Integration Test Results"
 
       - name: Generate Coverage Summary
