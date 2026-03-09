@@ -26,8 +26,35 @@ const {
   REGULAR_CHECK_TEMPLATE_ID_CY,
   REGULAR_CHECK_CHASE_TEMPLATE_ID_CY,
   FINISHED_TRADING_LA_TEMPLATE_ID_CY,
-  STILL_TRADING_LA_TEMPLATE_ID_CY
+  STILL_TRADING_LA_TEMPLATE_ID_CY,
+  HISTORICAL_REGISTRATION
 } = require("../config");
+
+const FAR_FUTURE_YEARS = 100;
+
+/**
+ * Determines whether a registration should be treated as "historic" for the purpose of
+ * skipping check emails. A registration is historic if its submission date is more than
+ * 3 months before the opt-out was enabled.
+ *
+ * @param {Date|String|Object} registrationSubmittedAt - Submission date (Date, ISO string, or moment).
+ * @param {Object} tradingStatusConfig - LA trading status config.
+ * @returns {boolean}
+ */
+const isHistoricRegistrationOptOut = (registrationSubmittedAt, tradingStatusConfig) => {
+  const enabledAtRaw = tradingStatusConfig?.ignore_historic_registrations_enabled_at;
+
+  if (!tradingStatusConfig?.ignore_historic_registrations || !enabledAtRaw) return false;
+
+  const enabledAt = moment(enabledAtRaw);
+  const submittedAt = moment(registrationSubmittedAt);
+
+  return (
+    enabledAt.isValid() &&
+    submittedAt.isValid() &&
+    submittedAt.isBefore(enabledAt.clone().subtract(3, MONTHS_TIME_INTERVAL))
+  );
+};
 
 /**
  * Validates the date fields in a registration object to ensure they are properly formatted and
@@ -209,6 +236,10 @@ const getNextActionAndDate = (mostRecentCheck, tradingStatusConfig) => {
   }
   // Handle INITIAL_REGISTRATION
   else if (mostRecentCheck.type === INITIAL_REGISTRATION) {
+    // If LA has opted out, do not schedule check emails for historic registrations.
+    if (isHistoricRegistrationOptOut(mostRecentCheck.time, tradingStatusConfig)) {
+      return { type: HISTORICAL_REGISTRATION, time: moment().add(FAR_FUTURE_YEARS, "years") };
+    }
     if (tradingStatusConfig.initial_check) {
       const nextActionTime = mostRecentCheckTime.add(
         tradingStatusConfig.initial_check,
@@ -278,6 +309,7 @@ const getNextActionAndDate = (mostRecentCheck, tradingStatusConfig) => {
   ) {
     result.time = staggerOldDates(result.time);
   }
+
   return result;
 };
 
