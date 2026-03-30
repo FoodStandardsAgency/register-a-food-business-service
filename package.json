@@ -88,6 +88,9 @@
     "prettier": "^3.8.1",
     "snyk": "^1.1303.2"
   },
+  "overrides": {
+    "tar": "7.5.13"
+  },
   "prettier": {
     "trailingComma": "none",
     "tabWidth": 2,
