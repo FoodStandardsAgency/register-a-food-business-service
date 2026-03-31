@@ -100,6 +100,26 @@ jobs:
             exit 1
           fi
 
+      - name: Run Vulnerability Scanner
+        id: vuln-scan
+        if: always()
+        run: |
+          node .github/scripts/vuln-scanner.js package-lock.json --out vuln-report.md
+          echo "exit_code=$?" >> $GITHUB_OUTPUT
+        continue-on-error: true
+
+      - name: Publish Vulnerability Scan Results
+        if: always()
+        run: |
+          echo "## 🔐 Vulnerability Scan Results" >> $GITHUB_STEP_SUMMARY
+          cat vuln-report.md >> $GITHUB_STEP_SUMMARY
+
+      - name: Fail on CRITICAL or HIGH vulnerabilities
+        if: always() && steps.vuln-scan.outcome == 'failure'
+        run: |
+          echo "::error::CRITICAL or HIGH vulnerabilities found. See the Vulnerability Scan Results in the job summary."
+          exit 1
+
       - name: Prune dev dependencies
         run: npm prune --production
 
