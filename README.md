@@ -53,3 +53,9 @@ This route is primarily in place to allow easy actioning of GDPR deletion reques
 
 This route is deprecated because the collections service now provides all `GET` functionality for saved registrations. However, the route can be used for admin purposes if necessary. The `client-name` and `api-secret` headers are required to use this route. Note that the matching environment variables are the `ADMIN_*` variables, which are different to those for the `POST/createNewRegistration` route.
 
+## Running NPM Packages vulnerability scanner
+
+- Full `node .github/scripts/vuln-scanner.js package-lock.json`
+- Table `node .github/scripts/vuln-scanner.js package-lock.json --format table`
+- List `node .github/scripts/vuln-scanner.js package-lock.json --format list`
+

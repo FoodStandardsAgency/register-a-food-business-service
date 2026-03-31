@@ -5,8 +5,6 @@ const logger = createLogger({
 
 const { AzureApplicationInsightsLogger } = require("winston-azure-application-insights");
 
-const { ElasticsearchTransport } = require("winston-elasticsearch");
-
 let env = process.env.NODE_ENV;
 let logLevel = env === "production" ? "error" : "info";
 logLevel = process.env.LOG_LEVEL ? process.env.LOG_LEVEL : logLevel;
@@ -68,7 +66,6 @@ switch (env) {
     };
 
     //rem this in when you need it atow there is a problem with this closing its fileHandle
-    //transportConfig.push(new ElasticsearchTransport(options.esTransportOpts));
 
     break;
 }
