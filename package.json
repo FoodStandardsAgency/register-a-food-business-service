@@ -64,7 +64,7 @@
     "mongodb": "^7.1.1",
     "morgan": "^1.10.1",
     "notifications-node-client": "^8.3.2",
-    "pdfmake": "^0.2.23",
+    "pdfmake": "^0.3.7",
     "swagger-ui-express": "^5.0.1",
     "uuid": "^11.0.5",
     "validator": "^13.15.26",
