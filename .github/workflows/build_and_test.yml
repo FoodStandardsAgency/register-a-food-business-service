@@ -47,9 +47,9 @@ jobs:
         run: npm run lint
 
       - name: Start MongoDB
-        uses: supercharge/mongodb-github-action@v1.10.0
+        uses: supercharge/mongodb-github-action@1.12.1
         with:
-          mongodb-version: "6.0"
+          mongodb-version: "7.0"
 
       - name: Wait for MongoDB
         run: |
@@ -68,7 +68,7 @@ jobs:
         uses: EnricoMi/publish-unit-test-result-action@v2
         if: always()
         with:
-          junit_files: ./reports/TEST-unit.xml
+          files: ./reports/TEST-unit.xml
           check_name: "Unit Test Results"
 
       - name: Trading Status Integration Tests
@@ -78,7 +78,7 @@ jobs:
         uses: EnricoMi/publish-unit-test-result-action@v2
         if: always()
         with:
-          junit_files: ./reports/TEST-tradingstatus.xml
+          files: ./reports/TEST-tradingstatus.xml
           check_name: "Trading Status Integration Test Results"
 
       - name: Generate Coverage Summary
@@ -99,6 +99,26 @@ jobs:
             echo "Coverage is below 80%!"
             exit 1
           fi
+
+      - name: Run Vulnerability Scanner
+        id: vuln-scan
+        if: always()
+        run: |
+          node .github/scripts/vuln-scanner.js package-lock.json --out vuln-report.md
+          echo "exit_code=$?" >> $GITHUB_OUTPUT
+        continue-on-error: true
+
+      - name: Publish Vulnerability Scan Results
+        if: always()
+        run: |
+          echo "## 🔐 Vulnerability Scan Results" >> $GITHUB_STEP_SUMMARY
+          cat vuln-report.md >> $GITHUB_STEP_SUMMARY
+
+      - name: Fail on CRITICAL or HIGH vulnerabilities
+        if: always() && steps.vuln-scan.outcome == 'failure'
+        run: |
+          echo "::error::CRITICAL or HIGH vulnerabilities found. See the Vulnerability Scan Results in the job summary."
+          exit 1
 
       - name: Prune dev dependencies
         run: npm prune --production

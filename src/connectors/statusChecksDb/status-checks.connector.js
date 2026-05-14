@@ -67,7 +67,7 @@ const updateTradingStatusCheck = async (fsa_rn, newStatus) => {
     } else {
       // Check if an item with same type exists
       const typeIndex = registration.status.trading_status_checks.findIndex(
-        (status) => status.type === newStatus.type
+        (status) => status.type === newStatus.type && status.address === newStatus.address
       );
 
       if (typeIndex >= 0) {

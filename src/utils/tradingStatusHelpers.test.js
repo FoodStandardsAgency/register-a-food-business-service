@@ -16,6 +16,7 @@ const {
   FINISHED_TRADING_LA,
   STILL_TRADING_LA,
   DELETE_REGISTRATION,
+  HISTORICAL_REGISTRATION,
   INITIAL_CHECK_TEMPLATE_ID,
   INITIAL_CHECK_CHASE_TEMPLATE_ID,
   REGULAR_CHECK_TEMPLATE_ID,
@@ -86,6 +87,59 @@ describe("getNextActionAndDate", () => {
 
       expect(result.type).toEqual(STILL_TRADING_LA);
       expect(compareDateEquality(result.time, expectedTime)).toBeTruthy();
+    });
+  });
+
+  describe("Historic registration opt-out", () => {
+    test("should return HISTORICAL_REGISTRATION (far future) instead of scheduling check emails for historic registrations", () => {
+      const enabledAt = moment();
+      const registrationSubmittedAt = enabledAt.clone().subtract(6, "months");
+
+      const configWithOptOut = {
+        ...tradingStatusConfig,
+        ignore_historic_registrations: true,
+        ignore_historic_registrations_enabled_at: enabledAt.toDate()
+      };
+
+      const mockRecentCheck = createMockRecentCheck(INITIAL_REGISTRATION, registrationSubmittedAt);
+      const result = getNextActionAndDate(mockRecentCheck, configWithOptOut);
+
+      expect(result.type).toEqual(HISTORICAL_REGISTRATION);
+      expect(result.time.isAfter(moment().add(90, "years"))).toBeTruthy();
+    });
+
+    test("should not affect non-INITIAL_REGISTRATION actions (e.g. CONFIRMED_NOT_TRADING -> FINISHED_TRADING_LA)", () => {
+      const enabledAt = moment();
+
+      const configWithOptOut = {
+        ...tradingStatusConfig,
+        ignore_historic_registrations: true,
+        ignore_historic_registrations_enabled_at: enabledAt.toDate()
+      };
+
+      const mockRecentCheck = createMockRecentCheck(
+        CONFIRMED_NOT_TRADING,
+        moment().subtract(1, "days")
+      );
+      const result = getNextActionAndDate(mockRecentCheck, configWithOptOut);
+
+      expect(result.type).toEqual(FINISHED_TRADING_LA);
+    });
+
+    test("should not affect recent INITIAL_REGISTRATION that is not historic", () => {
+      const enabledAt = moment();
+      const registrationSubmittedAt = enabledAt.clone().subtract(1, "months");
+
+      const configWithOptOut = {
+        ...tradingStatusConfig,
+        ignore_historic_registrations: true,
+        ignore_historic_registrations_enabled_at: enabledAt.toDate()
+      };
+
+      const mockRecentCheck = createMockRecentCheck(INITIAL_REGISTRATION, registrationSubmittedAt);
+      const result = getNextActionAndDate(mockRecentCheck, configWithOptOut);
+
+      expect(result.type).toEqual(INITIAL_CHECK);
     });
   });
 
@@ -492,7 +546,7 @@ describe("staggerOldDates", () => {
     const result = staggerOldDates(oldDateLaterInYear);
 
     // The result should have the current year
-    expect(result.year()).toBe(2025);
+    expect(result.year()).toBe(moment().year());
     expect(result.month()).toBe(11); // December is 11 (0-indexed)
     expect(result.date()).toBe(25);
   });
@@ -503,7 +557,7 @@ describe("staggerOldDates", () => {
     const result = staggerOldDates(oldDateEarlierInYear);
 
     // The result should have the next year (current year + 1)
-    expect(result.year()).toBe(2026);
+    expect(result.year()).toBe(moment().year() + 1);
     expect(result.month()).toBe(0); // January is 0 (0-indexed)
     expect(result.date()).toBe(15);
   });
