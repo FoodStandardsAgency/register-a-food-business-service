@@ -36,7 +36,6 @@ A successful `POST` request to the `/createNewRegistration` route performs the f
 - Gets metadata for the registration. Currently, this is the unique food business registration application reference and the registration date in `YYYY-MM-DD` format.
 - Sends a combined response object back to the client
 - Performs a series of asynchronous post-response operations:
-  - Saves the registration to the PostgreSQL database (`*-temp-store`) on Azure
   - Gets the config for the specified `registration-data-version`, which includes template IDs for GOV.UK Notify emails
   - Sends confirmation/notification emails to the Food Business Operator and Local Council(s) via [GOV.UK Notify](https://github.com/FoodStandardsAgency/register-a-food-business-wiki/wiki/The-Notifications-service).
 

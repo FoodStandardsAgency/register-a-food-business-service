@@ -7,4 +7,3 @@ In order to add a new data field, it needs to be validated then added to the ext
 1.  The data field should be added to the `validation.schema.js` so it can be validated as soon as it is accepted by the backend.
 2.  The data field needs to be added to a new template in Notify to ensure it is sent to the FBO and LC.
 3.  Add the data field to the database model in `db/models` in the correct subsection
-4.  Create a new migration to add the data field column in the PostgresDB. For more information, see documentation on [Sequelize](https://sequelize.readthedocs.io/en/latest/docs/migrations/)
