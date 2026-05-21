@@ -1,8 +1,8 @@
 # Adding a new data field
 
-In order to add anew data field it needs to be validated then added to the external connections.
+In order to add a new data field, it needs to be validated then added to the external connections.
 
-## Steps:
+## Steps
 
 1.  The data field should be added to the `validation.schema.js` so it can be validated as soon as it is accepted by the backend.
 2.  The data field needs to be mapped to the correct field in the `tascomi.connector.js`

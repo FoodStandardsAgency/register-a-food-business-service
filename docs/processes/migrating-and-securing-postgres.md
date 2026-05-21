@@ -1,6 +1,6 @@
 ## Procedure
 ### Creating a new server and database
-This could be done programatically but for this purpose, it can be easily achieved through the portal.
+This could be done programmatically but for this purpose, it can be easily achieved through the portal.
  1. Create a new Azure Database for PostgreSQL server with the following properties:
     * Type: Single server
     * Subscription: `<subscription>` (as per environment)
@@ -97,13 +97,13 @@ Either way, rename the schema afterwards as follows and set as default schema:
 ## Testing
 Ensure the changes have been effective with PG Admin:
   1. Connect to the DB as the `read_write_user` and verify that it is possible to update data but not to add a new column.
-  1. Connect to the DB as the `read_write_migrate_user` and verify that it is possible to to add and delete a new column and a new table.
+  1. Connect to the DB as the `read_write_migrate_user` and verify that it is possible to add and delete a new column and a new table.
  
  Or from the command prompt with pgcli:
  
  1. From a command prompt, run the following command, substituting in the appropriate host and password etc: 
     ```sh
-    pgcli "postgres://read_write_user@dev-temp-store:<password>@dev-temp-store.postgres.database.azure.com:5432/postgres?sslmode=require"
+    pgcli "postgres://read_write_user:<password>@dev-temp-store.postgres.database.azure.com:5432/postgres?sslmode=require"
     ```
 1. Then the following:  
 ```sql

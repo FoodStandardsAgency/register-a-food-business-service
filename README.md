@@ -1,25 +1,21 @@
 # Register a food business service
 
+A backend service that provides registration endpoints and downstream integrations for Food Standards Agency workflows.
+
 ## Setting up your development environment
 
-To run this application, you must use the [register-a-food-business-environment](https://github.com/FoodStandardsAgency/register-a-food-business-environment) repository to set up your development environment.
+## Prerequisites
+- Set up your development environment using the register-a-food-business-environment repository: https://github.com/FoodStandardsAgency/register-a-food-business-environment
+- Recommended IDE extension: Prettier (code formatting)
 
-It is recommended that you install the Prettier code-formatting extension for your IDE.
-
-## Detailed guides
-
-The following detailed guides are available:
-
+## Guides
 - [Starting and testing the application](./docs/contribution-guidelines/starting-testing-the-app.md)
 - [Adding a new data field](./docs/contribution-guidelines/adding-a-new-data-field.md)
 - [The tech stack](./docs/contribution-guidelines/the-tech-stack.md)
-- [The email notifications code](./docs/contribution-guidelines/email-notifications.md)
-- [The GOV.UK email notifications service](https://foodstandardsagency.atlassian.net/wiki/spaces/RFB/pages/491290652/The+Notifications+service)
-- [The FSA reference number generator](https://foodstandardsagency.atlassian.net/wiki/spaces/RFB/pages/491126788/The+FSA+registration+reference+number+generator)
+- [Email notifications code](./docs/contribution-guidelines/email-notifications.md)
 
-## The `/api/registration` route
-
-The `/api/registration` route is the endpoint for creating, fetching, and deleting registrations.
+## API: `/api/registration`
+Endpoints for creating, fetching, and deleting registrations.
 
 ### `POST /api/registration/createNewRegistration`
 
@@ -37,13 +33,12 @@ A successful `POST` request to the `/createNewRegistration` route performs the f
 - Saves the registration data to the `*-back-end-cache` database on Azure. This action means that any failed subsequent steps will be recoverable via a manual search of the cache database, rather than the user data being lost forever.
 - Validates the registration data against the [schema](/src/services/validation.schema.js)
 - Fetches the config details (such as contact details) for the specified district council and, optionally, its corresponding county council in cases where the county council manages food standards.
-- Gets metadata for the registration. Currently, this is the unique food business registration application reference (via an [Epimorphics API](https://foodstandardsagency.atlassian.net/wiki/spaces/RFB/pages/491126788/The+FSA+registration+reference+number+generator)) and the registration date in `YYYY-MM-DD` format.
+- Gets metadata for the registration. Currently, this is the unique food business registration application reference and the registration date in `YYYY-MM-DD` format.
 - Sends a combined response object back to the client
 - Performs a series of asynchronous post-response operations:
-  - Sends the registration to the Tascomi API specified in the config database for that council
   - Saves the registration to the PostgreSQL database (`*-temp-store`) on Azure
   - Gets the config for the specified `registration-data-version`, which includes template IDs for GOV.UK Notify emails
-  - Sends confirmation/notification emails to the Food Business Operator and Local Council(s) via [GOV.UK Notify](https://foodstandardsagency.atlassian.net/wiki/spaces/RFB/pages/491290652/The+Notifications+service).
+  - Sends confirmation/notification emails to the Food Business Operator and Local Council(s) via [GOV.UK Notify](https://github.com/FoodStandardsAgency/register-a-food-business-wiki/wiki/The-Notifications-service).
 
 ### `DELETE /api/registration/:fsa_rn`
 
