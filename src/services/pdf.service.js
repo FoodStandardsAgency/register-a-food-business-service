@@ -5,6 +5,7 @@
 
 const PdfPrinter = require("pdfmake/src/printer");
 const moment = require("moment");
+const { getMainPartnershipContactName } = require("../utils/operatorNameHelpers");
 
 const {
   docDefinitionGenerator,
@@ -101,13 +102,6 @@ const transformPartnersForPdf = (partners) => {
     partnerNames.push(partners[partner].partner_name);
   }
   return partnerNames.join(", ");
-};
-
-const getMainPartnershipContactName = (partners) => {
-  const mainPartnershipContact = partners.find((partner) => {
-    return partner.partner_is_primary_contact === true;
-  });
-  return mainPartnershipContact.partner_name;
 };
 
 const convertKeyToDisplayName = (key) =>

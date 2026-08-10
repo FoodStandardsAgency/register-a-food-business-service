@@ -102,6 +102,7 @@ describe("Status Checks Service", () => {
       submission_language: "en",
       establishment: {
         operator: {
+          operator_type: "SOLETRADER",
           operator_first_name: "John",
           operator_last_name: "Doe"
         },
@@ -137,6 +138,7 @@ describe("Status Checks Service", () => {
         reg_submission_date: "2025-06-01",
         establishment: {
           operator: {
+            operator_type: "SOLETRADER",
             operator_first_name: "John",
             operator_last_name: "Doe"
           },
@@ -185,6 +187,7 @@ describe("Status Checks Service", () => {
         reg_submission_date: "2025-06-01",
         establishment: {
           operator: {
+            operator_type: "SOLETRADER",
             operator_first_name: "John",
             operator_last_name: "Doe"
           },
@@ -248,6 +251,7 @@ describe("Status Checks Service", () => {
         reg_submission_date: "2025-06-01",
         establishment: {
           operator: {
+            operator_type: "SOLETRADER",
             operator_first_name: "John",
             operator_last_name: "Doe"
           },
@@ -294,6 +298,7 @@ describe("Status Checks Service", () => {
       reg_submission_date: "2025-06-01",
       establishment: {
         operator: {
+          operator_type: "SOLETRADER",
           operator_first_name: "John",
           operator_last_name: "Doe"
         },
@@ -458,6 +463,95 @@ describe("Status Checks Service", () => {
         "FSA-123456",
         INITIAL_CHECK
       );
+    });
+
+    const registrationWithOperator = (operator) => ({
+      ...mockRegistration,
+      establishment: {
+        ...mockRegistration.establishment,
+        operator
+      }
+    });
+
+    const sentOperatorName = () => sendSingleEmail.mock.calls[0][3].operator_name;
+
+    test("should use main partnership contact as operator name for partnerships", async () => {
+      // Arrange
+      const partnershipRegistration = registrationWithOperator({
+        operator_type: "PARTNERSHIP",
+        partners: [
+          { partner_name: "Alice Smith", partner_is_primary_contact: false },
+          { partner_name: "Bob Jones", partner_is_primary_contact: true }
+        ]
+      });
+
+      // Act
+      await sendTradingStatusEmails(partnershipRegistration, mockLaConfig, [emailsToSend[0]]);
+
+      // Assert
+      expect(sentOperatorName()).toBe("Bob Jones");
+    });
+
+    test("should use company name as operator name for companies", async () => {
+      // Arrange
+      const companyRegistration = registrationWithOperator({
+        operator_type: "COMPANY",
+        operator_company_name: "Test Food Ltd",
+        operator_companies_house_number: "01234567",
+        contact_representative_name: "Carol Represent"
+      });
+
+      // Act
+      await sendTradingStatusEmails(companyRegistration, mockLaConfig, [emailsToSend[0]]);
+
+      // Assert
+      expect(sentOperatorName()).toBe("Test Food Ltd");
+    });
+
+    test("should use charity name as operator name for charities", async () => {
+      // Arrange
+      const charityRegistration = registrationWithOperator({
+        operator_type: "CHARITY",
+        operator_charity_name: "Test Food Charity",
+        operator_charity_number: "1234567",
+        contact_representative_name: "Carol Represent"
+      });
+
+      // Act
+      await sendTradingStatusEmails(charityRegistration, mockLaConfig, [emailsToSend[0]]);
+
+      // Assert
+      expect(sentOperatorName()).toBe("Test Food Charity");
+    });
+
+    test("should use first and last name as operator name for a person registered by a representative", async () => {
+      // Arrange
+      const personRegistration = registrationWithOperator({
+        operator_type: "PERSON",
+        operator_first_name: "Priya",
+        operator_last_name: "Patel",
+        contact_representative_name: "Carol Represent"
+      });
+
+      // Act
+      await sendTradingStatusEmails(personRegistration, mockLaConfig, [emailsToSend[0]]);
+
+      // Assert
+      expect(sentOperatorName()).toBe("Priya Patel");
+    });
+
+    test("should fail loudly for an unrecognised operator type instead of sending", async () => {
+      // Arrange
+      const unknownTypeRegistration = registrationWithOperator({
+        operator_type: "COOPERATIVE",
+        operator_company_name: "Test Food Co-op"
+      });
+
+      // Act & Assert
+      await expect(
+        sendTradingStatusEmails(unknownTypeRegistration, mockLaConfig, [emailsToSend[0]])
+      ).rejects.toThrow('Unrecognised operator type "COOPERATIVE"');
+      expect(sendSingleEmail).not.toHaveBeenCalled();
     });
   });
 
