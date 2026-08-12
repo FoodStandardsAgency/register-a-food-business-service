@@ -51,7 +51,7 @@ describe("operatorNameHelpers", () => {
       expect(getOperatorName(operator)).toBe("Priya Patel");
     });
 
-    test("should return main partnership contact name for a partnership", () => {
+    test("should return all partner names for a partnership", () => {
       // Arrange
       const operator = {
         operator_type: "PARTNERSHIP",
@@ -62,7 +62,59 @@ describe("operatorNameHelpers", () => {
       };
 
       // Act & Assert
-      expect(getOperatorName(operator)).toBe("Bob Jones");
+      expect(getOperatorName(operator)).toBe("Alice Smith, Bob Jones");
+    });
+
+    test("should comma-separate three or more partner names", () => {
+      // Arrange
+      const operator = {
+        operator_type: "PARTNERSHIP",
+        partners: [
+          { partner_name: "Alice Smith", partner_is_primary_contact: true },
+          { partner_name: "Bob Jones", partner_is_primary_contact: false },
+          { partner_name: "Carol White", partner_is_primary_contact: false }
+        ]
+      };
+
+      // Act & Assert
+      expect(getOperatorName(operator)).toBe("Alice Smith, Bob Jones, Carol White");
+    });
+
+    test("should return the single partner name for a one-partner partnership", () => {
+      // Arrange
+      const operator = {
+        operator_type: "PARTNERSHIP",
+        partners: [{ partner_name: "Alice Smith", partner_is_primary_contact: true }]
+      };
+
+      // Act & Assert
+      expect(getOperatorName(operator)).toBe("Alice Smith");
+    });
+
+    test("should throw when a partner is missing its name", () => {
+      // Arrange
+      const operator = {
+        operator_type: "PARTNERSHIP",
+        partners: [
+          { partner_name: "Alice Smith", partner_is_primary_contact: true },
+          { partner_is_primary_contact: false }
+        ]
+      };
+
+      // Act & Assert
+      expect(() => getOperatorName(operator)).toThrow(
+        "Missing partner names in partners list"
+      );
+    });
+
+    test("should throw when the partners list is missing or empty", () => {
+      // Act & Assert
+      expect(() => getOperatorName({ operator_type: "PARTNERSHIP" })).toThrow(
+        "Missing partner names in partners list"
+      );
+      expect(() => getOperatorName({ operator_type: "PARTNERSHIP", partners: [] })).toThrow(
+        "Missing partner names in partners list"
+      );
     });
 
     test("should return company name for a company", () => {

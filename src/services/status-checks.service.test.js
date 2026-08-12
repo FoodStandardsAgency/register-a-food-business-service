@@ -475,7 +475,7 @@ describe("Status Checks Service", () => {
 
     const sentOperatorName = () => sendSingleEmail.mock.calls[0][3].operator_name;
 
-    test("should use main partnership contact as operator name for partnerships", async () => {
+    test("should use all partner names as operator name for partnerships", async () => {
       // Arrange
       const partnershipRegistration = registrationWithOperator({
         operator_type: "PARTNERSHIP",
@@ -489,7 +489,7 @@ describe("Status Checks Service", () => {
       await sendTradingStatusEmails(partnershipRegistration, mockLaConfig, [emailsToSend[0]]);
 
       // Assert
-      expect(sentOperatorName()).toBe("Bob Jones");
+      expect(sentOperatorName()).toBe("Alice Smith, Bob Jones");
     });
 
     test("should use company name as operator name for companies", async () => {

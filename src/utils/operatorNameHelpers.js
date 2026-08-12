@@ -22,6 +22,25 @@ const getMainPartnershipContactName = (partners) => {
 const joinPersonalName = (firstName, lastName) =>
   firstName && lastName ? `${firstName} ${lastName}` : undefined;
 
+/**
+ * Joins all partner names into a single comma-separated display name, e.g.
+ * "Alice Smith, Bob Jones" — the same style transformPartnersForNotify and
+ * transformPartnersForPdf use for partnership details. The operator of a
+ * partnership is the partners collectively, so the operator name lists them
+ * all rather than only the main partnership contact.
+ *
+ * @param {Array} partners partner objects
+ *
+ * @returns {string} Comma-separated partner names
+ */
+const getPartnershipOperatorName = (partners) => {
+  const names = (partners || []).map((partner) => partner.partner_name);
+  if (names.length === 0 || names.some((name) => !name)) {
+    throw new Error("Missing partner names in partners list");
+  }
+  return names.join(", ");
+};
+
 // One handler per operatorTypeEnum key. Operator types are deliberately a closed
 // list: a type without a handler fails loudly in getOperatorName rather than
 // rendering "undefined undefined" in emails sent to FBOs and local authorities.
@@ -31,7 +50,7 @@ const operatorNameBuilders = {
   [operatorTypeEnum.PERSON.key]: (operator) =>
     joinPersonalName(operator.operator_first_name, operator.operator_last_name),
   [operatorTypeEnum.PARTNERSHIP.key]: (operator) =>
-    getMainPartnershipContactName(operator.partners),
+    getPartnershipOperatorName(operator.partners),
   [operatorTypeEnum.COMPANY.key]: (operator) => operator.operator_company_name,
   [operatorTypeEnum.CHARITY.key]: (operator) => operator.operator_charity_name
 };
@@ -63,5 +82,6 @@ const getOperatorName = (operator) => {
 module.exports = {
   getOperatorName,
   getMainPartnershipContactName,
+  getPartnershipOperatorName,
   operatorNameBuilders
 };
