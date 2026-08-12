@@ -49,8 +49,7 @@ const operatorNameBuilders = {
     joinPersonalName(operator.operator_first_name, operator.operator_last_name),
   [operatorTypeEnum.PERSON.key]: (operator) =>
     joinPersonalName(operator.operator_first_name, operator.operator_last_name),
-  [operatorTypeEnum.PARTNERSHIP.key]: (operator) =>
-    getPartnershipOperatorName(operator.partners),
+  [operatorTypeEnum.PARTNERSHIP.key]: (operator) => getPartnershipOperatorName(operator.partners),
   [operatorTypeEnum.COMPANY.key]: (operator) => operator.operator_company_name,
   [operatorTypeEnum.CHARITY.key]: (operator) => operator.operator_charity_name
 };

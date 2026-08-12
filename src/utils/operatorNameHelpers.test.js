@@ -102,9 +102,7 @@ describe("operatorNameHelpers", () => {
       };
 
       // Act & Assert
-      expect(() => getOperatorName(operator)).toThrow(
-        "Missing partner names in partners list"
-      );
+      expect(() => getOperatorName(operator)).toThrow("Missing partner names in partners list");
     });
 
     test("should throw when the partners list is missing or empty", () => {
