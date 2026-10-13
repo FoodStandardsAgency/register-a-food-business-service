@@ -104,7 +104,7 @@ jobs:
         id: vuln-scan
         if: always()
         run: |
-          node .github/scripts/vuln-scanner.js package-lock.json --out vuln-report.md
+          node .github/scripts/vuln-scanner.js package-lock.json --no-dev --out vuln-report.md
           echo "exit_code=$?" >> $GITHUB_OUTPUT
         continue-on-error: true
 
