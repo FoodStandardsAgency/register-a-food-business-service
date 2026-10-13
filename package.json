@@ -89,7 +89,7 @@
   },
   "overrides": {
     "applicationinsights-native-metrics": {
-      "tar": "7.5.13"
+      "tar": "7.5.22"
     },
     "cucumber-junit": {
       "yargs-parser": "5.0.1"
