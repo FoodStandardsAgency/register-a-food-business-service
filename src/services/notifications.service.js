@@ -5,6 +5,7 @@
 
 const moment = require("moment");
 const { logEmitter, WARN, ERROR, INFO } = require("./logging.service");
+const { getMainPartnershipContactName } = require("../utils/operatorNameHelpers");
 const { sendSingleEmail } = require("../connectors/notify/notify.connector");
 const { pdfGenerator, transformDataForPdf } = require("./pdf.service");
 const {
@@ -496,20 +497,6 @@ const transformPartnersForNotify = (partners) => {
 const transformTradingNamesForNotify = (tradingNames) => {
   // Add bullet points to each trading name and join them with a new line
   return tradingNames.map((name) => `* ${name}`).join("\n");
-};
-
-/**
- * Extracts main partnership contact from partners list
- *
- * @param {Array} partners partner objects
- *
- * @returns Name of main partnership contact
- */
-const getMainPartnershipContactName = (partners) => {
-  const mainPartnershipContact = partners.find((partner) => {
-    return partner.partner_is_primary_contact === true;
-  });
-  return mainPartnershipContact.partner_name;
 };
 
 module.exports = {

@@ -87,6 +87,7 @@ const getTestRegistration = (fsaRn, council, submissionDate, nextStatusDate, lan
         establishment_trading_name: `Trading Name for ${fsaRn}`
       },
       operator: {
+        operator_type: "SOLETRADER",
         operator_email: "test@example.com",
         operator_first_name: `First name for ${fsaRn}`,
         operator_last_name: `Last name for ${fsaRn}`

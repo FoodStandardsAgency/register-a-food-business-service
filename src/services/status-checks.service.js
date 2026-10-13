@@ -24,6 +24,7 @@ const {
   deleteRegistration
 } = require("../connectors/statusChecksDb/status-checks.connector");
 const { encryptId } = require("../utils/crypto");
+const { getOperatorName } = require("../utils/operatorNameHelpers");
 const {
   INITIAL_REGISTRATION,
   INITIAL_CHECK,
@@ -217,10 +218,8 @@ const transformDataForNotify = (registration, laConfig, actionType, i18nUtil) =>
   // Determine status text based on action type
   const status = i18nUtil.t(getStatusTextForActionType(actionType));
 
-  // Build operator name from first and last name
-  const operatorFirstName = registration.establishment.operator.operator_first_name;
-  const operatorLastName = registration.establishment.operator.operator_last_name;
-  const operatorName = `${operatorFirstName} ${operatorLastName}`;
+  // Build operator name according to operator type (sole trader, partnership etc.)
+  const operatorName = getOperatorName(registration.establishment.operator);
 
   // Format submission date
   const lang = registration.submission_language ?? "en";
