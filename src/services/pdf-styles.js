@@ -192,21 +192,21 @@ const createGuidanceLinksSection = (lcInfo, i18n) => {
     createHyperlinkTitle(
       "How to achieve a high food hygiene rating (FHRS score)",
       "h4",
-      "https://www.food.gov.uk/business-guidance/food-hygiene-ratings-for-businesses"
+      "https://www.gov.uk/government/publications/food-hygiene-rating-scheme-fhrs-guidance-for-businesses/food-hygiene-rating-scheme-fhrs-guidance-for-businesses"
     )
   );
   guidanceLinksSectionNoSpaces.push(
     createHyperlinkTitle(
       "Information on the food safety management system safer food, better business",
       "h4",
-      "https://www.food.gov.uk/business-guidance/safer-food-better-business"
+      "https://www.gov.uk/government/publications/safer-food-better-business-sfbb/safer-food-better-business-sfbb"
     )
   );
   guidanceLinksSectionNoSpaces.push(
     createHyperlinkTitle(
       "Food labelling and allergens guidance",
       "h4",
-      "https://www.food.gov.uk/business-guidance/industry-specific-advice/labelling-and-allergens"
+      "https://www.gov.uk/government/publications/food-allergen-labelling-and-information-requirements-technical-guidance/food-allergen-labelling-and-information-requirements-technical-guidance"
     )
   );
   if (lcInfo.country == "england") {
@@ -233,7 +233,7 @@ const createGuidanceLinksSection = (lcInfo, i18n) => {
       createHyperlinkTitle(
         "I gael cyngor cyffredinol ar hylendid bwyd a sut i redeg busnes bwyd diogel",
         "h4",
-        "https://www.food.gov.uk/cy/canllawiau-ar-gyfer-busnesau"
+        "https://www.gov.uk/guidance/starting-a-food-business.cy"
       )
     );
     guidanceLinksSectionNoSpaces.push(
@@ -269,7 +269,7 @@ const createGuidanceLinksSection = (lcInfo, i18n) => {
       createHyperlinkTitle(
         "Safe Catering",
         "h4",
-        "https://www.food.gov.uk/business-guidance/safe-catering"
+        "https://www.gov.uk/government/publications/safe-catering"
       )
     );
     guidanceLinksSectionNoSpaces.push(
