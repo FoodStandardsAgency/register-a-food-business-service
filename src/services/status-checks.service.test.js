@@ -330,6 +330,38 @@ describe("Status Checks Service", () => {
         emailReplyToId: "reply-123"
       }
     ];
+
+    const sentEstablishmentAddress = () => sendSingleEmail.mock.calls[0][3].establishment_address;
+    test("should pass the establishment address to notify as newline-separated lines", async () => {
+      // Arrange
+      const registrationWithPremise = {
+        ...mockRegistration,
+        establishment: {
+          ...mockRegistration.establishment,
+          premise: {
+            establishment_address_line_1: "Test 2 Ltd",
+            establishment_address_line_2: "2 Test Lane",
+            establishment_town: "Southampton",
+            establishment_postcode: "SO15 7HH"
+          }
+        }
+      };
+
+      // Act
+      await sendTradingStatusEmails(registrationWithPremise, mockLaConfig, [emailsToSend[0]]);
+
+      // Assert
+      expect(sentEstablishmentAddress()).toBe("Test 2 Ltd\n2 Test Lane\nSouthampton\nSO15 7HH");
+    });
+
+    test("should pass an empty string, not undefined, when there is no premise", async () => {
+      // Act
+      await sendTradingStatusEmails(mockRegistration, mockLaConfig, [emailsToSend[0]]);
+
+      // Assert
+      expect(sentEstablishmentAddress()).toBe("");
+    });
+
     test("should send all emails successfully", async () => {
       // Arrange
       sendSingleEmail.mockResolvedValue(undefined); // Success case

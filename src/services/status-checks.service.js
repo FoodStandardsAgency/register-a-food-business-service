@@ -25,6 +25,7 @@ const {
 } = require("../connectors/statusChecksDb/status-checks.connector");
 const { encryptId } = require("../utils/crypto");
 const { getOperatorName } = require("../utils/operatorNameHelpers");
+const { getEstablishmentAddress } = require("../utils/establishmentAddressHelpers");
 const {
   INITIAL_REGISTRATION,
   INITIAL_CHECK,
@@ -234,6 +235,7 @@ const transformDataForNotify = (registration, laConfig, actionType, i18nUtil) =>
     reg_submission_date: formattedSubmissionDate,
     trading_name: registration.establishment.establishment_details.establishment_trading_name,
     operator_name: operatorName,
+    establishment_address: getEstablishmentAddress(registration.establishment),
     trading_yes_link: `${FRONT_END_URL}tradingstatus/stilltrading/${fsaId}?token=${encryptedId}&lang=${lang}`,
     trading_no_link: `${FRONT_END_URL}tradingstatus/nolongertrading/${fsaId}?token=${encryptedId}&lang=${lang}`
   };
