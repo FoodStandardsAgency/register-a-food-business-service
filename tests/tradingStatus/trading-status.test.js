@@ -86,6 +86,11 @@ const getTestRegistration = (fsaRn, council, submissionDate, nextStatusDate, lan
       establishment_details: {
         establishment_trading_name: `Trading Name for ${fsaRn}`
       },
+      premise: {
+        establishment_address_line_1: `${fsaRn} Test Street`,
+        establishment_town: "Testville",
+        establishment_postcode: "TE1 1ST"
+      },
       operator: {
         operator_type: "SOLETRADER",
         operator_email: "test@example.com",
@@ -95,6 +100,8 @@ const getTestRegistration = (fsaRn, council, submissionDate, nextStatusDate, lan
     }
   };
 };
+
+const expectedAddress = (fsaRn) => `${fsaRn} Test Street\nTestville\nTE1 1ST`;
 
 describe("Trading Status Checks: Registration Processing Integration Tests", () => {
   let connection;
@@ -207,10 +214,11 @@ describe("Trading Status Checks: Registration Processing Integration Tests", () 
       expect(data).toBeDefined();
       expect(data.registration_number).toBe(`${ENSURE_DELETED_TEST_PREFIX}1`);
       expect(data.la_name).toBe("Test Council");
+      expect(data.establishment_address).toBe(expectedAddress("1"));
       expect(data.reg_submission_date).toBe(
         moment(registration.reg_submission_date).clone().format("DD MMM YYYY")
       );
-      expect(Object.keys(data).length).toBe(8);
+      expect(Object.keys(data).length).toBe(9);
       expect(callArgs[4]).toBeNull(); // No PDF file
       expect(callArgs[5]).toBe(`${ENSURE_DELETED_TEST_PREFIX}1`);
       expect(callArgs[6]).toBe("INITIAL_CHECK");
@@ -273,10 +281,11 @@ describe("Trading Status Checks: Registration Processing Integration Tests", () 
       expect(data).toBeDefined();
       expect(data.registration_number).toBe(`${ENSURE_DELETED_TEST_PREFIX}1`);
       expect(data.la_name).toBe("Test Council");
+      expect(data.establishment_address).toBe(expectedAddress("1"));
       expect(data.reg_submission_date).toBe(
         moment(registration.reg_submission_date).clone().format("DD MMM YYYY")
       );
-      expect(Object.keys(data).length).toBe(8);
+      expect(Object.keys(data).length).toBe(9);
       expect(callArgs[4]).toBeNull(); // No PDF file
       expect(callArgs[5]).toBe(`${ENSURE_DELETED_TEST_PREFIX}1`);
       expect(callArgs[6]).toBe("INITIAL_CHECK_CHASE");
@@ -346,10 +355,11 @@ describe("Trading Status Checks: Registration Processing Integration Tests", () 
     expect(data).toBeDefined();
     expect(data.registration_number).toBe(`${ENSURE_DELETED_TEST_PREFIX}1`);
     expect(data.la_name).toBe("Test Council");
+    expect(data.establishment_address).toBe(expectedAddress("1"));
     expect(data.reg_submission_date).toBe(
       moment(registration.reg_submission_date).clone().format("DD MMM YYYY")
     );
-    expect(Object.keys(data).length).toBe(8);
+    expect(Object.keys(data).length).toBe(9);
     expect(callArgs[4]).toBeNull(); // No PDF file
     expect(callArgs[5]).toBe(`${ENSURE_DELETED_TEST_PREFIX}1`);
     expect(callArgs[6]).toBe("REGULAR_CHECK");
@@ -412,10 +422,11 @@ describe("Trading Status Checks: Registration Processing Integration Tests", () 
     expect(data).toBeDefined();
     expect(data.registration_number).toBe(`${ENSURE_DELETED_TEST_PREFIX}1`);
     expect(data.la_name).toBe("Test Council");
+    expect(data.establishment_address).toBe(expectedAddress("1"));
     expect(data.reg_submission_date).toBe(
       moment(registration.reg_submission_date).clone().format("DD MMM YYYY")
     );
-    expect(Object.keys(data).length).toBe(8);
+    expect(Object.keys(data).length).toBe(9);
     expect(callArgs[4]).toBeNull(); // No PDF file
     expect(callArgs[5]).toBe(`${ENSURE_DELETED_TEST_PREFIX}1`);
     expect(callArgs[6]).toBe("REGULAR_CHECK_CHASE");
@@ -479,10 +490,11 @@ describe("Trading Status Checks: Registration Processing Integration Tests", () 
     expect(data).toBeDefined();
     expect(data.registration_number).toBe(`${ENSURE_DELETED_TEST_PREFIX}1`);
     expect(data.la_name).toBe("Test Council");
+    expect(data.establishment_address).toBe(expectedAddress("1"));
     expect(data.reg_submission_date).toBe(
       moment(registration.reg_submission_date).clone().format("DD MMM YYYY")
     );
-    expect(Object.keys(data).length).toBe(8);
+    expect(Object.keys(data).length).toBe(9);
     expect(callArgs[4]).toBeNull(); // No PDF file
     expect(callArgs[5]).toBe(`${ENSURE_DELETED_TEST_PREFIX}1`);
     expect(callArgs[6]).toBe("STILL_TRADING_LA");
@@ -551,10 +563,11 @@ describe("Trading Status Checks: Registration Processing Integration Tests", () 
     expect(data0).toBeDefined();
     expect(data0.registration_number).toBe(`${ENSURE_DELETED_TEST_PREFIX}1`);
     expect(data0.la_name).toBe("Test Council");
+    expect(data0.establishment_address).toBe(expectedAddress("1"));
     expect(data0.reg_submission_date).toBe(
       moment(registration.reg_submission_date).clone().format("DD MMM YYYY")
     );
-    expect(Object.keys(data0).length).toBe(8);
+    expect(Object.keys(data0).length).toBe(9);
     expect(callArgs0[4]).toBeNull(); // No PDF file
     expect(callArgs0[5]).toBe(`${ENSURE_DELETED_TEST_PREFIX}1`);
     expect(callArgs0[6]).toBe("FINISHED_TRADING_LA");
@@ -567,10 +580,11 @@ describe("Trading Status Checks: Registration Processing Integration Tests", () 
     expect(data1).toBeDefined();
     expect(data1.registration_number).toBe(`${ENSURE_DELETED_TEST_PREFIX}1`);
     expect(data1.la_name).toBe("Test Council");
+    expect(data1.establishment_address).toBe(expectedAddress("1"));
     expect(data1.reg_submission_date).toBe(
       moment(registration.reg_submission_date).clone().format("DD MMM YYYY")
     );
-    expect(Object.keys(data1).length).toBe(8);
+    expect(Object.keys(data1).length).toBe(9);
     expect(callArgs1[4]).toBeNull(); // No PDF file
     expect(callArgs1[5]).toBe(`${ENSURE_DELETED_TEST_PREFIX}1`);
     expect(callArgs1[6]).toBe("FINISHED_TRADING_LA");
@@ -750,6 +764,7 @@ describe("Trading Status Checks: Registration Processing Integration Tests", () 
       expect(data).toBeDefined();
       expect(data.registration_number).toBe(`${ENSURE_DELETED_TEST_PREFIX}2`);
       expect(data.la_name).toBe("Test Council");
+      expect(data.establishment_address).toBe(expectedAddress("2"));
       expect(data.trading_no_link).toMatch(
         new RegExp(`http://localhost:3000/tradingstatus/nolongertrading/ENSURE_DELETED_RECORD-2?`)
       );
@@ -759,7 +774,7 @@ describe("Trading Status Checks: Registration Processing Integration Tests", () 
       expect(data.reg_submission_date).toBe(
         moment(registrationToUpdate.reg_submission_date).clone().format("DD MMM YYYY")
       );
-      expect(Object.keys(data).length).toBe(8);
+      expect(Object.keys(data).length).toBe(9);
       expect(callArgs[4]).toBeNull(); // No PDF file
       expect(callArgs[5]).toBe(`${ENSURE_DELETED_TEST_PREFIX}2`);
       expect(callArgs[6]).toBe("INITIAL_CHECK");
