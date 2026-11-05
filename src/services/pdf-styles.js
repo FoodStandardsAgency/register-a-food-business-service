@@ -185,7 +185,7 @@ const createGuidanceLinksSection = (lcInfo, i18n) => {
     createHyperlinkTitle(
       "Guidance for new food businesses",
       "h4",
-      "https://www.food.gov.uk/register-a-food-business#support-for-new-food-businesses"
+      "https://www.gov.uk/guidance/starting-a-food-business"
     )
   );
   guidanceLinksSectionNoSpaces.push(
@@ -240,21 +240,21 @@ const createGuidanceLinksSection = (lcInfo, i18n) => {
       createHyperlinkTitle(
         "I gael gwybodaeth am sut i gael sgôr uchel o dan y Cynllun Sgorio Hylendid Bwyd",
         "h4",
-        "https://www.food.gov.uk/cy/business-guidance/sgoriau-hylendid-bwyd-ar-gyfer-busnesau"
+        "https://www.gov.uk/government/publications/food-hygiene-rating-scheme-fhrs-guidance-for-businesses.cy"
       )
     );
     guidanceLinksSectionNoSpaces.push(
       createHyperlinkTitle(
         "I gael gwybodaeth am y system rheoli diogelwch bwyd, Bwyd mwy Diogel, Busnes Gwell",
         "h4",
-        "https://www.food.gov.uk/cy/business-guidance/bwyd-mwy-diogel-busnes-gwell"
+        "https://www.gov.uk/government/publications/safer-food-better-business-sfbb/bwyd-mwy-diogel-busnes-gwell"
       )
     );
     guidanceLinksSectionNoSpaces.push(
       createHyperlinkTitle(
         " I gael canllawiau ar labelu bwyd ac alergenau",
         "h4",
-        "https://www.food.gov.uk/cy/canllawiau-ar-gyfer-busnesau/cyngor-penodol-ar-gyfer-y-diwydiant/labelu-ac-alergenau"
+        "https://www.gov.uk/government/publications/food-allergen-labelling-and-information-requirements-technical-guidance/food-allergen-labelling-and-information-requirements-technical-guidance"
       )
     );
     guidanceLinksSectionNoSpaces.push(
